@@ -146,6 +146,7 @@ class Match:
 
     def to_dict(self):
         return {
+            'id': self.id,
             'date_time': self.date_time,
             'team_home': self.team_home,
             'team_away': self.team_away,
