@@ -7,6 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 class Match:
     def __init__(self):
+        self.id = None
         self.date_time = None
         self.date_time = None
 
@@ -277,6 +278,9 @@ class Match:
         self.team_away = driver.find_element(By.CSS_SELECTOR,
                                              '.duelParticipant__away .participant__participantName.participant__overflow > a').text
         print(self.team_home + " - " + self.team_away)
+
+        # 0. PK
+        self.id = date_time + "_" + self.team_home + "_" + self.team_away
 
         # 4./5./6. Competition, Season, Round
         # self.competition = "FORTUNA:LIGA"
