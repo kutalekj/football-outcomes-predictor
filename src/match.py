@@ -1,3 +1,10 @@
+from datetime import datetime
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
+
+
 class Match:
     def __init__(self):
         self.date_time = None
@@ -258,3 +265,317 @@ class Match:
             'goals_away_2h': self.goals_away_2h
         }
 
+    def get_match_statistics(self, driver, comp_name, season):
+        # 1. Date & Time
+        date_time = driver.find_element(By.CSS_SELECTOR, '.duelParticipant__startTime > div').text
+        date_time_parsed = datetime.strptime(date_time, "%d.%m.%Y %H:%M")
+        self.date_time = date_time_parsed.strftime("%Y-%m-%d %H:%M")
+
+        # 2./3. Teams
+        self.team_home = driver.find_element(By.CSS_SELECTOR,
+                                             '.duelParticipant__home .participant__participantName.participant__overflow > a').text
+        self.team_away = driver.find_element(By.CSS_SELECTOR,
+                                             '.duelParticipant__away .participant__participantName.participant__overflow > a').text
+        print(self.team_home + " - " + self.team_away)
+
+        # 4./5./6. Competition, Season, Round
+        # self.competition = "FORTUNA:LIGA"
+        self.competition = comp_name
+        # self.season = "2022-2023"
+        self.season = season
+        self.round = int(
+            driver.find_element(By.CSS_SELECTOR, '.tournamentHeader__country > a').text.split('ROUND ')[1])
+        print(self.competition + " " + self.season + ": Round " + str(self.round))
+
+        # 7./8./9. Result, Team Goals - Home/Away
+        score_div = driver.find_element(By.CSS_SELECTOR, '.detailScore__wrapper')
+        score_spans = score_div.find_elements(By.TAG_NAME, 'span')
+
+        self.goals_home = int(score_spans[0].text)
+        self.goals_away = int(score_spans[2].text)
+
+        if self.goals_home >= self.goals_away:
+            if self.goals_home > self.goals_away:
+                self.result = 0
+            else:
+                self.result = 1
+        else:
+            self.result = 2
+        print(
+            str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
+
+        # 10. Referee
+        referee_div = driver.find_element(By.CSS_SELECTOR, '.section .mi__data')
+        referee_div2 = referee_div.find_elements(By.TAG_NAME, 'div')[0]
+        self.referee = referee_div2.find_element(By.CSS_SELECTOR, '.mi__item__val').text.strip()
+
+        # 11./12. Neutral field, Finished
+        try:
+            match_info = driver.find_element(By.CSS_SELECTOR, '.infoBox__wrapper .infoBox__info').text
+            if "at a different stadium" in match_info:
+                self.neutral_field = True
+        except NoSuchElementException:
+            self.neutral_field = False
+
+        finished_elem = Wait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "fixedHeaderDuel__detailStatus")))
+        finished_text = driver.execute_script("return arguments[0].innerText;", finished_elem)
+        self.finished = True if finished_text == "FINISHED" else False
+        if not self.finished:
+            raise Exception("All matches must be finished")
+        print("Referee: " + self.referee + ", neutral field = " + str(
+            self.neutral_field) + ", finished = " + str(
+            self.finished))
+
+        # 13.- 24. Odds (Tipsport, Fortuna)
+        odds_elems = driver.find_elements(By.CSS_SELECTOR, '.oddsRowContent')
+        for odd_elem, i in zip(odds_elems, range(len(odds_elems))):
+            last_minute_odds = odd_elem.find_elements(By.CSS_SELECTOR, '.oddsValueInner')
+
+            last_minute_odd1 = last_minute_odds[0].text
+            last_minute_odd0 = last_minute_odds[1].text
+            last_minute_odd2 = last_minute_odds[2].text
+
+            init_odds = odd_elem.find_elements(By.CSS_SELECTOR, '.cellWrapper')
+
+            odd1 = init_odds[0].get_attribute("title")
+            init_odd1 = odd1.split(' ')[0] if odd1 != "" else last_minute_odd1
+            odd0 = init_odds[1].get_attribute("title")
+            init_odd0 = odd0.split(' ')[0] if odd0 != "" else last_minute_odd0
+            odd2 = init_odds[2].get_attribute("title")
+            init_odd2 = odd2.split(' ')[0] if odd2 != "" else last_minute_odd2
+
+            print(str(init_odd1) + " >> " + str(last_minute_odd1) + ", " + str(init_odd0) + " >> " + str(
+                last_minute_odd0) + ", " + str(init_odd2) + " >> " + str(last_minute_odd2))
+
+            if i == 0:
+                self.odd_tipsport_1_start = float(init_odd1)
+                self.odd_tipsport_1_end = float(last_minute_odd1)
+                self.odd_tipsport_0_start = float(init_odd0)
+                self.odd_tipsport_0_end = float(last_minute_odd0)
+                self.odd_tipsport_2_start = float(init_odd2)
+                self.odd_tipsport_2_end = float(last_minute_odd2)
+            else:
+                self.odd_fortuna_1_start = float(init_odd1)
+                self.odd_fortuna_1_end = float(last_minute_odd1)
+                self.odd_fortuna_0_start = float(init_odd0)
+                self.odd_fortuna_0_end = float(last_minute_odd0)
+                self.odd_fortuna_2_start = float(init_odd2)
+                self.odd_fortuna_2_end = float(last_minute_odd2)
+
+        # Yellow/Red cards Not on pitch
+        yellows_not_on_pitch_counter = 0
+        reds_not_on_pitch_counter = 0
+
+        incidents_section = driver.find_element(By.CSS_SELECTOR, '.smv__verticalSections.section')
+        incidents = incidents_section.find_elements(By.CSS_SELECTOR, '.smv__incident')
+        for inc in incidents:
+            try:
+                smv_assist = inc.find_element(By.CSS_SELECTOR, '.smv__assist')
+                if smv_assist.text == "(Not on pitch)":
+                    icon = inc.find_element(By.CSS_SELECTOR, '.smv__incidentIcon')
+                    if "yellow card" in icon.get_attribute("title") or len(
+                            driver.find_elements(By.CSS_SELECTOR, '.card-ico.yellowCard-ico')) > 0:
+                        yellows_not_on_pitch_counter += 1
+                        print("_____Found YELLOW not on pitch_____")
+                    if "red card" in icon.get_attribute("title") or len(
+                            driver.find_elements(By.CSS_SELECTOR, '.card-ico.redCard-ico')) > 0:
+                        reds_not_on_pitch_counter += 1
+                        print("_____Found RED not on pitch_____")
+            except NoSuchElementException:
+                pass
+                # print("_____no sub_incident found_____")
+
+        # --- STATS ---
+        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Stats']")))
+        driver.find_element(By.XPATH, "//button[text()='Stats']").click()
+
+        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
+        stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
+        for sr in stat_rows:
+            cat = sr.find_element(By.CSS_SELECTOR, '.stat__category')
+            cat_name = cat.find_element(By.CSS_SELECTOR, '.stat__categoryName').text
+
+            if cat_name == 'Ball Possession':
+                self.possession_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text[:-1])
+                self.possession_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text[:-1])
+            elif cat_name == 'Goal Attempts':
+                self.shots_total_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_total_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Shots on Goal':
+                self.shots_on_goal_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_on_goal_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Shots off Goal':
+                self.shots_off_goal_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_off_goal_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Blocked Shots':
+                self.shots_blocked_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_blocked_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Free Kicks':
+                self.free_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.free_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Corner Kicks':
+                self.corner_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.corner_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Offsides':
+                self.offsides_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.offsides_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Throw-ins':
+                self.throw_ins_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.throw_ins_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Goalkeeper Saves':
+                self.goalkeeper_saves_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.goalkeeper_saves_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Fouls':
+                self.fouls_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.fouls_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Red Cards':
+                self.red_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.red_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Yellow Cards':
+                self.yellow_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.yellow_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Attacks':
+                self.attacks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.attacks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Dangerous Attacks':
+                self.dangerous_attacks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.dangerous_attacks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            else:
+                raise ValueError('Unknown category name in statistics found.')
+
+        # --- 1st HALF STATS ---
+        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='1st Half']")))
+        driver.find_element(By.XPATH, "//button[text()='1st Half']").click()
+
+        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
+        stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
+
+        for sr in stat_rows:
+            cat = sr.find_element(By.CSS_SELECTOR, '.stat__category')
+            cat_name = cat.find_element(By.CSS_SELECTOR, '.stat__categoryName').text
+
+            if cat_name == 'Ball Possession':
+                self.possession_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text[:-1])
+                self.possession_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text[:-1])
+            elif cat_name == 'Goal Attempts':
+                self.shots_total_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_total_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Shots on Goal':
+                self.shots_on_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_on_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Shots off Goal':
+                self.shots_off_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_off_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Blocked Shots':
+                self.shots_blocked_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_blocked_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Free Kicks':
+                self.free_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.free_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Corner Kicks':
+                self.corner_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.corner_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Offsides':
+                self.offsides_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.offsides_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Throw-ins':
+                self.throw_ins_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.throw_ins_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Goalkeeper Saves':
+                self.goalkeeper_saves_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.goalkeeper_saves_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Fouls':
+                self.fouls_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.fouls_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Red Cards':
+                self.red_cards_on_pitch_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.red_cards_on_pitch_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Yellow Cards':
+                self.yellow_cards_on_pitch_home_1h = int(
+                    cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.yellow_cards_on_pitch_away_1h = int(
+                    cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Attacks':
+                self.attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Dangerous Attacks':
+                self.dangerous_attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.dangerous_attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            else:
+                raise ValueError('Unknown category name in statistics found.')
+
+        if None in (
+                self.shots_on_goal_home_1h, self.shots_on_goal_away_1h, self.goalkeeper_saves_home_1h,
+                self.goalkeeper_saves_away_1h):
+            raise ValueError('Missing statistics for 1st half: Shots on goal/Goalkeeper saves.')
+        self.goals_home_1h = self.shots_on_goal_home_1h - self.goalkeeper_saves_away_1h
+        self.goals_away_1h = self.shots_on_goal_away_1h - self.goalkeeper_saves_home_1h
+
+        # --- 2nd HALF STATS ---
+        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='2nd Half']")))
+        driver.find_element(By.XPATH, "//button[text()='2nd Half']").click()
+
+        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
+        stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
+
+        for sr in stat_rows:
+            cat = sr.find_element(By.CSS_SELECTOR, '.stat__category')
+            cat_name = cat.find_element(By.CSS_SELECTOR, '.stat__categoryName').text
+
+            if cat_name == 'Ball Possession':
+                self.possession_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text[:-1])
+                self.possession_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text[:-1])
+            elif cat_name == 'Goal Attempts':
+                self.shots_total_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_total_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Shots on Goal':
+                self.shots_on_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_on_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Shots off Goal':
+                self.shots_off_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_off_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Blocked Shots':
+                self.shots_blocked_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.shots_blocked_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Free Kicks':
+                self.free_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.free_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Corner Kicks':
+                self.corner_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.corner_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Offsides':
+                self.offsides_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.offsides_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Throw-ins':
+                self.throw_ins_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.throw_ins_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Goalkeeper Saves':
+                self.goalkeeper_saves_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.goalkeeper_saves_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Fouls':
+                self.fouls_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.fouls_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Red Cards':
+                self.red_cards_on_pitch_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.red_cards_on_pitch_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Yellow Cards':
+                self.yellow_cards_on_pitch_home_2h = int(
+                    cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.yellow_cards_on_pitch_away_2h = int(
+                    cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Attacks':
+                self.attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Dangerous Attacks':
+                self.dangerous_attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.dangerous_attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            else:
+                raise ValueError('Unknown category name in statistics found.')
+
+        if None in (
+                self.shots_on_goal_home_2h, self.shots_on_goal_away_2h, self.goalkeeper_saves_home_2h,
+                self.goalkeeper_saves_away_2h):
+            raise ValueError('Missing statistics for 2nd half: Shots on goal/Goalkeeper saves.')
+        self.goals_home_2h = self.shots_on_goal_home_2h - self.goalkeeper_saves_away_2h
+        self.goals_away_2h = self.shots_on_goal_away_2h - self.goalkeeper_saves_home_2h
