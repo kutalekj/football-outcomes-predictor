@@ -624,5 +624,5 @@ class Match:
 
     @staticmethod
     def check_num_of_matches(matches, comp):
-        if comp.finished is True and len(matches) != comp.num_of_mathces_expected:
-            raise ValueError(f"Found {len(matches)} matches, but {comp.num_of_mathces_expected} was expected.")
+        if comp.finished is True and len(matches) != comp.num_of_matches_expected:
+            raise ValueError(f"Found {len(matches)} matches, but {comp.num_of_matches_expected} was expected.")
