@@ -45,7 +45,7 @@ for c in comp_seasons:
 
     # <loop through all the relevant matches>
     matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
-    for match in matches[100:110]:
+    for match in matches[100:103]:
         match.click()
         time.sleep(2)
 
