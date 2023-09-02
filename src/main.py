@@ -2,6 +2,7 @@ import time
 import re
 import pandas as pd
 import json
+import os
 
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver
@@ -15,6 +16,15 @@ from webdriver_manager.chrome import ChromeDriverManager
 from match import Match
 from competition import CompSeason
 from utils import hide_sdk_banner
+
+file_path = "matches.csv"
+
+df = pd.DataFrame()
+
+if os.path.isfile(file_path):
+    df = pd.read_csv(file_path)
+else:
+    print(f"Could not find and open the file {file_path}.")
 
 # Read settings.json file
 with open('../comp_settings.json', 'r') as f:
@@ -45,7 +55,7 @@ for c in comp_seasons:
 
     # <loop through all the relevant matches>
     matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
-    for match in matches[100:103]:
+    for match in matches[101:103]:
         match.click()
         time.sleep(2)
 
@@ -69,10 +79,13 @@ for c in comp_seasons:
     Match.correct_zero_values(list_of_matches)
     # Match.check_num_of_matches(list_of_matches, c)  TODO: Uncomment
 
-    df = pd.DataFrame([match.to_dict() for match in list_of_matches])
-
-    df.to_csv('matches.csv', index=False)
+    new_df = pd.DataFrame([match.to_dict() for match in list_of_matches])
+    df = pd.concat([df, new_df], ignore_index=True)
 
     driver.quit()
+
+df.drop_duplicates(inplace=True)
+
+df.to_csv(file_path, index=False)
 
 break_point = 0
