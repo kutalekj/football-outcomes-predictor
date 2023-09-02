@@ -32,7 +32,7 @@ comp.country1 = "Czech Republic"
 comp.country2 = "czech-republic"
 comp.name1 = "FORTUNA:LIGA"
 comp.name2 = "fortuna-liga"
-comp.season = "2022-2023"
+comp.season = "2021-2022"
 
 comp.load_comp_season_match_page(driver)
 
@@ -40,7 +40,7 @@ list_of_matches = []
 
 # <loop through all the relevant matches>
 matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
-for match in matches[106:110]:
+for match in matches[100:210]:
     match.click()
     time.sleep(2)
 
@@ -61,6 +61,11 @@ for match in matches[106:110]:
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
 
+# Possible correction of -1 values to 0
+Match.correct_zero_values(list_of_matches)
+
 df = pd.DataFrame([match.to_dict() for match in list_of_matches])
+
+df.to_csv('matches.csv', index=False)
 
 break_point = 0

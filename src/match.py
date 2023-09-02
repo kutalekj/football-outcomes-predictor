@@ -39,10 +39,10 @@ class Match:
         self.odd_fortuna_2_start = None
         self.odd_fortuna_2_end = None
 
-        self.possession_home = None
-        self.possession_away = None
-        self.shots_total_home = None
-        self.shots_total_away = None
+        self.possession_home = -1
+        self.possession_away = -1
+        self.shots_total_home = -1
+        self.shots_total_away = -1
         self.shots_on_goal_home = -1
         self.shots_on_goal_away = -1
         self.shots_off_goal_home = -1
@@ -584,3 +584,40 @@ class Match:
             raise ValueError('Missing statistics for 2nd half: Shots on goal/Goalkeeper saves.')
         self.goals_home_2h = self.shots_on_goal_home_2h - self.goalkeeper_saves_away_2h
         self.goals_away_2h = self.shots_on_goal_away_2h - self.goalkeeper_saves_home_2h
+
+    @staticmethod
+    def correct_zero_values(matches):
+        attributes_to_check = [
+            'possession_home', 'possession_away', 'shots_total_home', 'shots_total_away',
+            'shots_on_goal_home', 'shots_on_goal_away', 'shots_off_goal_home', 'shots_off_goal_away',
+            'shots_blocked_home', 'shots_blocked_away', 'free_kicks_home', 'free_kicks_away',
+            'corner_kicks_home', 'corner_kicks_away', 'offsides_home', 'offsides_away',
+            'throw_ins_home', 'throw_ins_away', 'goalkeeper_saves_home', 'goalkeeper_saves_away',
+            'fouls_home', 'fouls_away', 'red_cards_on_pitch_home', 'red_cards_on_pitch_away',
+            'yellow_cards_on_pitch_home', 'yellow_cards_on_pitch_away', 'attacks_home', 'attacks_away',
+            'dangerous_attacks_home', 'dangerous_attacks_away', 'possession_home_1h', 'possession_away_1h',
+            'shots_total_home_1h', 'shots_total_away_1h', 'shots_on_goal_home_1h', 'shots_on_goal_away_1h',
+            'shots_off_goal_home_1h', 'shots_off_goal_away_1h', 'shots_blocked_home_1h', 'shots_blocked_away_1h',
+            'free_kicks_home_1h', 'free_kicks_away_1h', 'corner_kicks_home_1h', 'corner_kicks_away_1h',
+            'offsides_home_1h', 'offsides_away_1h', 'throw_ins_home_1h', 'throw_ins_away_1h',
+            'goalkeeper_saves_home_1h', 'goalkeeper_saves_away_1h', 'fouls_home_1h', 'fouls_away_1h',
+            'red_cards_on_pitch_home_1h', 'red_cards_on_pitch_away_1h', 'yellow_cards_on_pitch_home_1h',
+            'yellow_cards_on_pitch_away_1h', 'attacks_home_1h', 'attacks_away_1h', 'dangerous_attacks_home_1h',
+            'dangerous_attacks_away_1h', 'goals_home_1h', 'goals_away_1h', 'possession_home_2h', 'possession_away_2h',
+            'shots_total_home_2h', 'shots_total_away_2h', 'shots_on_goal_home_2h', 'shots_on_goal_away_2h',
+            'shots_off_goal_home_2h', 'shots_off_goal_away_2h', 'shots_blocked_home_2h', 'shots_blocked_away_2h',
+            'free_kicks_home_2h', 'free_kicks_away_2h', 'corner_kicks_home_2h', 'corner_kicks_away_2h',
+            'offsides_home_2h', 'offsides_away_2h', 'throw_ins_home_2h', 'throw_ins_away_2h',
+            'goalkeeper_saves_home_2h', 'goalkeeper_saves_away_2h', 'fouls_home_2h', 'fouls_away_2h',
+            'red_cards_on_pitch_home_2h', 'red_cards_on_pitch_away_2h', 'yellow_cards_on_pitch_home_2h',
+            'yellow_cards_on_pitch_away_2h', 'attacks_home_2h', 'attacks_away_2h', 'dangerous_attacks_home_2h',
+            'dangerous_attacks_away_2h', 'goals_home_2h', 'goals_away_2h'
+        ]
+
+        # Check if any Match object has any of the defined attributes greater than -1
+        if any(getattr(match, attr) > -1 for match in matches for attr in attributes_to_check):
+            # Set all attributes which are -1 to 0
+            for match in matches:
+                for attr in attributes_to_check:
+                    if getattr(match, attr) == -1:
+                        setattr(match, attr, 0)
