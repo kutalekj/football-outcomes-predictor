@@ -13,6 +13,8 @@ class CompSeason:
         self.name1 = None
         self.name2 = None
         self.season = None
+        self.finished = None
+        self.num_of_matches_expected = None
 
     def load_comp_season_match_page(self, driver):
         # Show more countries -> Czech Republic -> FORTUNA:LIGA (for instance)

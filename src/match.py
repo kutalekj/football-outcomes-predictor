@@ -621,3 +621,8 @@ class Match:
                 for attr in attributes_to_check:
                     if getattr(match, attr) == -1:
                         setattr(match, attr, 0)
+
+    @staticmethod
+    def check_num_of_matches(matches, comp):
+        if comp.finished is True and len(matches) != comp.num_of_mathces_expected:
+            raise ValueError(f"Found {len(matches)} matches, but {comp.num_of_mathces_expected} was expected.")

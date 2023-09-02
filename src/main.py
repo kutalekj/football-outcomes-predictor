@@ -15,7 +15,6 @@ from match import Match
 from competition import CompSeason
 from utils import hide_sdk_banner
 
-
 # Set webdriver
 options = Options()
 options.add_experimental_option("detach", True)
@@ -26,6 +25,8 @@ driver.get("https://www.flashscore.com/")
 driver.maximize_window()
 hide_sdk_banner(driver)
 
+list_of_comps = []
+
 # ------------------------------------------------------------------- FORTUNA:LIGA 2022/2023
 comp = CompSeason()
 comp.country1 = "Czech Republic"
@@ -33,39 +34,45 @@ comp.country2 = "czech-republic"
 comp.name1 = "FORTUNA:LIGA"
 comp.name2 = "fortuna-liga"
 comp.season = "2021-2022"
+comp.finished = False
+comp.num_of_matches_expected = 30 * 16
 
-comp.load_comp_season_match_page(driver)
+list_of_comps.append(comp)
 
-list_of_matches = []
+for c in list_of_comps:
+    comp.load_comp_season_match_page(driver)
 
-# <loop through all the relevant matches>
-matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
-for match in matches[100:210]:
-    match.click()
-    time.sleep(2)
+    list_of_matches = []
 
-    new_window = driver.window_handles[1]
-    driver.switch_to.window(new_window)
-    hide_sdk_banner(driver, include_placeholder=False, sleep=1.5)
+    # <loop through all the relevant matches>
+    matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
+    for match in matches[100:210]:
+        match.click()
+        time.sleep(2)
 
-    Wait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, "//a[@href='/football/" + comp.country2 + '/' + comp.name2 + "/']")))
-    competition_stage = driver.find_element(By.XPATH, "//a[@href='/football/" + comp.country2 + '/' + comp.name2 + "/']")
-    if re.match(r'' + comp.name1 + ' - ROUND.*', competition_stage.text):
-        print("\n" + driver.title)
+        new_window = driver.window_handles[1]
+        driver.switch_to.window(new_window)
+        hide_sdk_banner(driver, include_placeholder=False, sleep=1.5)
 
-        new_match = Match()
-        new_match.get_match_statistics(driver, comp.name1, comp.season)
-        list_of_matches.append(new_match)
+        Wait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//a[@href='/football/" + comp.country2 + '/' + comp.name2 + "/']")))
+        competition_stage = driver.find_element(By.XPATH,
+                                                "//a[@href='/football/" + comp.country2 + '/' + comp.name2 + "/']")
+        if re.match(r'' + comp.name1 + ' - ROUND.*', competition_stage.text):
+            print("\n" + driver.title)
 
-    driver.close()
-    driver.switch_to.window(driver.window_handles[0])
+            new_match = Match()
+            new_match.get_match_statistics(driver, comp.name1, comp.season)
+            list_of_matches.append(new_match)
 
-# Possible correction of -1 values to 0
-Match.correct_zero_values(list_of_matches)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
 
-df = pd.DataFrame([match.to_dict() for match in list_of_matches])
+    Match.correct_zero_values(list_of_matches)
+    Match.check_num_of_matches(list_of_matches, comp.num_of_matches_expected)
 
-df.to_csv('matches.csv', index=False)
+    df = pd.DataFrame([match.to_dict() for match in list_of_matches])
+
+    df.to_csv('matches.csv', index=False)
 
 break_point = 0
