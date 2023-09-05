@@ -54,6 +54,7 @@ for c in comp_seasons:
     list_of_matches = []
 
     # <loop through all the relevant matches>
+    Wait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.soccer .event__match--static')))
     matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
     for match in matches[101:103]:
         match.click()
