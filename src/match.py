@@ -24,6 +24,7 @@ class Match:
         self.referee = None
         self.neutral_field = None
         self.finished = None
+        self.no_spectators = None
 
         self.odd_tipsport_1_start = None
         self.odd_tipsport_1_end = None
@@ -183,6 +184,7 @@ class Match:
             'referee': self.referee,
             'neutral_field': self.neutral_field,
             'finished': self.finished,
+            'no_spectators': self.no_spectators,
             'odd_tipsport_1_start': self.odd_tipsport_1_start,
             'odd_tipsport_1_end': self.odd_tipsport_1_end,
             'odd_tipsport_0_start': self.odd_tipsport_0_start,
@@ -362,13 +364,20 @@ class Match:
         referee_div2 = referee_div.find_elements(By.TAG_NAME, 'div')[0]
         self.referee = referee_div2.find_element(By.CSS_SELECTOR, '.mi__item__val').text.strip()
 
-        # 11./12. Neutral field, Finished
+        # 11./12. Neutral field, Finished + NO_SPECTATORS?
         try:
             match_info = driver.find_element(By.CSS_SELECTOR, '.infoBox__wrapper .infoBox__info').text
             if "at a different stadium" in match_info:
                 self.neutral_field = True
         except NoSuchElementException:
             self.neutral_field = False
+
+        try:
+            match_info = driver.find_element(By.CSS_SELECTOR, '.infoBox__wrapper .infoBox__info').text
+            if "No spectators" in match_info:
+                self.no_spectators = True
+        except NoSuchElementException:
+            self.no_spectators = False
 
         finished_elem = Wait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "fixedHeaderDuel__detailStatus")))
