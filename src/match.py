@@ -707,11 +707,12 @@ class Match:
             'goals_away_2h'
         ]
 
-        # Check if any Match object has any of the defined attributes greater than -1
-        if any(getattr(match, attr) > -1 for match in matches for attr in attributes_to_check):
-            # Set all attributes which are -1 to 0
-            for match in matches:
-                for attr in attributes_to_check:
+        # For each attribute to check
+        for attr in attributes_to_check:
+            # If any Match object has the current attribute greater than -1
+            if any(getattr(match, attr) > -1 for match in matches):
+                # Set the current attribute which is -1 to 0 for all matches
+                for match in matches:
                     if getattr(match, attr) == -1:
                         setattr(match, attr, 0)
 
