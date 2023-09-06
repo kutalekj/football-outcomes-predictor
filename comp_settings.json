@@ -1,5 +1,14 @@
 [
   {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
     "country1": "France",
     "country2": "france",
     "name1": "Ligue 1",
@@ -104,15 +113,6 @@
     "name1": "League Two",
     "name2": "league-two",
     "season": "2021-2022",
-    "finished": true,
-    "num_of_matches_expected": 552
-  },
-  {
-    "country1": "England",
-    "country2": "england",
-    "name1": "League One",
-    "name2": "league-one",
-    "season": "2022-2023",
     "finished": true,
     "num_of_matches_expected": 552
   },
