@@ -67,7 +67,7 @@ for c in comp_seasons:
         Wait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//a[@href='/football/" + c.country2 + '/' + c.name2 + "/']")))
         competition_stage = driver.find_element(By.XPATH, "//a[@href='/football/" + c.country2 + '/' + c.name2 + "/']")
-        if re.match(r'' + c.name1 + ' - ROUND.*', competition_stage.text):
+        if re.match(r'' + c.name1.upper() + ' - ROUND.*', competition_stage.text):
             print("\n" + driver.title)
 
             new_match = Match()

@@ -1,0 +1,920 @@
+[
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FNL",
+    "name2": "fnl",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FNL",
+    "name2": "fnl",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FNL",
+    "name2": "fnl",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FNL",
+    "name2": "fnl",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FNL",
+    "name2": "fnl",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FNL",
+    "name2": "fnl",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Premier League",
+    "name2": "premier-league",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Premier League",
+    "name2": "premier-league",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Premier League",
+    "name2": "premier-league",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Premier League",
+    "name2": "premier-league",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Premier League",
+    "name2": "premier-league",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Premier League",
+    "name2": "premier-league",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League One",
+    "name2": "league-one",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League Two",
+    "name2": "league-two",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League Two",
+    "name2": "league-two",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League Two",
+    "name2": "league-two",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League Two",
+    "name2": "league-two",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League Two",
+    "name2": "league-two",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "England",
+    "country2": "england",
+    "name1": "League Two",
+    "name2": "league-two",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 552
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "2. Bundesliga",
+    "name2": "2-bundesliga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "2. Bundesliga",
+    "name2": "2-bundesliga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "2. Bundesliga",
+    "name2": "2-bundesliga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "2. Bundesliga",
+    "name2": "2-bundesliga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "2. Bundesliga",
+    "name2": "2-bundesliga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "2. Bundesliga",
+    "name2": "2-bundesliga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "3. Liga",
+    "name2": "3-liga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "3. Liga",
+    "name2": "3-liga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "3. Liga",
+    "name2": "3-liga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "3. Liga",
+    "name2": "3-liga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "3. Liga",
+    "name2": "3-liga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Germany",
+    "country2": "germany",
+    "name1": "3. Liga",
+    "name2": "3-liga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga2",
+    "name2": "laliga2",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 451
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga2",
+    "name2": "laliga2",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 451
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga2",
+    "name2": "laliga2",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 451
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga2",
+    "name2": "laliga2",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 451
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga2",
+    "name2": "laliga2",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 451
+  },
+  {
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga2",
+    "name2": "laliga2",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 451
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Italy",
+    "country2": "italy",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eredivisie",
+    "name2": "eredivisie",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eredivisie",
+    "name2": "eredivisie",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eredivisie",
+    "name2": "eredivisie",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eredivisie",
+    "name2": "eredivisie",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eredivisie",
+    "name2": "eredivisie",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eredivisie",
+    "name2": "eredivisie",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eerste Divisie",
+    "name2": "eerste-divisie",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eerste Divisie",
+    "name2": "eerste-divisie",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eerste Divisie",
+    "name2": "eerste-divisie",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eerste Divisie",
+    "name2": "eerste-divisie",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eerste Divisie",
+    "name2": "eerste-divisie",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Netherlands",
+    "country2": "netherlands",
+    "name1": "Eerste Divisie",
+    "name2": "eerste-divisie",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 1",
+    "name2": "ligue-1",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 1",
+    "name2": "ligue-1",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 1",
+    "name2": "ligue-1",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 1",
+    "name2": "ligue-1",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 1",
+    "name2": "ligue-1",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 1",
+    "name2": "ligue-1",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 2",
+    "name2": "ligue-2",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 2",
+    "name2": "ligue-2",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 2",
+    "name2": "ligue-2",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 2",
+    "name2": "ligue-2",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 2",
+    "name2": "ligue-2",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "France",
+    "country2": "france",
+    "name1": "Ligue 2",
+    "name2": "ligue-2",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  }
+]
