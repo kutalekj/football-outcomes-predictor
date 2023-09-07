@@ -374,6 +374,8 @@ class Match:
                 self.neutral_field = True
             else:
                 self.neutral_field = False
+                if "No spectators" not in match_info:
+                    print("\t\t\tNEW_MATCH_INFO: " + match_info)
         except NoSuchElementException:
             self.neutral_field = False
 
@@ -383,6 +385,8 @@ class Match:
                 self.no_spectators = True
             else:
                 self.no_spectators = False
+                if "at a different stadium" not in match_info:
+                    print("\t\t\tNEW_MATCH_INFO: " + match_info)
         except NoSuchElementException:
             self.no_spectators = False
 
