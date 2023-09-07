@@ -35,8 +35,7 @@ comp_seasons = []
 for s in comp_settings:
     comp = CompSeason()
     comp.__dict__.update(s)
-    if comp.season != "2023-2024":  # TODO: Remove condition
-        comp_seasons.append(comp)
+    comp_seasons.append(comp)
 
 for c in comp_seasons:
     # Set webdriver
