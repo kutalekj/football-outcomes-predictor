@@ -372,6 +372,8 @@ class Match:
             match_info = driver.find_element(By.CSS_SELECTOR, '.infoBox__wrapper .infoBox__info').text
             if "at a different stadium" in match_info:
                 self.neutral_field = True
+            else:
+                self.neutral_field = False
         except NoSuchElementException:
             self.neutral_field = False
 
@@ -379,6 +381,8 @@ class Match:
             match_info = driver.find_element(By.CSS_SELECTOR, '.infoBox__wrapper .infoBox__info').text
             if "No spectators" in match_info:
                 self.no_spectators = True
+            else:
+                self.no_spectators = False
         except NoSuchElementException:
             self.no_spectators = False
 

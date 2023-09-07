@@ -1834,5 +1834,383 @@
     "season": "2023-2024",
     "finished": false,
     "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Romania",
+    "country2": "romania",
+    "name1": "Liga 1",
+    "name2": "liga-1",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Romania",
+    "country2": "romania",
+    "name1": "Liga 1",
+    "name2": "liga-1",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Romania",
+    "country2": "romania",
+    "name1": "Liga 1",
+    "name2": "liga-1",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Romania",
+    "country2": "romania",
+    "name1": "Liga 1",
+    "name2": "liga-1",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Romania",
+    "country2": "romania",
+    "name1": "Liga 1",
+    "name2": "liga-1",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Romania",
+    "country2": "romania",
+    "name1": "Liga 1",
+    "name2": "liga-1",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Norway",
+    "country2": "norway",
+    "name1": "Eliteserien",
+    "name2": "eliteserien",
+    "season": "2018",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Norway",
+    "country2": "norway",
+    "name1": "Eliteserien",
+    "name2": "eliteserien",
+    "season": "2019",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Norway",
+    "country2": "norway",
+    "name1": "Eliteserien",
+    "name2": "eliteserien",
+    "season": "2020",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Norway",
+    "country2": "norway",
+    "name1": "Eliteserien",
+    "name2": "eliteserien",
+    "season": "2021",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Norway",
+    "country2": "norway",
+    "name1": "Eliteserien",
+    "name2": "eliteserien",
+    "season": "2022",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Norway",
+    "country2": "norway",
+    "name1": "Eliteserien",
+    "name2": "eliteserien",
+    "season": "2023",
+    "finished": false,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Slovakia",
+    "country2": "slovakia",
+    "name1": "Nike liga",
+    "name2": "nike-liga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Slovakia",
+    "country2": "slovakia",
+    "name1": "Nike liga",
+    "name2": "nike-liga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Slovakia",
+    "country2": "slovakia",
+    "name1": "Nike liga",
+    "name2": "nike-liga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Slovakia",
+    "country2": "slovakia",
+    "name1": "Nike liga",
+    "name2": "nike-liga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Slovakia",
+    "country2": "slovakia",
+    "name1": "Nike liga",
+    "name2": "nike-liga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Slovakia",
+    "country2": "slovakia",
+    "name1": "Nike liga",
+    "name2": "nike-liga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Serbia",
+    "country2": "serbia",
+    "name1": "Super Liga",
+    "name2": "super-liga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Serbia",
+    "country2": "serbia",
+    "name1": "Super Liga",
+    "name2": "super-liga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Serbia",
+    "country2": "serbia",
+    "name1": "Super Liga",
+    "name2": "super-liga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Serbia",
+    "country2": "serbia",
+    "name1": "Super Liga",
+    "name2": "super-liga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Serbia",
+    "country2": "serbia",
+    "name1": "Super Liga",
+    "name2": "super-liga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Serbia",
+    "country2": "serbia",
+    "name1": "Super Liga",
+    "name2": "super-liga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Hungary",
+    "country2": "hungary",
+    "name1": "OTP Bank Liga",
+    "name2": "otp-bank-liga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Hungary",
+    "country2": "hungary",
+    "name1": "OTP Bank Liga",
+    "name2": "otp-bank-liga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Hungary",
+    "country2": "hungary",
+    "name1": "OTP Bank Liga",
+    "name2": "otp-bank-liga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Hungary",
+    "country2": "hungary",
+    "name1": "OTP Bank Liga",
+    "name2": "otp-bank-liga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Hungary",
+    "country2": "hungary",
+    "name1": "OTP Bank Liga",
+    "name2": "otp-bank-liga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Hungary",
+    "country2": "hungary",
+    "name1": "OTP Bank Liga",
+    "name2": "otp-bank-liga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Scotland",
+    "country2": "scotland",
+    "name1": "Premiership",
+    "name2": "premiership",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Scotland",
+    "country2": "scotland",
+    "name1": "Premiership",
+    "name2": "premiership",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Scotland",
+    "country2": "scotland",
+    "name1": "Premiership",
+    "name2": "premiership",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Scotland",
+    "country2": "scotland",
+    "name1": "Premiership",
+    "name2": "premiership",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Scotland",
+    "country2": "scotland",
+    "name1": "Premiership",
+    "name2": "premiership",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 198
+  },
+  {
+    "country1": "Scotland",
+    "country2": "scotland",
+    "name1": "Premiership",
+    "name2": "premiership",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 198
   }
 ]
