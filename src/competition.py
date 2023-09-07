@@ -101,6 +101,15 @@ class CompSeason:
                                 hide_advert_banner(driver)
                                 driver.find_element(By.CSS_SELECTOR,
                                                     'a.event__more.event__more--static[href="#"]').click()
+                                try:
+                                    Wait(driver, 10).until(
+                                        EC.presence_of_element_located(
+                                            (By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]')))
+                                    hide_advert_banner(driver)
+                                    driver.find_element(By.CSS_SELECTOR,
+                                                        'a.event__more.event__more--static[href="#"]').click()
+                                except (TimeoutException, NoSuchElementException):
+                                    print("Warning: Element not present or timeout exceeded.")
                             except (TimeoutException, NoSuchElementException):
                                 print("Warning: Element not present or timeout exceeded.")
                         except (TimeoutException, NoSuchElementException):

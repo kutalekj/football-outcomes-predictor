@@ -4,6 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
+from utils import is_float
+
 
 class Match:
     def __init__(self):
@@ -374,9 +376,12 @@ class Match:
         # print(str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
 
         # 10. Referee
-        referee_div = driver.find_element(By.CSS_SELECTOR, '.section .mi__data')
-        referee_div2 = referee_div.find_elements(By.TAG_NAME, 'div')[0]
-        self.referee = referee_div2.find_element(By.CSS_SELECTOR, '.mi__item__val').text.strip()
+        try:
+            referee_div = driver.find_element(By.CSS_SELECTOR, '.section .mi__data')
+            referee_div2 = referee_div.find_elements(By.TAG_NAME, 'div')[0]
+            self.referee = referee_div2.find_element(By.CSS_SELECTOR, '.mi__item__val').text.strip()
+        except NoSuchElementException:
+            self.referee = None
 
         # 11./12. Neutral field, Finished + NO_SPECTATORS?
         try:
@@ -432,6 +437,11 @@ class Match:
             odd2 = init_odds[2].get_attribute("title")
             init_odd2 = odd2.split(' ')[0] if odd2 != "" else last_minute_odd2
 
+            if not all([is_float(init_odd1), is_float(init_odd0), is_float(init_odd2)]):
+                init_odd1 = -1
+                init_odd0 = -1
+                init_odd2 = -1
+
             # print(str(init_odd1) + " >> " + str(last_minute_odd1) + ", " + str(init_odd0) + " >> " + str(last_minute_odd0) + ", " + str(init_odd2) + " >> " + str(last_minute_odd2))
 
             if i == 0:
@@ -474,7 +484,7 @@ class Match:
 
         # --- STATS ---
         try:
-            Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Stats']")))
+            Wait(driver, 4).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Stats']")))
             driver.find_element(By.XPATH, "//button[text()='Stats']").click()
         except (TimeoutException, NoSuchElementException):
             return
