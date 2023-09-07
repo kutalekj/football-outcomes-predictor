@@ -2,7 +2,7 @@ from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
 class Match:
@@ -461,8 +461,11 @@ class Match:
                 # print("_____no sub_incident found_____")
 
         # --- STATS ---
-        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Stats']")))
-        driver.find_element(By.XPATH, "//button[text()='Stats']").click()
+        try:
+            Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Stats']")))
+            driver.find_element(By.XPATH, "//button[text()='Stats']").click()
+        except (TimeoutException, NoSuchElementException):
+            return
 
         Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
         stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
