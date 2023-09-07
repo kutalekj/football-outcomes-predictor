@@ -916,5 +916,923 @@
     "season": "2023-2024",
     "finished": false,
     "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2018",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie A",
+    "name2": "serie-a",
+    "season": "2023",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2018",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Brazil",
+    "country2": "brazil",
+    "name1": "Serie B",
+    "name2": "serie-b",
+    "season": "2023",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal",
+    "name2": "liga-portugal",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal",
+    "name2": "liga-portugal",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal",
+    "name2": "liga-portugal",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal",
+    "name2": "liga-portugal",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal",
+    "name2": "liga-portugal",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal",
+    "name2": "liga-portugal",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal 2",
+    "name2": "liga-portugal-2",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal 2",
+    "name2": "liga-portugal-2",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal 2",
+    "name2": "liga-portugal-2",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal 2",
+    "name2": "liga-portugal-2",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal 2",
+    "name2": "liga-portugal-2",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Portugal",
+    "country2": "portugal",
+    "name1": "Liga Portugal 2",
+    "name2": "liga-portugal-2",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "Super Lig",
+    "name2": "super-lig",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "Super Lig",
+    "name2": "super-lig",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "Super Lig",
+    "name2": "super-lig",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "Super Lig",
+    "name2": "super-lig",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "Super Lig",
+    "name2": "super-lig",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "Super Lig",
+    "name2": "super-lig",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 380
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "1. Lig",
+    "name2": "1-lig",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "1. Lig",
+    "name2": "1-lig",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "1. Lig",
+    "name2": "1-lig",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "1. Lig",
+    "name2": "1-lig",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "1. Lig",
+    "name2": "1-lig",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Turkey",
+    "country2": "turkey",
+    "name1": "1. Lig",
+    "name2": "1-lig",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Argentina",
+    "country2": "argentina",
+    "name1": "Liga Profesional",
+    "name2": "liga-profesional",
+    "season": "2018",
+    "finished": true,
+    "num_of_matches_expected": 378
+  },
+  {
+    "country1": "Argentina",
+    "country2": "argentina",
+    "name1": "Liga Profesional",
+    "name2": "liga-profesional",
+    "season": "2019",
+    "finished": true,
+    "num_of_matches_expected": 378
+  },
+  {
+    "country1": "Argentina",
+    "country2": "argentina",
+    "name1": "Liga Profesional",
+    "name2": "liga-profesional",
+    "season": "2020",
+    "finished": true,
+    "num_of_matches_expected": 378
+  },
+  {
+    "country1": "Argentina",
+    "country2": "argentina",
+    "name1": "Liga Profesional",
+    "name2": "liga-profesional",
+    "season": "2021",
+    "finished": true,
+    "num_of_matches_expected": 378
+  },
+  {
+    "country1": "Argentina",
+    "country2": "argentina",
+    "name1": "Liga Profesional",
+    "name2": "liga-profesional",
+    "season": "2022",
+    "finished": true,
+    "num_of_matches_expected": 378
+  },
+  {
+    "country1": "Argentina",
+    "country2": "argentina",
+    "name1": "Liga Profesional",
+    "name2": "liga-profesional",
+    "season": "2023",
+    "finished": false,
+    "num_of_matches_expected": 378
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 153
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 153
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 153
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 153
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 153
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 153
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2018",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2019",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2020",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2021",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2022",
+    "finished": true,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2023",
+    "finished": false,
+    "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
+    "season": "2019-2020",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 306
   }
 ]

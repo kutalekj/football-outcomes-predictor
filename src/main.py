@@ -71,7 +71,7 @@ for c in comp_seasons:
             print("\n" + driver.title)
 
             new_match = Match()
-            new_match.get_match_statistics(driver, c.name1, c.season)
+            new_match.get_match_statistics(driver, c.country1, c.name1, c.season)
             list_of_matches.append(new_match)
 
         driver.close()

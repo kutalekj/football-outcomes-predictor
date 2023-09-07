@@ -17,6 +17,7 @@ class Match:
         self.goals_away = None
         self.result = None
 
+        self.country = None
         self.competition = None
         self.season = None
         self.round = None
@@ -178,6 +179,7 @@ class Match:
             'goals_home': self.goals_home,
             'goals_away': self.goals_away,
             'result': self.result,
+            'country': self.country,
             'competition': self.competition,
             'season': self.season,
             'round': self.round,
@@ -317,7 +319,7 @@ class Match:
             'goals_away_2h': self.goals_away_2h
         }
 
-    def get_match_statistics(self, driver, comp_name, season):
+    def get_match_statistics(self, driver, coutry, comp_name, season):
         # 1. Date & Time
         date_time = driver.find_element(By.CSS_SELECTOR, '.duelParticipant__startTime > div').text
         date_time_parsed = datetime.strptime(date_time, "%d.%m.%Y %H:%M")
@@ -333,7 +335,8 @@ class Match:
         # 0. PK
         self.id = date_time + "_" + self.team_home + "_" + self.team_away
 
-        # 4./5./6. Competition, Season, Round
+        # 4./5./6. Competition, Season, Round + COUNTRY
+        self.country = coutry
         # self.competition = "FORTUNA:LIGA"
         self.competition = comp_name
         # self.season = "2022-2023"

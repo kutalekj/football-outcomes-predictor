@@ -1,146 +1,92 @@
 [
   {
-    "country1": "England",
-    "country2": "england",
-    "name1": "League One",
-    "name2": "league-one",
-    "season": "2022-2023",
-    "finished": true,
-    "num_of_matches_expected": 552
-  },
-  {
-    "country1": "France",
-    "country2": "france",
-    "name1": "Ligue 1",
-    "name2": "ligue-1",
-    "season": "2020-2021",
-    "finished": true,
-    "num_of_matches_expected": 306
-  },
-  {
-    "country1": "France",
-    "country2": "france",
-    "name1": "Ligue 2",
-    "name2": "ligue-2",
-    "season": "2022-2023",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Netherlands",
-    "country2": "netherlands",
-    "name1": "Eerste Divisie",
-    "name2": "eerste-divisie",
-    "season": "2020-2021",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Netherlands",
-    "country2": "netherlands",
-    "name1": "Eredivisie",
-    "name2": "eredivisie",
+    "country1": "Poland",
+    "country2": "poland",
+    "name1": "Ekstraklasa",
+    "name2": "ekstraklasa",
     "season": "2019-2020",
     "finished": true,
     "num_of_matches_expected": 306
   },
   {
-    "country1": "Italy",
-    "country2": "italy",
-    "name1": "Serie B",
-    "name2": "serie-b",
-    "season": "2021-2022",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Italy",
-    "country2": "italy",
-    "name1": "Serie A",
-    "name2": "serie-a",
-    "season": "2018-2019",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Spain",
-    "country2": "spain",
-    "name1": "LaLiga2",
-    "name2": "laliga2",
-    "season": "2021-2022",
-    "finished": true,
-    "num_of_matches_expected": 451
-  },
-  {
-    "country1": "Spain",
-    "country2": "spain",
-    "name1": "LaLiga",
-    "name2": "laliga",
-    "season": "2020-2021",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Germany",
-    "country2": "germany",
-    "name1": "3. Liga",
-    "name2": "3-liga",
-    "season": "2022-2023",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Germany",
-    "country2": "germany",
-    "name1": "2. Bundesliga",
-    "name2": "2-bundesliga",
-    "season": "2018-2019",
-    "finished": true,
-    "num_of_matches_expected": 306
-  },
-  {
-    "country1": "Germany",
-    "country2": "germany",
-    "name1": "Bundesliga",
-    "name2": "bundesliga",
-    "season": "2021-2022",
-    "finished": true,
-    "num_of_matches_expected": 306
-  },
-  {
-    "country1": "England",
-    "country2": "england",
-    "name1": "League Two",
-    "name2": "league-two",
-    "season": "2021-2022",
-    "finished": true,
-    "num_of_matches_expected": 552
-  },
-  {
-    "country1": "England",
-    "country2": "england",
-    "name1": "Championship",
-    "name2": "championship",
-    "season": "2022-2023",
-    "finished": true,
-    "num_of_matches_expected": 552
-  },
-  {
-    "country1": "England",
-    "country2": "england",
-    "name1": "Premier League",
-    "name2": "premier-league",
-    "season": "2022-2023",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Czech Republic",
-    "country2": "czech-republic",
-    "name1": "FNL",
-    "name2": "fnl",
-    "season": "2022-2023",
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2022",
     "finished": true,
     "num_of_matches_expected": 240
+  },
+  {
+    "country1": "Israel",
+    "country2": "israel",
+    "name1": "Ligat ha'Al",
+    "name2": "ligat-ha-al",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Austria",
+    "country2": "austria",
+    "name1": "Bundesliga",
+    "name2": "bundesliga",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Belgium",
+    "country2": "belgium",
+    "name1": "Jupiler Pro League",
+    "name2": "jupiler-pro-league",
+    "season": "2022-2023",
+    "finished": true,
+    "num_of_matches_expected": 306
+  },
+  {
+    "country1": "Croatia",
+    "country2": "croatia",
+    "name1": "HNL",
+    "name2": "hnl",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Denmark",
+    "country2": "denmark",
+    "name1": "Superliga",
+    "name2": "superliga",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 132
+  },
+  {
+    "country1": "Switzerland",
+    "country2": "switzerland",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2020-2021",
+    "finished": true,
+    "num_of_matches_expected": 180
+  },
+  {
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
+    "season": "2021-2022",
+    "finished": true,
+    "num_of_matches_expected": 182
+  },
+  {
+    "country1": "Mexico",
+    "country2": "mexico",
+    "name1": "Liga MX",
+    "name2": "liga-mx",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 153
   }
 ]
