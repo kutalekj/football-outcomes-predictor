@@ -56,7 +56,7 @@ for c in comp_seasons:
     # <loop through all the relevant matches>
     Wait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.soccer .event__match--static')))
     matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
-    for match in matches[101:103]:
+    for match in matches:
         match.click()
         time.sleep(2)
 
@@ -68,7 +68,7 @@ for c in comp_seasons:
             EC.presence_of_element_located((By.XPATH, "//a[@href='/football/" + c.country2 + '/' + c.name2 + "/']")))
         competition_stage = driver.find_element(By.XPATH, "//a[@href='/football/" + c.country2 + '/' + c.name2 + "/']")
         if re.match(r'' + c.name1.upper() + ' - ROUND.*', competition_stage.text):
-            print("\n" + driver.title)
+            print(driver.title)
 
             new_match = Match()
             new_match.get_match_statistics(driver, c.country1, c.name1, c.season)
@@ -79,6 +79,7 @@ for c in comp_seasons:
 
     Match.correct_zero_values(list_of_matches)
     # Match.check_num_of_matches(list_of_matches, c)  TODO: Uncomment
+    print(f"{len(list_of_matches)} matches were found.\n")
 
     new_df = pd.DataFrame([match.to_dict() for match in list_of_matches])
     df = pd.concat([df, new_df], ignore_index=True)

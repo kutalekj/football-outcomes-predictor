@@ -330,7 +330,7 @@ class Match:
                                              '.duelParticipant__home .participant__participantName.participant__overflow > a').text
         self.team_away = driver.find_element(By.CSS_SELECTOR,
                                              '.duelParticipant__away .participant__participantName.participant__overflow > a').text
-        print(self.team_home + " - " + self.team_away)
+        # print(self.team_home + " - " + self.team_away)
 
         # 0. PK
         self.id = date_time + "_" + self.team_home + "_" + self.team_away
@@ -343,7 +343,7 @@ class Match:
         self.season = season
         self.round = int(
             driver.find_element(By.CSS_SELECTOR, '.tournamentHeader__country > a').text.split('ROUND ')[1])
-        print(self.competition + " " + self.season + ": Round " + str(self.round))
+        # print(self.competition + " " + self.season + ": Round " + str(self.round))
 
         # 7./8./9. Result, Team Goals - Home/Away
         score_div = driver.find_element(By.CSS_SELECTOR, '.detailScore__wrapper')
@@ -359,8 +359,7 @@ class Match:
                 self.result = 1
         else:
             self.result = 2
-        print(
-            str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
+        # print(str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
 
         # 10. Referee
         referee_div = driver.find_element(By.CSS_SELECTOR, '.section .mi__data')
@@ -396,18 +395,21 @@ class Match:
         self.finished = True if finished_text == "FINISHED" else False
         if not self.finished:
             raise Exception("All matches must be finished")
-        print("Referee: " + self.referee + ", neutral field = " + str(
-            self.neutral_field) + ", finished = " + str(
-            self.finished))
+        # print("Referee: " + self.referee + ", neutral field = " + str(self.neutral_field) + ", finished = " + str(self.finished))
 
         # 13.- 24. Odds (Tipsport, Fortuna)
         odds_elems = driver.find_elements(By.CSS_SELECTOR, '.oddsRowContent')
         for odd_elem, i in zip(odds_elems, range(len(odds_elems))):
             last_minute_odds = odd_elem.find_elements(By.CSS_SELECTOR, '.oddsValueInner')
 
-            last_minute_odd1 = last_minute_odds[0].text
-            last_minute_odd0 = last_minute_odds[1].text
-            last_minute_odd2 = last_minute_odds[2].text
+            if len(last_minute_odds) < 3:
+                last_minute_odd1 = -1
+                last_minute_odd0 = -1
+                last_minute_odd2 = -1
+            else:
+                last_minute_odd1 = last_minute_odds[0].text
+                last_minute_odd0 = last_minute_odds[1].text
+                last_minute_odd2 = last_minute_odds[2].text
 
             init_odds = odd_elem.find_elements(By.CSS_SELECTOR, '.cellWrapper')
 
@@ -418,8 +420,7 @@ class Match:
             odd2 = init_odds[2].get_attribute("title")
             init_odd2 = odd2.split(' ')[0] if odd2 != "" else last_minute_odd2
 
-            print(str(init_odd1) + " >> " + str(last_minute_odd1) + ", " + str(init_odd0) + " >> " + str(
-                last_minute_odd0) + ", " + str(init_odd2) + " >> " + str(last_minute_odd2))
+            # print(str(init_odd1) + " >> " + str(last_minute_odd1) + ", " + str(init_odd0) + " >> " + str(last_minute_odd0) + ", " + str(init_odd2) + " >> " + str(last_minute_odd2))
 
             if i == 0:
                 self.odd_tipsport_1_start = float(init_odd1)
