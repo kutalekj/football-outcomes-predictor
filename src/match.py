@@ -85,6 +85,8 @@ class Match:
         self.expected_goals_away = -1
         self.goal_kicks_home = -1
         self.goal_kicks_away = -1
+        self.pass_success_home = -1
+        self.pass_success_away = -1
 
         self.possession_home_1h = -1
         self.possession_away_1h = -1
@@ -128,6 +130,8 @@ class Match:
         self.expected_goals_away_1h = -1
         self.goal_kicks_home_1h = -1
         self.goal_kicks_away_1h = -1
+        self.pass_success_home_1h = -1
+        self.pass_success_away_1h = -1
 
         self.goals_home_1h = -1
         self.goals_away_1h = -1
@@ -174,6 +178,8 @@ class Match:
         self.expected_goals_away_2h = -1
         self.goal_kicks_home_2h = -1
         self.goal_kicks_away_2h = -1
+        self.pass_success_home_2h = -1
+        self.pass_success_away_2h = -1
 
         self.goals_home_2h = -1
         self.goals_away_2h = -1
@@ -247,6 +253,8 @@ class Match:
             'expected_goals_away': self.expected_goals_away,
             'goal_kicks_home': self.goal_kicks_home,
             'goal_kicks_away': self.goal_kicks_away,
+            'pass_success_home': self.pass_success_home,
+            'pass_success_away': self.pass_success_away,
             'possession_home_1h': self.possession_home_1h,
             'possession_away_1h': self.possession_away_1h,
             'shots_total_home_1h': self.shots_total_home_1h,
@@ -287,6 +295,8 @@ class Match:
             'expected_goals_away_1h': self.expected_goals_away_1h,
             'goal_kicks_home_1h': self.goal_kicks_home_1h,
             'goal_kicks_away_1h': self.goal_kicks_away_1h,
+            'pass_success_home_1h': self.pass_success_home_1h,
+            'pass_success_away_1h': self.pass_success_away_1h,
             'goals_home_1h': self.goals_home_1h,
             'goals_away_1h': self.goals_away_1h,
             'possession_home_2h': self.possession_home_2h,
@@ -329,6 +339,8 @@ class Match:
             'expected_goals_away_2h': self.expected_goals_away_2h,
             'goal_kicks_home_2h': self.goal_kicks_home_2h,
             'goal_kicks_away_2h': self.goal_kicks_away_2h,
+            'pass_success_home_2h': self.pass_success_home_2h,
+            'pass_success_away_2h': self.pass_success_away_2h,
             'goals_home_2h': self.goals_home_2h,
             'goals_away_2h': self.goals_away_2h
         }
@@ -555,6 +567,9 @@ class Match:
             elif cat_name == 'Goal Kicks':
                 self.goal_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
                 self.goal_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Pass Success %':
+                self.pass_success_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.pass_success_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
             else:
                 raise ValueError('Unknown category name in statistics found.')
 
@@ -631,6 +646,9 @@ class Match:
             elif cat_name == 'Goal Kicks':
                 self.goal_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
                 self.goal_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Pass Success %':
+                self.pass_success_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.pass_success_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
             else:
                 raise ValueError('Unknown category name in statistics found.')
 
@@ -714,6 +732,9 @@ class Match:
             elif cat_name == 'Goal Kicks':
                 self.goal_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
                 self.goal_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+            elif cat_name == 'Pass Success %':
+                self.pass_success_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                self.pass_success_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
             else:
                 raise ValueError('Unknown category name in statistics found.')
 
@@ -727,20 +748,19 @@ class Match:
     @staticmethod
     def correct_zero_values(matches):
         attributes_to_check = [
-            'possession_home', 'possession_away', 'shots_total_home', 'shots_total_away',
-            'shots_on_goal_home', 'shots_on_goal_away', 'shots_off_goal_home', 'shots_off_goal_away',
-            'shots_blocked_home', 'shots_blocked_away', 'free_kicks_home', 'free_kicks_away',
-            'corner_kicks_home', 'corner_kicks_away', 'offsides_home', 'offsides_away',
-            'throw_ins_home', 'throw_ins_away', 'goalkeeper_saves_home', 'goalkeeper_saves_away',
+            'possession_home', 'possession_away', 'shots_total_home', 'shots_total_away', 'shots_on_goal_home',
+            'shots_on_goal_away', 'shots_off_goal_home', 'shots_off_goal_away',
+            'shots_blocked_home', 'shots_blocked_away', 'free_kicks_home', 'free_kicks_away', 'corner_kicks_home',
+            'corner_kicks_away', 'offsides_home', 'offsides_away', 'throw_ins_home', 'throw_ins_away',
+            'goalkeeper_saves_home', 'goalkeeper_saves_away',
             'fouls_home', 'fouls_away', 'red_cards_on_pitch_home', 'red_cards_on_pitch_away',
             'yellow_cards_on_pitch_home', 'yellow_cards_on_pitch_away', 'attacks_home', 'attacks_away',
             'dangerous_attacks_home', 'dangerous_attacks_away', 'tackles_home', 'tackles_away', 'total_passes_home',
-            'total_passes_away', 'completed_passes_home',
-            'completed_passes_away', 'expected_goals_home', 'expected_goals_away', 'goal_kicks_home', 'goal_kicks_away',
-            'possession_home_1h',
-            'possession_away_1h',
-            'shots_total_home_1h', 'shots_total_away_1h', 'shots_on_goal_home_1h', 'shots_on_goal_away_1h',
-            'shots_off_goal_home_1h', 'shots_off_goal_away_1h', 'shots_blocked_home_1h', 'shots_blocked_away_1h',
+            'total_passes_away', 'completed_passes_home', 'completed_passes_away', 'expected_goals_home',
+            'expected_goals_away', 'goal_kicks_home', 'goal_kicks_away', 'pass_success_home', 'pass_success_away',
+            'possession_home_1h', 'possession_away_1h', 'shots_total_home_1h', 'shots_total_away_1h',
+            'shots_on_goal_home_1h', 'shots_on_goal_away_1h', 'shots_off_goal_home_1h', 'shots_off_goal_away_1h',
+            'shots_blocked_home_1h', 'shots_blocked_away_1h',
             'free_kicks_home_1h', 'free_kicks_away_1h', 'corner_kicks_home_1h', 'corner_kicks_away_1h',
             'offsides_home_1h', 'offsides_away_1h', 'throw_ins_home_1h', 'throw_ins_away_1h',
             'goalkeeper_saves_home_1h', 'goalkeeper_saves_away_1h', 'fouls_home_1h', 'fouls_away_1h',
@@ -749,8 +769,8 @@ class Match:
             'dangerous_attacks_away_1h', 'tackles_home_1h', 'tackles_away_1h', 'total_passes_home_1h',
             'total_passes_away_1h', 'completed_passes_home_1h',
             'completed_passes_away_1h', 'expected_goals_home_1h', 'expected_goals_away_1h', 'goal_kicks_home_1h',
-            'goal_kicks_away_1h', 'goals_home_1h',
-            'goals_away_1h', 'possession_home_2h', 'possession_away_2h',
+            'goal_kicks_away_1h', 'pass_success_home_1h', 'pass_success_away_1h', 'goals_home_1h', 'goals_away_1h',
+            'possession_home_2h', 'possession_away_2h',
             'shots_total_home_2h', 'shots_total_away_2h', 'shots_on_goal_home_2h', 'shots_on_goal_away_2h',
             'shots_off_goal_home_2h', 'shots_off_goal_away_2h', 'shots_blocked_home_2h', 'shots_blocked_away_2h',
             'free_kicks_home_2h', 'free_kicks_away_2h', 'corner_kicks_home_2h', 'corner_kicks_away_2h',
@@ -759,10 +779,9 @@ class Match:
             'red_cards_on_pitch_home_2h', 'red_cards_on_pitch_away_2h', 'yellow_cards_on_pitch_home_2h',
             'yellow_cards_on_pitch_away_2h', 'attacks_home_2h', 'attacks_away_2h', 'dangerous_attacks_home_2h',
             'dangerous_attacks_away_2h', 'tackles_home_2h', 'tackles_away_2h', 'total_passes_home_2h',
-            'total_passes_away_2h', 'completed_passes_home_2h',
-            'completed_passes_away_2h', 'expected_goals_home_2h', 'expected_goals_away_2h', 'goal_kicks_home_2h',
-            'goal_kicks_away_2h', 'goals_home_2h',
-            'goals_away_2h'
+            'total_passes_away_2h', 'completed_passes_home_2h', 'completed_passes_away_2h', 'expected_goals_home_2h',
+            'expected_goals_away_2h', 'goal_kicks_home_2h', 'goal_kicks_away_2h', 'pass_success_home_2h',
+            'pass_success_away_2h', 'goals_home_2h', 'goals_away_2h'
         ]
 
         # For each attribute to check
