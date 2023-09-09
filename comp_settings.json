@@ -1,11 +1,11 @@
 [
   {
-    "country1": "Czech Republic",
-    "country2": "czech-republic",
-    "name1": "FNL",
-    "name2": "fnl",
-    "season": "2022-2023",
+    "country1": "England",
+    "country2": "england",
+    "name1": "Championship",
+    "name2": "championship",
+    "season": "2018-2019",
     "finished": true,
-    "num_of_matches_expected": 240
+    "num_of_matches_expected": 552
   }
 ]

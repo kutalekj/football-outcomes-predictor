@@ -10,6 +10,7 @@ from utils import is_float
 class Match:
     def __init__(self):
         self.id = None
+        self.match_invalid = False
         self.date_time = None
         self.date_time = None
 
@@ -423,7 +424,8 @@ class Match:
         finished_text = driver.execute_script("return arguments[0].innerText;", finished_elem)
         self.finished = True if finished_text == "FINISHED" else False
         if not self.finished:
-            raise Exception("All matches must be finished")
+            print("WARNING: Unfinished match found")
+            self.match_invalid = True
         # print("Referee: " + self.referee + ", neutral field = " + str(self.neutral_field) + ", finished = " + str(self.finished))
 
         # 13.- 24. Odds (Tipsport, Fortuna)
