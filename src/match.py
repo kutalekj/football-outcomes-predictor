@@ -10,7 +10,7 @@ from utils import is_float
 class Match:
     def __init__(self):
         self.id = None
-        self.match_invalid = False
+        self.match_valid = True
         self.date_time = None
         self.date_time = None
 
@@ -425,7 +425,8 @@ class Match:
         self.finished = True if finished_text == "FINISHED" else False
         if not self.finished:
             print("WARNING: Unfinished match found")
-            self.match_invalid = True
+            self.match_valid = False
+            return
         # print("Referee: " + self.referee + ", neutral field = " + str(self.neutral_field) + ", finished = " + str(self.finished))
 
         # 13.- 24. Odds (Tipsport, Fortuna)

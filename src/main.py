@@ -72,7 +72,7 @@ for c in comp_seasons:
             new_match = Match()
             new_match.get_match_statistics(driver, c.country1, c.name1, c.season)
 
-            if not new_match.match_invalid:
+            if new_match.match_valid:
                 list_of_matches.append(new_match)
 
         driver.close()

@@ -1,11 +1,11 @@
 [
   {
-    "country1": "England",
-    "country2": "england",
-    "name1": "Championship",
-    "name2": "championship",
+    "country1": "Spain",
+    "country2": "spain",
+    "name1": "LaLiga",
+    "name2": "laliga",
     "season": "2018-2019",
     "finished": true,
-    "num_of_matches_expected": 552
+    "num_of_matches_expected": 380
   }
 ]
