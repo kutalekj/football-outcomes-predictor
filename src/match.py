@@ -504,75 +504,75 @@ class Match:
         except (TimeoutException, NoSuchElementException):
             return
 
-        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
-        stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
+        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '._row_hf6ag_7')))
+        stat_rows = driver.find_elements(By.CSS_SELECTOR, '._row_hf6ag_7')
         for sr in stat_rows:
-            cat = sr.find_element(By.CSS_SELECTOR, '.stat__category')
-            cat_name = cat.find_element(By.CSS_SELECTOR, '.stat__categoryName').text
+            cat = sr.find_element(By.CSS_SELECTOR, '._category_hf6ag_14')
+            cat_name = cat.find_element(By.CSS_SELECTOR, '._categoryName_gomgt_3').text
 
             if cat_name == 'Ball Possession':
-                self.possession_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text[:-1])
-                self.possession_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text[:-1])
+                self.possession_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text[:-1])
+                self.possession_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text[:-1])
             elif cat_name == 'Goal Attempts':
-                self.shots_total_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_total_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_total_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_total_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Shots on Goal':
-                self.shots_on_goal_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_on_goal_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_on_goal_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_on_goal_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Shots off Goal':
-                self.shots_off_goal_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_off_goal_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_off_goal_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_off_goal_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Blocked Shots':
-                self.shots_blocked_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_blocked_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_blocked_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_blocked_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Free Kicks':
-                self.free_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.free_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.free_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.free_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Corner Kicks':
-                self.corner_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.corner_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.corner_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.corner_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Offsides':
-                self.offsides_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.offsides_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.offsides_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.offsides_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Throw-ins':
-                self.throw_ins_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.throw_ins_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.throw_ins_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.throw_ins_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Goalkeeper Saves':
-                self.goalkeeper_saves_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.goalkeeper_saves_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.goalkeeper_saves_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.goalkeeper_saves_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Fouls':
-                self.fouls_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.fouls_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.fouls_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.fouls_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Red Cards':
-                self.red_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.red_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.red_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.red_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Yellow Cards':
-                self.yellow_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.yellow_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.yellow_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.yellow_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Attacks':
-                self.attacks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.attacks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.attacks_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.attacks_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Dangerous Attacks':
-                self.dangerous_attacks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.dangerous_attacks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.dangerous_attacks_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.dangerous_attacks_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Tackles':
-                self.tackles_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.tackles_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.tackles_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.tackles_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Total Passes':
-                self.total_passes_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.total_passes_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.total_passes_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.total_passes_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Completed Passes':
-                self.completed_passes_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.completed_passes_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.completed_passes_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.completed_passes_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Expected Goals (xG)':
-                self.expected_goals_home = float(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.expected_goals_away = float(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.expected_goals_home = float(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.expected_goals_away = float(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Goal Kicks':
-                self.goal_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.goal_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.goal_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.goal_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Pass Success %':
-                self.pass_success_home = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.pass_success_away = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.pass_success_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.pass_success_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             else:
                 raise ValueError('Unknown category name in statistics found.')
 
@@ -580,78 +580,78 @@ class Match:
         Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='1st Half']")))
         driver.find_element(By.XPATH, "//button[text()='1st Half']").click()
 
-        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
-        stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
+        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '._row_hf6ag_7')))
+        stat_rows = driver.find_elements(By.CSS_SELECTOR, '._row_hf6ag_7')
 
         for sr in stat_rows:
-            cat = sr.find_element(By.CSS_SELECTOR, '.stat__category')
-            cat_name = cat.find_element(By.CSS_SELECTOR, '.stat__categoryName').text
+            cat = sr.find_element(By.CSS_SELECTOR, '._category_hf6ag_14')
+            cat_name = cat.find_element(By.CSS_SELECTOR, '._categoryName_gomgt_3').text
 
             if cat_name == 'Ball Possession':
-                self.possession_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text[:-1])
-                self.possession_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text[:-1])
+                self.possession_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text[:-1])
+                self.possession_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text[:-1])
             elif cat_name == 'Goal Attempts':
-                self.shots_total_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_total_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_total_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_total_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Shots on Goal':
-                self.shots_on_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_on_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_on_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_on_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Shots off Goal':
-                self.shots_off_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_off_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_off_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_off_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Blocked Shots':
-                self.shots_blocked_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_blocked_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_blocked_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_blocked_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Free Kicks':
-                self.free_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.free_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.free_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.free_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Corner Kicks':
-                self.corner_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.corner_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.corner_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.corner_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Offsides':
-                self.offsides_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.offsides_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.offsides_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.offsides_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Throw-ins':
-                self.throw_ins_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.throw_ins_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.throw_ins_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.throw_ins_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Goalkeeper Saves':
-                self.goalkeeper_saves_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.goalkeeper_saves_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.goalkeeper_saves_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.goalkeeper_saves_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Fouls':
-                self.fouls_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.fouls_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.fouls_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.fouls_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Red Cards':
-                self.red_cards_on_pitch_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.red_cards_on_pitch_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.red_cards_on_pitch_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.red_cards_on_pitch_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Yellow Cards':
                 self.yellow_cards_on_pitch_home_1h = int(
-                    cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                    cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
                 self.yellow_cards_on_pitch_away_1h = int(
-                    cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                    cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Attacks':
-                self.attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Dangerous Attacks':
-                self.dangerous_attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.dangerous_attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.dangerous_attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.dangerous_attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Tackles':
-                self.tackles_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.tackles_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.tackles_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.tackles_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Total Passes':
-                self.total_passes_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.total_passes_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.total_passes_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.total_passes_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Completed Passes':
-                self.completed_passes_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.completed_passes_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.completed_passes_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.completed_passes_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Expected Goals (xG)':
-                self.expected_goals_home_1h = float(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.expected_goals_away_1h = float(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.expected_goals_home_1h = float(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.expected_goals_away_1h = float(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Goal Kicks':
-                self.goal_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.goal_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.goal_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.goal_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Pass Success %':
-                self.pass_success_home_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.pass_success_away_1h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.pass_success_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.pass_success_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             else:
                 raise ValueError('Unknown category name in statistics found.')
 
@@ -666,78 +666,78 @@ class Match:
         Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='2nd Half']")))
         driver.find_element(By.XPATH, "//button[text()='2nd Half']").click()
 
-        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.stat__row')))
-        stat_rows = driver.find_elements(By.CSS_SELECTOR, '.stat__row')
+        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '._row_hf6ag_7')))
+        stat_rows = driver.find_elements(By.CSS_SELECTOR, '._row_hf6ag_7')
 
         for sr in stat_rows:
-            cat = sr.find_element(By.CSS_SELECTOR, '.stat__category')
-            cat_name = cat.find_element(By.CSS_SELECTOR, '.stat__categoryName').text
+            cat = sr.find_element(By.CSS_SELECTOR, '._category_hf6ag_14')
+            cat_name = cat.find_element(By.CSS_SELECTOR, '._categoryName_gomgt_3').text
 
             if cat_name == 'Ball Possession':
-                self.possession_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text[:-1])
-                self.possession_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text[:-1])
+                self.possession_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text[:-1])
+                self.possession_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text[:-1])
             elif cat_name == 'Goal Attempts':
-                self.shots_total_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_total_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_total_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_total_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Shots on Goal':
-                self.shots_on_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_on_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_on_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_on_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Shots off Goal':
-                self.shots_off_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_off_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_off_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_off_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Blocked Shots':
-                self.shots_blocked_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.shots_blocked_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.shots_blocked_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.shots_blocked_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Free Kicks':
-                self.free_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.free_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.free_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.free_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Corner Kicks':
-                self.corner_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.corner_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.corner_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.corner_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Offsides':
-                self.offsides_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.offsides_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.offsides_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.offsides_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Throw-ins':
-                self.throw_ins_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.throw_ins_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.throw_ins_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.throw_ins_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Goalkeeper Saves':
-                self.goalkeeper_saves_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.goalkeeper_saves_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.goalkeeper_saves_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.goalkeeper_saves_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Fouls':
-                self.fouls_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.fouls_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.fouls_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.fouls_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Red Cards':
-                self.red_cards_on_pitch_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.red_cards_on_pitch_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.red_cards_on_pitch_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.red_cards_on_pitch_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Yellow Cards':
                 self.yellow_cards_on_pitch_home_2h = int(
-                    cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
+                    cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
                 self.yellow_cards_on_pitch_away_2h = int(
-                    cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                    cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Attacks':
-                self.attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Dangerous Attacks':
-                self.dangerous_attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.dangerous_attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.dangerous_attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.dangerous_attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Tackles':
-                self.tackles_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.tackles_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.tackles_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.tackles_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Total Passes':
-                self.total_passes_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.total_passes_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.total_passes_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.total_passes_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Completed Passes':
-                self.completed_passes_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.completed_passes_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.completed_passes_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.completed_passes_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Expected Goals (xG)':
-                self.expected_goals_home_2h = float(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.expected_goals_away_2h = float(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.expected_goals_home_2h = float(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.expected_goals_away_2h = float(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Goal Kicks':
-                self.goal_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.goal_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.goal_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.goal_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Pass Success %':
-                self.pass_success_home_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__homeValue').text)
-                self.pass_success_away_2h = int(cat.find_element(By.CSS_SELECTOR, '.stat__awayValue').text)
+                self.pass_success_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
+                self.pass_success_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             else:
                 raise ValueError('Unknown category name in statistics found.')
 
