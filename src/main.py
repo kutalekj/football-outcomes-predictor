@@ -11,6 +11,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 
 from match import Match
@@ -55,6 +56,14 @@ for c in comp_seasons:
     # <loop through all the relevant matches>
     Wait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.soccer .event__match--static')))
     matches = driver.find_elements(By.CSS_SELECTOR, '.soccer .event__match--static')
+
+    try:
+        wizard_element = driver.find_element(By.CSS_SELECTOR, '.wizard')
+        driver.execute_script("arguments[0].style.display = 'none';", wizard_element)
+        time.sleep(2)
+    except NoSuchElementException:
+        pass
+
     for match in matches:
         match.click()
         time.sleep(2)
