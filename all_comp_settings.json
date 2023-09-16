@@ -976,15 +976,6 @@
     "country2": "brazil",
     "name1": "Serie B",
     "name2": "serie-b",
-    "season": "2018",
-    "finished": true,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "Brazil",
-    "country2": "brazil",
-    "name1": "Serie B",
-    "name2": "serie-b",
     "season": "2019",
     "finished": true,
     "num_of_matches_expected": 380
