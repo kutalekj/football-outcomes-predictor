@@ -583,8 +583,8 @@ class Match:
                 self.goal_kicks_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
                 self.goal_kicks_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Pass Success %':
-                self.pass_success_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
-                self.pass_success_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
+                self.pass_success_home = int(float(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text))
+                self.pass_success_away = int(float(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text))
             elif cat_name == 'Distance Covered (metres)':
                 self.distance_covered_metres_home = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
                 self.distance_covered_metres_away = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
@@ -665,8 +665,8 @@ class Match:
                 self.goal_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
                 self.goal_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Pass Success %':
-                self.pass_success_home_1h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
-                self.pass_success_away_1h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
+                self.pass_success_home_1h = int(float(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text))
+                self.pass_success_away_1h = int(float(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text))
             elif cat_name == 'Distance Covered (metres)':
                 self.distance_covered_metres_home_1h = int(
                     cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
@@ -756,8 +756,8 @@ class Match:
                 self.goal_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
                 self.goal_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
             elif cat_name == 'Pass Success %':
-                self.pass_success_home_2h = int(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
-                self.pass_success_away_2h = int(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text)
+                self.pass_success_home_2h = int(float(cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text))
+                self.pass_success_away_2h = int(float(cat.find_element(By.CSS_SELECTOR, '._awayValue_um3q5_12').text))
             elif cat_name == 'Distance Covered (metres)':
                 self.distance_covered_metres_home_2h = int(
                     cat.find_element(By.CSS_SELECTOR, '._homeValue_um3q5_8').text)
