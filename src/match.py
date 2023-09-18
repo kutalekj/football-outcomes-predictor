@@ -384,30 +384,6 @@ class Match:
             driver.find_element(By.CSS_SELECTOR, '.tournamentHeader__country > a').text.split('ROUND ')[1])
         # print(self.competition + " " + self.season + ": Round " + str(self.round))
 
-        # 7./8./9. Result, Team Goals - Home/Away
-        score_div = driver.find_element(By.CSS_SELECTOR, '.detailScore__wrapper')
-        score_spans = score_div.find_elements(By.TAG_NAME, 'span')
-
-        self.goals_home = int(score_spans[0].text)
-        self.goals_away = int(score_spans[2].text)
-
-        if self.goals_home >= self.goals_away:
-            if self.goals_home > self.goals_away:
-                self.result = 0
-            else:
-                self.result = 1
-        else:
-            self.result = 2
-        # print(str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
-
-        # 10. Referee
-        try:
-            referee_div = driver.find_element(By.CSS_SELECTOR, '.section .mi__data')
-            referee_div2 = referee_div.find_elements(By.TAG_NAME, 'div')[0]
-            self.referee = referee_div2.find_element(By.CSS_SELECTOR, '.mi__item__val').text.strip()
-        except NoSuchElementException:
-            self.referee = None
-
         # 11./12. Neutral field, Finished + NO_SPECTATORS?
         try:
             match_info = driver.find_element(By.CSS_SELECTOR, '.infoBox__wrapper .infoBox__info').text
@@ -440,6 +416,30 @@ class Match:
             self.match_valid = False
             return
         # print("Referee: " + self.referee + ", neutral field = " + str(self.neutral_field) + ", finished = " + str(self.finished))
+
+        # 7./8./9. Result, Team Goals - Home/Away
+        score_div = driver.find_element(By.CSS_SELECTOR, '.detailScore__wrapper')
+        score_spans = score_div.find_elements(By.TAG_NAME, 'span')
+
+        self.goals_home = int(score_spans[0].text)
+        self.goals_away = int(score_spans[2].text)
+
+        if self.goals_home >= self.goals_away:
+            if self.goals_home > self.goals_away:
+                self.result = 0
+            else:
+                self.result = 1
+        else:
+            self.result = 2
+        # print(str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
+
+        # 10. Referee
+        try:
+            referee_div = driver.find_element(By.CSS_SELECTOR, '.section .mi__data')
+            referee_div2 = referee_div.find_elements(By.TAG_NAME, 'div')[0]
+            self.referee = referee_div2.find_element(By.CSS_SELECTOR, '.mi__item__val').text.strip()
+        except NoSuchElementException:
+            self.referee = None
 
         # 13.- 24. Odds (Tipsport, Fortuna)
         odds_elems = driver.find_elements(By.CSS_SELECTOR, '.oddsRowContent')
