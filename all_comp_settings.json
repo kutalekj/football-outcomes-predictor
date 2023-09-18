@@ -1237,7 +1237,7 @@
     "country2": "argentina",
     "name1": "Liga Profesional",
     "name2": "liga-profesional",
-    "season": "2018",
+    "season": "2018-2019",
     "finished": true,
     "num_of_matches_expected": 378
   },
@@ -1246,16 +1246,7 @@
     "country2": "argentina",
     "name1": "Liga Profesional",
     "name2": "liga-profesional",
-    "season": "2019",
-    "finished": true,
-    "num_of_matches_expected": 378
-  },
-  {
-    "country1": "Argentina",
-    "country2": "argentina",
-    "name1": "Liga Profesional",
-    "name2": "liga-profesional",
-    "season": "2020",
+    "season": "2019-2020",
     "finished": true,
     "num_of_matches_expected": 378
   },
