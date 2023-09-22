@@ -1,20 +1,20 @@
 [
   {
-    "country1": "Mexico",
-    "country2": "mexico",
-    "name1": "Liga MX",
-    "name2": "liga-mx",
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
     "season": "2022-2023",
     "finished": true,
-    "num_of_matches_expected": 153
+    "num_of_matches_expected": 182
   },
   {
-    "country1": "Mexico",
-    "country2": "mexico",
-    "name1": "Liga MX",
-    "name2": "liga-mx",
+    "country1": "Greece",
+    "country2": "greece",
+    "name1": "Super League",
+    "name2": "super-league",
     "season": "2023-2024",
     "finished": false,
-    "num_of_matches_expected": 153
+    "num_of_matches_expected": 182
   }
 ]
