@@ -1,2 +1,3 @@
 "Limited number of spectators" instead of "No spectators" - e.g. in FORTUNA:LIGA 2019/2020 and 2020/2021
 Match not finished, but AWARDED (27.4.2019, Championship, Bolton - Brentford)
+Match info "Neutral location" in greek league, instead of "Neutral field" - MAYBE ADD ATTRIBUTE FOR MATCH INFO?
