@@ -1,20 +1,11 @@
 [
   {
-    "country1": "Croatia",
-    "country2": "croatia",
-    "name1": "HNL",
-    "name2": "hnl",
-    "season": "2019-2020",
-    "finished": true,
-    "num_of_matches_expected": 180
-  },
-  {
-    "country1": "Croatia",
-    "country2": "croatia",
-    "name1": "HNL",
-    "name2": "hnl",
-    "season": "2020-2021",
-    "finished": true,
-    "num_of_matches_expected": 180
+    "country1": "Sweden",
+    "country2": "sweden",
+    "name1": "Allsvenskan",
+    "name2": "allsvenskan",
+    "season": "2023",
+    "finished": false,
+    "num_of_matches_expected": 240
   }
 ]

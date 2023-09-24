@@ -22,13 +22,13 @@ file_path = "matches.csv"
 
 df = pd.DataFrame()
 
-if os.path.isfile(file_path):
-    df = pd.read_csv(file_path)
+if os.path.isfile("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\matches.csv"):
+    df = pd.read_csv("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\matches.csv")
 else:
     print(f"Could not find and open the file {file_path}.")
 
 # Read settings.json file
-with open('../comp_settings.json', 'r') as f:
+with open("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\comp_settings.json", 'r') as f:
     comp_settings = json.load(f)
 
 # Create CompSeason instances
@@ -70,7 +70,7 @@ for c in comp_seasons:
 
         new_window = driver.window_handles[1]
         driver.switch_to.window(new_window)
-        hide_sdk_banner(driver, include_placeholder=False, sleep=1.5)
+        hide_sdk_banner(driver, sleep=2.5, include_placeholder=False)
 
         Wait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//a[@href='/football/" + c.country2 + '/' + c.name2 + "/']")))

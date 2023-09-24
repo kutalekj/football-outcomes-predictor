@@ -592,8 +592,13 @@ class Match:
                 raise ValueError('Unknown category name in statistics found.')
 
         # --- 1st HALF STATS ---
-        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='1st Half']")))
-        driver.find_element(By.XPATH, "//button[text()='1st Half']").click()
+        try:
+            Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='1st Half']")))
+            driver.find_element(By.XPATH, "//button[text()='1st Half']").click()
+        except (NoSuchElementException, TimeoutException):
+            print("WARNING: Timeout, or 1st half stats not found.")
+            self.match_valid = False
+            return
 
         Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '._row_hf6ag_7')))
         stat_rows = driver.find_elements(By.CSS_SELECTOR, '._row_hf6ag_7')
