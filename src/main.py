@@ -22,13 +22,18 @@ file_path = "matches.csv"
 
 df = pd.DataFrame()
 
+"""
 if os.path.isfile("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\matches.csv"):
     df = pd.read_csv("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\matches.csv")
+"""
+if os.path.isfile(file_path):
+    df = pd.read_csv(file_path)
 else:
     print(f"Could not find and open the file {file_path}.")
 
 # Read settings.json file
-with open("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\comp_settings.json", 'r') as f:
+# with open("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\comp_settings.json", 'r') as f:
+with open('../comp_settings.json', 'r') as f:
     comp_settings = json.load(f)
 
 # Create CompSeason instances

@@ -1,11 +1,11 @@
 [
   {
-    "country1": "Sweden",
-    "country2": "sweden",
-    "name1": "Allsvenskan",
-    "name2": "allsvenskan",
-    "season": "2023",
-    "finished": false,
-    "num_of_matches_expected": 240
+    "country1": "Cyprus",
+    "country2": "cyprus",
+    "name1": "Cyta Championship",
+    "name2": "cyta-championship",
+    "season": "2018-2019",
+    "finished": true,
+    "num_of_matches_expected": 182
   }
 ]
