@@ -1876,15 +1876,6 @@
     "country2": "cyprus",
     "name1": "Cyta Championship",
     "name2": "cyta-championship",
-    "season": "2018-2019",
-    "finished": true,
-    "num_of_matches_expected": 182
-  },
-  {
-    "country1": "Cyprus",
-    "country2": "cyprus",
-    "name1": "Cyta Championship",
-    "name2": "cyta-championship",
     "season": "2019-2020",
     "finished": true,
     "num_of_matches_expected": 182
