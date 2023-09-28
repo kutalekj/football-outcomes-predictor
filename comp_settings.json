@@ -1,11 +1,2 @@
 [
-  {
-    "country1": "Norway",
-    "country2": "norway",
-    "name1": "Eliteserien",
-    "name2": "eliteserien",
-    "season": "2023",
-    "finished": false,
-    "num_of_matches_expected": 240
-  }
 ]
