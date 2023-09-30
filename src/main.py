@@ -101,7 +101,7 @@ for c in comp_seasons:
 
     driver.quit()
 
-df.drop_duplicates(inplace=True)
+df = Match.drop_duplicate_matches(df)
 
 df.to_csv(file_path, index=False)
 

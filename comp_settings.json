@@ -1,2 +1,11 @@
 [
+  {
+    "country1": "Czech Republic",
+    "country2": "czech-republic",
+    "name1": "FORTUNA:LIGA",
+    "name2": "fortuna-liga",
+    "season": "2023-2024",
+    "finished": false,
+    "num_of_matches_expected": 240
+  }
 ]

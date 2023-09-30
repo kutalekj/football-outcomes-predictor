@@ -1,4 +1,5 @@
 from datetime import datetime
+import numpy as np
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support import expected_conditions as EC
@@ -833,3 +834,36 @@ class Match:
     def check_num_of_matches(matches, comp):
         if comp.finished is True and len(matches) != comp.num_of_matches_expected:
             raise ValueError(f"Found {len(matches)} matches, but {comp.num_of_matches_expected} was expected.")
+
+    @staticmethod
+    def drop_duplicate_matches(df):
+        # Create a DataFrame where -1.0 and NaN are considered the same
+        df_copy = df.copy()
+        df_copy[df_copy == -1.0] = np.nan
+
+        # Add a column that gives priority to rows with more initialized values
+        df_copy['priority'] = df_copy.count(axis=1)
+
+        # Sort by priority (descending) and then drop duplicates
+        df_result = df_copy.sort_values(by='priority', ascending=False).drop_duplicates(keep='first').drop(
+            columns='priority')
+
+        # Replace NaN with -1.0 unless it's not the "referee" attribute (keep that as NaN if empty)
+        cols_to_replace = [col for col in df_result.columns if col != 'referee']
+        df_result[cols_to_replace] = df_result[cols_to_replace].fillna(-1.0)
+
+        # Check for remaining NaN values (should be only referee)
+        """
+        for idx, row in df_result.iloc[::100, :].iterrows():
+            if row.isnull().any():
+                print(f"Row {idx} has NaN values in columns: {row[row.isnull()].index.tolist()}")
+        """
+
+        # Check for filtered duplicates
+        """
+        filtered = df_result[
+            (df_result['competition'] == "FORTUNA:LIGA") & (df_result['season'] == "2023-2024") & (df_result['round'] == 6) & (
+                        df_result['team_home'] == "Sparta Prague")]
+        """
+
+        return df_result
