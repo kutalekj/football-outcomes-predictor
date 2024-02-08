@@ -93,7 +93,7 @@ for c in comp_seasons:
         driver.switch_to.window(driver.window_handles[0])
 
     Match.correct_zero_values(list_of_matches)
-    # Match.check_num_of_matches(list_of_matches, c)  TODO: Uncomment
+    # Match.check_num_of_matches(list_of_matches, c)  TODO: Uncomment?
     print(f"{len(list_of_matches)} matches were found.\n")
 
     new_df = pd.DataFrame([match.to_dict() for match in list_of_matches])
