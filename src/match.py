@@ -844,7 +844,6 @@ class Match:
             'clearances_completed_home_2h', 'clearances_completed_away_2h',
             'goals_home_2h', 'goals_away_2h'
         ]
-
         # For each attribute to check
         for attr in attributes_to_check:
             # If any Match object has the current attribute greater than -1
@@ -853,7 +852,7 @@ class Match:
                 for match in matches:
                     if getattr(match, attr) == -1:
                         setattr(match, attr, 0)
-
+                        
     @staticmethod
     def check_num_of_matches(matches, comp):
         if comp.finished is True and len(matches) != comp.num_of_matches_expected:
