@@ -852,7 +852,7 @@ class Match:
                 for match in matches:
                     if getattr(match, attr) == -1:
                         setattr(match, attr, 0)
-                        
+
     @staticmethod
     def check_num_of_matches(matches, comp):
         if comp.finished is True and len(matches) != comp.num_of_matches_expected:
