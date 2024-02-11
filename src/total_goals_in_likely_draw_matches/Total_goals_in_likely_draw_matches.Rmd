@@ -555,6 +555,234 @@ top_countries
 top_competitions <- c("FORTUNA_LIGA", "FNL", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Ligue 2", "League One", "3. Liga", "Nike liga", "Ligat ha'Al", "HNL", "Super League", "Ekstraklasa", "Eliteserien", "Allsvenskan")
 top_competitions
 
+great_competitions_matches_tipsport <- draw_matches_tipsport_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions)
+print(paste0("New length of data frame is ", nrow(great_competitions_matches_tipsport)))
+
+great_competitions_matches_fortuna <- draw_matches_fortuna_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions)
+print(paste0("New length of data frame is ", nrow(great_competitions_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- great_competitions_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- great_competitions_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="slateblue", alpha=0.85, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_great_competitions.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- great_competitions_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- great_competitions_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="slateblue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_great_competitions.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## Only GREAT competitions, only pre-COVID seasons
+
+### Filter out low-level competitions and post-COVID matches too
+- WARNING: More competitions are called "Bundesliga" (Germany and Austria?) or "Super League" (Greece and Switzerland?)
+```{r}
+top_countries <- c("England", "Germany", "France", "Czech Republic", "Spain", "Italy", "Netherlands", "Portugal", "Belgium", "Denmark", "Turkey", "Slovakia", "Israel", "Croatia", "Greece", "Austria", "Switzerland", "Poland", "Sweden", "Norway")
+top_countries
+
+top_competitions <- c("FORTUNA_LIGA", "FNL", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Ligue 2", "League One", "3. Liga", "Nike liga", "Ligat ha'Al", "HNL", "Super League", "Ekstraklasa", "Eliteserien", "Allsvenskan")
+top_competitions
+
+great_competitions_pre_covid_matches_tipsport <- draw_matches_tipsport_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time < "2020-03-01 00:00")
+print(paste0("New length of data frame is ", nrow(great_competitions_pre_covid_matches_tipsport)))
+
+great_competitions_pre_covid_matches_fortuna <- draw_matches_fortuna_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time < "2020-03-01 00:00")
+print(paste0("New length of data frame is ", nrow(great_competitions_pre_covid_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- great_competitions_pre_covid_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- great_competitions_pre_covid_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="slateblue", alpha=0.85, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions pre-COVID matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_great_competitions_preCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- great_competitions_pre_covid_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- great_competitions_pre_covid_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="slateblue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions pre-COVID matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_great_competitions_preCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## Only GREAT competitions, only pre-COVID seasons
+
+### Filter out low-level competitions and post-COVID matches too
+- WARNING: More competitions are called "Bundesliga" (Germany and Austria?) or "Super League" (Greece and Switzerland?)
+```{r}
+top_countries <- c("England", "Germany", "France", "Czech Republic", "Spain", "Italy", "Netherlands", "Portugal", "Belgium", "Denmark", "Turkey", "Slovakia", "Israel", "Croatia", "Greece", "Austria", "Switzerland", "Poland", "Sweden", "Norway")
+top_countries
+
+top_competitions <- c("FORTUNA_LIGA", "FNL", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Ligue 2", "League One", "3. Liga", "Nike liga", "Ligat ha'Al", "HNL", "Super League", "Ekstraklasa", "Eliteserien", "Allsvenskan")
+top_competitions
+
+great_competitions_post_covid_matches_tipsport <- draw_matches_tipsport_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time > "2021-09-01 00:00")
+print(paste0("New length of data frame is ", nrow(great_competitions_post_covid_matches_tipsport)))
+
+great_competitions_post_covid_matches_fortuna <- draw_matches_fortuna_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time > "2021-09-01 00:00")
+print(paste0("New length of data frame is ", nrow(great_competitions_post_covid_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- great_competitions_post_covid_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- great_competitions_post_covid_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="slateblue", alpha=0.85, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions post-COVID matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_great_competitions_postCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- great_competitions_pre_covid_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- great_competitions_pre_covid_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="slateblue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions post-COVID matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_great_competitions_postCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## Only TOP competitions, all non-COVID seasons
+
+### Filter out low-level competitions too
+```{r}
+top_countries <- c("England", "Germany", "France", "Czech Republic", "Spain", "Italy", "Netherlands", "Portugal", "Belgium", "Denmark", "Turkey", "Greece", "Switzerland", "Croatia")
+top_countries
+
+top_competitions <- c("FORTUNA_LIGA", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Super League", "HNL")
+top_competitions
+
 top_competitions_matches_tipsport <- draw_matches_tipsport_cut |>
   filter(country %in% top_countries & competition %in% top_competitions)
 print(paste0("New length of data frame is ", nrow(top_competitions_matches_tipsport)))
@@ -575,7 +803,7 @@ summaries <- top_competitions_matches_tipsport |>
             total_matches = n())  # total number of matches in each bin
 
 chart <- top_competitions_matches_tipsport |> ggplot(aes(x=total_goals)) + 
-  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  geom_histogram(binwidth=1, fill="darkorchid", alpha=0.85, color="white") +
   facet_wrap(~bin, scales="free_y") + 
   geom_vline(data=summaries, aes(xintercept=mean_goals),
              color="red", linetype="dashed", size=1) + 
@@ -583,12 +811,12 @@ chart <- top_competitions_matches_tipsport |> ggplot(aes(x=total_goals)) +
             aes(x=mean_goals + 1, y=max_count - 1, 
                 label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
             hjust=0, vjust=1) +
-  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions matches with spectators; Tipsport)",
+  labs(title="Histogram of total goals in likely draw resulting matches (TOP competitions matches with spectators; Tipsport)",
        x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
 
 chart
 
-filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_great_competitions.png")
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_top_competitions.png")
 ggsave(filename, plot = chart, width = 12, height = 10)
 ```
 
@@ -602,7 +830,7 @@ summaries <- top_competitions_matches_fortuna |>
             total_matches = n())  # total number of matches in each bin
 
 chart <- top_competitions_matches_fortuna |> ggplot(aes(x=total_goals)) + 
-  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  geom_histogram(binwidth=1, fill="darkorchid", alpha=0.7, color="white") +
   facet_wrap(~bin, scales="free_y") + 
   geom_vline(data=summaries, aes(xintercept=mean_goals),
              color="red", linetype="dashed", size=1) + 
@@ -610,17 +838,168 @@ chart <- top_competitions_matches_fortuna |> ggplot(aes(x=total_goals)) +
             aes(x=mean_goals + 1, y=max_count - 1, 
                 label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
             hjust=0, vjust=1) +
-  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions matches with spectators; Fortuna)",
+  labs(title="Histogram of total goals in likely draw resulting matches (TOP competitions matches with spectators; Fortuna)",
        x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
 
 chart
 
-filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_great_competitions.png")
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_top_competitions.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## Only TOP competitions, only pre-COVID seasons
+
+### Filter out low-level competitions and post-COVID matches too
+```{r}
+top_countries <- c("England", "Germany", "France", "Czech Republic", "Spain", "Italy", "Netherlands", "Portugal", "Belgium", "Denmark", "Turkey", "Greece", "Switzerland", "Croatia")
+top_countries
+
+top_competitions <- c("FORTUNA_LIGA", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Super League", "HNL")
+top_competitions
+
+top_competitions_pre_covid_matches_tipsport <- draw_matches_tipsport_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time < "2020-03-01 00:00")
+print(paste0("New length of data frame is ", nrow(top_competitions_pre_covid_matches_tipsport)))
+
+top_competitions_pre_covid_matches_fortuna <- draw_matches_fortuna_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time < "2020-03-01 00:00")
+print(paste0("New length of data frame is ", nrow(top_competitions_pre_covid_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- top_competitions_pre_covid_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- top_competitions_pre_covid_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="darkorchid", alpha=0.85, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (TOP competitions pre-COVID matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_top_competitions_preCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- top_competitions_pre_covid_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- top_competitions_pre_covid_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="darkorchid", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (TOP competitions pre-COVID matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_top_competitions_preCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## Only TOP competitions, only post-COVID seasons
+
+### Filter out low-level competitions and pre-COVID matches too
+```{r}
+top_countries <- c("England", "Germany", "France", "Czech Republic", "Spain", "Italy", "Netherlands", "Portugal", "Belgium", "Denmark", "Turkey", "Greece", "Switzerland", "Croatia")
+top_countries
+
+top_competitions <- c("FORTUNA_LIGA", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Super League", "HNL")
+top_competitions
+
+top_competitions_post_covid_matches_tipsport <- draw_matches_tipsport_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time > "2021-09-01 00:00")
+print(paste0("New length of data frame is ", nrow(top_competitions_post_covid_matches_tipsport)))
+
+top_competitions_post_covid_matches_fortuna <- draw_matches_fortuna_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions
+         & date_time > "2021-09-01 00:00")
+print(paste0("New length of data frame is ", nrow(top_competitions_post_covid_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- top_competitions_post_covid_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- top_competitions_post_covid_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="darkorchid", alpha=0.85, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (TOP competitions post-COVID matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_top_competitions_postCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- top_competitions_post_covid_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- top_competitions_post_covid_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="darkorchid", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (TOP competitions post-COVID matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_top_competitions_postCOVID.png")
 ggsave(filename, plot = chart, width = 12, height = 10)
 ```
 
 
 TODO: Some of the done plots again, but only with TOP competitions
-  - TODO: GREAT comps preCOVID and postCOVID
   - TODO: TOP comps non-COVID, preCOVID and postCOVID
 TODO: Maybe based on the variance, find a safe interval for draw odds without margin (for betting)
