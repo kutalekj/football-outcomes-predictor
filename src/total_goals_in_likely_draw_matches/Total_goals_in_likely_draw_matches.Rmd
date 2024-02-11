@@ -28,6 +28,7 @@ library(base)
 
 ### Read data
 ```{r}
+src_basename = "matches_10_10"
 src_filename = "matches_10_10.csv"
 
 dat_raw <- read.csv2(file = paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\", src_filename), header = TRUE, sep = ",")
@@ -110,7 +111,10 @@ dat[random_rows, c(1, (ncol(dat) - (last_N_columns-1)) : ncol(dat))]
 ### Add columns for win/draw/lose **probabilities without margins** (only **end**, not **start**)
 - `prob_without_margin = prob_with_margin - prob_with_margin * (margin / sum_of_odds)`
 - (`sum_of_odds = 1 + margin`)
+- **two possibilities** of how to distirbute the total margin
 ```{r}
+# A. Distribute the total margin PROPORTIONALLY to the 1/0/2 odds
+
 dat <- dat |> mutate(
   prb_nomarg_1_tips_end = (1/odd_tipsport_1_end) - (1/odd_tipsport_1_end) * (margin_tipsport_end / (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
   prb_nomarg_0_tips_end = (1/odd_tipsport_0_end) - (1/odd_tipsport_0_end) * (margin_tipsport_end / (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
@@ -119,6 +123,17 @@ dat <- dat |> mutate(
   prb_nomarg_0_fort_end = (1/odd_fortuna_0_end) - (1/odd_fortuna_0_end) * (margin_fortuna_end / (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end)),
   prb_nomarg_2_fort_end = (1/odd_fortuna_2_end) - (1/odd_fortuna_2_end) * (margin_fortuna_end / (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end))
 )
+
+# B. Distribute the total margin EQUALLY between the 1/0/2 odds (one third to each)
+
+# dat <- dat |> mutate(
+#   prb_nomarg_1_tips_end = (1/odd_tipsport_1_end) - (margin_tipsport_end / 3),
+#   prb_nomarg_0_tips_end = (1/odd_tipsport_0_end) - (margin_tipsport_end / 3),
+#   prb_nomarg_2_tips_end = (1/odd_tipsport_2_end) - (margin_tipsport_end / 3),
+#   prb_nomarg_1_fort_end = (1/odd_fortuna_1_end) - (margin_fortuna_end / 3),
+#   prb_nomarg_0_fort_end = (1/odd_fortuna_0_end) - (margin_fortuna_end / 3),
+#   prb_nomarg_2_fort_end = (1/odd_fortuna_2_end) - (margin_fortuna_end / 3)
+# )
 
 # Print out average probabilities without margins (end, not start)
 print(paste0("Average probabilities without margins by Tipsport for win/draw/loose are: ",
@@ -217,7 +232,48 @@ draw_matches_fortuna_cut <- draw_matches_fortuna |> mutate(
 table(draw_matches_fortuna_cut$bin)
 ```
 
-# Histograms of total goals for each bin of matches
+##### Check number of common rows in both resulting data frames (**Tipsport** and **Fortuna**)
+- first, calculate portion of similar matches chosen as likely-draw for both Tipsport and Fortuna
+- then, calculate number and portion of matches similarly placed in the individual bins for both Tipsport and Fortuna
+```{r}
+common_rows <- merge(draw_matches_tipsport_cut, draw_matches_fortuna_cut, by = "id")
+print(paste0(nrow(common_rows)/nrow(draw_matches_tipsport) * 100, "% of rows in new Tipsport data frame is in the Fortuna data frame as well."))
+print(paste0(nrow(common_rows)/nrow(draw_matches_fortuna) * 100, "% of rows in new Fortuna data frame is in the Tipsort data frame as well."))
+
+# Check similarities in the individual bins (more important)
+draw_matches_2829_in_both <- common_rows |> filter(bin.x == "28-29%" & bin.y == "28-29%")
+draw_matches_2930_in_both <- common_rows |> filter(bin.x == "29-30%" & bin.y == "29-30%")
+draw_matches_3031_in_both <- common_rows |> filter(bin.x == "30-31%" & bin.y == "30-31%")
+draw_matches_3132_in_both <- common_rows |> filter(bin.x == "31-32%" & bin.y == "31-32%")
+draw_matches_3233_in_both <- common_rows |> filter(bin.x == "32-33%" & bin.y == "32-33%")
+draw_matches_3334_in_both <- common_rows |> filter(bin.x == "33-34%" & bin.y == "33-34%")
+draw_matches_3435_in_both <- common_rows |> filter(bin.x == "34-35%" & bin.y == "34-35%")
+
+total_number_of_rows_similar_for_both_in_all_bins = length(draw_matches_2829_in_both) + 
+  length(draw_matches_2930_in_both) + length(draw_matches_3031_in_both) +
+  length(draw_matches_3132_in_both) + length(draw_matches_3233_in_both) +
+  length(draw_matches_3334_in_both) + length(draw_matches_3435_in_both)
+
+print(paste0("Total number of matches similarly placed in the individual bins for both Tipsport and Fortuna in all bins together is ", total_number_of_rows_similar_for_both_in_all_bins, ", which is ", 
+      total_number_of_rows_similar_for_both_in_all_bins / nrow(draw_matches_tipsport) * 100, "% of total number of matches selected for Tipsport draw matches and ", 
+      total_number_of_rows_similar_for_both_in_all_bins / nrow(draw_matches_fortuna) * 100, "% of total number of matches selected for Fortuna draw matches."))
+```
+
+```{r}
+# common_rows <- merge(draw_matches_tipsport_cut, draw_matches_fortuna_cut, by = "id") |>
+#   rename(bin = bin.x)
+# 
+# common_rows |>
+#   group_by(bin) |>
+#   slice_sample(n = 10, replace = FALSE) |>
+#   select(prb_nomarg_0_tips_end.x, prb_nomarg_0_fort_end.x) |>
+#   group_map(~ print(.x))
+```
+
+## All competitions, all seasons (non-COVID)
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
 ```{r}
 summaries <- draw_matches_tipsport_cut |>
   group_by(bin) |>
@@ -226,7 +282,7 @@ summaries <- draw_matches_tipsport_cut |>
             max_count = max(table(total_goals)),  # the highest bar for positioning
             total_matches = n())  # total number of matches in each bin
 
-draw_matches_tipsport_cut |> ggplot(aes(x=total_goals)) + 
+chart <- draw_matches_tipsport_cut |> ggplot(aes(x=total_goals)) + 
   geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
   facet_wrap(~bin, scales="free_y") + 
   geom_vline(data=summaries, aes(xintercept=mean_goals),
@@ -236,10 +292,16 @@ draw_matches_tipsport_cut |> ggplot(aes(x=total_goals)) +
                 label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
             hjust=0, vjust=1) +
   labs(title="Histogram of total goals in likely draw resulting matches (all non-COVID matches with spectators; Tipsport)",
-       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename)) +
-  theme(plot.title = element_text(size = 9))
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
 
+chart
 
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
 summaries <- draw_matches_fortuna_cut |>
   group_by(bin) |>
   summarize(mean_goals = mean(total_goals, na.rm=T),
@@ -247,7 +309,7 @@ summaries <- draw_matches_fortuna_cut |>
             max_count = max(table(total_goals)),  # the highest bar for positioning
             total_matches = n())  # total number of matches in each bin
 
-draw_matches_fortuna_cut |> ggplot(aes(x=total_goals)) + 
+chart <- draw_matches_fortuna_cut |> ggplot(aes(x=total_goals)) + 
   geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
   facet_wrap(~bin, scales="free_y") + 
   geom_vline(data=summaries, aes(xintercept=mean_goals),
@@ -257,6 +319,308 @@ draw_matches_fortuna_cut |> ggplot(aes(x=total_goals)) +
                 label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
             hjust=0, vjust=1) +
   labs(title="Histogram of total goals in likely draw resulting matches (all non-COVID matches with spectators; Fortuna)",
-       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")")) +
-  theme(plot.title = element_text(size = 9))
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
 ```
+
+### Bar plots of average goals in each bin of matches (by draw odds without margins)
+- **Tipsport**
+```{r}
+# Sort (asc.)
+sorted <- draw_matches_tipsport |> arrange(prb_nomarg_0_tips_end)
+
+# Split into 7 bins
+data_bin_7 <- sorted |>
+  mutate(draw_odds_bin = cut(prb_nomarg_0_tips_end, breaks = 7)) |>
+  group_by(draw_odds_bin) |>
+  summarize(average_goals = mean(total_goals, na.rm = TRUE),
+            match_count = n(), .groups = 'drop')
+
+# Split into 14 bins
+data_bin_14 <- sorted |>
+  mutate(draw_odds_bin = cut(prb_nomarg_0_tips_end, breaks = 14)) |>
+  group_by(draw_odds_bin) |>
+  summarize(average_goals = mean(total_goals, na.rm = TRUE),
+            match_count = n(), .groups = 'drop')
+
+# Plot
+chart <- ggplot() +
+  geom_col(data = data_bin_7, aes(x = draw_odds_bin, y = average_goals), fill = "blue", alpha = 1.0) +
+  geom_col(data = data_bin_14, aes(x = draw_odds_bin, y = average_goals), fill = "azure4", alpha = 1.0) +
+  geom_text(data = data_bin_7, aes(x = draw_odds_bin, y = average_goals, label = round(average_goals, 2)), 
+            position = position_dodge(width = 0.9), vjust = -0.5, color = "blue", fontface = "bold") + # Odds labels
+  geom_text(data = data_bin_14, aes(x = draw_odds_bin, y = average_goals, label = round(average_goals, 2)), 
+            position = position_dodge(width = 0.9), vjust = -0.5, color = "azure4") + # Odds labels
+  geom_text(data = data_bin_7, aes(x = draw_odds_bin, y = 0, label = match_count), 
+            vjust = 1.5, color = "blue") + # Match count labels
+  geom_text(data = data_bin_14, aes(x = draw_odds_bin, y = 0, label = match_count), 
+            vjust = 1.5, color = "azure4") + # Match count labels
+  labs(x = "Binned draw odds", y = "Mean total goals", title = "Mean number of goals in matches binned by draw odds without margin (all non-COVID matches with spectators; Fortuna)") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, face = "bold"),
+        plot.margin = unit(c(1, 1, 1, 1), "cm"))
+
+chart
+
+# Save
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\bars_by_margins_tipsport.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+# Sort (asc.)
+sorted <- draw_matches_fortuna |> arrange(prb_nomarg_0_fort_end)
+
+# Split into 7 bins
+data_bin_7 <- sorted |>
+  mutate(draw_odds_bin = cut(prb_nomarg_0_fort_end, breaks = 7)) |>
+  group_by(draw_odds_bin) |>
+  summarize(average_goals = mean(total_goals, na.rm = TRUE),
+            match_count = n(), .groups = 'drop')
+
+# Split into 14 bins
+data_bin_14 <- sorted |>
+  mutate(draw_odds_bin = cut(prb_nomarg_0_fort_end, breaks = 14)) |>
+  group_by(draw_odds_bin) |>
+  summarize(average_goals = mean(total_goals, na.rm = TRUE),
+            match_count = n(), .groups = 'drop')
+
+# Plot
+chart <- ggplot() +
+  geom_col(data = data_bin_7, aes(x = draw_odds_bin, y = average_goals), fill = "blue", alpha = 1.0) +
+  geom_col(data = data_bin_14, aes(x = draw_odds_bin, y = average_goals), fill = "azure4", alpha = 1.0) +
+  geom_text(data = data_bin_7, aes(x = draw_odds_bin, y = average_goals, label = round(average_goals, 2)), 
+            position = position_dodge(width = 0.9), vjust = -0.5, color = "blue", fontface = "bold") + # Odds labels
+  geom_text(data = data_bin_14, aes(x = draw_odds_bin, y = average_goals, label = round(average_goals, 2)), 
+            position = position_dodge(width = 0.9), vjust = -0.5, color = "azure4") + # Odds labels
+  geom_text(data = data_bin_7, aes(x = draw_odds_bin, y = 0, label = match_count), 
+            vjust = 1.5, color = "blue") + # Match count labels
+  geom_text(data = data_bin_14, aes(x = draw_odds_bin, y = 0, label = match_count), 
+            vjust = 1.5, color = "azure4") + # Match count labels
+  labs(x = "Binned draw odds", y = "Mean total goals", title = "Mean number of goals in matches binned by draw odds without margin (all non-COVID matches with spectators; Fortuna)") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, face = "bold"),
+        plot.margin = unit(c(1, 1, 1, 1), "cm"))
+
+chart
+
+# Save
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\bars_by_margins_fortuna.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## All competitions, only pre-COVID seasons
+
+### Filter out post-COVID matches too
+```{r}
+pre_covid_matches_tipsport <- draw_matches_tipsport_cut |> filter(date_time < "2020-03-01 00:00")
+print(paste0("New length of data frame is ", nrow(pre_covid_matches_tipsport)))
+
+pre_covid_matches_fortuna <- draw_matches_fortuna_cut |> filter(date_time < "2020-03-01 00:00")
+print(paste0("New length of data frame is ", nrow(pre_covid_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- pre_covid_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- pre_covid_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (pre-COVID matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_preCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- pre_covid_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- pre_covid_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (pre-COVID matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_preCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## All competitions, only post-COVID seasons
+
+### Filter out pre-COVID matches too
+```{r}
+post_covid_matches_tipsport <- draw_matches_tipsport_cut |> filter(date_time > "2021-09-01 00:00")
+print(paste0("New length of data frame is ", nrow(post_covid_matches_tipsport)))
+
+post_covid_matches_fortuna <- draw_matches_fortuna_cut |> filter(date_time > "2021-09-01 00:00")
+print(paste0("New length of data frame is ", nrow(post_covid_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- post_covid_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- post_covid_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (post-COVID matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_postCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- post_covid_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- post_covid_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (post-COVID matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_postCOVID.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+## Only GREAT competitions, all non-COVID seasons
+
+### Filter out low-level competitions too
+- WARNING: More competitions are called "Bundesliga" (Germany and Austria?) or "Super League" (Greece and Switzerland?)
+```{r}
+top_countries <- c("England", "Germany", "France", "Czech Republic", "Spain", "Italy", "Netherlands", "Portugal", "Belgium", "Denmark", "Turkey", "Slovakia", "Israel", "Croatia", "Greece", "Austria", "Switzerland", "Poland", "Sweden", "Norway")
+top_countries
+
+top_competitions <- c("FORTUNA_LIGA", "FNL", "Bundesliga", "2. Bundesliga", "Premier League", "Championship", "Ligue 1", "LaLiga", "Serie A", "Eredivisie", "Liga Portugal", "Jupiler Pro League", "Superliga", "Super Lig", "Serie B", "LaLiga2", "Ligue 2", "League One", "3. Liga", "Nike liga", "Ligat ha'Al", "HNL", "Super League", "Ekstraklasa", "Eliteserien", "Allsvenskan")
+top_competitions
+
+top_competitions_matches_tipsport <- draw_matches_tipsport_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions)
+print(paste0("New length of data frame is ", nrow(top_competitions_matches_tipsport)))
+
+top_competitions_matches_fortuna <- draw_matches_fortuna_cut |>
+  filter(country %in% top_countries & competition %in% top_competitions)
+print(paste0("New length of data frame is ", nrow(top_competitions_matches_fortuna)))
+```
+
+### Histograms of total goals for each bin of matches
+- **Tipsport**
+```{r}
+summaries <- top_competitions_matches_tipsport |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- top_competitions_matches_tipsport |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions matches with spectators; Tipsport)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_tipsport_great_competitions.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+- **Fortuna**
+```{r}
+summaries <- top_competitions_matches_fortuna |>
+  group_by(bin) |>
+  summarize(mean_goals = mean(total_goals, na.rm=T),
+            variance = var(total_goals, na.rm=T),
+            max_count = max(table(total_goals)),  # the highest bar for positioning
+            total_matches = n())  # total number of matches in each bin
+
+chart <- top_competitions_matches_fortuna |> ggplot(aes(x=total_goals)) + 
+  geom_histogram(binwidth=1, fill="blue", alpha=0.7, color="white") +
+  facet_wrap(~bin, scales="free_y") + 
+  geom_vline(data=summaries, aes(xintercept=mean_goals),
+             color="red", linetype="dashed", size=1) + 
+  geom_text(data=summaries, 
+            aes(x=mean_goals + 1, y=max_count - 1, 
+                label=sprintf("Mean: %.2f\nVar: %.2f\nMatches: %d", mean_goals, variance, total_matches)), 
+            hjust=0, vjust=1) +
+  labs(title="Histogram of total goals in likely draw resulting matches (GREAT competitions matches with spectators; Fortuna)",
+       x="Total Goals", y=paste0("Number of Matches (based on ", src_filename, ")"))
+
+chart
+
+filename <- paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\total_goals_in_likely_draw_matches\\", src_basename, "\\histograms_fortuna_great_competitions.png")
+ggsave(filename, plot = chart, width = 12, height = 10)
+```
+
+
+TODO: Some of the done plots again, but only with TOP competitions
+  - TODO: GREAT comps preCOVID and postCOVID
+  - TODO: TOP comps non-COVID, preCOVID and postCOVID
+TODO: Maybe based on the variance, find a safe interval for draw odds without margin (for betting)
