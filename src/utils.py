@@ -8,10 +8,20 @@ def hide_sdk_banner(driver, sleep=2.0, include_placeholder=True):
         driver.execute_script("document.getElementsByClassName('otPlaceholder')[0].style.display='none';")
 
 
-def hide_advert_banner(driver, sleep=2):
+def hide_advert_banner(driver, sleep=2.0):
     time.sleep(sleep)
     driver.execute_script(
         "document.getElementsByClassName('boxOverContent boxOverContent--type-2 isSticky isMobileSticky disabledSkeleton isNotClosed boxOverContent--active')[0].style.display='none';")
+
+
+def hide_tipsport_consent_banner(driver, sleep=2.0):
+    time.sleep(sleep)
+    driver.execute_script("""
+        var banner = document.querySelector("[class^='Consentstyled__Banner']");
+        if (banner) {
+            banner.style.display = 'none';
+        }
+        """)
 
 
 def is_float(input):
