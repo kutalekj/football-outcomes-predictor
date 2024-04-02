@@ -1,20 +1,3 @@
 [
-  {
-    "country1": "England",
-    "country2": "england",
-    "name1": "Premier League",
-    "name2": "premier-league",
-    "season": "2023-2024",
-    "finished": false,
-    "num_of_matches_expected": 380
-  },
-  {
-    "country1": "England",
-    "country2": "england",
-    "name1": "Championship",
-    "name2": "championship",
-    "season": "2023-2024",
-    "finished": false,
-    "num_of_matches_expected": 552
-  }
+
 ]
