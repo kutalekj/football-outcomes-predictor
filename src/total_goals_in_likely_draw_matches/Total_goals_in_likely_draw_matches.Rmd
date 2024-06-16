@@ -111,18 +111,18 @@ dat[random_rows, c(1, (ncol(dat) - (last_N_columns-1)) : ncol(dat))]
 ### Add columns for win/draw/lose **probabilities without margins** (only **end**, not **start**)
 - `prob_without_margin = prob_with_margin - prob_with_margin * (margin / sum_of_odds)`
 - (`sum_of_odds = 1 + margin`)
-- **two possibilities** of how to distirbute the total margin
+- **two possibilities** of how to distirbute the total margin (**A** is the same as **C**, but is **C** is **simpler** and thus, **better !!!**)
 ```{r}
 # A. Distribute the total margin PROPORTIONALLY to the 1/0/2 odds
 
-dat <- dat |> mutate(
-  prb_nomarg_1_tips_end = (1/odd_tipsport_1_end) - (1/odd_tipsport_1_end) * (margin_tipsport_end / (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
-  prb_nomarg_0_tips_end = (1/odd_tipsport_0_end) - (1/odd_tipsport_0_end) * (margin_tipsport_end / (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
-  prb_nomarg_2_tips_end = (1/odd_tipsport_2_end) - (1/odd_tipsport_2_end) * (margin_tipsport_end / (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
-  prb_nomarg_1_fort_end = (1/odd_fortuna_1_end) - (1/odd_fortuna_1_end) * (margin_fortuna_end / (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end)),
-  prb_nomarg_0_fort_end = (1/odd_fortuna_0_end) - (1/odd_fortuna_0_end) * (margin_fortuna_end / (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end)),
-  prb_nomarg_2_fort_end = (1/odd_fortuna_2_end) - (1/odd_fortuna_2_end) * (margin_fortuna_end / (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end))
-)
+# dat <- dat |> mutate(
+#   prb_nomarg_1_tips_end = (1/odd_tipsport_1_end) - (1/odd_tipsport_1_end) * (margin_tipsport_end / # (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
+#   prb_nomarg_0_tips_end = (1/odd_tipsport_0_end) - (1/odd_tipsport_0_end) * (margin_tipsport_end / # (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
+#   prb_nomarg_2_tips_end = (1/odd_tipsport_2_end) - (1/odd_tipsport_2_end) * (margin_tipsport_end / # (1/odd_tipsport_1_end + 1/odd_tipsport_0_end + 1/odd_tipsport_2_end)),
+#   prb_nomarg_1_fort_end = (1/odd_fortuna_1_end) - (1/odd_fortuna_1_end) * (margin_fortuna_end / # (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end)),
+#   prb_nomarg_0_fort_end = (1/odd_fortuna_0_end) - (1/odd_fortuna_0_end) * (margin_fortuna_end / # (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end)),
+#   prb_nomarg_2_fort_end = (1/odd_fortuna_2_end) - (1/odd_fortuna_2_end) * (margin_fortuna_end / # (1/odd_fortuna_1_end + 1/odd_fortuna_0_end + 1/odd_fortuna_2_end))
+# )
 
 # B. Distribute the total margin EQUALLY between the 1/0/2 odds (one third to each)
 
@@ -134,6 +134,16 @@ dat <- dat |> mutate(
 #   prb_nomarg_0_fort_end = (1/odd_fortuna_0_end) - (margin_fortuna_end / 3),
 #   prb_nomarg_2_fort_end = (1/odd_fortuna_2_end) - (margin_fortuna_end / 3)
 # )
+
+# C. Distribute the total margin in the easiest way - divide each 1/odd by total prob. with margin
+dat <- dat |> mutate(
+  prb_nomarg_1_tips_end = (1/odd_tipsport_1_end) / (margin_tipsport_end + 1),
+  prb_nomarg_0_tips_end = (1/odd_tipsport_0_end) / (margin_tipsport_end + 1),
+  prb_nomarg_2_tips_end = (1/odd_tipsport_2_end) / (margin_tipsport_end + 1),
+  prb_nomarg_1_fort_end = (1/odd_fortuna_1_end) / (margin_fortuna_end + 1),
+  prb_nomarg_0_fort_end = (1/odd_fortuna_0_end) / (margin_fortuna_end + 1),
+  prb_nomarg_2_fort_end = (1/odd_fortuna_2_end) / (margin_fortuna_end + 1)
+)
 
 # Print out average probabilities without margins (end, not start)
 print(paste0("Average probabilities without margins by Tipsport for win/draw/loose are: ",
@@ -1000,6 +1010,5 @@ ggsave(filename, plot = chart, width = 12, height = 10)
 ```
 
 
-TODO: Some of the done plots again, but only with TOP competitions
-  - TODO: TOP comps non-COVID, preCOVID and postCOVID
-TODO: Maybe based on the variance, find a safe interval for draw odds without margin (for betting)
+
+- TODO: Maybe based on the variance, find a safe interval for draw odds without margin (for betting)
