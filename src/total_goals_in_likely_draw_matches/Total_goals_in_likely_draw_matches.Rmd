@@ -28,8 +28,8 @@ library(base)
 
 ### Read data
 ```{r}
-src_basename = "matches_10_10"
-src_filename = "matches_10_10.csv"
+src_basename = "matches_02_04"
+src_filename = "matches_02_04.csv"
 
 dat_raw <- read.csv2(file = paste0("C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\", src_filename), header = TRUE, sep = ",")
 ```
