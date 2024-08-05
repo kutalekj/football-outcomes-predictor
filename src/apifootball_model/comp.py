@@ -12,8 +12,8 @@ class Comp:
     def __init__(self, id_, name):
         self.id = id_
         self.name = name
-        self.rounds_per_season = []  # Note that for the current season the rounds list will be continuously updated
-        self.all_rounds_sorted = []  # Note that for the current season the rounds list will be continuously updated
+        self.rounds_per_season = []
+        self.all_rounds_sorted = []
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
@@ -67,7 +67,7 @@ class Comp:
 
             # Create new Round instance
             season_rounds_list = []
-            for round_name in rounds_per_season:
+            for round_name in rounds_per_season['response']:
                 new_round = rounds.Round(self.id, self.name, season, round_name)
 
                 # Regularity

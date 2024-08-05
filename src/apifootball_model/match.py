@@ -84,7 +84,7 @@ class Match:
 
                     new_match.status = fixture['fixture']['status']['short']
                     if new_match.status not in ["FT", "AET", "PEN"]:
-                        print(f"WARNING: Match {new_match.id} not finished")
+                        print(f"WARNING: Match {new_match.id} not finished")  # TODO: Debug a OT/PEN match - how handle?
 
                     new_match.datetime = datetime.fromisoformat(fixture['fixture']['date'])
                     new_match.hour = int(new_match.datetime.hour)
