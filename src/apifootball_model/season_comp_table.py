@@ -2,13 +2,19 @@
 season_comp_table.py
 """
 
-
 import http.client
 import json
 import settings
 import utils as ut
 
 
+# TODO: Make table available for each type of round with multiple rounds - e.g. DEN Superliga splits in two parts
+# TODO: Maybe list of round types for which it is sensible to maintain table for each comp? - in settings
+# TODO: Similar system for SUI Super League and even more crazy system holds for BEL Jupiler Pro League
+# TODO: Handle also the transition from regular season part to the champions/rel. round - use previous tables and form
+# "Regular Season - N", "Championship Round - N", "Relegation Round - N", "Relegation Round", "Championship Round"
+# "Conference League Play-offs - Final" (or Semi/...), "Relegation Decider", "Relegation Play-offs - Final" (or ...)
+# "Promotion Play-offs - Semi-finals" Pr ...), "Conference League Play-off Group - 3" (or ...)
 class SeasonCompTable:
     def __init__(self, comp_id, comp_name, season):
         self.comp_id = comp_id
@@ -20,7 +26,7 @@ class SeasonCompTable:
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
     def init_teams_in_season_comp(self):
-        request_string = "/teams/league=" + str(self.comp_id) + "&season=" + str(self.season)
+        request_string = "/teams?league=" + str(self.comp_id) + "&season=" + str(self.season)
 
         self.conn.request("GET", request_string, headers=settings.HEADERS)
 
@@ -34,7 +40,8 @@ class SeasonCompTable:
             teams.append({'id': int(team['team']['id']), 'name': team['team']['name']})
 
         self.teams = teams
-        self.team_stats = {team: {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in self.teams}
+        self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
+                           self.teams}
 
     def update_table(self, matches):
         for match in matches:

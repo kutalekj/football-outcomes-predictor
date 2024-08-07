@@ -16,7 +16,6 @@ global_instance = Global.get_instance()
 for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'])
     new_comp.init_all_rounds()
-    # TODO: Might need to do additional filtering by the round type (Regular/Relegation/Friendly/...)
 
     global_instance.all_comps.append(new_comp)
 
