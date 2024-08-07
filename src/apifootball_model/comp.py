@@ -17,7 +17,7 @@ class Comp:
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
-    def get_round_by_comp_season(self, season, round_name):
+    def get_round_by_comp_season_round_name(self, season, round_name):
         for season_rounds in self.rounds_per_season:
             if season_rounds['season'] == season:
                 for round_ in season_rounds['rounds']:

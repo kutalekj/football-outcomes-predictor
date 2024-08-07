@@ -6,7 +6,7 @@ import os
 import csv
 import http.client
 import json
-import datetime
+from dateutil.parser import parse
 import settings
 import utils as ut
 from feature import MatchFeatures
@@ -23,10 +23,9 @@ class Match:
         self.month = None  # feature
 
         self.country = None
-        self.comp_id = None  # feature
-        self.comp_name = None
+        self.comp = None  # feature src
         self.season = None  # feature
-        self.round = None  # feature
+        self.round = None  # feature src
 
         self.home_team_id = None  # feature
         self.home_team_name = None
@@ -86,18 +85,17 @@ class Match:
                     if new_match.status not in ["FT", "AET", "PEN"]:
                         print(f"WARNING: Match {new_match.id} not finished")  # TODO: Debug a OT/PEN match - how handle?
 
-                    new_match.datetime = datetime.fromisoformat(fixture['fixture']['date'])
+                    new_match.datetime = parse(fixture['fixture']['date'])
                     new_match.hour = int(new_match.datetime.hour)
                     new_match.month = int(new_match.datetime.month)
 
                     new_match.country = fixture['league']['country']
 
-                    new_match.comp_id = comp.id
+                    new_match.comp = comp
                     if int(fixture['league']['id']) != comp.id:
                         raise ValueError(
                             f"Comp ID found [{fixture['league']['id']}] not matching expected value {str(comp.id)}")
 
-                    new_match.comp_name = comp.name
                     if fixture['league']['name'] != comp.name:
                         raise ValueError(
                             f"Comp name found [{fixture['league']['name']}] not matching expected value {comp.name}")
@@ -153,16 +151,14 @@ class Match:
                     new_match.away_team_elo = settings.INIT_ELO
 
                     # STATISTICS
-                    stats_request_string = "/fixtures?statistics?fixture=" + str(new_match.id)
+                    stats_request_string = "/fixtures/statistics?fixture=" + str(new_match.id)
                     conn.request("GET", stats_request_string, headers=settings.HEADERS)
                     res = conn.getresponse()
                     data = res.read()
-                    data_stats = json.loads(data)
+                    data_stats = json.loads(data)['response']
 
-                    new_match.home_team_shots_on_target = Match.get_stats_value(data_stats['response'], "Shots on Goal",
-                                                                                "home")
-                    new_match.away_team_shots_on_target = Match.get_stats_value(data_stats['response'], "Shots on Goal",
-                                                                                "away")
+                    new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
+                    new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
 
                     # Calculate features vector
                     new_match.calculate_match_features()
@@ -174,7 +170,7 @@ class Match:
 
     @staticmethod
     def get_stats_value(stats, stat_name, home_away):
-        if len(stat_name != 2):
+        if len(stats) != 2:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."
                             f"Instead, {str(len(stat_name))} were found.")
 
@@ -199,7 +195,8 @@ class Match:
             raise ValueError(f"Unsupported statistic value found: {stat_name}")
 
     def calculate_match_features(self):
-        new_match_features = MatchFeatures(self.comp_id, self.season, self.round, self.home_team_id, self.away_team_id)
+        new_match_features = MatchFeatures(self.comp.id, self.season, self.round.regular_rank_in_season,
+                                           self.home_team_id, self.away_team_id)
 
         new_match_features.hours = self.hour
         new_match_features.month = self.month

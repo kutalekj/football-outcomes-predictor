@@ -41,6 +41,10 @@ def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
                 raise Exception(
                     "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
 
+    # Avoid division by zero
+    if n - total_none_values == 0:
+        return 0
+
     return total_points / (n - total_none_values)
 
 
@@ -79,6 +83,10 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
                 raise Exception(
                     "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
 
+    # Avoid division by zero
+    if n - total_none_values == 0:
+        return 0
+
     return total_goals / (n - total_none_values)
 
 
@@ -116,6 +124,10 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
             else:
                 raise Exception(
                     "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
+
+    # Avoid division by zero
+    if n - total_none_values == 0:
+        return 0
 
     return total_shots_on_target / (n - total_none_values)
 
@@ -174,6 +186,10 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
 
             else:
                 raise ValueError("The \"scored_conceded\" parameter equals neither to \"scored\" or \"conceded\".")
+
+    # Avoid division by zero
+    if n - total_none_values == 0:
+        return 0
 
     return total_goals / (n - total_none_values)
 

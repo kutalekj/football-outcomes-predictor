@@ -10,7 +10,7 @@ def get_last_round_of_previous_season(comp, curr_season):
     prev_season = curr_season - 1
 
     if prev_season < settings.FIRST_SEASON:
-        raise ValueError(f"Cannot go beyond the first season {str(settings.FIRST_SEASON)} in rounds history.")
+        return None
 
     # Last round of previous season equals to the number of rounds up to the last one of the previous season
     for season_rounds in comp.rounds_per_season:
@@ -31,12 +31,16 @@ def get_match_by_comp_season_round_team(comp_id, season, round_, team_id):
 
 
 def get_previous_match(curr_match, team_id):
+    # Might happen that a match has no previous matches
+    if curr_match is None:
+        return None
+
     curr_season = curr_match.season
-    curr_round = curr_match.round
+    curr_round_in_season = curr_match.round.regular_rank_in_season
 
     # Same season
-    if curr_round > 1:
-        prev_round = curr_round - 1
+    if curr_round_in_season > 1:
+        prev_round = curr_round_in_season - 1
         prev_season = curr_season
 
     # Previous season, last round
@@ -210,7 +214,7 @@ def get_all_regular_matches_up_to_round(comp_id, season, round_):
 def get_table_by_comp_season(comp_id, season):
     global_instance = Global.get_instance()
 
-    for table in global_instance.all_matches:
+    for table in global_instance.all_tables:
         if table.comp == comp_id and table.season == season:
             return table
 
