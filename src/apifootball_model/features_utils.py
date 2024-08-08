@@ -195,19 +195,24 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
 
 
 # home_elo_rating, away_elo_rating
-def update_elo_for_both_teams(curr_match):
+def calculate_elo_for_both_teams(curr_match):
+    home_team_prev_match_is_none = False
+    away_team_prev_match_is_none = False
+
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
     # Then get its ELO and goals scored in the previous match
     home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team)
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
         home_team_prev_match_goals = 0
+
+        home_team_prev_match_is_none = True
     else:
         if home_team_prev_match.home_team == curr_match.home_team:
-            home_team_prev_match_elo = home_team_prev_match.home_team_elo
+            home_team_prev_match_elo = home_team_prev_match.features.home_team_elo
             home_team_prev_match_goals = home_team_prev_match.home_team_goals
         elif home_team_prev_match.away_team == curr_match.home_team:
-            home_team_prev_match_elo = home_team_prev_match.away_team_elo
+            home_team_prev_match_elo = home_team_prev_match.features.away_team_elo
             home_team_prev_match_goals = home_team_prev_match.away_team_goals
         else:
             raise Exception("Current home team not found in its previous match. This should never happen.")
@@ -218,12 +223,14 @@ def update_elo_for_both_teams(curr_match):
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
         away_team_prev_match_goals = 0
+
+        away_team_prev_match_is_none = True
     else:
         if away_team_prev_match.home_team == curr_match.away_team:
-            away_team_prev_match_elo = away_team_prev_match.home_team_elo
+            away_team_prev_match_elo = away_team_prev_match.features.home_team_elo
             away_team_prev_match_goals = away_team_prev_match.home_team_goals
         elif away_team_prev_match.away_team == curr_match.away_team:
-            away_team_prev_match_elo = away_team_prev_match.away_team_elo
+            away_team_prev_match_elo = away_team_prev_match.features.away_team_elo
             away_team_prev_match_goals = away_team_prev_match.away_team_goals
         else:
             raise Exception("Current away team not found in its previous match. This should never happen.")
@@ -244,8 +251,10 @@ def update_elo_for_both_teams(curr_match):
     home_team_new_elo = home_team_prev_match_elo + ELO_K * (alpha_home - expected_score_home_team)
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)
 
-    curr_match.home_team_elo = home_team_new_elo
-    curr_match.away_team_elo = away_team_new_elo
+    home_team_new_elo = home_team_new_elo if not home_team_prev_match_is_none else INIT_ELO
+    away_team_new_elo = away_team_new_elo if not away_team_prev_match_is_none else INIT_ELO
+
+    return home_team_new_elo, away_team_new_elo
 
 
 # home_position, away_position

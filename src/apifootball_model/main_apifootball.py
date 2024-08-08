@@ -28,10 +28,9 @@ for comp in global_instance.all_comps:
         global_instance.all_tables.append(new_table)
 
 # Get matches
-existing_matches = Match.load_existing_matches()
-new_matches = Match.get_matches_data_using_api(global_instance.all_comps)
+global_instance.all_matches = Match.load_existing_matches()
+Match.get_new_matches_data_using_api(global_instance.all_comps)
 
-global_instance.all_matches = existing_matches + new_matches
 # TODO: Save matches
 
 print("breakpoint")

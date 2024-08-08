@@ -11,6 +11,7 @@ import settings
 import utils as ut
 from feature import MatchFeatures
 import features_utils as feature_ut
+from globals import Global
 
 
 class Match:
@@ -38,13 +39,11 @@ class Match:
         self.home_team_points = None  # feature src
         self.away_team_points = None  # feature src
 
-        self.home_team_elo = None  # feature
-        self.away_team_elo = None  # feature
-
         self.home_team_shots_on_target = None  # feature src
         self.away_team_shots_on_target = None  # feature src
 
-        self.features_vector = None
+        self.features = None
+        self.feature_vector = None
 
     @staticmethod
     def load_existing_matches():
@@ -60,8 +59,8 @@ class Match:
         return existing_matches
 
     @staticmethod
-    def get_matches_data_using_api(all_comps, from_season=None, from_round=None):
-        matches = []
+    def get_new_matches_data_using_api(all_comps, from_season=None, from_round=None):
+        global_instance = Global.get_instance()
 
         seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
             if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
@@ -149,9 +148,6 @@ class Match:
                         new_match.home_team_points = 1
                         new_match.away_team_points = 1
 
-                    new_match.home_team_elo = settings.INIT_ELO
-                    new_match.away_team_elo = settings.INIT_ELO
-
                     # STATISTICS
                     stats_request_string = "/fixtures/statistics?fixture=" + str(new_match.id)
                     conn.request("GET", stats_request_string, headers=settings.HEADERS)
@@ -162,13 +158,12 @@ class Match:
                     new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
 
-                    # Calculate features vector
-                    new_match.features_vector = new_match.calculate_match_features()
+                    # Calculate features
+                    new_match.features = new_match.calculate_match_features()
+                    new_match.feature_vector = MatchFeatures.match_features_to_vector(new_match.features)
 
-                    # Add to list
-                    matches.append(new_match)
-
-        return matches
+                    # Add to list TODO: Add check that this new match is not already in existing matches (all_matches)
+                    global_instance.all_matches.append(new_match)
 
     @staticmethod
     def get_stats_value(stats, stat_name, home_away):
@@ -203,7 +198,8 @@ class Match:
         new_match_features.hours = self.hour
         new_match_features.month = self.month
 
-        # Note that elo will be updated after training
+        (new_match_features.home_curr_elo, new_match_features.away_curr_elo) = feature_ut.calculate_elo_for_both_teams(
+            self)
 
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")
@@ -247,4 +243,4 @@ class Match:
         new_match_features.away_curr_position = \
             table.get_team_position_at_round(new_match_features.away_team_id, new_match_features.round)
 
-        return MatchFeatures.match_features_to_vector(new_match_features)
+        return new_match_features
