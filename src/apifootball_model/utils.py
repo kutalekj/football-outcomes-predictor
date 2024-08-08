@@ -215,7 +215,7 @@ def get_table_by_comp_season(comp_id, season):
     global_instance = Global.get_instance()
 
     for table in global_instance.all_tables:
-        if table.comp == comp_id and table.season == season:
+        if table.comp_id == comp_id and table.season == season:
             return table
 
     return None

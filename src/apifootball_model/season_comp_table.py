@@ -65,7 +65,8 @@ class SeasonCompTable:
 
     def calculate_and_get_teams_positions_at_round(self, round_):
         # Reset team stats
-        self.team_stats = {team: {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in self.teams}
+        self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
+                           self.teams}
 
         # Get all matches up to the wanted round
         regular_matches_up_to_round = ut.get_all_regular_matches_up_to_round(self.comp_id, self.season, round_)
@@ -74,9 +75,10 @@ class SeasonCompTable:
         self.update_table(regular_matches_up_to_round)
 
         sorted_teams = sorted(self.teams, key=lambda team: (
-            self.team_stats[team]['points'],
-            self.team_stats[team]['goals_for'] - self.team_stats[team]['goals_against'],
-            self.team_stats[team]['goals_for']), reverse=True)
+            self.team_stats[(team['id'], team['name'])]['points'],
+            self.team_stats[(team['id'], team['name'])]['goals_for'] - self.team_stats[(team['id'], team['name'])][
+                'goals_against'],
+            self.team_stats[(team['id'], team['name'])]['goals_for']), reverse=True)
 
         return sorted_teams
 

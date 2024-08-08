@@ -44,6 +44,8 @@ class Match:
         self.home_team_shots_on_target = None  # feature src
         self.away_team_shots_on_target = None  # feature src
 
+        self.features_vector = None
+
     @staticmethod
     def load_existing_matches():
         existing_matches = []
@@ -161,7 +163,7 @@ class Match:
                     new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
 
                     # Calculate features vector
-                    new_match.calculate_match_features()
+                    new_match.features_vector = new_match.calculate_match_features()
 
                     # Add to list
                     matches.append(new_match)
