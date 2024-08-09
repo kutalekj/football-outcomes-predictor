@@ -201,17 +201,17 @@ def calculate_elo_for_both_teams(curr_match):
 
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
     # Then get its ELO and goals scored in the previous match
-    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team)
+    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team_id)
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
         home_team_prev_match_goals = 0
 
         home_team_prev_match_is_none = True
     else:
-        if home_team_prev_match.home_team == curr_match.home_team:
+        if home_team_prev_match.home_team_id == curr_match.home_team_id:
             home_team_prev_match_elo = home_team_prev_match.features.home_team_elo
             home_team_prev_match_goals = home_team_prev_match.home_team_goals
-        elif home_team_prev_match.away_team == curr_match.home_team:
+        elif home_team_prev_match.away_team_id == curr_match.home_team_id:
             home_team_prev_match_elo = home_team_prev_match.features.away_team_elo
             home_team_prev_match_goals = home_team_prev_match.away_team_goals
         else:
@@ -219,17 +219,17 @@ def calculate_elo_for_both_teams(curr_match):
 
     # Get previous match of currently AWAY team and find out if it was home or away team in that previous match
     # Then get its ELO and goals scored in the previous match
-    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team)
+    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team_id)
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
         away_team_prev_match_goals = 0
 
         away_team_prev_match_is_none = True
     else:
-        if away_team_prev_match.home_team == curr_match.away_team:
+        if away_team_prev_match.home_team_id == curr_match.away_team_id:
             away_team_prev_match_elo = away_team_prev_match.features.home_team_elo
             away_team_prev_match_goals = away_team_prev_match.home_team_goals
-        elif away_team_prev_match.away_team == curr_match.away_team:
+        elif away_team_prev_match.away_team_id == curr_match.away_team_id:
             away_team_prev_match_elo = away_team_prev_match.features.away_team_elo
             away_team_prev_match_goals = away_team_prev_match.away_team_goals
         else:
