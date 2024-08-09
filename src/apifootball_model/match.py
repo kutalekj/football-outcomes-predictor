@@ -156,7 +156,8 @@ class Match:
                     data_stats = json.loads(data)['response']
 
                     # TODO: Debug
-                    if new_match.round.total_rank_all_time > 1:
+                    if new_match.round.total_rank_all_time > 1 and \
+                            (new_match.home_team_id == 42 or new_match.away_team_id == 42):
                         break_point = True
 
                     new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
@@ -202,8 +203,8 @@ class Match:
         new_match_features.hours = self.hour
         new_match_features.month = self.month
 
-        (new_match_features.home_curr_elo, new_match_features.away_curr_elo) = feature_ut.calculate_elo_for_both_teams(
-            self)
+        (new_match_features.home_elo_after_this_match, new_match_features.away_elo_after_this_match) = \
+            feature_ut.calculate_elo_for_both_teams(self)
 
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")
