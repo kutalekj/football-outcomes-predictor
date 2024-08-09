@@ -156,8 +156,7 @@ class Match:
                     data_stats = json.loads(data)['response']
 
                     # TODO: Debug
-                    if new_match.round.total_rank_all_time > 1 and \
-                            (new_match.home_team_id == 42 or new_match.away_team_id == 42):
+                    if new_match.home_team_id == 42 or new_match.away_team_id == 42:
                         break_point = True
 
                     new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")

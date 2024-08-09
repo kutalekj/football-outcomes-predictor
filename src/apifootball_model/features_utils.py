@@ -245,9 +245,6 @@ def calculate_elo_for_both_teams(curr_match):
     home_team_new_elo = home_team_prev_match_elo + ELO_K * (alpha_home - expected_score_home_team)
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)
 
-    home_team_new_elo = home_team_new_elo if not home_team_prev_match_is_none else INIT_ELO
-    away_team_new_elo = away_team_new_elo if not away_team_prev_match_is_none else INIT_ELO
-
     return home_team_new_elo, away_team_new_elo
 
 
