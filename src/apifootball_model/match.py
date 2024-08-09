@@ -42,8 +42,8 @@ class Match:
         self.home_team_shots_on_target = None  # feature src
         self.away_team_shots_on_target = None  # feature src
 
-        self.features = None
-        self.feature_vector = None
+        self.features_before_match_played = None
+        self.feature_vector_before_match_played = None
 
     @staticmethod
     def load_existing_matches():
@@ -163,8 +163,9 @@ class Match:
                     new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
 
                     # Calculate features
-                    new_match.features = new_match.calculate_match_features()
-                    new_match.feature_vector = MatchFeatures.match_features_to_vector(new_match.features)
+                    new_match.features_before_match_played = new_match.calculate_match_features()
+                    new_match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
+                        new_match.features_before_match_played)
 
                     # Add to list TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
