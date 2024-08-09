@@ -241,10 +241,10 @@ class Match:
             feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
 
         # Current position in a table
-        table = ut.get_table_by_comp_season(new_match_features.comp_id, new_match_features.season)
-        new_match_features.home_curr_position = \
-            table.get_team_position_at_round(new_match_features.home_team_id, new_match_features.round)
-        new_match_features.away_curr_position = \
-            table.get_team_position_at_round(new_match_features.away_team_id, new_match_features.round)
+        table = ut.get_table_by_comp_season(self.comp.id, self.season)
+        new_match_features.home_curr_position = table.get_curr_team_position_in_season_at_round(self.home_team_id,
+                                                                                                self.round)
+        new_match_features.away_curr_position = table.get_curr_team_position_in_season_at_round(self.away_team_id,
+                                                                                                self.round)
 
         return new_match_features

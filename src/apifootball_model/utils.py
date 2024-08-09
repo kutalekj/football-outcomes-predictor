@@ -18,13 +18,14 @@ def get_last_round_of_previous_season(comp, curr_season):
             return len(season_rounds['rounds'])
 
 
-def get_match_by_comp_season_round_team(comp_id, season, round_, team_id):
+def get_match_by_comp_season_round_team(comp_id, season, total_round_rank_in_season, team_id):
     global_instance = Global.get_instance()
 
     # Get match
     for match in global_instance.all_matches:
-        if match.comp.id == comp_id and match.season == season and match.round == round_ and (
-                match.home_team_id == team_id or match.away_team_id == team_id):
+        if match.comp.id == comp_id and match.season == season and \
+                match.round.total_rank_in_season == total_round_rank_in_season and \
+                (match.home_team_id == team_id or match.away_team_id == team_id):
             return match
 
     return None
@@ -36,23 +37,24 @@ def get_previous_match(curr_match, team_id):
         return None
 
     curr_season = curr_match.season
-    curr_round_in_season = curr_match.round.regular_rank_in_season
+    curr_round_rank_in_season = curr_match.round.regular_rank_in_season
 
     # Same season
-    if curr_round_in_season > 1:
-        prev_round = curr_round_in_season - 1
+    if curr_round_rank_in_season > 1:
+        prev_round_rank_in_season = curr_round_rank_in_season - 1
         prev_season = curr_season
 
     # Previous season, last round
     else:
-        prev_round = get_last_round_of_previous_season(curr_match.comp, curr_season)
+        prev_round_rank_in_season = get_last_round_of_previous_season(curr_match.comp, curr_season)
         prev_season = curr_season - 1
 
         # Check if not older than the initial season
         if prev_season < settings.FIRST_SEASON:
             return None
 
-    prev_match = get_match_by_comp_season_round_team(curr_match.comp, prev_season, prev_round, team_id)
+    prev_match = get_match_by_comp_season_round_team(curr_match.comp.id, prev_season, prev_round_rank_in_season,
+                                                     team_id)
     if prev_match is None:
         return None
     else:
@@ -80,12 +82,12 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
             for i in range(0, MAX_MATCH_HISTORY_TO_CHECK):
                 prev_prev_match = get_previous_match(new_curr_prev_match, team_id)
 
-                if prev_prev_match.home_team_id == team_id:
-                    return prev_prev_match
-
                 # There might not be any previous matches left
                 if prev_prev_match is None:
                     return None
+
+                if prev_prev_match.home_team_id == team_id:
+                    return prev_prev_match
 
                 new_curr_prev_match = prev_prev_match  # TODO: Check the copying/deep copying functionality via debug
 
@@ -109,12 +111,12 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
             for i in range(0, MAX_MATCH_HISTORY_TO_CHECK):
                 prev_prev_match = get_previous_match(new_curr_prev_match, team_id)
 
-                if prev_prev_match.away_team_id == team_id:
-                    return prev_prev_match
-
                 # There might not be any previous matches left
                 if prev_prev_match is None:
                     return None
+
+                if prev_prev_match.away_team_id == team_id:
+                    return prev_prev_match
 
                 new_curr_prev_match = prev_prev_match  # TODO: Check the copying/deep copying functionality via debug
 
@@ -129,6 +131,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
 
 
 def get_n_previous_matches(n, curr_match, team_id, home_away=None):
+    # TODO: Remember that the previous match is in the first position in the list while the n-th previous is last...
     n_previous_matches = []
 
     """
@@ -199,13 +202,14 @@ def get_all_matches_of_round(comp_id, season, round_):
     return matches_of_round
 
 
-def get_all_regular_matches_up_to_round(comp_id, season, round_):
+def get_all_regular_matches_in_season_up_to_round(comp_id, season, round_):
     global_instance = Global.get_instance()
 
     matches_up_to_round = []
     # Get match
     for match in global_instance.all_matches:
-        if match.comp.id == comp_id and match.season == season and match.round <= round_ and match.round.is_regular:
+        if match.comp.id == comp_id and match.season == season and match.round.is_regular and \
+                match.round.regular_rank_in_season <= round_.regular_rank_in_season:
             matches_up_to_round.append(match)
 
     return matches_up_to_round
