@@ -23,7 +23,7 @@ def get_match_by_comp_season_round_team(comp_id, season, round_, team_id):
 
     # Get match
     for match in global_instance.all_matches:
-        if match.comp == comp_id and match.season == season and match.round == round_ and (
+        if match.comp.id == comp_id and match.season == season and match.round == round_ and (
                 match.home_team_id == team_id or match.away_team_id == team_id):
             return match
 
@@ -193,7 +193,7 @@ def get_all_matches_of_round(comp_id, season, round_):
     matches_of_round = []
     # Get match
     for match in global_instance.all_matches:
-        if match.comp == comp_id and match.season == season and match.round == round_:
+        if match.comp.id == comp_id and match.season == season and match.round == round_:
             matches_of_round.append(match)
 
     return matches_of_round
@@ -205,7 +205,7 @@ def get_all_regular_matches_up_to_round(comp_id, season, round_):
     matches_up_to_round = []
     # Get match
     for match in global_instance.all_matches:
-        if match.comp == comp_id and match.season == season and match.round <= round_ and match.round.is_regular:
+        if match.comp.id == comp_id and match.season == season and match.round <= round_ and match.round.is_regular:
             matches_up_to_round.append(match)
 
     return matches_up_to_round
