@@ -203,8 +203,14 @@ class Match:
         new_match_features.hours = self.hour
         new_match_features.month = self.month
 
-        (new_match_features.home_elo_after_this_match, new_match_features.away_elo_after_this_match) = \
+        (new_match_features.home_elo, new_match_features.away_elo) = \
             feature_ut.calculate_elo_for_both_teams(self)
+
+        # TODO: Debug
+        if new_match_features.home_team_id == 42:
+            print(new_match_features.home_elo)
+        if new_match_features.away_team_id == 42:
+            print(new_match_features.away_elo)
 
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")

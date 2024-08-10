@@ -14,8 +14,8 @@ class MatchFeatures:
         self.hours = None
         self.month = None
 
-        self.home_elo_after_this_match = None
-        self.away_elo_after_this_match = None
+        self.home_elo = None
+        self.away_elo = None
 
         self.home_avg_points_last_5 = None
         self.home_avg_points_last_20 = None

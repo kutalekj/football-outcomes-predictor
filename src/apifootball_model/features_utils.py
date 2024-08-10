@@ -209,10 +209,10 @@ def calculate_elo_for_both_teams(curr_match):
         home_team_prev_match_is_none = True
     else:
         if home_team_prev_match.home_team_id == curr_match.home_team_id:
-            home_team_prev_match_elo = home_team_prev_match.features.home_curr_elo
+            home_team_prev_match_elo = home_team_prev_match.features_before_match_played.home_elo
             home_team_prev_match_goals = home_team_prev_match.home_team_goals
         elif home_team_prev_match.away_team_id == curr_match.home_team_id:
-            home_team_prev_match_elo = home_team_prev_match.features.away_curr_elo
+            home_team_prev_match_elo = home_team_prev_match.features_before_match_played.away_elo
             home_team_prev_match_goals = home_team_prev_match.away_team_goals
         else:
             raise Exception("Current home team not found in its previous match. This should never happen.")
@@ -227,10 +227,10 @@ def calculate_elo_for_both_teams(curr_match):
         away_team_prev_match_is_none = True
     else:
         if away_team_prev_match.home_team_id == curr_match.away_team_id:
-            away_team_prev_match_elo = away_team_prev_match.features.home_curr_elo
+            away_team_prev_match_elo = away_team_prev_match.features_before_match_played.home_elo
             away_team_prev_match_goals = away_team_prev_match.home_team_goals
         elif away_team_prev_match.away_team_id == curr_match.away_team_id:
-            away_team_prev_match_elo = away_team_prev_match.features.away_curr_elo
+            away_team_prev_match_elo = away_team_prev_match.features_before_match_played.away_elo
             away_team_prev_match_goals = away_team_prev_match.away_team_goals
         else:
             raise Exception("Current away team not found in its previous match. This should never happen.")
@@ -250,11 +250,6 @@ def calculate_elo_for_both_teams(curr_match):
 
     home_team_new_elo = home_team_prev_match_elo + ELO_K * (alpha_home - expected_score_home_team)
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)
-
-    if home_team_prev_match_is_none:
-        home_team_new_elo = INIT_ELO
-    if away_team_prev_match_is_none:
-        away_team_new_elo = INIT_ELO
 
     return home_team_new_elo, away_team_new_elo
 
