@@ -14,7 +14,7 @@ global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
 for comp in settings.COMPS:
-    new_comp = Comp(comp['id'], comp['name'])
+    new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     new_comp.init_all_rounds()
 
     global_instance.all_comps.append(new_comp)

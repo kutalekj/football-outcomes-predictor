@@ -9,11 +9,14 @@ import rounds
 
 
 class Comp:
-    def __init__(self, id_, name):
+    def __init__(self, id_, name, regular_keywords):
         self.id = id_
         self.name = name
+
         self.rounds_per_season = []
         self.all_rounds_sorted = []
+
+        self.regular_round_keywords = regular_keywords
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
@@ -71,10 +74,13 @@ class Comp:
                 new_round = rounds.Round(self.id, self.name, season, round_name)
 
                 # Regularity
-                new_round.is_regular = new_round.is_round_regular()
+                new_round.is_regular = new_round.is_round_regular(self)
                 if new_round.is_regular:
                     regular_rounds_per_season_counter += 1
                     total_regular_rounds_counter += 1
+
+                    # TODO: Debug
+                    print(f"Comp = {self.name}, season = {season}, {round_name}")
 
                 rounds_per_season_counter += 1
                 total_rounds_counter += 1

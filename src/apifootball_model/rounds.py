@@ -6,7 +6,7 @@ rounds.py
 class Round:
     def __init__(self, comp_id, comp_name, season, name):
         self.comp_id = comp_id
-        self.comp = comp_name
+        self.comp_name = comp_name
         self.season = season
         self.name = name
 
@@ -18,6 +18,7 @@ class Round:
         self.regular_rank_all_time = None  # only for regular rounds
         self.total_rank_all_time = None
 
-    # TODO: This is currently a dummy implementation!
-    def is_round_regular(self):
-        return True if 'Regular' in self.name else False
+    def is_round_regular(self, curr_comp):
+        for keyword in curr_comp.regular_round_keywords:
+            if keyword in self.name:
+                return True
