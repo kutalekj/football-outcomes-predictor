@@ -64,6 +64,7 @@ class Match:
 
         seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
             if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
+        seasons = [2021]  # TODO: Temporary
 
         first_round = from_round if from_round is not None else 1
 
@@ -156,8 +157,8 @@ class Match:
                     data_stats = json.loads(data)['response']
 
                     # TODO: Debug
-                    if new_match.home_team_id == 42 or new_match.away_team_id == 42:
-                        break_point = True
+                    # if new_match.home_team_id == 42 or new_match.away_team_id == 42:
+                    #     break_point = True
 
                     new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
@@ -169,6 +170,9 @@ class Match:
 
                     # Add to list TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
+
+            # Once having matches and their teams, get the information which rounds consist of all teams and which not
+            comp.init_teams_involved_in_rounds()
 
     @staticmethod
     def get_stats_value(stats, stat_name, home_away):
@@ -196,6 +200,9 @@ class Match:
         else:
             raise ValueError(f"Unsupported statistic value found: {stat_name}")
 
+    # TODO: Some round matches are postponed and played after following round at sometime in the future
+    # TODO: Calculate match features after loading all matches? Or is features calculation invariant to this?
+    # TODO: Debug ELO to find this out. Check rounds orderings
     def calculate_match_features(self):
         new_match_features = MatchFeatures(self.comp.id, self.season, self.round.regular_rank_in_season,
                                            self.home_team_id, self.away_team_id)
@@ -208,9 +215,9 @@ class Match:
 
         # TODO: Debug
         if new_match_features.home_team_id == 42:
-            print(new_match_features.home_elo)
+            print(f"Elo after match {self.round.regular_rank_in_season - 1} = " + str(new_match_features.home_elo))
         if new_match_features.away_team_id == 42:
-            print(new_match_features.away_elo)
+            print(f"Elo after match {self.round.regular_rank_in_season - 1} = " + str(new_match_features.away_elo))
 
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")

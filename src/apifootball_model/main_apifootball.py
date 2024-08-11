@@ -21,8 +21,6 @@ for comp in [{'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Re
 
     global_instance.all_comps.append(new_comp)
 
-"""
-
 # Init tables for comp seasons
 for comp in global_instance.all_comps:
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
@@ -38,5 +36,3 @@ Match.get_new_matches_data_using_api(global_instance.all_comps)
 # TODO: Save matches
 
 print("breakpoint")
-
-"""

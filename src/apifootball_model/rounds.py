@@ -5,11 +5,11 @@ rounds.py
 (regular season, relegation or championship rounds or Conference league play-off group rounds)
 """
 
-
 import settings
 import http.client
 import urllib.parse
 import json
+import utils as ut
 
 
 class Round:
@@ -37,27 +37,13 @@ class Round:
             if keyword in self.name:
                 return True
 
-    def get_teams_involved(self, comp, season):
-        # Get data from API
-        round_name_encoded = urllib.parse.quote(self.name)  # Without this encoding, white spaces caused problems
-        request_string = "/fixtures?league=" + str(comp.id) + "&season=" + str(season) + "&round=" + round_name_encoded
-        self.conn.request("GET", request_string, headers=settings.HEADERS)
+    def get_teams_involved(self):
+        all_matches_of_round = ut.get_all_matches_of_round(self.comp_id, self.season, self.total_rank_all_time)
 
-        res = self.conn.getresponse()
-        data = res.read()
-
-        fixtures_in_round = json.loads(data)
-
-        # Get all the teams
-        for fixture in fixtures_in_round['response']:
-            home_team = {'id': int(fixture['teams']['home']['id']), 'name': fixture['teams']['home']['name']}
-            away_team = {'id': int(fixture['teams']['away']['id']), 'name': fixture['teams']['away']['name']}
-
-            self.teams_involved.append(home_team)
-            self.teams_involved.append(away_team)
-
-        # Remove duplicates (might not be needed, just assurance)
-        self.teams_involved = [dict(t) for t in {tuple(sorted(team.items())) for team in self.teams_involved}]
+        self.teams_involved = [{'id': match.home_team_id, 'name': match.home_team_name} for match in
+                               all_matches_of_round]
+        self.teams_involved += [{'id': match.away_team_id, 'name': match.away_team_name} for match in
+                                all_matches_of_round]
 
     def has_all_comp_season_teams_involved(self, teams_in_comp, season):
         teams_in_curr_season_comp = []

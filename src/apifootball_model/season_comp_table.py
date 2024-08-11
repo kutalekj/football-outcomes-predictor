@@ -19,11 +19,20 @@ class SeasonCompTable:
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
     def init_teams_in_season_comp(self):
-        teams_in_season_comp = ut.get_teams_by_comp_id_season(self.comp_id, self.season)
-        if teams_in_season_comp is None:
-            raise ValueError(f"Unexpected error occurred - no teams were found for the {self.comp_name} {self.season}")
+        request_string = "/teams?league=" + str(self.comp_id) + "&season=" + str(self.season)
 
-        self.teams = teams_in_season_comp
+        self.conn.request("GET", request_string, headers=settings.HEADERS)
+
+        res = self.conn.getresponse()
+        data = res.read()
+
+        data_teams = json.loads(data)
+
+        teams = []
+        for team in data_teams['response']:
+            teams.append({'id': int(team['team']['id']), 'name': team['team']['name']})
+
+        self.teams = teams
         self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
                            self.teams}
 

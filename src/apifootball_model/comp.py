@@ -73,7 +73,8 @@ class Comp:
         total_regular_rounds_counter = 0
         total_rounds_counter = 0
 
-        for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+        # for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1): TODO: Temporary
+        for season in range(settings.FIRST_SEASON, settings.FIRST_SEASON + 1):
             regular_rounds_per_season_counter = 0
             rounds_per_season_counter = 0
 
@@ -92,11 +93,6 @@ class Comp:
             for round_name in rounds_per_season['response']:
                 new_round = rounds.Round(self.id, self.name, season, round_name)
 
-                # Teams involved in the round
-                new_round.get_teams_involved(self, season)
-                new_round.has_all_comp_season_teams = new_round.has_all_comp_season_teams_involved(
-                    self.teams_per_season, season)
-
                 # Regularity (season comp table is only updated by regular round matches)
                 new_round.is_regular = new_round.is_round_regular(self)
                 if new_round.is_regular:
@@ -114,10 +110,19 @@ class Comp:
                 new_round.regular_rank_all_time = total_regular_rounds_counter
                 new_round.total_rank_all_time = total_rounds_counter
 
-                if new_round.total_rank_all_time == 1:  # TODO: Debug
-                    print(new_round.teams_involved)
+                # if new_round.total_rank_all_time == 1:  # TODO: Debug
+                #     print(new_round.teams_involved)
 
                 season_rounds_list.append(new_round)
                 self.all_rounds_sorted.append(new_round)
 
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
+
+    def init_teams_involved_in_rounds(self):
+        for season_rounds in self.rounds_per_season:
+            for round_ in season_rounds['rounds']:
+                round_.get_teams_involved()
+                round_.has_all_comp_season_teams = round_.has_all_comp_season_teams_involved(self.teams_per_season,
+                                                                                             season_rounds['season'])
+
+        # Note that for self.all_round_sorted the information is propagated as well

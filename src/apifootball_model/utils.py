@@ -136,29 +136,6 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
     # TODO: Remember that the previous match is in the first position in the list while the n-th previous is last...
     n_previous_matches = []
 
-    """
-    curr_season = curr_match.season
-    curr_round = curr_match.round
-
-    for i in range(1, n + 1):
-
-        # Same season
-        if curr_round - i > 1:
-            prev_round = curr_round - i
-            prev_season = curr_season
-
-        # Previous season
-        else:
-            prev_round = curr_match.rounds_per_season - i + curr_round
-            prev_season = curr_season - 1
-
-            # Check if not older than the initial season
-            if prev_season < FIRST_SEASON:
-                return None
-
-        # NOTE THAT "None" CAN BE RETURNED FROM "get_match_by_comp_season_round_team"
-    """
-
     # Get N last home matches
     if home_away == "home":
         curr_prev_match = curr_match
@@ -192,13 +169,14 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
     return n_previous_matches
 
 
-def get_all_matches_of_round(comp_id, season, round_):
+def get_all_matches_of_round(comp_id, season, total_round_rank_overall):
     global_instance = Global.get_instance()
 
     matches_of_round = []
     # Get match
     for match in global_instance.all_matches:
-        if match.comp.id == comp_id and match.season == season and match.round == round_:
+        if match.comp.id == comp_id and match.season == season \
+                and match.round.total_rank_all_time == total_round_rank_overall:
             matches_of_round.append(match)
 
     return matches_of_round
@@ -224,15 +202,4 @@ def get_table_by_comp_season(comp_id, season):
         if table.comp_id == comp_id and table.season == season:
             return table
 
-    return None
-
-
-def get_teams_by_comp_id_season(comp_id, season):
-    global_instance = Global.get_instance()
-
-    for comp in global_instance.all_comps:
-        if comp.id == comp_id:
-            for teams_in_season_comp in comp.teams_per_season:
-                if teams_in_season_comp['season'] == season:
-                    return teams_in_season_comp['teams']
     return None
