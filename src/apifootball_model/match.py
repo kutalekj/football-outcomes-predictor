@@ -157,8 +157,9 @@ class Match:
                     data_stats = json.loads(data)['response']
 
                     # TODO: Debug
-                    # if new_match.home_team_id == 42 or new_match.away_team_id == 42:
-                    #     break_point = True
+                    if new_match.home_team_id == 42 or new_match.away_team_id == 42:
+                        print(
+                            f"Round {str(new_match.round.total_rank_all_time)} (called [{str(new_match.round.name)}])\t\t\t{str(new_match.datetime.day)}.{str(new_match.datetime.month)}. {str(new_match.datetime.year)}")
 
                     new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
@@ -203,6 +204,11 @@ class Match:
     # TODO: Some round matches are postponed and played after following round at sometime in the future
     # TODO: Calculate match features after loading all matches? Or is features calculation invariant to this?
     # TODO: Debug ELO to find this out. Check rounds orderings
+    # TODO: Try to call endpoint for matches not only by comp and season, but also by rounds (three loops, not two)?
+
+    # TODO: Primarily, matches should be sorted by datetime when played, not rounds
+    # TODO: Rounds might be played in different order for each team
+    # TODO: So, getting previous/next match should not depend on round number - should get new match of a team by date!
     def calculate_match_features(self):
         new_match_features = MatchFeatures(self.comp.id, self.season, self.round.regular_rank_in_season,
                                            self.home_team_id, self.away_team_id)
