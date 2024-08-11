@@ -95,12 +95,12 @@ class Comp:
 
                 # Regularity (season comp table is only updated by regular round matches)
                 new_round.is_regular = new_round.is_round_regular(self)
+
+                # TODO: Debug
+                # print(f"Comp = {self.name}, season = {season}, {round_name}")
                 if new_round.is_regular:
                     regular_rounds_per_season_counter += 1
                     total_regular_rounds_counter += 1
-
-                    # TODO: Debug
-                    # print(f"Comp = {self.name}, season = {season}, {round_name}")
 
                 rounds_per_season_counter += 1
                 total_rounds_counter += 1
