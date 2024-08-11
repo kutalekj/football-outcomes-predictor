@@ -18,6 +18,8 @@ class Comp:
 
         self.regular_round_keywords = regular_keywords
 
+        self.teams_per_season = []
+
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
     def get_round_by_comp_season_round_name(self, season, round_name):
@@ -45,10 +47,27 @@ class Comp:
     def get_next_round_in_season(self, season, rank_in_season):
         for season_rounds in self.rounds_per_season:
             if season_rounds['season'] == season:
-                return season_rounds['rounds'][rank_in_season]\
+                return season_rounds['rounds'][rank_in_season] \
                     if rank_in_season < len(season_rounds['rounds']) else None
 
         raise ValueError(f"Season {str(season)} not found.")
+
+    def init_teams_in_comp(self):
+        for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+            request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
+
+            self.conn.request("GET", request_string, headers=settings.HEADERS)
+
+            res = self.conn.getresponse()
+            data = res.read()
+
+            data_teams = json.loads(data)
+
+            teams = []
+            for team in data_teams['response']:
+                teams.append({'id': int(team['team']['id']), 'name': team['team']['name']})
+
+            self.teams_per_season.append({'season': season, 'teams': teams})
 
     def init_all_rounds(self):
         total_regular_rounds_counter = 0
@@ -73,14 +92,19 @@ class Comp:
             for round_name in rounds_per_season['response']:
                 new_round = rounds.Round(self.id, self.name, season, round_name)
 
-                # Regularity
+                # Teams involved in the round
+                new_round.get_teams_involved(self, season)
+                new_round.has_all_comp_season_teams = new_round.has_all_comp_season_teams_involved(
+                    self.teams_per_season, season)
+
+                # Regularity (season comp table is only updated by regular round matches)
                 new_round.is_regular = new_round.is_round_regular(self)
                 if new_round.is_regular:
                     regular_rounds_per_season_counter += 1
                     total_regular_rounds_counter += 1
 
                     # TODO: Debug
-                    print(f"Comp = {self.name}, season = {season}, {round_name}")
+                    # print(f"Comp = {self.name}, season = {season}, {round_name}")
 
                 rounds_per_season_counter += 1
                 total_rounds_counter += 1
@@ -89,6 +113,9 @@ class Comp:
                 new_round.total_rank_in_season = rounds_per_season_counter
                 new_round.regular_rank_all_time = total_regular_rounds_counter
                 new_round.total_rank_all_time = total_rounds_counter
+
+                if new_round.total_rank_all_time == 1:  # TODO: Debug
+                    print(new_round.teams_involved)
 
                 season_rounds_list.append(new_round)
                 self.all_rounds_sorted.append(new_round)

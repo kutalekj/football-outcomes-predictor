@@ -8,13 +8,6 @@ import settings
 import utils as ut
 
 
-# TODO: Make table available for each type of round with multiple rounds - e.g. DEN Superliga splits in two parts
-# TODO: Maybe list of round types for which it is sensible to maintain table for each comp? - in settings
-# TODO: Similar system for SUI Super League and even more crazy system holds for BEL Jupiler Pro League
-# TODO: Handle also the transition from regular season part to the champions/rel. round - use previous tables and form
-# "Regular Season - N", "Championship Round - N", "Relegation Round - N", "Relegation Round", "Championship Round"
-# "Conference League Play-offs - Final" (or Semi/...), "Relegation Decider", "Relegation Play-offs - Final" (or ...)
-# "Promotion Play-offs - Semi-finals" Pr ...), "Conference League Play-off Group - 3" (or ...)
 class SeasonCompTable:
     def __init__(self, comp_id, comp_name, season):
         self.comp_id = comp_id
@@ -26,20 +19,11 @@ class SeasonCompTable:
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
     def init_teams_in_season_comp(self):
-        request_string = "/teams?league=" + str(self.comp_id) + "&season=" + str(self.season)
+        teams_in_season_comp = ut.get_teams_by_comp_id_season(self.comp_id, self.season)
+        if teams_in_season_comp is None:
+            raise ValueError(f"Unexpected error occurred - no teams were found for the {self.comp_name} {self.season}")
 
-        self.conn.request("GET", request_string, headers=settings.HEADERS)
-
-        res = self.conn.getresponse()
-        data = res.read()
-
-        data_teams = json.loads(data)
-
-        teams = []
-        for team in data_teams['response']:
-            teams.append({'id': int(team['team']['id']), 'name': team['team']['name']})
-
-        self.teams = teams
+        self.teams = teams_in_season_comp
         self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
                            self.teams}
 
@@ -65,6 +49,7 @@ class SeasonCompTable:
                 self.team_stats[(home_team_id, home_team_name)]['points'] += 1
                 self.team_stats[(away_team_id, away_team_name)]['points'] += 1
 
+    # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
     def calculate_and_get_teams_positions_in_season_at_round(self, round_):
         # Reset team stats
         self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
@@ -85,6 +70,10 @@ class SeasonCompTable:
 
         return sorted_teams
 
+    # TODO: Include also matches that do not belong to the predefined competitions - friendly and pre-season ones
+    # TODO: Or, if for predictions, how to omit the table position information which is meaningless for them?
+
+    # TODO: UCL/UEL/UECL matches - separate tables
     def get_curr_team_position_in_season_at_round(self, team_id, round_):
         sorted_teams = self.calculate_and_get_teams_positions_in_season_at_round(round_)
 

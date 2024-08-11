@@ -4,6 +4,7 @@ utils.py
 
 import settings
 from globals import Global
+from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
 
 
 def get_last_round_of_previous_season(comp, curr_season):
@@ -18,6 +19,9 @@ def get_last_round_of_previous_season(comp, curr_season):
             return len(season_rounds['rounds'])
 
 
+# TODO: Currently might not work correctly - for example Relegation Rounds are not played by all teams...
+# TODO: Add boolean attribute for round "covering_all_teams" - for regular rounds containing all teams
+# TODO: ...until still False, keep looking at the previous match
 def get_match_by_comp_season_round_team(comp_id, season, total_round_rank_in_season, team_id):
     global_instance = Global.get_instance()
 
@@ -62,8 +66,6 @@ def get_previous_match(curr_match, team_id):
 
 
 def get_last_home_away_match(curr_match, team_id, home_away=None):
-    MAX_MATCH_HISTORY_TO_CHECK = 10
-
     curr_prev_match = get_previous_match(curr_match, team_id)
 
     if curr_prev_match is None:
@@ -79,7 +81,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
         elif curr_prev_match.away_team_id == team_id:
             new_curr_prev_match = curr_prev_match
 
-            for i in range(0, MAX_MATCH_HISTORY_TO_CHECK):
+            for i in range(0, MAX_MATCH_HISTORY_TO_CHECK_LOW):
                 prev_prev_match = get_previous_match(new_curr_prev_match, team_id)
 
                 # There might not be any previous matches left
@@ -92,7 +94,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
                 new_curr_prev_match = prev_prev_match  # TODO: Check the copying/deep copying functionality via debug
 
             raise Exception(
-                f"Last home match not found even after checking last {MAX_MATCH_HISTORY_TO_CHECK} matches.")
+                f"Last home match not found even after checking last {MAX_MATCH_HISTORY_TO_CHECK_LOW} matches.")
 
         else:
             raise ValueError(f"Found team with ID={team_id} which is neither home or away in a match.")
@@ -108,7 +110,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
         elif curr_prev_match.home_team_id == team_id:
             new_curr_prev_match = curr_prev_match
 
-            for i in range(0, MAX_MATCH_HISTORY_TO_CHECK):
+            for i in range(0, MAX_MATCH_HISTORY_TO_CHECK_LOW):
                 prev_prev_match = get_previous_match(new_curr_prev_match, team_id)
 
                 # There might not be any previous matches left
@@ -121,7 +123,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
                 new_curr_prev_match = prev_prev_match  # TODO: Check the copying/deep copying functionality via debug
 
             raise Exception(
-                f"Last away match not found even after checking last {MAX_MATCH_HISTORY_TO_CHECK} matches.")
+                f"Last away match not found even after checking last {MAX_MATCH_HISTORY_TO_CHECK_LOW} matches.")
 
         else:
             raise ValueError(f"Found team with ID={team_id} which is neither home or away in a match.")
@@ -222,4 +224,15 @@ def get_table_by_comp_season(comp_id, season):
         if table.comp_id == comp_id and table.season == season:
             return table
 
+    return None
+
+
+def get_teams_by_comp_id_season(comp_id, season):
+    global_instance = Global.get_instance()
+
+    for comp in global_instance.all_comps:
+        if comp.id == comp_id:
+            for teams_in_season_comp in comp.teams_per_season:
+                if teams_in_season_comp['season'] == season:
+                    return teams_in_season_comp['teams']
     return None

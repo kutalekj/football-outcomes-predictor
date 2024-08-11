@@ -13,11 +13,15 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
-for comp in settings.COMPS:
+# for comp in settings.COMPS:  # TODO: Temporary
+for comp in [{'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']}]:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
+    new_comp.init_teams_in_comp()
     new_comp.init_all_rounds()
 
     global_instance.all_comps.append(new_comp)
+
+"""
 
 # Init tables for comp seasons
 for comp in global_instance.all_comps:
@@ -34,3 +38,5 @@ Match.get_new_matches_data_using_api(global_instance.all_comps)
 # TODO: Save matches
 
 print("breakpoint")
+
+"""

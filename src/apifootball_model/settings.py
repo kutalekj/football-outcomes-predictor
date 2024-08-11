@@ -17,6 +17,9 @@ MATCHES_FILENAME = "api_ftb_matches_.csv"
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
 
+MAX_MATCH_HISTORY_TO_CHECK_LOW = 15
+MAX_MATCH_HISTORY_TO_CHECK_HIGH = 50
+
 # {v3API_id, name, regular_round_keywords}
 COMPS = [
     {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']},
