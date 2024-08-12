@@ -6,6 +6,7 @@ import http.client
 import json
 import settings
 import utils as ut
+from team import Team
 
 
 class SeasonCompTable:
@@ -30,10 +31,16 @@ class SeasonCompTable:
 
         teams = []
         for team in data_teams['response']:
-            teams.append({'id': int(team['team']['id']), 'name': team['team']['name']})
+            new_team = Team(int(team['team']['id']), team['team']['name'])
+            # TODO: Check if creating a new team object here (again - done first time during the comp initialization)...
+            # TODO: ...whether it points to the same object as created earlier (with similar ID and name). If not, ...
+            # TODO: ...remove this new team creating here and find the corresponding existing team instead.
+            # TODO: Note that IDs of the same team in global_instance.all_teams and in comp season differ... SO FIX IT
+
+            teams.append(new_team)
 
         self.teams = teams
-        self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
+        self.team_stats = {(team.id, team.name): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
                            self.teams}
 
     def update_table(self, matches):

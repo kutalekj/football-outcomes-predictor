@@ -8,6 +8,7 @@ class Global:
             cls._instance.all_matches = []
             cls._instance.all_comps = []
             cls._instance.all_tables = []
+            cls._instance.all_teams = []
 
         return cls._instance
 

@@ -6,6 +6,8 @@ import http.client
 import json
 import settings
 import rounds
+from team import Team
+from globals import Global
 
 
 class Comp:
@@ -14,7 +16,7 @@ class Comp:
         self.name = name
 
         self.rounds_per_season = []
-        self.all_rounds_sorted = []
+        self.all_rounds_sorted = []  # Note the rounds are probably sorted in the order of when completely played...
 
         self.regular_round_keywords = regular_keywords
 
@@ -53,6 +55,8 @@ class Comp:
         raise ValueError(f"Season {str(season)} not found.")
 
     def init_teams_in_comp(self):
+        global_instance = Global.get_instance()
+
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
 
@@ -65,18 +69,24 @@ class Comp:
 
             teams = []
             for team in data_teams['response']:
-                teams.append({'id': int(team['team']['id']), 'name': team['team']['name']})
+                new_team = Team(int(team['team']['id']), team['team']['name'])
+                # TODO: Do not create the same team more than once! If would create an existing team, find it instead...
+
+                teams.append(new_team)  # Add team to teams list of a season of the current Comp
+
+                global_instance.all_teams.append(new_team)  # Add team to the global teams list
 
             self.teams_per_season.append({'season': season, 'teams': teams})
 
-    def init_all_rounds(self):
-        total_regular_rounds_counter = 0
-        total_rounds_counter = 0
+        global_instance.all_teams = list(set(global_instance.all_teams))  # Remove duplicates
 
-        # for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1): TODO: Temporary
-        for season in range(settings.FIRST_SEASON, settings.FIRST_SEASON + 1):
-            regular_rounds_per_season_counter = 0
-            rounds_per_season_counter = 0
+    def init_all_rounds(self):
+        # total_regular_rounds_counter = 0
+        # total_rounds_counter = 0
+
+        for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+            # regular_rounds_per_season_counter = 0
+            # rounds_per_season_counter = 0
 
             # Get data from API
             request_string = "/fixtures/rounds?league=" + str(self.id) + "&season=" + str(season)
@@ -96,8 +106,7 @@ class Comp:
                 # Regularity (season comp table is only updated by regular round matches)
                 new_round.is_regular = new_round.is_round_regular(self)
 
-                # TODO: Debug
-                # print(f"Comp = {self.name}, season = {season}, {round_name}")
+                """
                 if new_round.is_regular:
                     regular_rounds_per_season_counter += 1
                     total_regular_rounds_counter += 1
@@ -109,12 +118,10 @@ class Comp:
                 new_round.total_rank_in_season = rounds_per_season_counter
                 new_round.regular_rank_all_time = total_regular_rounds_counter
                 new_round.total_rank_all_time = total_rounds_counter
-
-                # if new_round.total_rank_all_time == 1:  # TODO: Debug
-                #     print(new_round.teams_involved)
+                """
 
                 season_rounds_list.append(new_round)
-                self.all_rounds_sorted.append(new_round)
+                self.all_rounds_sorted.append(new_round)  # TODO: Will these round listing variables be still needed?
 
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
 

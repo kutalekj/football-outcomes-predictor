@@ -13,18 +13,23 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
-# for comp in settings.COMPS:  # TODO: Temporary
-for comp in [{'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']}]:
+# for comp in [{'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']}]:
+for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
+    print(f"Initializing comp [{new_comp.name}].")
+
     new_comp.init_teams_in_comp()
     new_comp.init_all_rounds()
 
     global_instance.all_comps.append(new_comp)
+global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team: team.id)
 
 # Init tables for comp seasons
 for comp in global_instance.all_comps:
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
         new_table = SeasonCompTable(comp.id, comp.name, season)
+        print(f"Initializing table for comp [{new_table.comp_name}].")
+
         new_table.init_teams_in_season_comp()
 
         global_instance.all_tables.append(new_table)
