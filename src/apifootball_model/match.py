@@ -85,6 +85,10 @@ class Match:
 
                     new_match.status = fixture['fixture']['status']['short']
                     if new_match.status not in ["FT", "AET", "PEN"]:
+                        if new_match.status == "CANC":
+                            print(f"Canceled match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
+                            continue
+
                         print(f"WARNING: Match {new_match.id} not finished")  # TODO: Debug a OT/PEN match - how handle?
 
                     new_match.datetime = parse(fixture['fixture']['date'])
@@ -180,8 +184,9 @@ class Match:
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
         if len(stats) == 0:
-            print(
-                f"Statistics [{stat_name}] missing for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
+            if home_away == "home":
+                print(
+                    f"Statistics [{stat_name}] missing for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
             return -1
 
         if len(stats) != 2:
