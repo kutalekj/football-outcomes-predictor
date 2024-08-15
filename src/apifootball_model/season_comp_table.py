@@ -31,11 +31,15 @@ class SeasonCompTable:
 
         teams = []
         for team in data_teams['response']:
-            new_team = Team(int(team['team']['id']), team['team']['name'])
-            # TODO: Check if creating a new team object here (again - done first time during the comp initialization)...
-            # TODO: ...whether it points to the same object as created earlier (with similar ID and name). If not, ...
-            # TODO: ...remove this new team creating here and find the corresponding existing team instead.
-            # TODO: Note that IDs of the same team in global_instance.all_teams and in comp season differ... SO FIX IT
+            team_id = int(team['team']['id'])
+            team_name = team['team']['name']
+
+            new_team = ut.get_team_if_exists(team_id, team_name)
+
+            # Team not found
+            if new_team is None:
+                raise Exception(f"Team {team_id}: {team_name} not found in existing ones. Should not happen here, "
+                                f"since teams were already initialized during the Comp initialization.")
 
             teams.append(new_team)
 

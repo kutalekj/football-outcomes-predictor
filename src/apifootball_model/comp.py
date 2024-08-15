@@ -8,6 +8,7 @@ import settings
 import rounds
 from team import Team
 from globals import Global
+import utils as ut
 
 
 class Comp:
@@ -69,8 +70,15 @@ class Comp:
 
             teams = []
             for team in data_teams['response']:
-                new_team = Team(int(team['team']['id']), team['team']['name'])
-                # TODO: Do not create the same team more than once! If would create an existing team, find it instead...
+                team_id = int(team['team']['id'])
+                team_name = team['team']['name']
+
+                # Find team if exists
+                new_team = ut.get_team_if_exists(team_id, team_name)
+
+                # Team not existing yet
+                if new_team is None:
+                    new_team = Team(team_id, team_name)
 
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 

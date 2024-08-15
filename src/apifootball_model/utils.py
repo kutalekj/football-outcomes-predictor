@@ -203,3 +203,13 @@ def get_table_by_comp_season(comp_id, season):
             return table
 
     return None
+
+
+def get_team_if_exists(team_id, team_name):
+    global_instance = Global.get_instance()
+
+    for team in global_instance.all_teams:
+        if team.id == team_id and team.name == team_name:
+            return team
+
+    return None
