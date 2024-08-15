@@ -59,16 +59,16 @@ class Match:
         return existing_matches
 
     @staticmethod
-    def get_new_matches_data_using_api(all_comps, from_season=None, from_round=None):
+    def get_new_matches_data_using_api(from_season=None, from_round=None):
         global_instance = Global.get_instance()
 
-        seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
-            if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
+        # seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
+        # if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
         seasons = [2021]  # TODO: Temporary
 
         first_round = from_round if from_round is not None else 1
 
-        for comp in all_comps:
+        for comp in global_instance.all_comps:
             for season in seasons:
                 conn = http.client.HTTPSConnection(settings.HOST)
 
@@ -112,8 +112,8 @@ class Match:
                         raise ValueError(f"Unable to get round for the match {str(new_match.id)}")
 
                     # If searching only for matches from a certain round and currently have a lower one, skip the match
-                    if new_match.round.total_rank_all_time < first_round:
-                        continue
+                    # if new_match.round.total_rank_all_time < first_round:  # TODO: Uncomment once round ranks added
+                    #     continue
 
                     new_match.home_team_id = int(fixture['teams']['home']['id'])
                     new_match.home_team_name = fixture['teams']['home']['name']
@@ -164,10 +164,12 @@ class Match:
                     new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
 
+                    """
                     # Calculate features
                     new_match.features_before_match_played = new_match.calculate_match_features()
                     new_match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
                         new_match.features_before_match_played)
+                    """
 
                     # Add to list TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
@@ -177,6 +179,12 @@ class Match:
 
     @staticmethod
     def get_stats_value(stats, stat_name, home_away):
+        # Stats not present
+        if len(stats) == 0:
+            print(
+                f"Statistics [{stat_name}] missing for a match between {stats[0]['team']['name']} and {stats[1]['team']['name']}")
+            return -1
+
         if len(stats) != 2:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."
                             f"Instead, {str(len(stat_name))} were found.")

@@ -13,8 +13,10 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
-# for comp in [{'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']}]:
-for comp in settings.COMPS:
+for comp in [{'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round',
+                                'Conference League Play-off Group']}]:
+# for comp in settings.COMPS:  # TODO: Temporary
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -36,7 +38,7 @@ for comp in global_instance.all_comps:
 
 # Get matches
 global_instance.all_matches = Match.load_existing_matches()
-Match.get_new_matches_data_using_api(global_instance.all_comps)
+Match.get_new_matches_data_using_api()
 
 # TODO: Save matches
 
