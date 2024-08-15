@@ -119,11 +119,23 @@ class Match:
                     # if new_match.round.total_rank_all_time < first_round:  # TODO: Uncomment once round ranks added
                     #     continue
 
+                    # Home team
                     new_match.home_team_id = int(fixture['teams']['home']['id'])
                     new_match.home_team_name = fixture['teams']['home']['name']
 
+                    home_team = ut.get_team_if_exists(new_match.home_team_id, new_match.home_team_name)
+                    if home_team is None:
+                        raise Exception(f"Failed to find a home team {new_match.home_team_name} to assign a match.")
+                    home_team.matches.append(new_match)
+
+                    # Away team
                     new_match.away_team_id = int(fixture['teams']['away']['id'])
                     new_match.away_team_name = fixture['teams']['away']['name']
+
+                    away_team = ut.get_team_if_exists(new_match.away_team_id, new_match.away_team_name)
+                    if away_team is None:
+                        raise Exception(f"Failed to find a home team {new_match.away_team_name} to assign a match.")
+                    away_team.matches.append(new_match)
 
                     if bool(fixture['teams']['home']['winner']) and not bool(fixture['teams']['away']['winner']):
                         new_match.winner_team_id = new_match.home_team_id
