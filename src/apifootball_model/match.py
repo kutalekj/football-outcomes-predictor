@@ -161,8 +161,8 @@ class Match:
                         print(
                             f"Round {str(new_match.round.total_rank_all_time)} (called [{str(new_match.round.name)}])\t\t\t{str(new_match.datetime.day)}.{str(new_match.datetime.month)}. {str(new_match.datetime.year)}")
 
-                    new_match.home_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "home")
-                    new_match.away_team_shots_on_target = Match.get_stats_value(data_stats, "Shots on Goal", "away")
+                    new_match.home_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "home")
+                    new_match.away_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "away")
 
                     """
                     # Calculate features
@@ -177,12 +177,11 @@ class Match:
             # Once having matches and their teams, get the information which rounds consist of all teams and which not
             comp.init_teams_involved_in_rounds()
 
-    @staticmethod
-    def get_stats_value(stats, stat_name, home_away):
+    def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
         if len(stats) == 0:
             print(
-                f"Statistics [{stat_name}] missing for a match between {stats[0]['team']['name']} and {stats[1]['team']['name']}")
+                f"Statistics [{stat_name}] missing for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
             return -1
 
         if len(stats) != 2:
