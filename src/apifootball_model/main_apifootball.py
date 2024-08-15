@@ -40,6 +40,9 @@ for comp in global_instance.all_comps:
 global_instance.all_matches = Match.load_existing_matches()
 Match.get_new_matches_data_using_api()
 
+# Sort matches by datetime played (asc.)
+global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match: match.datetime)
+
 # TODO: Save matches
 
 print("breakpoint")
