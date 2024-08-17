@@ -305,12 +305,15 @@ class Match:
         new_match_features.away_avg_goals_conceded_away_last_20 = \
             feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
 
-        # Current position in a table
-        # TODO: Add check if match is regular or not - if EU/home cup match, set this feature value to -1
-        table = ut.get_table_by_comp_season(self.comp.id, self.season)
-        new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team_id,
-                                                                                                  self.round)
-        new_match_features.away_curr_position = table.get_curr_team_position_in_season_up_to_date(self.away_team_id,
-                                                                                                  self.round)
+        # Current position in a table (if regular match, -1 otherwise)
+        if self.round.is_regular:
+            table = ut.get_table_by_comp_season(self.comp.id, self.season)
+            new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team_id,
+                                                                                                      self.round)
+            new_match_features.away_curr_position = table.get_curr_team_position_in_season_up_to_date(self.away_team_id,
+                                                                                                      self.round)
+        else:
+            new_match_features.home_curr_position = -1
+            new_match_features.away_curr_position = -1
 
         return new_match_features

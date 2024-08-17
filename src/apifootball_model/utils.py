@@ -189,7 +189,7 @@ def get_all_regular_matches_in_season_up_to_date(comp_id, season, date):
     for team in curr_season_table.teams:
 
         # Get only regular match up to the wanted date
-        team_matches = [match for match in team.matches if match.datetime < date and not match.is_regular]
+        team_matches = [match for match in team.matches if match.datetime < date and not match.round.is_regular]
 
         matches_up_to_date += team_matches
 
