@@ -35,6 +35,7 @@ def get_match_by_comp_season_round_team(comp_id, season, total_round_rank_in_sea
     return None
 
 
+# TODO: Note that matches in teams are in one large list, not in lists per each season
 def get_previous_match(curr_match, team_id):
     # Might happen that a match has no previous matches
     if curr_match is None:
@@ -91,7 +92,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
                 if prev_prev_match.home_team_id == team_id:
                     return prev_prev_match
 
-                new_curr_prev_match = prev_prev_match  # TODO: Check the copying/deep copying functionality via debug
+                new_curr_prev_match = prev_prev_match
 
             raise Exception(
                 f"Last home match not found even after checking last {MAX_MATCH_HISTORY_TO_CHECK_LOW} matches.")
@@ -120,7 +121,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
                 if prev_prev_match.away_team_id == team_id:
                     return prev_prev_match
 
-                new_curr_prev_match = prev_prev_match  # TODO: Check the copying/deep copying functionality via debug
+                new_curr_prev_match = prev_prev_match
 
             raise Exception(
                 f"Last away match not found even after checking last {MAX_MATCH_HISTORY_TO_CHECK_LOW} matches.")
@@ -144,7 +145,7 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
             prev_home_match = get_last_home_away_match(curr_prev_match, team_id, "home")
             n_previous_matches.append(prev_home_match)
 
-            curr_prev_match = prev_home_match  # TODO: Check the copying/deep copying functionality via debug
+            curr_prev_match = prev_home_match
 
     # Get N last away matches
     elif home_away == "away":
@@ -154,7 +155,7 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
             prev_away_match = get_last_home_away_match(curr_prev_match, team_id, "away")
             n_previous_matches.append(prev_away_match)
 
-            curr_prev_match = prev_away_match  # TODO: Check the copying/deep copying functionality via debug
+            curr_prev_match = prev_away_match
 
     # Get N last matches
     else:
@@ -164,7 +165,7 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
             prev_match = get_previous_match(curr_prev_match, team_id)
             n_previous_matches.append(prev_match)
 
-            curr_prev_match = prev_match  # TODO: Check the copying/deep copying functionality via debug
+            curr_prev_match = prev_match
 
     return n_previous_matches
 
