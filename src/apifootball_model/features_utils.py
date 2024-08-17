@@ -252,14 +252,3 @@ def calculate_elo_for_both_teams(curr_match):
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)
 
     return home_team_new_elo, away_team_new_elo
-
-
-# home_position, away_position
-def get_team_position_at_round(comp, season, round_, team_id):
-    # Get the appropriate table
-    table = ut.get_table_by_comp_season(comp, season)
-
-    # Calculate table position up to the specified round
-    sorted_teams_positions = table.calculate_and_get_teams_positions_in_season_up_to_date(round_)
-
-    return sorted_teams_positions.index(team_id) + 1

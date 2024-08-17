@@ -182,9 +182,7 @@ def get_all_matches_of_round(comp_id, season, total_round_rank_overall):
     return matches_of_round
 
 
-def get_all_regular_matches_in_season_up_to_date(comp_id, season, date):
-    curr_season_table = get_table_by_comp_season(comp_id, season)
-
+def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     matches_up_to_date = []
     for team in curr_season_table.teams:
 

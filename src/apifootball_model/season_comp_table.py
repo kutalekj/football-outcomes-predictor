@@ -83,7 +83,7 @@ class SeasonCompTable:
                            self.teams}
 
         # Get all matches up to the wanted date
-        regular_matches_up_to_date = ut.get_all_regular_matches_in_season_up_to_date(self.comp_id, self.season, date)
+        regular_matches_up_to_date = ut.get_all_regular_matches_in_season_table_up_to_date(self, )
 
         # Update the table with matches up to the wanted date
         self.update_table(regular_matches_up_to_date)
