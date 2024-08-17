@@ -44,8 +44,8 @@ class SeasonCompTable:
             teams.append(new_team)
 
         self.teams = teams
-        self.team_stats = {(team.id, team.name): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
-                           self.teams}
+        self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
+                                                  'avg_points_per_game': 0} for team in self.teams}
 
     def update_table(self, matches):
         for match in matches:
@@ -56,46 +56,48 @@ class SeasonCompTable:
             home_goals = match.home_team_goals
             away_goals = match.away_team_goals
 
+            self.team_stats[(home_team_id, home_team_name)]['games_played'] += 1
             self.team_stats[(home_team_id, home_team_name)]['goals_for'] += home_goals
             self.team_stats[(home_team_id, home_team_name)]['goals_against'] += away_goals
+            self.team_stats[(away_team_id, away_team_name)]['games_played'] += 1
             self.team_stats[(away_team_id, away_team_name)]['goals_for'] += away_goals
             self.team_stats[(away_team_id, away_team_name)]['goals_against'] += home_goals
 
             if home_goals > away_goals:
-                self.team_stats[(home_team_id, home_team_name)]['points'] += 3
+                self.team_stats[(home_team_id, home_team_name)]['points'] += 3.0
             elif home_goals < away_goals:
-                self.team_stats[(away_team_id, away_team_name)]['points'] += 3
+                self.team_stats[(away_team_id, away_team_name)]['points'] += 3.0
             else:
-                self.team_stats[(home_team_id, home_team_name)]['points'] += 1
-                self.team_stats[(away_team_id, away_team_name)]['points'] += 1
+                self.team_stats[(home_team_id, home_team_name)]['points'] += 1.0
+                self.team_stats[(away_team_id, away_team_name)]['points'] += 1.0
+
+        # Normalize points (some teams might have more matches played up to a certain date)
+        for team, team_stats in zip(self.teams, self.team_stats):
+            team_stats[(team.id, team.name)]['avg_points_per_game'] = team_stats[(team.id, team.name)]['points'] / \
+                                                                      team_stats[(team.id, team.name)]['games_played']
 
     # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
-    def calculate_and_get_teams_positions_in_season_at_round(self, round_):
+    def calculate_and_get_teams_positions_in_season_up_to_date(self, date):
         # Reset team stats
         self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
                            self.teams}
 
-        # Get all matches up to the wanted round
-        regular_matches_up_to_round = ut.get_all_regular_matches_in_season_up_to_round(self.comp_id, self.season,
-                                                                                       round_)
+        # Get all matches up to the wanted date
+        regular_matches_up_to_date = ut.get_all_regular_matches_in_season_up_to_date(self.comp_id, self.season, date)
 
-        # Update the table with matches up to the wanted round
-        self.update_table(regular_matches_up_to_round)
+        # Update the table with matches up to the wanted date
+        self.update_table(regular_matches_up_to_date)
 
         sorted_teams = sorted(self.teams, key=lambda team: (
-            self.team_stats[(team['id'], team['name'])]['points'],
+            self.team_stats[(team['id'], team['name'])]['avg_points_per_game'],
             self.team_stats[(team['id'], team['name'])]['goals_for'] - self.team_stats[(team['id'], team['name'])][
                 'goals_against'],
             self.team_stats[(team['id'], team['name'])]['goals_for']), reverse=True)
 
         return sorted_teams
 
-    # TODO: Include also matches that do not belong to the predefined competitions - friendly and pre-season ones
-    # TODO: Or, if for predictions, how to omit the table position information which is meaningless for them?
-
-    # TODO: UCL/UEL/UECL matches - separate tables
-    def get_curr_team_position_in_season_at_round(self, team_id, round_):
-        sorted_teams = self.calculate_and_get_teams_positions_in_season_at_round(round_)
+    def get_curr_team_position_in_season_up_to_date(self, team_id, date):
+        sorted_teams = self.calculate_and_get_teams_positions_in_season_up_to_date(date)
 
         for position, team in enumerate(sorted_teams, start=1):
             if team['id'] == team_id:

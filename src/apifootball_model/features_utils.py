@@ -260,6 +260,6 @@ def get_team_position_at_round(comp, season, round_, team_id):
     table = ut.get_table_by_comp_season(comp, season)
 
     # Calculate table position up to the specified round
-    sorted_teams_positions = table.calculate_and_get_teams_positions_in_season_at_round(round_)
+    sorted_teams_positions = table.calculate_and_get_teams_positions_in_season_up_to_date(round_)
 
     return sorted_teams_positions.index(team_id) + 1

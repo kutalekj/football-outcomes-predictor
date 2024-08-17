@@ -182,17 +182,19 @@ def get_all_matches_of_round(comp_id, season, total_round_rank_overall):
     return matches_of_round
 
 
-def get_all_regular_matches_in_season_up_to_round(comp_id, season, round_):
-    global_instance = Global.get_instance()
+def get_all_regular_matches_in_season_up_to_date(comp_id, season, date):
+    curr_season_table = get_table_by_comp_season(comp_id, season)
 
-    matches_up_to_round = []
-    # Get match
-    for match in global_instance.all_matches:
-        if match.comp.id == comp_id and match.season == season and match.round.is_regular and \
-                match.round.regular_rank_in_season <= round_.regular_rank_in_season:
-            matches_up_to_round.append(match)
+    matches_up_to_date = []
+    for team in curr_season_table.teams:
 
-    return matches_up_to_round
+        # Get only regular match up to the wanted date
+        team_matches = [match for match in team.matches if match.datetime < date and not match.is_regular]
+
+        matches_up_to_date += team_matches
+
+    # Remove duplicates (each match expected to appear twice)
+    return list(set(matches_up_to_date))
 
 
 def get_table_by_comp_season(comp_id, season):

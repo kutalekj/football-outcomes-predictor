@@ -27,6 +27,8 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League",
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team: team.id)
 
 # Init tables for comp seasons
+# TODO: Include also matches that do not belong to the predefined competitions - UCL/UEL/UECL and home cups
+# TODO: Omit the table position information which is almost meaningless for them - set -1 for this feature
 for comp in global_instance.all_comps:
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
         new_table = SeasonCompTable(comp.id, comp.name, season)

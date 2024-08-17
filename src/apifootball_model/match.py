@@ -66,7 +66,7 @@ class Match:
         # if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
         seasons = [2021]  # TODO: Temporary
 
-        first_round = from_round if from_round is not None else 1
+        first_round = from_round if from_round is not None else 1  # TODO: Useless?
 
         for comp in global_instance.all_comps:
             for season in seasons:
@@ -95,6 +95,10 @@ class Match:
                     new_match.hour = int(new_match.datetime.hour)
                     new_match.month = int(new_match.datetime.month)
 
+                    # If searching only for matches from a certain date and currently have an older one, skip the match
+                    # if new_match.round.datetime < from_date:  # TODO: Implement
+                    #     continue
+
                     new_match.country = fixture['league']['country']
 
                     new_match.comp = comp
@@ -114,10 +118,6 @@ class Match:
                     new_match.round = comp.get_round_by_comp_season_round_name(season, fixture['league']['round'])
                     if new_match.round is None:
                         raise ValueError(f"Unable to get round for the match {str(new_match.id)}")
-
-                    # If searching only for matches from a certain round and currently have a lower one, skip the match
-                    # if new_match.round.total_rank_all_time < first_round:  # TODO: Uncomment once round ranks added
-                    #     continue
 
                     # Home team
                     new_match.home_team_id = int(fixture['teams']['home']['id'])
@@ -306,10 +306,11 @@ class Match:
             feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
 
         # Current position in a table
+        # TODO: Add check if match is regular or not - if EU/home cup match, set this feature value to -1
         table = ut.get_table_by_comp_season(self.comp.id, self.season)
-        new_match_features.home_curr_position = table.get_curr_team_position_in_season_at_round(self.home_team_id,
-                                                                                                self.round)
-        new_match_features.away_curr_position = table.get_curr_team_position_in_season_at_round(self.away_team_id,
-                                                                                                self.round)
+        new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team_id,
+                                                                                                  self.round)
+        new_match_features.away_curr_position = table.get_curr_team_position_in_season_up_to_date(self.away_team_id,
+                                                                                                  self.round)
 
         return new_match_features
