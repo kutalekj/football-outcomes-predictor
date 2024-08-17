@@ -190,9 +190,6 @@ class Match:
                     # Add to list TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
 
-            # Once having matches and their teams, get the information which rounds consist of all teams and which not
-            comp.init_teams_involved_in_rounds()
-
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
         if len(stats) == 0:

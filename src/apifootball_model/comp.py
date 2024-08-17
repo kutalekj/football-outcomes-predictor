@@ -89,13 +89,8 @@ class Comp:
         global_instance.all_teams = list(set(global_instance.all_teams))  # Remove duplicates
 
     def init_all_rounds(self):
-        # total_regular_rounds_counter = 0
-        # total_rounds_counter = 0
 
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
-            # regular_rounds_per_season_counter = 0
-            # rounds_per_season_counter = 0
-
             # Get data from API
             request_string = "/fixtures/rounds?league=" + str(self.id) + "&season=" + str(season)
 
@@ -114,30 +109,7 @@ class Comp:
                 # Regularity (season comp table is only updated by regular round matches)
                 new_round.is_regular = new_round.is_round_regular(self)
 
-                """
-                if new_round.is_regular:
-                    regular_rounds_per_season_counter += 1
-                    total_regular_rounds_counter += 1
-
-                rounds_per_season_counter += 1
-                total_rounds_counter += 1
-
-                new_round.regular_rank_in_season = regular_rounds_per_season_counter
-                new_round.total_rank_in_season = rounds_per_season_counter
-                new_round.regular_rank_all_time = total_regular_rounds_counter
-                new_round.total_rank_all_time = total_rounds_counter
-                """
-
                 season_rounds_list.append(new_round)
                 self.all_rounds_sorted.append(new_round)  # TODO: Will these round listing variables be still needed?
 
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
-
-    def init_teams_involved_in_rounds(self):
-        for season_rounds in self.rounds_per_season:
-            for round_ in season_rounds['rounds']:
-                round_.get_teams_involved()
-                round_.has_all_comp_season_teams = round_.has_all_comp_season_teams_involved(self.teams_per_season,
-                                                                                             season_rounds['season'])
-
-        # Note that for self.all_round_sorted the information is propagated as well

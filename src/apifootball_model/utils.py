@@ -169,19 +169,6 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
     return n_previous_matches
 
 
-def get_all_matches_of_round(comp_id, season, total_round_rank_overall):
-    global_instance = Global.get_instance()
-
-    matches_of_round = []
-    # Get match
-    for match in global_instance.all_matches:
-        if match.comp.id == comp_id and match.season == season \
-                and match.round.total_rank_all_time == total_round_rank_overall:
-            matches_of_round.append(match)
-
-    return matches_of_round
-
-
 def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     matches_up_to_date = []
     for team in curr_season_table.teams:
