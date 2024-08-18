@@ -45,6 +45,14 @@ class Match:
         self.features_before_match_played = None
         self.feature_vector_before_match_played = None
 
+    def __eq__(self, other):
+        if isinstance(other, Match):
+            return self.id == other.id
+        return False
+
+    def __hash__(self):
+        return hash(self.id)
+
     @staticmethod
     def load_existing_matches():
         existing_matches = []
