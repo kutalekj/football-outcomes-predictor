@@ -23,11 +23,12 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League",
     new_comp.init_all_rounds()
 
     global_instance.all_comps.append(new_comp)
-global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team: team.id)
+global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
 # Init tables for comp seasons
-# TODO: Include also matches that do not belong to the predefined competitions - UCL/UEL/UECL and home cups
+# TODO: Include also matches that do not belong to the predefined competitions - home cups, not UCL/UEL/UECL !!!
 # TODO: Omit the table position information which is almost meaningless for them - set -1 for this feature
+# TODO: Add-note...Or, if exclude EU cups for biased table pos/form calculation, maybe no need for -1
 for comp in global_instance.all_comps:
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
         new_table = SeasonCompTable(comp.id, comp.name, season)

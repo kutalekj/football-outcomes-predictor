@@ -6,7 +6,7 @@ import settings
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
 
-
+"""
 def get_last_round_of_previous_season(comp, curr_season):
     prev_season = curr_season - 1
 
@@ -17,8 +17,9 @@ def get_last_round_of_previous_season(comp, curr_season):
     for season_rounds in comp.rounds_per_season:
         if comp.rounds_per_season['season'] == prev_season:
             return len(season_rounds['rounds'])
+"""
 
-
+"""
 # TODO: Currently might not work correctly - for example Relegation Rounds are not played by all teams...
 # TODO: Add boolean attribute for round "covering_all_teams" - for regular rounds containing all teams
 # TODO: ...until still False, keep looking at the previous match
@@ -33,9 +34,37 @@ def get_match_by_comp_season_round_team(comp_id, season, total_round_rank_in_sea
             return match
 
     return None
+"""
 
 
-# TODO: Note that matches in teams are in one large list, not in lists per each season
+def get_previous_match(team, curr_match, same_comp=False, same_season=False, regular=False):
+    curr_match_idx = team.get_index_of_match_in_sorted_team_matches_list(curr_match)
+
+    # A first match has no previous matches
+    if curr_match_idx == 0:
+        return None
+
+    prev_match = team.matches[curr_match_idx - 1]
+
+    if prev_match is None:
+        return None
+
+    if same_comp:
+        if curr_match.comp != prev_match.comp:
+            return get_previous_match(team, prev_match, same_comp, same_season, regular)
+
+    if same_season:
+        if curr_match.season > prev_match.season:
+            return None
+
+    if regular:
+        if not prev_match.round.is_regular:
+            return get_previous_match(team, prev_match, same_comp, same_season, regular)
+
+    return prev_match
+
+
+"""
 def get_previous_match(curr_match, team_id):
     # Might happen that a match has no previous matches
     if curr_match is None:
@@ -64,10 +93,11 @@ def get_previous_match(curr_match, team_id):
         return None
     else:
         return prev_match
+"""
 
 
-def get_last_home_away_match(curr_match, team_id, home_away=None):
-    curr_prev_match = get_previous_match(curr_match, team_id)
+def get_last_home_away_match(curr_match, team_id, home_away=None, same_comp=False, same_season=False, regular=False):
+    curr_prev_match = get_previous_match(curr_match, team_id, same_comp, same_season, regular)
 
     if curr_prev_match is None:
         return None
@@ -83,7 +113,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
             new_curr_prev_match = curr_prev_match
 
             for i in range(0, MAX_MATCH_HISTORY_TO_CHECK_LOW):
-                prev_prev_match = get_previous_match(new_curr_prev_match, team_id)
+                prev_prev_match = get_previous_match(new_curr_prev_match, team_id, same_comp, same_season, regular)
 
                 # There might not be any previous matches left
                 if prev_prev_match is None:
@@ -112,7 +142,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
             new_curr_prev_match = curr_prev_match
 
             for i in range(0, MAX_MATCH_HISTORY_TO_CHECK_LOW):
-                prev_prev_match = get_previous_match(new_curr_prev_match, team_id)
+                prev_prev_match = get_previous_match(new_curr_prev_match, team_id, same_comp, same_season, regular)
 
                 # There might not be any previous matches left
                 if prev_prev_match is None:
@@ -133,7 +163,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None):
         raise ValueError("The \"home_away\" parameter set to a wrong value.")
 
 
-def get_n_previous_matches(n, curr_match, team_id, home_away=None):
+def get_n_previous_matches(n, curr_match, team_id, home_away=None, same_comp=False, same_season=False, regular=False):
     # TODO: Remember that the previous match is in the first position in the list while the n-th previous is last...
     n_previous_matches = []
 
@@ -142,7 +172,8 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
         curr_prev_match = curr_match
 
         for i in range(0, n):
-            prev_home_match = get_last_home_away_match(curr_prev_match, team_id, "home")
+            prev_home_match = get_last_home_away_match(curr_prev_match, team_id, "home", same_comp, same_season,
+                                                       regular)
             n_previous_matches.append(prev_home_match)
 
             curr_prev_match = prev_home_match
@@ -152,7 +183,8 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
         curr_prev_match = curr_match
 
         for i in range(0, n):
-            prev_away_match = get_last_home_away_match(curr_prev_match, team_id, "away")
+            prev_away_match = get_last_home_away_match(curr_prev_match, team_id, "away", same_comp, same_season,
+                                                       regular)
             n_previous_matches.append(prev_away_match)
 
             curr_prev_match = prev_away_match
@@ -162,7 +194,7 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
         curr_prev_match = curr_match
 
         for i in range(0, n):
-            prev_match = get_previous_match(curr_prev_match, team_id)
+            prev_match = get_previous_match(curr_prev_match, team_id, same_comp, same_season, regular)
             n_previous_matches.append(prev_match)
 
             curr_prev_match = prev_match
@@ -173,7 +205,6 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None):
 def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     matches_up_to_date = []
     for team in curr_season_table.teams:
-
         # Get only regular match up to the wanted date
         team_matches = [match for match in team.matches if match.datetime < date and not match.round.is_regular]
 

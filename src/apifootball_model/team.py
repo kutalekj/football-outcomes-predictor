@@ -13,3 +13,11 @@ class Team:
 
     def __hash__(self):
         return hash(self.id)
+
+    # TODO: Write this function in a better way + check it by GPT
+    def get_index_of_match_in_sorted_team_matches_list(self, match):
+        team_matches = sorted(self.matches, key=lambda match_: match_.datetime)
+
+        for i, match__ in enumerate(team_matches):
+            if match__ == match:
+                return i

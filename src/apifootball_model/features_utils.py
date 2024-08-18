@@ -2,10 +2,8 @@
 feature_utils.py
 """
 
-
 import utils as ut
 from settings import INIT_ELO
-
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -17,10 +15,12 @@ ELO_K = 32.0
 def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     # Check if wanted for currently HOME or currently AWAY team
     if home_away == "home":
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id)
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.home_team_id
     elif home_away == "away":
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id)
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.away_team_id
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
@@ -55,13 +55,15 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if home_away == "home":
 
         # Last N matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id)
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.home_team_id
 
     elif home_away == "away":
 
         # Last N matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id)
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.away_team_id
 
     else:
@@ -97,13 +99,15 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
     if home_away == "home":
 
         # Last N matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id)
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.home_team_id
 
     elif home_away == "away":
 
         # Last N matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id)
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.away_team_id
 
     else:
@@ -141,13 +145,15 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
     if home_away == "home":
 
         # Last N home matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, "home")
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, "home", same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.home_team_id
 
     elif home_away == "away":
 
         # Last N away matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, "away")
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, "away", same_comp=False,
+                                                   same_season=False, regular=False)
         team_id = curr_match.away_team_id
 
     else:
@@ -201,7 +207,8 @@ def calculate_elo_for_both_teams(curr_match):
 
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
     # Then get its ELO and goals scored in the previous match
-    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team_id)
+    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team_id, same_comp=False,
+                                                 same_season=False, regular=False)
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
         home_team_prev_match_goals = 0
@@ -219,7 +226,8 @@ def calculate_elo_for_both_teams(curr_match):
 
     # Get previous match of currently AWAY team and find out if it was home or away team in that previous match
     # Then get its ELO and goals scored in the previous match
-    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team_id)
+    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team_id, same_comp=False,
+                                                 same_season=False, regular=False)
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
         away_team_prev_match_goals = 0
