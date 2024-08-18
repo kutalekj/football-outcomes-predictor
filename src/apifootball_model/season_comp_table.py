@@ -34,7 +34,7 @@ class SeasonCompTable:
             team_id = int(team['team']['id'])
             team_name = team['team']['name']
 
-            new_team = ut.get_team_if_exists(team_id, team_name)
+            new_team = ut.get_team_if_exists(team_id)
 
             # Team not found
             if new_team is None:

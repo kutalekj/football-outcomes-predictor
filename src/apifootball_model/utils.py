@@ -5,6 +5,7 @@ utils.py
 import settings
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
+from datetime import timedelta
 
 """
 def get_last_round_of_previous_season(comp, curr_season):
@@ -37,7 +38,9 @@ def get_match_by_comp_season_round_team(comp_id, season, total_round_rank_in_sea
 """
 
 
-def get_previous_match(team, curr_match, same_comp=False, same_season=False, regular=False):
+def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, regular=False):
+    team = get_team_if_exists(team_id)
+
     curr_match_idx = team.get_index_of_match_in_sorted_team_matches_list(curr_match)
 
     # A first match has no previous matches
@@ -51,7 +54,7 @@ def get_previous_match(team, curr_match, same_comp=False, same_season=False, reg
 
     if same_comp:
         if curr_match.comp != prev_match.comp:
-            return get_previous_match(team, prev_match, same_comp, same_season, regular)
+            return get_previous_match(prev_match, team, same_comp, same_season, regular)
 
     if same_season:
         if curr_match.season > prev_match.season:
@@ -59,7 +62,7 @@ def get_previous_match(team, curr_match, same_comp=False, same_season=False, reg
 
     if regular:
         if not prev_match.round.is_regular:
-            return get_previous_match(team, prev_match, same_comp, same_season, regular)
+            return get_previous_match(prev_match, team, same_comp, same_season, regular)
 
     return prev_match
 
@@ -224,11 +227,17 @@ def get_table_by_comp_season(comp_id, season):
     return None
 
 
-def get_team_if_exists(team_id, team_name):
+def get_team_if_exists(team_id):
     global_instance = Global.get_instance()
 
     for team in global_instance.all_teams:
-        if team.id == team_id and team.name == team_name:
+        if team.id == team_id:
             return team
 
     return None
+
+
+def is_match_within_days(curr_datetime, match_datetime, n):
+    time_difference = curr_datetime - match_datetime
+
+    return time_difference <= timedelta(days=n)

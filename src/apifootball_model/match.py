@@ -123,7 +123,7 @@ class Match:
                     new_match.home_team_id = int(fixture['teams']['home']['id'])
                     new_match.home_team_name = fixture['teams']['home']['name']
 
-                    home_team = ut.get_team_if_exists(new_match.home_team_id, new_match.home_team_name)
+                    home_team = ut.get_team_if_exists(new_match.home_team_id)
                     if home_team is None:
                         raise Exception(f"Failed to find a home team {new_match.home_team_name} to assign a match.")
                     home_team.matches.append(new_match)
@@ -132,7 +132,7 @@ class Match:
                     new_match.away_team_id = int(fixture['teams']['away']['id'])
                     new_match.away_team_name = fixture['teams']['away']['name']
 
-                    away_team = ut.get_team_if_exists(new_match.away_team_id, new_match.away_team_name)
+                    away_team = ut.get_team_if_exists(new_match.away_team_id)
                     if away_team is None:
                         raise Exception(f"Failed to find a home team {new_match.away_team_name} to assign a match.")
                     away_team.matches.append(new_match)
@@ -266,6 +266,15 @@ class Match:
 
         (new_match_features.home_elo, new_match_features.away_elo) = \
             feature_ut.calculate_elo_for_both_teams(self)
+
+        new_match_features.home_match_load_per_day_last_10_days = feature_ut.get_match_load_per_day_last_n(self, 10,
+                                                                                                           "home")
+        new_match_features.home_match_load_per_day_last_25_days = feature_ut.get_match_load_per_day_last_n(self, 25,
+                                                                                                           "home")
+        new_match_features.away_match_load_per_day_last_10_days = feature_ut.get_match_load_per_day_last_n(self, 10,
+                                                                                                           "away")
+        new_match_features.away_match_load_per_day_last_25_days = feature_ut.get_match_load_per_day_last_n(self, 25,
+                                                                                                           "away")
 
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")

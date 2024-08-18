@@ -74,7 +74,7 @@ class Comp:
                 team_name = team['team']['name']
 
                 # Find team if exists
-                new_team = ut.get_team_if_exists(team_id, team_name)
+                new_team = ut.get_team_if_exists(team_id)
 
                 # Team not existing yet
                 if new_team is None:

@@ -10,6 +10,40 @@ ELO_D = 400.0
 ELO_K = 32.0
 
 
+# home_match_load_per_day_last_10_days, home_match_load_per_day_last_25_days
+# away_match_load_per_day_last_10_days, away_match_load_per_day_last_25_days
+def get_match_load_per_day_last_n(curr_match, n, home_away):
+    new_curr_match = curr_match
+
+    num_matches = 0
+
+    if home_away == "home":
+        while True:
+            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.home_team_id, same_comp=False,
+                                               same_season=False, regular=False)
+
+            if ut.is_match_within_days(curr_match.datetime, prev_match.datetime, n):
+                num_matches += 1
+                new_curr_match = prev_match
+            else:
+                break
+
+    elif home_away == "else":
+        while True:
+            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.away_team_id, same_comp=False,
+                                               same_season=False, regular=False)
+
+            if ut.is_match_within_days(curr_match.datetime, prev_match.datetime, n):
+                num_matches += 1
+                new_curr_match = prev_match
+            else:
+                break
+    else:
+        raise Exception("The \"home_away\" parameter set to a wrong value.")
+
+    return float(num_matches) / n
+
+
 # home_team_points_avg_last_5, home_team_points_avg_last_20
 # away_team_points_avg_last_5, away_team_points_avg_last_20
 def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably

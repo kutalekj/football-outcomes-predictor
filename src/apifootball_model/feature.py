@@ -4,7 +4,6 @@ feature.py
 
 
 # TODO: Relativize features (only Elo, or comp_id, season, ... as well?)
-# TODO: Add feature for match load per day in the previous 10 days (and maybe for the previous 25 days too)
 class MatchFeatures:
     def __init__(self, comp_id, season, round_, home_team_id, away_team_id):
         self.comp_id = comp_id
@@ -18,6 +17,11 @@ class MatchFeatures:
 
         self.home_elo = None
         self.away_elo = None
+
+        self.home_match_load_per_day_last_10_days = None
+        self.home_match_load_per_day_last_25_days = None
+        self.away_match_load_per_day_last_10_days = None
+        self.away_match_load_per_day_last_25_days = None
 
         self.home_avg_points_last_5 = None
         self.home_avg_points_last_20 = None
