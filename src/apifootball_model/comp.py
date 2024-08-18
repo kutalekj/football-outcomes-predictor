@@ -34,27 +34,6 @@ class Comp:
 
         return None
 
-    def get_prev_round_by_total_rank(self, total_rank):
-        return self.all_rounds_sorted[total_rank - 1] if total_rank > 1 else None
-
-    def get_next_round_by_total_rank(self, total_rank):
-        return self.all_rounds_sorted[total_rank + 1] if total_rank < len(self.all_rounds_sorted) else None
-
-    def get_prev_round_in_season(self, season, rank_in_season):
-        for season_rounds in self.rounds_per_season:
-            if season_rounds['season'] == season:
-                return season_rounds['rounds'][rank_in_season - 2] if rank_in_season > 1 else None
-
-        raise ValueError(f"Season {str(season)} not found.")
-
-    def get_next_round_in_season(self, season, rank_in_season):
-        for season_rounds in self.rounds_per_season:
-            if season_rounds['season'] == season:
-                return season_rounds['rounds'][rank_in_season] \
-                    if rank_in_season < len(season_rounds['rounds']) else None
-
-        raise ValueError(f"Season {str(season)} not found.")
-
     def init_teams_in_comp(self):
         global_instance = Global.get_instance()
 
