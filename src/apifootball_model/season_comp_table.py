@@ -77,10 +77,11 @@ class SeasonCompTable:
                                                                       team_stats[(team.id, team.name)]['games_played']
 
     # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
+    # TODO: Since table positions are now calculated after all matches loading, calculation can be done without resets
     def calculate_and_get_teams_positions_in_season_up_to_date(self, date):
         # Reset team stats
-        self.team_stats = {(team['id'], team['name']): {'points': 0, 'goals_for': 0, 'goals_against': 0} for team in
-                           self.teams}
+        self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
+                                                  'avg_points_per_game': 0} for team in self.teams}
 
         # Get all matches up to the wanted date
         regular_matches_up_to_date = ut.get_all_regular_matches_in_season_table_up_to_date(self, date)

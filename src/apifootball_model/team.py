@@ -3,6 +3,9 @@ class Team:
         self.id = id_
         self.name = name
 
+        # Exclude lower tier teams that played only relegation playoff match at the end of season from season tables
+        self.regularity_in_comp_season = []
+
         self.matches = []  # just list of all matches of the team sorted by the datetime played asc
         # {'comp_id': comp_id, 'comp_name': comp_name, 'season': season_num, 'matches': matches_list} - NO!
 

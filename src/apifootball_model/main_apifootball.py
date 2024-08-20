@@ -46,6 +46,29 @@ Match.get_new_matches_data_using_api()
 for team in global_instance.all_teams:
     team.matches = sorted(team.matches, key=lambda match_: match_.datetime)
 
+    # Check team regularity (assume each team plays exactly in one regular comp each season!)
+    for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+        if not any([match.round.is_regular for match in [m for m in team.matches if m.season == season]]):
+
+            # Set the "is_regular" team attribute to False
+            for season_elem in team.regularity_in_comp_season:
+                if season_elem['season'] == season:
+                    season_elem['is_regular'] = False
+
+# Exclude irregular teams from tables calculation TODO: This
+for table in global_instance.all_tables:
+    table.teams = [team for team in table.teams if any([season_elem for season_elem in team.regularity_in_comp_season if
+                                                        season_elem['season'] == table.season and season_elem[
+                                                            'is_regular']])]
+
+    for team in table.teams:
+        table.team_stats = {(team.id, team.name): stats for (team_id, team_name), stats in table.team_stats.items() if
+                            any([season_elem for season_elem in team.regularity_in_comp_season if
+                                 season_elem['season'] == table.season and season_elem[
+                                     'is_regular']])}
+
+# TODO: Add missing statistics by averaging the existing ones
+
 # Calculate features
 for team in global_instance.all_teams:
     for match in team.matches:
