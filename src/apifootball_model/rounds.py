@@ -27,3 +27,4 @@ class Round:
         for keyword in curr_comp.regular_round_keywords:
             if keyword in self.name:
                 return True
+        return False

@@ -70,9 +70,8 @@ class Match:
     def get_new_matches_data_using_api(from_season=None, from_round=None):
         global_instance = Global.get_instance()
 
-        # seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
-        # if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
-        seasons = [2021]  # TODO: Temporary
+        seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
+            if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
 
         first_round = from_round if from_round is not None else 1  # TODO: Useless?
 
@@ -93,8 +92,12 @@ class Match:
 
                     new_match.status = fixture['fixture']['status']['short']
                     if new_match.status not in ["FT", "AET", "PEN"]:
-                        if new_match.status == "CANC":
+                        if new_match.status in ["Canc", "CANC"]:
                             print(f"Canceled match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
+                            continue
+
+                        if new_match.status == "PST":
+                            print(f"Postponed match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
                             continue
 
                         print(f"WARNING: Match {new_match.id} not finished")  # TODO: Debug a OT/PEN match - how handle?

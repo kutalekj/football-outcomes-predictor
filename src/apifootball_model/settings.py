@@ -37,11 +37,10 @@ COMPS = [
     {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season']},
     {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
     {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round',
-                                'Conference League Play-off Group']},
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
     {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},
     {'id': 207, 'name': "Super League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round']},  # SUI
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # SUI
     {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']}
 ]
 

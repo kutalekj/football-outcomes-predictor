@@ -58,7 +58,8 @@ class Comp:
                 # Team not existing yet
                 if new_team is None:
                     new_team = Team(team_id, team_name)
-                    new_team.regularity_in_comp_season.append({'comp': self, 'season': season, 'is_regular': True})
+
+                new_team.regularity_in_comp_season.append({'comp': self, 'season': season, 'is_regular': True})
 
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 

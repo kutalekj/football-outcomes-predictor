@@ -13,8 +13,7 @@ global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
 for comp in [{'id': 144, 'name': "Jupiler Pro League",
-              'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round',
-                                         'Conference League Play-off Group']}]:
+              'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:
     # for comp in settings.COMPS:  # TODO: Temporary
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
@@ -26,9 +25,8 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League",
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
 # Init tables for comp seasons
-# TODO: Include also matches that do not belong to the predefined competitions - home cups, not UCL/UEL/UECL !!!
+# TODO: Include also matches that do not belong to the predefined competitions - home cups, UCL/UEL/UECL
 # TODO: Omit the table position information which is almost meaningless for them - set -1 for this feature
-# TODO: Add-note...Or, if exclude EU cups for biased table pos/form calculation, maybe no need for -1
 for comp in global_instance.all_comps:
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
         new_table = SeasonCompTable(comp.id, comp.name, season)
@@ -48,12 +46,21 @@ for team in global_instance.all_teams:
 
     # Check team regularity (assume each team plays exactly in one regular comp each season!)
     for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
-        if not any([match.round.is_regular for match in [m for m in team.matches if m.season == season]]):
+        team_matches_in_season = [m for m in team.matches if m.season == season]
 
-            # Set the "is_regular" team attribute to False
-            for season_elem in team.regularity_in_comp_season:
-                if season_elem['season'] == season:
-                    season_elem['is_regular'] = False
+        # If team participating in the season, check if it played some regular matches
+        if len(team_matches_in_season) > 0:
+
+            regular_team_matches_in_season = [match.round.is_regular for match in team_matches_in_season]
+            print(f"[{season}] {team.name}: {regular_team_matches_in_season}")
+
+            # Team played some matches (at least one) in the season, but none of them was regular
+            if not any(regular_team_matches_in_season):
+
+                # Set the "is_regular" team attribute to False
+                for season_elem in team.regularity_in_comp_season:
+                    if season_elem['season'] == season:
+                        season_elem['is_regular'] = False
 
 # Exclude irregular teams from tables calculation TODO: This
 for table in global_instance.all_tables:
