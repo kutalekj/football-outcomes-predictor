@@ -10,6 +10,7 @@ from dateutil.parser import parse
 from datetime import datetime
 import settings
 import utils as ut
+import time
 from feature import MatchFeatures
 import features_utils as feature_ut
 from globals import Global
@@ -88,6 +89,9 @@ class Match:
                 res = conn.getresponse()
                 data = res.read()
                 data_fixtures = json.loads(data)
+
+                print(
+                    f"{len(data_fixtures['response'])} matches were found in comp {comp.name} in season {str(season)}")
 
                 # Loop over matches - get match info
                 for fixture in data_fixtures['response']:
@@ -205,8 +209,10 @@ class Match:
                     # TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
 
+                    time.sleep(0.1)
+
     def get_stats_value(self, stats, stat_name, home_away):
-        # Stats not present TODO: Why there are so many matches with Shots on Goal missing in Jupiler Pro League? Debug
+        # Stats not present
         if len(stats) == 0:
             if home_away == "home":
                 print(
