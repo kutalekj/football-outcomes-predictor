@@ -69,7 +69,7 @@ class Match:
         return existing_matches
 
     @staticmethod
-    def get_new_matches_data_using_api(from_season=None):
+    def get_new_matches_data_using_api(from_season=None, from_date=None):
         global_instance = Global.get_instance()
 
         seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
@@ -83,6 +83,10 @@ class Match:
 
                 request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
                                  "&from=" + str(settings.FIRST_SEASON) + "-01-01" + \
+                                 "&to=" + datetime.today().strftime("%Y-%m-%d") \
+                                 if from_date is None else \
+                                 "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
+                                 "&from=" + from_date.strftime("%Y-%m-%d") + \
                                  "&to=" + datetime.today().strftime("%Y-%m-%d")
 
                 conn.request("GET", request_string, headers=settings.HEADERS)
@@ -124,10 +128,6 @@ class Match:
                     new_match.datetime = parse(fixture['fixture']['date'])
                     new_match.hour = int(new_match.datetime.hour)
                     new_match.month = int(new_match.datetime.month)
-
-                    # If searching only for matches from a certain date and currently have an older one, skip the match
-                    # if new_match.round.datetime < from_date:  # TODO: Implement
-                    #     continue
 
                     new_match.country = fixture['league']['country']
 
@@ -210,6 +210,7 @@ class Match:
             if home_away == "home":
                 print(
                     f"Statistics [{stat_name}] missing for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
+                # TODO: Add debug count for missing statistics for each regular team - for knowing how many missing
             return -1
 
         if len(stats) != 2:

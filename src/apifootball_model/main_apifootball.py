@@ -13,9 +13,10 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
-for comp in [{'id': 144, 'name': "Jupiler Pro League",
-              'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:
-    # for comp in settings.COMPS:  # TODO: Temporary
+for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
+             {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []}]:  # TODO: Temporary
+
+# for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -26,9 +27,12 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League",
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
 # Init tables for comp seasons
-# TODO: Include also matches that do not belong to the predefined competitions - home cups, UCL/UEL/UECL
-# TODO: Omit the table position information which is almost meaningless for them - set -1 for this feature
 for comp in global_instance.all_comps:
+    # Omit the cups - do not create tables for them
+    if len(comp.regular_round_keywords) == 0:
+        print(f"_DEBUG_: Skipping tables initialization for comp {comp.name}")
+        continue
+
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
         new_table = SeasonCompTable(comp.id, comp.name, season)
         print(f"Initializing table for comp [{new_table.comp_name}].")

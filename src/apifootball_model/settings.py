@@ -41,7 +41,24 @@ COMPS = [
     {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},
     {'id': 207, 'name': "Super League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # SUI
-    {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']}
+    {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']},
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
+    {'id': 45, 'name': "FA Cup", 'regular_round_keywords': []},
+    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': []},
+    {'id': 81, 'name': "DFB Pokal", 'regular_round_keywords': []},
+    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': []},
+    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': []},
+    {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': []},
+    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': []},  # NED
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
+    {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': []},
+    {'id': 212, 'name': "Cup", 'regular_round_keywords': []},  # CRO
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': []},  # TUR
+    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},  # DEN
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]
 
 INIT_ELO = 1500
