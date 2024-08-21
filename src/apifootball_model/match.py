@@ -174,16 +174,8 @@ class Match:
                     else:
                         new_match.winner_team_id = -1
 
-                    # Matches that did not finish in regular time are skipped
-                    if new_match.status != "FT":
-                        print(
-                            f"INFO: Match {new_match.id} between {new_match.home_team_name} and"
-                            f"{new_match.away_team_name} played at {str(new_match.datetime)}"
-                            f"did not finish in regular time.")  # TODO: Debug a OT/PEN match - how handle?
-                        continue
-
-                    new_match.home_team_goals = int(fixture['goals']['home'])
-                    new_match.away_team_goals = int(fixture['goals']['away'])
+                    new_match.home_team_goals = int(fixture['score']['fulltime']['home'])
+                    new_match.away_team_goals = int(fixture['score']['fulltime']['away'])
 
                     if new_match.home_team_goals > new_match.away_team_goals:
                         new_match.home_team_points = 3
@@ -209,6 +201,7 @@ class Match:
                     # TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
 
+                    # Delay so that limit of requests per minute is not exceeded
                     time.sleep(0.1)
 
     def get_stats_value(self, stats, stat_name, home_away):
