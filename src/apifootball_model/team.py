@@ -1,3 +1,6 @@
+import settings
+
+
 class Team:
     def __init__(self, id_, name):
         self.id = id_
@@ -26,3 +29,20 @@ class Team:
 
         # This should never happen
         return None
+
+    def correct_team_regularity(self):
+        for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+            team_matches_in_season = [m for m in self.matches if m.season == season]
+
+            # If team participating in the season, check if it played some regular matches
+            if len(team_matches_in_season) > 0:
+
+                regular_team_matches_in_season = [match.round.is_regular for match in team_matches_in_season]
+
+                # Team played some matches in the season, but none of them was regular
+                if not any(regular_team_matches_in_season):
+
+                    # Set the "is_regular" team attribute to False
+                    for season_elem in self.regularity_in_comp_season:
+                        if season_elem['season'] == season:
+                            season_elem['is_regular'] = False

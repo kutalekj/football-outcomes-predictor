@@ -6,7 +6,7 @@ import http.client
 import json
 import settings
 import utils as ut
-from team import Team
+from globals import Global
 
 
 class SeasonCompTable:
@@ -104,3 +104,19 @@ class SeasonCompTable:
             if team['id'] == team_id:
                 return position
         return None
+
+    @staticmethod
+    def exclude_irregular_teams_from_table_calculations():
+        global_instance = Global.get_instance()
+
+        for table in global_instance.all_tables:
+            table.teams = [team for team in table.teams if
+                           any([season_elem for season_elem in team.regularity_in_comp_season if
+                                season_elem['season'] == table.season and season_elem[
+                                    'is_regular']])]
+
+            table.team_stats = {(team_id, team_name): stats for (team_id, team_name), stats in table.team_stats.items()
+                                if
+                                any([season_elem for season_elem in
+                                     ut.get_team_if_exists(team_id).regularity_in_comp_season
+                                     if season_elem['season'] == table.season and season_elem['is_regular']])}

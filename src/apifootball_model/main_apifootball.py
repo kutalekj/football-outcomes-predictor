@@ -2,6 +2,7 @@ import http.client
 import json
 import datetime
 import features_utils as feature_ut
+import utils as ut
 import settings
 from comp import Comp
 from season_comp_table import SeasonCompTable
@@ -45,34 +46,10 @@ for team in global_instance.all_teams:
     team.matches = sorted(team.matches, key=lambda match_: match_.datetime)
 
     # Check team regularity (assume each team plays exactly in one regular comp each season!)
-    for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
-        team_matches_in_season = [m for m in team.matches if m.season == season]
+    team.correct_team_regularity()
 
-        # If team participating in the season, check if it played some regular matches
-        if len(team_matches_in_season) > 0:
-
-            regular_team_matches_in_season = [match.round.is_regular for match in team_matches_in_season]
-            print(f"[{season}] {team.name}: {regular_team_matches_in_season}")
-
-            # Team played some matches (at least one) in the season, but none of them was regular
-            if not any(regular_team_matches_in_season):
-
-                # Set the "is_regular" team attribute to False
-                for season_elem in team.regularity_in_comp_season:
-                    if season_elem['season'] == season:
-                        season_elem['is_regular'] = False
-
-# Exclude irregular teams from tables calculation TODO: This
-for table in global_instance.all_tables:
-    table.teams = [team for team in table.teams if any([season_elem for season_elem in team.regularity_in_comp_season if
-                                                        season_elem['season'] == table.season and season_elem[
-                                                            'is_regular']])]
-
-    for team in table.teams:
-        table.team_stats = {(team.id, team.name): stats for (team_id, team_name), stats in table.team_stats.items() if
-                            any([season_elem for season_elem in team.regularity_in_comp_season if
-                                 season_elem['season'] == table.season and season_elem[
-                                     'is_regular']])}
+# Exclude irregular teams from tables calculation
+SeasonCompTable.exclude_irregular_teams_from_table_calculations()
 
 # TODO: Add missing statistics by averaging the existing ones
 
@@ -83,6 +60,9 @@ for team in global_instance.all_teams:
         match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
             match.features_before_match_played)
 
-# TODO: Save matches
+# TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
+# TODO: Maybe will need to run the full script multiple times - store data multiple times and then just take the...
+# TODO: ...largest one, because now having issues that sometimes Shots on Goals are not found and sometimes are (?)
+
 
 print("breakpoint")

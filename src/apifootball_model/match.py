@@ -7,6 +7,7 @@ import csv
 import http.client
 import json
 from dateutil.parser import parse
+from datetime import datetime
 import settings
 import utils as ut
 from feature import MatchFeatures
@@ -67,40 +68,54 @@ class Match:
         return existing_matches
 
     @staticmethod
-    def get_new_matches_data_using_api(from_season=None, from_round=None):
+    def get_new_matches_data_using_api(from_season=None):
         global_instance = Global.get_instance()
 
         seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
             if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
 
-        first_round = from_round if from_round is not None else 1  # TODO: Useless?
-
         for comp in global_instance.all_comps:
             for season in seasons:
+
+                # Get historic match data from API - up to current day
                 conn = http.client.HTTPSConnection(settings.HOST)
 
-                request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id)
+                request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
+                                 "&from=" + str(settings.FIRST_SEASON) + "-01-01" + \
+                                 "&to=" + datetime.today().strftime("%Y-%m-%d")
 
                 conn.request("GET", request_string, headers=settings.HEADERS)
                 res = conn.getresponse()
                 data = res.read()
                 data_fixtures = json.loads(data)
 
-                # Loop over matches
+                # Loop over matches - get match info
                 for fixture in data_fixtures['response']:
                     new_match = Match(int(fixture['fixture']['id']))
 
                     new_match.status = fixture['fixture']['status']['short']
                     if new_match.status not in ["FT", "AET", "PEN"]:
                         if new_match.status in ["Canc", "CANC"]:
-                            print(f"Canceled match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
+                            print(
+                                f"Canceled match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
                             continue
 
                         if new_match.status == "PST":
-                            print(f"Postponed match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
+                            print(
+                                f"Postponed match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
                             continue
 
-                        print(f"WARNING: Match {new_match.id} not finished")  # TODO: Debug a OT/PEN match - how handle?
+                        if new_match.status == "NS":
+                            print(
+                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} did not start yet (should be played at {fixture['fixture']['date']})")
+                            continue
+
+                        if new_match.status == "TBD":
+                            print(
+                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} not scheduled yet - to be played")
+                            continue
+
+                        print(f"WARNING: Match {new_match.id} not finished")
 
                     new_match.datetime = parse(fixture['fixture']['date'])
                     new_match.hour = int(new_match.datetime.hour)
@@ -160,7 +175,7 @@ class Match:
                         print(
                             f"INFO: Match {new_match.id} between {new_match.home_team_name} and"
                             f"{new_match.away_team_name} played at {str(new_match.datetime)}"
-                            f"did not finish in regular time.")
+                            f"did not finish in regular time.")  # TODO: Debug a OT/PEN match - how handle?
                         continue
 
                     new_match.home_team_goals = int(fixture['goals']['home'])
@@ -176,33 +191,22 @@ class Match:
                         new_match.home_team_points = 1
                         new_match.away_team_points = 1
 
-                    # STATISTICS
+                    # Statistics
                     stats_request_string = "/fixtures/statistics?fixture=" + str(new_match.id)
                     conn.request("GET", stats_request_string, headers=settings.HEADERS)
                     res = conn.getresponse()
                     data = res.read()
                     data_stats = json.loads(data)['response']
 
-                    # TODO: Debug
-                    if new_match.home_team_id == 42 or new_match.away_team_id == 42:
-                        print(
-                            f"Round {str(new_match.round.total_rank_all_time)} (called [{str(new_match.round.name)}])\t\t\t{str(new_match.datetime.day)}.{str(new_match.datetime.month)}. {str(new_match.datetime.year)}")
-
                     new_match.home_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "away")
 
-                    """
-                    # Calculate features
-                    new_match.features_before_match_played = new_match.calculate_match_features()
-                    new_match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
-                        new_match.features_before_match_played)
-                    """
-
-                    # Add to list TODO: Add check that this new match is not already in existing matches (all_matches)
+                    # Add match to list
+                    # TODO: Add check that this new match is not already in existing matches (all_matches)
                     global_instance.all_matches.append(new_match)
 
     def get_stats_value(self, stats, stat_name, home_away):
-        # Stats not present
+        # Stats not present TODO: Why there are so many matches with Shots on Goal missing in Jupiler Pro League? Debug
         if len(stats) == 0:
             if home_away == "home":
                 print(
