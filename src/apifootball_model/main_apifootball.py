@@ -65,8 +65,6 @@ for team in global_instance.all_teams:
             match.features_before_match_played)
 
 # TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
-# TODO: Maybe will need to run the full script multiple times - store data multiple times and then just take the...
-# TODO: ...largest one, because now having issues that sometimes Shots on Goals are not found and sometimes are (?)
 
 
 print("breakpoint")

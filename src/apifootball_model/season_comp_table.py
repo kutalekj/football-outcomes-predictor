@@ -77,7 +77,13 @@ class SeasonCompTable:
                                                                       team_stats[(team.id, team.name)]['games_played']
 
     # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
+    # TODO: Issue1: In a new season there might be a team that had no previous matches...
+    # TODO: Issue2: Prev match getting would currently return last match of 2021 as prev match of first match of 2023...
+    # TODO: ...if the team was not competing in 2022 - unwanted behavior.
+    # TODO: Solution: Probably currently fixing none of these - future features
+
     # TODO: Since table positions are now calculated after all matches loading, calculation can be done without resets
+    # TODO: Solution: Probably currently not fixing - possible future features (it might be faster, but complicated...)
     def calculate_and_get_teams_positions_in_season_up_to_date(self, date):
         # Reset team stats
         self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,

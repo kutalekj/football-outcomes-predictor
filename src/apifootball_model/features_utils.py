@@ -236,9 +236,6 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
 
 # home_elo_rating, away_elo_rating
 def calculate_elo_for_both_teams(curr_match):
-    home_team_prev_match_is_none = False
-    away_team_prev_match_is_none = False
-
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
     # Then get its ELO and goals scored in the previous match
     home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team_id, same_comp=False,
@@ -246,8 +243,6 @@ def calculate_elo_for_both_teams(curr_match):
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
         home_team_prev_match_goals = 0
-
-        home_team_prev_match_is_none = True
     else:
         if home_team_prev_match.home_team_id == curr_match.home_team_id:
             home_team_prev_match_elo = home_team_prev_match.features_before_match_played.home_elo
@@ -265,8 +260,6 @@ def calculate_elo_for_both_teams(curr_match):
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
         away_team_prev_match_goals = 0
-
-        away_team_prev_match_is_none = True
     else:
         if away_team_prev_match.home_team_id == curr_match.away_team_id:
             away_team_prev_match_elo = away_team_prev_match.features_before_match_played.home_elo

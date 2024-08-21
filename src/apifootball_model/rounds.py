@@ -2,7 +2,7 @@
 rounds.py
 
 "Regular" round = a table is maintained for it, contributes to a team position in a table
-(regular season, relegation or championship rounds or Conference league play-off group rounds)
+(regular season, relegation or championship rounds)
 """
 
 import settings

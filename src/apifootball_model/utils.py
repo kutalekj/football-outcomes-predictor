@@ -7,36 +7,6 @@ from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
 from datetime import timedelta
 
-"""
-def get_last_round_of_previous_season(comp, curr_season):
-    prev_season = curr_season - 1
-
-    if prev_season < settings.FIRST_SEASON:
-        return None
-
-    # Last round of previous season equals to the number of rounds up to the last one of the previous season
-    for season_rounds in comp.rounds_per_season:
-        if comp.rounds_per_season['season'] == prev_season:
-            return len(season_rounds['rounds'])
-"""
-
-"""
-# TODO: Currently might not work correctly - for example Relegation Rounds are not played by all teams...
-# TODO: Add boolean attribute for round "covering_all_teams" - for regular rounds containing all teams
-# TODO: ...until still False, keep looking at the previous match
-def get_match_by_comp_season_round_team(comp_id, season, total_round_rank_in_season, team_id):
-    global_instance = Global.get_instance()
-
-    # Get match
-    for match in global_instance.all_matches:
-        if match.comp.id == comp_id and match.season == season and \
-                match.round.total_rank_in_season == total_round_rank_in_season and \
-                (match.home_team_id == team_id or match.away_team_id == team_id):
-            return match
-
-    return None
-"""
-
 
 def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, regular=False):
     team = get_team_if_exists(team_id)
@@ -65,38 +35,6 @@ def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, 
             return get_previous_match(prev_match, team, same_comp, same_season, regular)
 
     return prev_match
-
-
-"""
-def get_previous_match(curr_match, team_id):
-    # Might happen that a match has no previous matches
-    if curr_match is None:
-        return None
-
-    curr_season = curr_match.season
-    curr_round_rank_in_season = curr_match.round.regular_rank_in_season
-
-    # Same season
-    if curr_round_rank_in_season > 1:
-        prev_round_rank_in_season = curr_round_rank_in_season - 1
-        prev_season = curr_season
-
-    # Previous season, last round
-    else:
-        prev_round_rank_in_season = get_last_round_of_previous_season(curr_match.comp, curr_season)
-        prev_season = curr_season - 1
-
-        # Check if not older than the initial season
-        if prev_season < settings.FIRST_SEASON:
-            return None
-
-    prev_match = get_match_by_comp_season_round_team(curr_match.comp.id, prev_season, prev_round_rank_in_season,
-                                                     team_id)
-    if prev_match is None:
-        return None
-    else:
-        return prev_match
-"""
 
 
 def get_last_home_away_match(curr_match, team_id, home_away=None, same_comp=False, same_season=False, regular=False):
