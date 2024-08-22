@@ -13,9 +13,7 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # Init comps and their seasons and rounds
-for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
-             {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []}]:  # TODO: Temporary
-
+for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:  # TODO: Temporary
 # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
@@ -30,7 +28,6 @@ global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: 
 for comp in global_instance.all_comps:
     # Omit the cups - do not create tables for them
     if len(comp.regular_round_keywords) == 0:
-        print(f"_DEBUG_: Skipping tables initialization for comp {comp.name}")
         continue
 
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
@@ -57,12 +54,14 @@ SeasonCompTable.exclude_irregular_teams_from_table_calculations()
 
 # TODO: Add missing statistics by averaging the existing ones
 
-# Calculate features
-for team in global_instance.all_teams:
-    for match in team.matches:
-        match.features_before_match_played = match.calculate_match_features()
-        match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
-            match.features_before_match_played)
+# Calculate features for each match (must be done chronologically asc.!)
+for match in global_instance.all_matches:
+    if match.home_team_name == "Genk" or match.away_team_name == "Genk":
+        stop_here = True
+
+    match.features_before_match_played = match.calculate_match_features()
+    match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
+        match.features_before_match_played)
 
 # TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
 

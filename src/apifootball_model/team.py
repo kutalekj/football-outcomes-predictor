@@ -21,6 +21,9 @@ class Team:
         return hash(self.id)
 
     def get_index_of_match_in_sorted_team_matches_list(self, match):
+        if match is None:
+            return None
+
         team_matches = sorted(self.matches, key=lambda match_: match_.datetime)
 
         for i, match__ in enumerate(team_matches):

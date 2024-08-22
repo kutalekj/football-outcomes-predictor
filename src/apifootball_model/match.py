@@ -207,7 +207,7 @@ class Match:
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
         if len(stats) == 0:
-            if home_away == "home":
+            if home_away == "home" and self.round.is_regular:
                 print(
                     f"Statistics [{stat_name}] missing for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
                 # TODO: Add debug count for missing statistics for each regular team - for knowing how many missing
@@ -237,41 +237,6 @@ class Match:
         else:
             raise ValueError(f"Unsupported statistic value found: {stat_name}")
 
-    # TODO: Some round matches are postponed and played after following round at sometime in the future
-    # TODO: Calculate match features after loading all matches? Or is features calculation invariant to this?
-    # TODO: Debug ELO to find this out. Check rounds orderings
-    # TODO: Try to call endpoint for matches not only by comp and season, but also by rounds (three loops, not two)?
-
-    # TODO: Primarily, matches should be sorted by datetime when played, not rounds
-    # TODO: Rounds might be played in different order for each team
-    # TODO: So, getting previous/next match should not depend on round number - should get new match of a team by date!
-
-    # TODO: DIFFERENT ROUNDS ORDERING FOR EACH TEAM MUST BE SET!!! Each team might play rounds in different order
-    # TODO: 1. Init comps and tables and get matches (do not calculate round ranks or table pos. or features)
-    # TODO: 2. Sort all matches in global_instance.all_matches by datetime asc
-    # TODO: 3. Each match should add pointer to a previous match for both teams (or to a next one as well?)...
-    # TODO: 3C. No no, here, distribute matches between teams
-    # TODO: ...(maybe to both a  previous match and a previous regular match) and calculate round ranks for both teams
-    # TODO: 4C, No no, round ranking not needed to specify - it corresponds to the rank (regular) of match in the list
-    # TODO: 4. After round correctly ranked for each team, calculate table position, and features, for each match
-    # TODO: Then, when a new match comes some day, it is appended to the sorted matches list all_matches, connected...
-    # TODO: ...to a previous match for both teams involved and his round ranks are calculated based on its previous...
-    # TODO: ...matches. Finally, features before match played are calculated for it and it is passed to model training.
-    # TODO: Note that if bidirectional matches connection, do not forget to update the neighbours pointers too each time
-    # TODO: Fortunately, if doing this correctly, getting prev and next matches should be easy, without loops
-    # TODO: Note that maybe the round name should be added to the Match ctor so that each match is uniquely initialized
-    # TODO: No no, this is ment for features, not matches, and it is not needed.
-    # TODO: Note that after implementing get_match_by_comp_season_round_team following this scheme, the...
-    # TODO: ...get_teams_involved method for each round will not be needed...
-    # TODO: ...(it was used for knowing which round is played by all comp season teams) :)
-    # TODO: Note that if will need method get_all_matches_of_round the matches (only the already played ones) might...
-    # TODO: ...by found by comp, season and round name (instead of rank) - but risking that some matches not played yet
-    # TODO: Add-note - the method get_all_matches_of_round was needed for get_teams_involved - so not needed now :)
-    # TODO: Note that similarly if will need method get_all_regular_matches_in_season_up_to_round the matches...
-    # TODO: ...(again, only the already played ones - create flag for round_finished?) might be found by iterating...
-    # TODO: ...to the past over previous matches of season comp for each team (and then set(list())) - but similarly,...
-    # TODO: ...risking that some matches were not played. This method will be probably needed in some shape, because...
-    # TODO: ...it is needed for table re-calculation
     def calculate_match_features(self):
         new_match_features = MatchFeatures(self.comp.id, self.season, self.round.name, self.home_team_id,
                                            self.away_team_id)
@@ -330,9 +295,9 @@ class Match:
         if self.round.is_regular:
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
             new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team_id,
-                                                                                                      self.round)
+                                                                                                      self.datetime)
             new_match_features.away_curr_position = table.get_curr_team_position_in_season_up_to_date(self.away_team_id,
-                                                                                                      self.round)
+                                                                                                      self.datetime)
         else:
             new_match_features.home_curr_position = -1
             new_match_features.away_curr_position = -1

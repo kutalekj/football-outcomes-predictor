@@ -72,9 +72,11 @@ class SeasonCompTable:
                 self.team_stats[(away_team_id, away_team_name)]['points'] += 1.0
 
         # Normalize points (some teams might have more matches played up to a certain date)
-        for team, team_stats in zip(self.teams, self.team_stats):
-            team_stats[(team.id, team.name)]['avg_points_per_game'] = team_stats[(team.id, team.name)]['points'] / \
-                                                                      team_stats[(team.id, team.name)]['games_played']
+        for team in self.teams:
+            self.team_stats[(team.id, team.name)]['avg_points_per_game'] = \
+                self.team_stats[(team.id, team.name)]['points'] / \
+                self.team_stats[(team.id, team.name)]['games_played'] \
+                if self.team_stats[(team.id, team.name)]['games_played'] > 0 else 0.0
 
     # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
     # TODO: Issue1: In a new season there might be a team that had no previous matches...
@@ -96,10 +98,9 @@ class SeasonCompTable:
         self.update_table(regular_matches_up_to_date)
 
         sorted_teams = sorted(self.teams, key=lambda team: (
-            self.team_stats[(team['id'], team['name'])]['avg_points_per_game'],
-            self.team_stats[(team['id'], team['name'])]['goals_for'] - self.team_stats[(team['id'], team['name'])][
-                'goals_against'],
-            self.team_stats[(team['id'], team['name'])]['goals_for']), reverse=True)
+            self.team_stats[(team.id, team.name)]['avg_points_per_game'],
+            self.team_stats[(team.id, team.name)]['goals_for'] - self.team_stats[(team.id, team.name)]['goals_against'],
+            self.team_stats[(team.id, team.name)]['goals_for']), reverse=True)
 
         return sorted_teams
 
@@ -107,7 +108,7 @@ class SeasonCompTable:
         sorted_teams = self.calculate_and_get_teams_positions_in_season_up_to_date(date)
 
         for position, team in enumerate(sorted_teams, start=1):
-            if team['id'] == team_id:
+            if team.id == team_id:
                 return position
         return None
 

@@ -22,16 +22,22 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
             prev_match = ut.get_previous_match(new_curr_match, new_curr_match.home_team_id, same_comp=False,
                                                same_season=False, regular=False)
 
+            if prev_match is None:
+                break
+
             if ut.is_match_within_days(curr_match.datetime, prev_match.datetime, n):
                 num_matches += 1
                 new_curr_match = prev_match
             else:
                 break
 
-    elif home_away == "else":
+    elif home_away == "away":
         while True:
             prev_match = ut.get_previous_match(new_curr_match, new_curr_match.away_team_id, same_comp=False,
                                                same_season=False, regular=False)
+
+            if prev_match is None:
+                break
 
             if ut.is_match_within_days(curr_match.datetime, prev_match.datetime, n):
                 num_matches += 1
@@ -273,6 +279,7 @@ def calculate_elo_for_both_teams(curr_match):
     expected_score_home_team = 1.0 / (1.0 + (ELO_C ** ((away_team_prev_match_elo - home_team_prev_match_elo) / ELO_D)))
     expected_score_away_team = 1.0 - expected_score_home_team
 
+    # TODO: Check this winning/losing implementation - isn't it wrong?
     if home_team_prev_match_goals > away_team_prev_match_goals:
         alpha_home = 1
         alpha_away = 0

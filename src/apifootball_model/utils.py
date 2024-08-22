@@ -14,7 +14,7 @@ def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, 
     curr_match_idx = team.get_index_of_match_in_sorted_team_matches_list(curr_match)
 
     # A first match has no previous matches
-    if curr_match_idx == 0:
+    if curr_match_idx == 0 or curr_match_idx is None:
         return None
 
     prev_match = team.matches[curr_match_idx - 1]
@@ -147,7 +147,7 @@ def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     matches_up_to_date = []
     for team in curr_season_table.teams:
         # Get only regular match up to the wanted date
-        team_matches = [match for match in team.matches if match.datetime < date and not match.round.is_regular]
+        team_matches = [match for match in team.matches if match.datetime < date and match.round.is_regular]
 
         matches_up_to_date += team_matches
 
