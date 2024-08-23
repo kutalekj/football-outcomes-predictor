@@ -55,6 +55,7 @@ SeasonCompTable.exclude_irregular_teams_from_table_calculations()
 # TODO: Add missing statistics by averaging the existing ones
 
 # Calculate features for each match (must be done chronologically asc.!)
+global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
 for match in global_instance.all_matches:
     if match.home_team_name == "Genk" or match.away_team_name == "Genk":
         stop_here = True

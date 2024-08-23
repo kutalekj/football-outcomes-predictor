@@ -3,7 +3,7 @@ feature_utils.py
 """
 
 import utils as ut
-from settings import INIT_ELO
+from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -85,7 +85,7 @@ def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if n - total_none_values == 0:
         return 0
 
-    return total_points / (n - total_none_values)
+    return float(total_points / (n - total_none_values))
 
 
 # home_avg_goals_last_5, home_avg_goals_last_20
@@ -129,7 +129,7 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if n - total_none_values == 0:
         return 0
 
-    return total_goals / (n - total_none_values)
+    return float(total_goals / (n - total_none_values))
 
 
 # home_avg_shots_on_target_last_5, home_avg_shots_on_target_last_20
@@ -173,7 +173,7 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
     if n - total_none_values == 0:
         return 0
 
-    return total_shots_on_target / (n - total_none_values)
+    return float(total_shots_on_target / (n - total_none_values))
 
 
 # home_avg_goals_scored_home_last_5, home_avg_goals_scored_home_last_20
@@ -237,58 +237,55 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
     if n - total_none_values == 0:
         return 0
 
-    return total_goals / (n - total_none_values)
+    return float(total_goals / (n - total_none_values))
 
 
 # home_elo_rating, away_elo_rating
 def calculate_elo_for_both_teams(curr_match):
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
-    # Then get its ELO and goals scored in the previous match
+    # Then get its ELO in the previous match
     home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team_id, same_comp=False,
                                                  same_season=False, regular=False)
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
-        home_team_prev_match_goals = 0
     else:
         if home_team_prev_match.home_team_id == curr_match.home_team_id:
             home_team_prev_match_elo = home_team_prev_match.features_before_match_played.home_elo
-            home_team_prev_match_goals = home_team_prev_match.home_team_goals
         elif home_team_prev_match.away_team_id == curr_match.home_team_id:
             home_team_prev_match_elo = home_team_prev_match.features_before_match_played.away_elo
-            home_team_prev_match_goals = home_team_prev_match.away_team_goals
         else:
             raise Exception("Current home team not found in its previous match. This should never happen.")
 
     # Get previous match of currently AWAY team and find out if it was home or away team in that previous match
-    # Then get its ELO and goals scored in the previous match
+    # Then get its ELO in the previous match
     away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team_id, same_comp=False,
                                                  same_season=False, regular=False)
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
-        away_team_prev_match_goals = 0
     else:
         if away_team_prev_match.home_team_id == curr_match.away_team_id:
             away_team_prev_match_elo = away_team_prev_match.features_before_match_played.home_elo
-            away_team_prev_match_goals = away_team_prev_match.home_team_goals
         elif away_team_prev_match.away_team_id == curr_match.away_team_id:
             away_team_prev_match_elo = away_team_prev_match.features_before_match_played.away_elo
-            away_team_prev_match_goals = away_team_prev_match.away_team_goals
         else:
             raise Exception("Current away team not found in its previous match. This should never happen.")
 
     expected_score_home_team = 1.0 / (1.0 + (ELO_C ** ((away_team_prev_match_elo - home_team_prev_match_elo) / ELO_D)))
     expected_score_away_team = 1.0 - expected_score_home_team
 
-    # TODO: Check this winning/losing implementation - isn't it wrong?
-    if home_team_prev_match_goals > away_team_prev_match_goals:
+    if home_team_prev_match is None or home_team_prev_match.winner_team_id == WINNER_TEAM_ID_CODE_FOR_DRAW:
+        alpha_home = 0.5
+    elif home_team_prev_match.winner_team_id == curr_match.home_team_id:
         alpha_home = 1
-        alpha_away = 0
-    elif home_team_prev_match_goals < away_team_prev_match_goals:
+    else:
         alpha_home = 0
+
+    if away_team_prev_match is None or away_team_prev_match.winner_team_id == WINNER_TEAM_ID_CODE_FOR_DRAW:
+        alpha_away = 0.5
+    elif away_team_prev_match.winner_team_id == curr_match.away_team_id:
         alpha_away = 1
     else:
-        alpha_home = 0.5
-        alpha_away = 0.5
+        alpha_away = 0
 
     home_team_new_elo = home_team_prev_match_elo + ELO_K * (alpha_home - expected_score_home_team)
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)

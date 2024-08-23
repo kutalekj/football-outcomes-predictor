@@ -146,8 +146,9 @@ def get_n_previous_matches(n, curr_match, team_id, home_away=None, same_comp=Fal
 def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     matches_up_to_date = []
     for team in curr_season_table.teams:
-        # Get only regular match up to the wanted date
-        team_matches = [match for match in team.matches if match.datetime < date and match.round.is_regular]
+        # Get only regular matches up to the wanted date (from the current season)
+        team_matches = [match for match in team.matches if
+                        match.season == curr_season_table.season and match.datetime < date and match.round.is_regular]
 
         matches_up_to_date += team_matches
 

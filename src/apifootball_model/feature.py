@@ -41,15 +41,15 @@ class MatchFeatures:
         self.home_curr_position = None
         self.away_curr_position = None
 
-        self.home_avg_goals_scored_home_last_5 = None
-        self.home_avg_goals_scored_home_last_20 = None
-        self.away_avg_goals_scored_home_last_5 = None
-        self.away_avg_goals_scored_home_last_20 = None
+        self.home_avg_goals_scored_home_last_5 = 0
+        self.home_avg_goals_scored_home_last_20 = 0
+        self.away_avg_goals_scored_home_last_5 = 0
+        self.away_avg_goals_scored_home_last_20 = 0
 
-        self.home_avg_goals_conceded_home_last_5 = None
-        self.home_avg_goals_conceded_home_last_20 = None
-        self.away_avg_goals_conceded_home_last_5 = None
-        self.away_avg_goals_conceded_home_last_20 = None
+        self.home_avg_goals_conceded_home_last_5 = 0
+        self.home_avg_goals_conceded_home_last_20 = 0
+        self.away_avg_goals_conceded_home_last_5 = 0
+        self.away_avg_goals_conceded_home_last_20 = 0
 
     @staticmethod
     def match_features_to_vector(match_features):
