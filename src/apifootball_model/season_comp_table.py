@@ -97,6 +97,7 @@ class SeasonCompTable:
         # Update the table with matches up to the wanted date
         self.update_table(regular_matches_up_to_date)
 
+        # TODO: Adj.: Team with equal sorting might get same position (e.g. 1st position for all teams before season)
         sorted_teams = sorted(self.teams, key=lambda team: (
             self.team_stats[(team.id, team.name)]['avg_points_per_game'],
             self.team_stats[(team.id, team.name)]['goals_for'] - self.team_stats[(team.id, team.name)]['goals_against'],

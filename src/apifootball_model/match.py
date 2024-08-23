@@ -103,6 +103,7 @@ class Match:
 
                     new_match.status = fixture['fixture']['status']['short']
                     if new_match.status not in ["FT", "AET", "PEN"]:
+
                         if new_match.status in ["Canc", "CANC"]:
                             print(
                                 f"Canceled match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
@@ -121,6 +122,11 @@ class Match:
                         if new_match.status == "TBD":
                             print(
                                 f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} not scheduled yet - to be played")
+                            continue
+
+                        if new_match.status == "WO":
+                            print(
+                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was not played - WalkOver")
                             continue
 
                         print(f"WARNING: Match {new_match.id} not finished")
@@ -223,13 +229,13 @@ class Match:
             if home_away == "home":
                 for statistic in stats[0]['statistics']:
                     if statistic['type'] == stat_name:
-                        return statistic['value']
+                        return statistic['value'] if statistic['value'] is not None else -1
 
             # Away team
             elif home_away == "away":
                 for statistic in stats[1]['statistics']:
                     if statistic['type'] == stat_name:
-                        return statistic['value']
+                        return statistic['value'] if statistic['value'] is not None else -1
 
             else:
                 raise ValueError("The \"home_away\" parameter set to a wrong value.")
