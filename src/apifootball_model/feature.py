@@ -5,10 +5,10 @@ feature.py
 
 # TODO: Relativize features (only Elo, or comp_id, season, ... as well?)
 class MatchFeatures:
-    def __init__(self, comp_id, season, round_, home_team_id, away_team_id):
+    def __init__(self, comp_id, season, relative_match_position, home_team_id, away_team_id):
         self.comp_id = comp_id
         self.season = season
-        self.round = round_
+        self.relative_match_position = relative_match_position
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
 

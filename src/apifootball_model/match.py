@@ -7,7 +7,7 @@ import csv
 import http.client
 import json
 from dateutil.parser import parse
-from datetime import datetime
+from datetime import datetime, timedelta
 import settings
 import utils as ut
 import time
@@ -22,27 +22,28 @@ class Match:
         self.status = None
 
         self.datetime = None
-        self.hour = None  # feature
-        self.month = None  # feature
+        self.hour = None
+        self.month = None
 
         self.country = None
-        self.comp = None  # feature src
-        self.season = None  # feature
-        self.round = None  # feature src
+        self.comp = None
+        self.season = None
+        self.round = None
+        self.relative_position_in_comp_season = None
 
-        self.home_team_id = None  # feature
+        self.home_team_id = None
         self.home_team_name = None
-        self.away_team_id = None  # feature
+        self.away_team_id = None
         self.away_team_name = None
 
         self.winner_team_id = None
-        self.home_team_goals = None  # feature src
-        self.away_team_goals = None  # feature src
-        self.home_team_points = None  # feature src
-        self.away_team_points = None  # feature src
+        self.home_team_goals = None
+        self.away_team_goals = None
+        self.home_team_points = None
+        self.away_team_points = None
 
-        self.home_team_shots_on_target = None  # feature src
-        self.away_team_shots_on_target = None  # feature src
+        self.home_team_shots_on_target = None
+        self.away_team_shots_on_target = None
 
         self.features_before_match_played = None
         self.feature_vector_before_match_played = None
@@ -155,6 +156,11 @@ class Match:
                     if new_match.round is None:
                         raise ValueError(f"Unable to get round for the match {str(new_match.id)}")
 
+                    new_match.relative_position_in_comp_season = \
+                        new_match.calculate_relative_match_position_is_comp_season(comp, season)
+                    if new_match.relative_position_in_comp_season is None:
+                        raise ValueError(f"Unable to get relative position of match in {str(season)} {comp.name}")
+
                     # Home team
                     new_match.home_team_id = int(fixture['teams']['home']['id'])
                     new_match.home_team_name = fixture['teams']['home']['name']
@@ -243,9 +249,29 @@ class Match:
         else:
             raise ValueError(f"Unsupported statistic value found: {stat_name}")
 
+    def calculate_relative_match_position_is_comp_season(self, comp, season):
+        for comp_season_info in comp.start_end_dates_per_season:
+            if comp_season_info['season'] == season:
+
+                start_date = comp_season_info['start'].replace(tzinfo=self.datetime.tzinfo)
+                end_date = comp_season_info['end'].replace(tzinfo=self.datetime.tzinfo)
+
+                if start_date <= self.datetime <= end_date:
+                    season_length = (end_date - start_date).days
+                    days_into_season = (self.datetime - start_date).days
+                    relative_position = days_into_season / season_length
+
+                    return relative_position
+
+                # Case for matches finishing e.g. one day after the regular season end date
+                elif start_date <= self.datetime <= end_date + timedelta(days=7):
+                    return settings.ALMOST_ONE
+
+        return None
+
     def calculate_match_features(self):
-        new_match_features = MatchFeatures(self.comp.id, self.season, self.round.name, self.home_team_id,
-                                           self.away_team_id)
+        new_match_features = MatchFeatures(self.comp.id, self.season, self.relative_position_in_comp_season,
+                                           self.home_team_id, self.away_team_id)
 
         new_match_features.hours = self.hour
         new_match_features.month = self.month

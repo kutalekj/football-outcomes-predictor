@@ -5,7 +5,7 @@ utils.py
 import settings
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, regular=False):

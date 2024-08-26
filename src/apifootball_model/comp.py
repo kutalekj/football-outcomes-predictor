@@ -60,7 +60,8 @@ class Comp:
             if start_date_str is None or end_date_str is None:
                 raise ValueError(f"Unable to found corresponding season ([{season}] for comp {self.name})")
 
-            self.start_end_dates_per_season.append({'season': season, 'start': parse(start_date_str), 'end': parse(end_date_str)})
+            self.start_end_dates_per_season.append({'season': season, 'start': parse(start_date_str),
+                                                    'end': parse(end_date_str)})
 
             # Teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
