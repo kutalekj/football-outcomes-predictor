@@ -290,4 +290,9 @@ def calculate_elo_for_both_teams(curr_match):
     home_team_new_elo = home_team_prev_match_elo + ELO_K * (alpha_home - expected_score_home_team)
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)
 
-    return home_team_new_elo, away_team_new_elo
+    return normalize_elo(home_team_new_elo), normalize_elo(away_team_new_elo)
+
+
+def normalize_elo(elo, min_elo=1000, max_elo=2000):
+    normalized_elo = (elo - min_elo) / (max_elo - min_elo)
+    return normalized_elo

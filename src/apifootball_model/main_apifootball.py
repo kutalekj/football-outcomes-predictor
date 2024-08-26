@@ -64,12 +64,6 @@ for match in global_instance.all_matches:
     match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
         match.features_before_match_played)
 
-    # DEBUG
-    if match.home_team_name == "Genk":
-        print(str(match.features_before_match_played.home_curr_position))
-    elif match.away_team_name == "Genk":
-        print(str(match.features_before_match_played.away_curr_position))
-
 # TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
 
 
