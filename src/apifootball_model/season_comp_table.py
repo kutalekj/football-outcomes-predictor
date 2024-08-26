@@ -108,10 +108,13 @@ class SeasonCompTable:
     def get_curr_team_position_in_season_up_to_date(self, team_id, date):
         sorted_teams = self.calculate_and_get_teams_positions_in_season_up_to_date(date)
 
+        # Get relative position (1.0 as the best, 0.0 as the worst!)
         for position, team in enumerate(sorted_teams, start=1):
             if team.id == team_id:
-                return position
-        return None
+                return 1.0 - (position / len(self.teams))
+
+        raise Exception(f"Unable to calculate team [{str(team_id)}] position in the current comp season "
+                        f"[{self.comp_name}, {str(self.season)}]")
 
     @staticmethod
     def exclude_irregular_teams_from_table_calculations():
