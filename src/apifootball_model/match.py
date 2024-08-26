@@ -373,4 +373,13 @@ class Match:
             print(f"{self.datetime}: {self.comp.name}, {self.season}, {self.round.name}")
             print(f"{self.home_team_name} {self.home_team_goals} ({self.home_team_shots_on_target}) - {self.away_team_name} {self.away_team_goals} ({self.away_team_shots_on_target})")
 
+        # DEBUG
+        global_instance = Global.get_instance()
+        global_instance.all_avg_goals.append(new_match_features.home_avg_goals_last_5)
+        global_instance.all_avg_goals.append(new_match_features.away_avg_goals_last_5)
+        global_instance.all_avg_points.append(new_match_features.home_avg_points_last_5)
+        global_instance.all_avg_points.append(new_match_features.away_avg_points_last_5)
+        global_instance.all_avg_shots_on_goal.append(new_match_features.home_avg_points_last_5)
+        global_instance.all_avg_shots_on_goal.append(new_match_features.away_avg_points_last_5)
+
         return new_match_features

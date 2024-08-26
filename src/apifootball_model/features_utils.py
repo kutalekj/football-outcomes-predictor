@@ -2,6 +2,7 @@
 feature_utils.py
 """
 
+import numpy as np
 import utils as ut
 from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW
 
@@ -85,7 +86,8 @@ def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if n - total_none_values == 0:
         return 0
 
-    return float(total_points / (n - total_none_values))
+    avg_points = float(total_points / (n - total_none_values))
+    return normalize_points(avg_points)
 
 
 # home_avg_goals_last_5, home_avg_goals_last_20
@@ -129,7 +131,8 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if n - total_none_values == 0:
         return 0
 
-    return float(total_goals / (n - total_none_values))
+    avg_goals = float(total_goals / (n - total_none_values))
+    return normalize_goals(avg_goals)
 
 
 # home_avg_shots_on_target_last_5, home_avg_shots_on_target_last_20
@@ -173,7 +176,8 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
     if n - total_none_values == 0:
         return 0
 
-    return float(total_shots_on_target / (n - total_none_values))
+    avg_shots_on_target = float(total_shots_on_target / (n - total_none_values))
+    return normalize_sog(avg_shots_on_target)
 
 
 # home_avg_goals_scored_home_last_5, home_avg_goals_scored_home_last_20
@@ -237,7 +241,8 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
     if n - total_none_values == 0:
         return 0
 
-    return float(total_goals / (n - total_none_values))
+    avg_goals_scored_conceded = float(total_goals / (n - total_none_values))
+    return normalize_goals(avg_goals_scored_conceded)
 
 
 # home_elo_rating, away_elo_rating
@@ -296,3 +301,15 @@ def calculate_elo_for_both_teams(curr_match):
 def normalize_elo(elo, min_elo=1000, max_elo=2000):
     normalized_elo = (elo - min_elo) / (max_elo - min_elo)
     return normalized_elo
+
+
+def normalize_points(points):
+    return points / 3.0
+
+
+def normalize_goals(goals):
+    return ut.min_max_scaling_with_clipping(goals, 4.68)
+
+
+def normalize_sog(sog):
+    return ut.min_max_scaling_with_clipping(sog, 4.03)

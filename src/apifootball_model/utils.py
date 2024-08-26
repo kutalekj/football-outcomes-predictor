@@ -2,6 +2,7 @@
 utils.py
 """
 
+import numpy as np
 import settings
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
@@ -180,3 +181,8 @@ def is_match_within_days(curr_datetime, match_datetime, n):
     time_difference = curr_datetime - match_datetime
 
     return time_difference <= timedelta(days=n)
+
+
+def min_max_scaling_with_clipping(value, max_value):
+    scaled_value = value / max_value
+    return np.clip(scaled_value, 0, 1)
