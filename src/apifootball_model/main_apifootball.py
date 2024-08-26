@@ -12,11 +12,8 @@ from globals import Global
 
 global_instance = Global.get_instance()
 
-# Init comps and their seasons and rounds
-for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
-             {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
-             {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
-             {'id': 147, 'name': "Cup", 'regular_round_keywords': []}]:  # TODO: Temporary
+# 1. Init comps and their seasons and rounds
+for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:  # TODO: Temporary
 # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
@@ -27,7 +24,7 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords':
     global_instance.all_comps.append(new_comp)
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
-# Init tables for comp seasons
+# 2. Init tables for comp seasons
 for comp in global_instance.all_comps:
     # Omit the cups - do not create tables for them
     if len(comp.regular_round_keywords) == 0:
@@ -41,7 +38,7 @@ for comp in global_instance.all_comps:
 
         global_instance.all_tables.append(new_table)
 
-# Get matches
+# 3. Get matches
 global_instance.all_matches = Match.load_existing_matches()
 Match.get_new_matches_data_using_api()
 
@@ -55,11 +52,11 @@ for team in global_instance.all_teams:
 # Exclude irregular teams from tables calculation
 SeasonCompTable.exclude_irregular_teams_from_table_calculations()
 
-# TODO: Add missing statistics by averaging the existing ones
-
-# Calculate features for each match (must be done chronologically asc.!)
+# 4. Calculate features for each match (must be done chronologically asc.!)
 global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
 for match in global_instance.all_matches:
+
+    # DEBUG
     if match.home_team_name == "Genk" or match.away_team_name == "Genk":
         stop_here = True
 

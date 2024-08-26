@@ -215,9 +215,9 @@ class Match:
         if len(stats) == 0:
             if home_away == "home" and self.round.is_regular:
                 print(
-                    f"Statistics [{stat_name}] missing for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
-                # TODO: Add debug count for missing statistics for each regular team - for knowing how many missing
-            return -1
+                    f"Statistics [{stat_name}] estimated for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
+
+            return feature_ut.get_avg_shots_on_target_last_n(self, 5, home_away)
 
         if len(stats) != 2:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."

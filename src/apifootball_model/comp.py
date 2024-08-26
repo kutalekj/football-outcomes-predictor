@@ -7,6 +7,7 @@ import json
 import settings
 import rounds
 from team import Team
+from dateutil.parser import parse
 from globals import Global
 import utils as ut
 
@@ -22,6 +23,7 @@ class Comp:
         self.regular_round_keywords = regular_keywords
 
         self.teams_per_season = []
+        self.start_end_dates_per_season = []
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
@@ -37,7 +39,30 @@ class Comp:
     def init_teams_in_comp(self):
         global_instance = Global.get_instance()
 
+        # Init teams + get start/end date of each comp season
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+
+            # Season start/end date
+            request_string = "/leagues?id=" + str(self.id) + "&season=" + str(season)
+
+            self.conn.request("GET", request_string, headers=settings.HEADERS)
+
+            res = self.conn.getresponse()
+            data = res.read()
+
+            data_comp_season = json.loads(data)
+
+            start_date_str = data_comp_season['response'][0]['seasons'][0]['start'] if \
+                data_comp_season['response'][0]['seasons'][0]['year'] == season else None
+            end_date_str = data_comp_season['response'][0]['seasons'][0]['end'] if \
+                data_comp_season['response'][0]['seasons'][0]['year'] == season else None
+
+            if start_date_str is None or end_date_str is None:
+                raise ValueError(f"Unable to found corresponding season ([{season}] for comp {self.name})")
+
+            self.start_end_dates_per_season.append({'season': season, 'start': parse(start_date_str), 'end': parse(end_date_str)})
+
+            # Teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
 
             self.conn.request("GET", request_string, headers=settings.HEADERS)
