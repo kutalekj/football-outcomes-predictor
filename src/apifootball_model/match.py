@@ -267,6 +267,10 @@ class Match:
                 elif start_date <= self.datetime <= end_date + timedelta(days=7):
                     return settings.ALMOST_ONE
 
+                # Case for matches finishing e.g. one day before the regular season start date
+                elif start_date <= self.datetime + timedelta(days=7) <= end_date:
+                    return settings.ZERO
+
         return None
 
     def calculate_match_features(self):
@@ -379,7 +383,7 @@ class Match:
         global_instance.all_avg_goals.append(new_match_features.away_avg_goals_last_5)
         global_instance.all_avg_points.append(new_match_features.home_avg_points_last_5)
         global_instance.all_avg_points.append(new_match_features.away_avg_points_last_5)
-        global_instance.all_avg_shots_on_goal.append(new_match_features.home_avg_points_last_5)
-        global_instance.all_avg_shots_on_goal.append(new_match_features.away_avg_points_last_5)
+        global_instance.all_avg_shots_on_goal.append(new_match_features.home_avg_shots_on_target_last_5)
+        global_instance.all_avg_shots_on_goal.append(new_match_features.away_avg_shots_on_target_last_5)
 
         return new_match_features
