@@ -14,7 +14,7 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
-for comp in [{'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']}]:
+for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:
 # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
@@ -66,16 +66,4 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
-
-print(f"Avg points = {str(np.mean(np.asarray(global_instance.all_avg_points)))}")
-print(f"Variance points = {str(np.var(np.asarray(global_instance.all_avg_points)))}")
-print(f"StdDev points = {str(np.std(np.asarray(global_instance.all_avg_points)))}")
-
-print(f"Avg goals = {str(np.mean(np.asarray(global_instance.all_avg_goals)))}")
-print(f"Variance goals = {str(np.var(np.asarray(global_instance.all_avg_goals)))}")
-print(f"StdDev goals = {str(np.std(np.asarray(global_instance.all_avg_goals)))}")
-
-print(f"Avg SoG = {str(np.mean(np.asarray(global_instance.all_avg_shots_on_goal)))}")
-print(f"Variance SoG = {str(np.var(np.asarray(global_instance.all_avg_shots_on_goal)))}")
-print(f"StdDev SoG = {str(np.std(np.asarray(global_instance.all_avg_shots_on_goal)))}")
 print("breakpoint")

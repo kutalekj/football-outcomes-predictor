@@ -308,8 +308,8 @@ def normalize_points(points):
 
 
 def normalize_goals(goals):
-    return ut.min_max_scaling_with_clipping(goals, 4.68)
+    return ut.min_max_scaling_with_clipping(goals, 5.19)
 
 
 def normalize_sog(sog):
-    return ut.min_max_scaling_with_clipping(sog, 4.03)
+    return ut.min_max_scaling_with_clipping(sog, 11.85)

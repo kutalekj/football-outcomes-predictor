@@ -10,10 +10,6 @@ class Global:
             cls._instance.all_tables = []
             cls._instance.all_teams = []
 
-            cls._instance.all_avg_points = []
-            cls._instance.all_avg_goals = []
-            cls._instance.all_avg_shots_on_goal = []
-
         return cls._instance
 
     @classmethod
