@@ -67,7 +67,4 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
-print(f"Avg matches = {str(np.mean(np.asarray(global_instance.all_match_loads)))}")
-print(f"Variance matches = {str(np.var(np.asarray(global_instance.all_match_loads)))}")
-print(f"StdDev matches = {str(np.std(np.asarray(global_instance.all_match_loads)))}")
 print("breakpoint")

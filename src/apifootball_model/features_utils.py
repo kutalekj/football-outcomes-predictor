@@ -48,7 +48,8 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
 
-    return float(num_matches) / n
+    match_load = float(num_matches) / n
+    return normalize_match_loads(match_load)
 
 
 # home_team_points_avg_last_5, home_team_points_avg_last_20
@@ -316,3 +317,7 @@ def normalize_goals(goals):
 
 def normalize_sog(sog):
     return ut.min_max_scaling_with_clipping(sog, 11.85)
+
+
+def normalize_match_loads(match_loads):
+    return ut.min_max_scaling_with_clipping(match_loads, 0.246)

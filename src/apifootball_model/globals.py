@@ -10,8 +10,6 @@ class Global:
             cls._instance.all_tables = []
             cls._instance.all_teams = []
 
-            cls._instance.all_match_loads = []
-
         return cls._instance
 
     @classmethod

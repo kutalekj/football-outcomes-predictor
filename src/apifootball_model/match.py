@@ -286,18 +286,14 @@ class Match:
         (new_match_features.home_elo, new_match_features.away_elo) = \
             feature_ut.calculate_elo_for_both_teams(self)
 
-        new_match_features.home_match_load_per_day_last_10_days = feature_ut.get_match_load_per_day_last_n(self, 10,
-                                                                                                           "home")
-        new_match_features.home_match_load_per_day_last_25_days = feature_ut.get_match_load_per_day_last_n(self, 25,
-                                                                                                           "home")
-        new_match_features.away_match_load_per_day_last_10_days = feature_ut.get_match_load_per_day_last_n(self, 10,
-                                                                                                           "away")
-        new_match_features.away_match_load_per_day_last_25_days = feature_ut.get_match_load_per_day_last_n(self, 25,
-                                                                                                           "away")
-
-        global_instance = Global.get_instance()
-        global_instance.all_match_loads.append(new_match_features.home_match_load_per_day_last_10_days)
-        global_instance.all_match_loads.append(new_match_features.away_match_load_per_day_last_10_days)
+        new_match_features.home_match_load_per_day_last_10_days = \
+            1.0 - feature_ut.get_match_load_per_day_last_n(self, 10, "home")
+        new_match_features.home_match_load_per_day_last_25_days = \
+            1.0 - feature_ut.get_match_load_per_day_last_n(self, 25, "home")
+        new_match_features.away_match_load_per_day_last_10_days = \
+            1.0 - feature_ut.get_match_load_per_day_last_n(self, 10, "away")
+        new_match_features.away_match_load_per_day_last_25_days = \
+            1.0 - feature_ut.get_match_load_per_day_last_n(self, 25, "away")
 
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")
