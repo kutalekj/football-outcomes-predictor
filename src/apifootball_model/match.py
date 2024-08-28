@@ -31,10 +31,8 @@ class Match:
         self.round = None
         self.relative_position_in_comp_season = None
 
-        self.home_team_id = None
-        self.home_team_name = None
-        self.away_team_id = None
-        self.away_team_name = None
+        self.home_team = None
+        self.away_team = None
 
         self.winner_team_id = None
         self.home_team_goals = None
@@ -162,27 +160,29 @@ class Match:
                         raise ValueError(f"Unable to get relative position of match in {str(season)} {comp.name}")
 
                     # Home team
-                    new_match.home_team_id = int(fixture['teams']['home']['id'])
-                    new_match.home_team_name = fixture['teams']['home']['name']
+                    home_team_id = int(fixture['teams']['home']['id'])
 
-                    home_team = ut.get_team_if_exists(new_match.home_team_id)
+                    home_team = ut.get_team_if_exists(home_team_id)
                     if home_team is None:
-                        raise Exception(f"Failed to find a home team {new_match.home_team_name} to assign a match.")
+                        raise Exception(f"Failed to find a home team with ID {home_team_id} to assign a match.")
+
+                    new_match.home_team = home_team
                     home_team.matches.append(new_match)
 
                     # Away team
-                    new_match.away_team_id = int(fixture['teams']['away']['id'])
-                    new_match.away_team_name = fixture['teams']['away']['name']
+                    away_team_id = int(fixture['teams']['away']['id'])
 
-                    away_team = ut.get_team_if_exists(new_match.away_team_id)
+                    away_team = ut.get_team_if_exists(away_team_id)
                     if away_team is None:
-                        raise Exception(f"Failed to find a home team {new_match.away_team_name} to assign a match.")
+                        raise Exception(f"Failed to find a home team with ID {away_team_id} to assign a match.")
+
+                    new_match.away_team = away_team
                     away_team.matches.append(new_match)
 
                     if bool(fixture['teams']['home']['winner']) and not bool(fixture['teams']['away']['winner']):
-                        new_match.winner_team_id = new_match.home_team_id
+                        new_match.winner_team_id = new_match.home_team.id
                     elif not bool(fixture['teams']['home']['winner']) and bool(fixture['teams']['away']['winner']):
-                        new_match.winner_team_id = new_match.away_team_id
+                        new_match.winner_team_id = new_match.away_team.id
                     else:
                         new_match.winner_team_id = settings.WINNER_TEAM_ID_CODE_FOR_DRAW
 
@@ -221,7 +221,7 @@ class Match:
         if len(stats) == 0:
             if home_away == "home" and self.round.is_regular:
                 print(
-                    f"Statistics [{stat_name}] estimated for a match between {self.home_team_name} and {self.away_team_name} played at {self.datetime}")
+                    f"Statistics [{stat_name}] estimated for a match between {self.home_team.name} and {self.away_team.name} played at {self.datetime}")
 
             return feature_ut.get_avg_shots_on_target_last_n(self, 5, home_away)
 
@@ -275,7 +275,7 @@ class Match:
 
     def calculate_match_features(self):
         new_match_features = MatchFeatures(self.comp.id, self.season, self.relative_position_in_comp_season,
-                                           self.home_team_id, self.away_team_id)
+                                           self.home_team.id, self.away_team.id)
 
         new_match_features.hours = self.hour
         new_match_features.month = self.month
@@ -330,17 +330,17 @@ class Match:
         # Current position in a table (if regular match, -1 otherwise)
         if self.round.is_regular:
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
-            new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team_id,
+            new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team.id,
                                                                                                       self.datetime)
-            new_match_features.away_curr_position = table.get_curr_team_position_in_season_up_to_date(self.away_team_id,
+            new_match_features.away_curr_position = table.get_curr_team_position_in_season_up_to_date(self.away_team.id,
                                                                                                       self.datetime)
         else:
             new_match_features.home_curr_position = -1
             new_match_features.away_curr_position = -1
 
         # DEBUG PRINTS...
-        if self.home_team_name == "Genk" or self.away_team_name == "Genk":
-            if self.home_team_name == "Genk":
+        if self.home_team.name == "Genk" or self.away_team.name == "Genk":
+            if self.home_team.name == "Genk":
                 print("\n\n\tFeatures before match:")
                 print(f"ELO={new_match_features.home_elo}")
                 print(
@@ -356,7 +356,7 @@ class Match:
                 print(
                     f"Avg goals conceded home last 5/20 matches={new_match_features.home_avg_goals_conceded_home_last_5}/{new_match_features.home_avg_goals_conceded_home_last_20}")
                 print(f"Table position={new_match_features.home_curr_position}")
-            elif self.away_team_name == "Genk":
+            elif self.away_team.name == "Genk":
                 print("\n\n\tFeatures before match:")
                 print(f"ELO={new_match_features.away_elo}")
                 print(
@@ -375,6 +375,6 @@ class Match:
 
             print("\n\tMATCH_STATISTICS:")
             print(f"{self.datetime}: {self.comp.name}, {self.season}, {self.round.name}")
-            print(f"{self.home_team_name} {self.home_team_goals} ({self.home_team_shots_on_target}) - {self.away_team_name} {self.away_team_goals} ({self.away_team_shots_on_target})")
+            print(f"{self.home_team.name} {self.home_team_goals} ({self.home_team_shots_on_target}) - {self.away_team.name} {self.away_team_goals} ({self.away_team_shots_on_target})")
 
         return new_match_features

@@ -20,7 +20,7 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 
     if home_away == "home":
         while True:
-            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.home_team_id, same_comp=False,
+            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.home_team.id, same_comp=False,
                                                same_season=False, regular=False)
 
             if prev_match is None:
@@ -34,7 +34,7 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 
     elif home_away == "away":
         while True:
-            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.away_team_id, same_comp=False,
+            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.away_team.id, same_comp=False,
                                                same_season=False, regular=False)
 
             if prev_match is None:
@@ -56,13 +56,13 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     # Check if wanted for currently HOME or currently AWAY team
     if home_away == "home":
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.home_team_id
+        team_id = curr_match.home_team.id
     elif home_away == "away":
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.away_team_id
+        team_id = curr_match.away_team.id
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
 
@@ -74,9 +74,9 @@ def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
 
         # In each match the wanted team was either HOME or AWAY
         else:
-            if team_id == match.home_team_id:
+            if team_id == match.home_team.id:
                 total_points += match.home_team_points
-            elif team_id == match.away_team_id:
+            elif team_id == match.away_team.id:
                 total_points += match.away_team_points
             else:
                 raise Exception(
@@ -97,16 +97,16 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if home_away == "home":
 
         # Last N matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.home_team_id
+        team_id = curr_match.home_team.id
 
     elif home_away == "away":
 
         # Last N matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.away_team_id
+        team_id = curr_match.away_team.id
 
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
@@ -119,9 +119,9 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
 
         # In each match the wanted team was either HOME or AWAY
         else:
-            if team_id == match.home_team_id:
+            if team_id == match.home_team.id:
                 total_goals += match.home_team_goals
-            elif team_id == match.away_team_id:
+            elif team_id == match.away_team.id:
                 total_goals += match.away_team_goals
             else:
                 raise Exception(
@@ -142,16 +142,16 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
     if home_away == "home":
 
         # Last N matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.home_team_id
+        team_id = curr_match.home_team.id
 
     elif home_away == "away":
 
         # Last N matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.away_team_id
+        team_id = curr_match.away_team.id
 
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
@@ -164,9 +164,9 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
 
         # In each match the wanted team was either HOME or AWAY
         else:
-            if team_id == match.home_team_id:
+            if team_id == match.home_team.id:
                 total_shots_on_target += match.home_team_shots_on_target
-            elif team_id == match.away_team_id:
+            elif team_id == match.away_team.id:
                 total_shots_on_target += match.away_team_shots_on_target
             else:
                 raise Exception(
@@ -189,16 +189,16 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
     if home_away == "home":
 
         # Last N home matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team_id, "home", same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, "home", same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.home_team_id
+        team_id = curr_match.home_team.id
 
     elif home_away == "away":
 
         # Last N away matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team_id, "away", same_comp=False,
+        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, "away", same_comp=False,
                                                    same_season=False, regular=False)
-        team_id = curr_match.away_team_id
+        team_id = curr_match.away_team.id
 
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
@@ -214,9 +214,9 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
             if scored_conceded == "scored":
 
                 # In each match the wanted team was either HOME or AWAY - if HOME then count HOME team goals etc.
-                if team_id == match.home_team_id:
+                if team_id == match.home_team.id:
                     total_goals += match.home_team_goals
-                elif team_id == match.away_team_id:
+                elif team_id == match.away_team.id:
                     total_goals += match.away_team_goals
                 else:
                     raise Exception(
@@ -226,9 +226,9 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
             elif scored_conceded == "conceded":
 
                 # In each match the wanted team was either HOME or AWAY - if HOME then count AWAY team goals etc.
-                if team_id == match.home_team_id:
+                if team_id == match.home_team.id:
                     total_goals += match.away_team_goals
-                elif team_id == match.away_team_id:
+                elif team_id == match.away_team.id:
                     total_goals += match.home_team_goals
                 else:
                     raise Exception(
@@ -249,28 +249,28 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
 def calculate_elo_for_both_teams(curr_match):
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
     # Then get its ELO in the previous match
-    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team_id, same_comp=False,
+    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team.id, same_comp=False,
                                                  same_season=False, regular=False)
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
     else:
-        if home_team_prev_match.home_team_id == curr_match.home_team_id:
+        if home_team_prev_match.home_team.id == curr_match.home_team.id:
             home_team_prev_match_elo = home_team_prev_match.features_before_match_played.home_elo
-        elif home_team_prev_match.away_team_id == curr_match.home_team_id:
+        elif home_team_prev_match.away_team.id == curr_match.home_team.id:
             home_team_prev_match_elo = home_team_prev_match.features_before_match_played.away_elo
         else:
             raise Exception("Current home team not found in its previous match. This should never happen.")
 
     # Get previous match of currently AWAY team and find out if it was home or away team in that previous match
     # Then get its ELO in the previous match
-    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team_id, same_comp=False,
+    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team.id, same_comp=False,
                                                  same_season=False, regular=False)
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
     else:
-        if away_team_prev_match.home_team_id == curr_match.away_team_id:
+        if away_team_prev_match.home_team.id == curr_match.away_team.id:
             away_team_prev_match_elo = away_team_prev_match.features_before_match_played.home_elo
-        elif away_team_prev_match.away_team_id == curr_match.away_team_id:
+        elif away_team_prev_match.away_team.id == curr_match.away_team.id:
             away_team_prev_match_elo = away_team_prev_match.features_before_match_played.away_elo
         else:
             raise Exception("Current away team not found in its previous match. This should never happen.")
@@ -280,14 +280,14 @@ def calculate_elo_for_both_teams(curr_match):
 
     if home_team_prev_match is None or home_team_prev_match.winner_team_id == WINNER_TEAM_ID_CODE_FOR_DRAW:
         alpha_home = 0.5
-    elif home_team_prev_match.winner_team_id == curr_match.home_team_id:
+    elif home_team_prev_match.winner_team_id == curr_match.home_team.id:
         alpha_home = 1
     else:
         alpha_home = 0
 
     if away_team_prev_match is None or away_team_prev_match.winner_team_id == WINNER_TEAM_ID_CODE_FOR_DRAW:
         alpha_away = 0.5
-    elif away_team_prev_match.winner_team_id == curr_match.away_team_id:
+    elif away_team_prev_match.winner_team_id == curr_match.away_team.id:
         alpha_away = 1
     else:
         alpha_away = 0

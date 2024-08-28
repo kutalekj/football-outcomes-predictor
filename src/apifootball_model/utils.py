@@ -47,11 +47,11 @@ def get_last_home_away_match(curr_match, team_id, home_away=None, same_comp=Fals
     # Searching for a last home match of team "team_id"
     if home_away == "home":
         # Found and it is a home match
-        if curr_prev_match.home_team_id == team_id:
+        if curr_prev_match.home_team.id == team_id:
             return curr_prev_match
 
         # Found away match - go back until home match is found
-        elif curr_prev_match.away_team_id == team_id:
+        elif curr_prev_match.away_team.id == team_id:
             new_curr_prev_match = curr_prev_match
 
             for i in range(0, MAX_MATCH_HISTORY_TO_CHECK_LOW):
@@ -61,7 +61,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None, same_comp=Fals
                 if prev_prev_match is None:
                     return None
 
-                if prev_prev_match.home_team_id == team_id:
+                if prev_prev_match.home_team.id == team_id:
                     return prev_prev_match
 
                 new_curr_prev_match = prev_prev_match
@@ -76,11 +76,11 @@ def get_last_home_away_match(curr_match, team_id, home_away=None, same_comp=Fals
     elif home_away == "away":
 
         # Found and it is an away match
-        if curr_prev_match.away_team_id == team_id:
+        if curr_prev_match.away_team.id == team_id:
             return curr_prev_match
 
         # Found home match - go back until away match is found
-        elif curr_prev_match.home_team_id == team_id:
+        elif curr_prev_match.home_team.id == team_id:
             new_curr_prev_match = curr_prev_match
 
             for i in range(0, MAX_MATCH_HISTORY_TO_CHECK_LOW):
@@ -90,7 +90,7 @@ def get_last_home_away_match(curr_match, team_id, home_away=None, same_comp=Fals
                 if prev_prev_match is None:
                     return None
 
-                if prev_prev_match.away_team_id == team_id:
+                if prev_prev_match.away_team.id == team_id:
                     return prev_prev_match
 
                 new_curr_prev_match = prev_prev_match

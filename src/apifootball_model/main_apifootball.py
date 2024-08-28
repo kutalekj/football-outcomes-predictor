@@ -14,7 +14,7 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
-for comp in [{'id': 144, 'name': "Jupiler Pro League", 'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:
+for comp in [{'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season']}]:
 # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
@@ -58,7 +58,7 @@ global_instance.all_matches = sorted(global_instance.all_matches, key=lambda mat
 for match in global_instance.all_matches:
 
     # DEBUG
-    if match.home_team_name == "Genk" or match.away_team_name == "Genk":
+    if match.home_team.name == "Genk" or match.away_team.name == "Genk":
         stop_here = True
 
     match.features_before_match_played = match.calculate_match_features()

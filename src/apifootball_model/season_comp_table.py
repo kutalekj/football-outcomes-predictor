@@ -49,10 +49,10 @@ class SeasonCompTable:
 
     def update_table(self, matches):
         for match in matches:
-            home_team_id = match.home_team_id
-            home_team_name = match.home_team_name
-            away_team_id = match.away_team_id
-            away_team_name = match.away_team_name
+            home_team_id = match.home_team.id
+            home_team_name = match.home_team.name
+            away_team_id = match.away_team.id
+            away_team_name = match.away_team.name
             home_goals = match.home_team_goals
             away_goals = match.away_team_goals
 
