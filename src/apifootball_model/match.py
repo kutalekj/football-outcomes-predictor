@@ -295,6 +295,10 @@ class Match:
         new_match_features.away_match_load_per_day_last_25_days = feature_ut.get_match_load_per_day_last_n(self, 25,
                                                                                                            "away")
 
+        global_instance = Global.get_instance()
+        global_instance.all_match_loads.append(new_match_features.home_match_load_per_day_last_10_days)
+        global_instance.all_match_loads.append(new_match_features.away_match_load_per_day_last_10_days)
+
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")
         new_match_features.away_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "away")
@@ -321,14 +325,15 @@ class Match:
         new_match_features.away_avg_goals_scored_away_last_20 = \
             feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "scored")
 
+        # Take complement (the idea is to have a larger number for a "better" value - many conceded goals is bad)
         new_match_features.home_avg_goals_conceded_home_last_5 = \
-            feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 5, "home", "conceded")
+            1.0 - feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 5, "home", "conceded")
         new_match_features.home_avg_goals_conceded_home_last_20 = \
-            feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "home", "conceded")
+            1.0 - feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "home", "conceded")
         new_match_features.away_avg_goals_conceded_away_last_5 = \
-            feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 5, "away", "conceded")
+            1.0 - feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 5, "away", "conceded")
         new_match_features.away_avg_goals_conceded_away_last_20 = \
-            feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
+            1.0 - feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
 
         # Current position in a table (if regular match, -1 otherwise)
         if self.round.is_regular:
