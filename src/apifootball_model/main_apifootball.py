@@ -14,7 +14,8 @@ from globals import Global
 global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
-for comp in [{'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season']}]:
+for comp in [{'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:
 # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")

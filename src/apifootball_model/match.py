@@ -43,6 +43,9 @@ class Match:
         self.home_team_shots_on_target = None
         self.away_team_shots_on_target = None
 
+        self.home_elo_before_match_not_normalized = None
+        self.away_elo_before_match_not_normalized = None
+
         self.features_before_match_played = None
         self.feature_vector_before_match_played = None
 

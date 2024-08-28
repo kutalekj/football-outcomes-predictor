@@ -255,9 +255,9 @@ def calculate_elo_for_both_teams(curr_match):
         home_team_prev_match_elo = INIT_ELO
     else:
         if home_team_prev_match.home_team.id == curr_match.home_team.id:
-            home_team_prev_match_elo = home_team_prev_match.features_before_match_played.home_elo
+            home_team_prev_match_elo = home_team_prev_match.home_elo_before_match_not_normalized
         elif home_team_prev_match.away_team.id == curr_match.home_team.id:
-            home_team_prev_match_elo = home_team_prev_match.features_before_match_played.away_elo
+            home_team_prev_match_elo = home_team_prev_match.away_elo_before_match_not_normalized
         else:
             raise Exception("Current home team not found in its previous match. This should never happen.")
 
@@ -269,9 +269,9 @@ def calculate_elo_for_both_teams(curr_match):
         away_team_prev_match_elo = INIT_ELO
     else:
         if away_team_prev_match.home_team.id == curr_match.away_team.id:
-            away_team_prev_match_elo = away_team_prev_match.features_before_match_played.home_elo
+            away_team_prev_match_elo = away_team_prev_match.home_elo_before_match_not_normalized
         elif away_team_prev_match.away_team.id == curr_match.away_team.id:
-            away_team_prev_match_elo = away_team_prev_match.features_before_match_played.away_elo
+            away_team_prev_match_elo = away_team_prev_match.away_elo_before_match_not_normalized
         else:
             raise Exception("Current away team not found in its previous match. This should never happen.")
 
@@ -295,12 +295,15 @@ def calculate_elo_for_both_teams(curr_match):
     home_team_new_elo = home_team_prev_match_elo + ELO_K * (alpha_home - expected_score_home_team)
     away_team_new_elo = away_team_prev_match_elo + ELO_K * (alpha_away - expected_score_away_team)
 
+    curr_match.home_elo_before_match_not_normalized = home_team_new_elo
+    curr_match.away_elo_before_match_not_normalized = away_team_new_elo
+
     return normalize_elo(home_team_new_elo), normalize_elo(away_team_new_elo)
 
 
 def normalize_elo(elo, min_elo=1000, max_elo=2000):
     normalized_elo = (elo - min_elo) / (max_elo - min_elo)
-    return normalized_elo
+    return max(0, min(1, normalized_elo))
 
 
 def normalize_points(points):
