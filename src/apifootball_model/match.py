@@ -279,10 +279,16 @@ class Match:
 
     def calculate_match_features(self):
         # Transform team IDs and comp ID to one-hot encoding
-        table = ut.get_table_by_comp_season(self.comp.id, self.season)
 
-        home_team_id_encoded = table.one_hot_encoder.transform([[self.home_team.id]]).toarray()
-        away_team_id_encoded = table.one_hot_encoder.transform([[self.away_team.id]]).toarray()
+        # TODO: Check this by debug - shouldn't be here check for both teams regularity, instead of round regularity?
+        if self.round.is_regular:
+            table = ut.get_table_by_comp_season(self.comp.id, self.season)
+
+            home_team_id_encoded = table.one_hot_encoder.transform([[self.home_team.id]]).toarray()
+            away_team_id_encoded = table.one_hot_encoder.transform([[self.away_team.id]]).toarray()
+        else:
+            home_team_id_encoded = [[0]]  # if not regular, encoder might not know the teams
+            away_team_id_encoded = [[0]]
 
         global_instance = Global.get_instance()
         comp_id_encoded = global_instance.one_hot_encoder_comps.transform([[self.comp.id]]).toarray()
@@ -290,14 +296,17 @@ class Match:
         new_match_features = MatchFeatures(comp_id_encoded, self.season, self.relative_position_in_comp_season,
                                            home_team_id_encoded, away_team_id_encoded)
 
+        # Hour & month
         new_match_features.hours_sin = np.sin(2 * np.pi * self.hour / 24)
         new_match_features.hours_cos = np.cos(2 * np.pi * self.hour / 24)
         new_match_features.month_sin = np.sin(2 * np.pi * self.month / 12)
         new_match_features.month_cos = np.cos(2 * np.pi * self.month / 12)
 
+        # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = \
             feature_ut.calculate_elo_for_both_teams(self)
 
+        # Other numerical features
         new_match_features.home_match_load_per_day_last_10_days = \
             1.0 - feature_ut.get_match_load_per_day_last_n(self, 10, "home")
         new_match_features.home_match_load_per_day_last_25_days = \
@@ -344,6 +353,7 @@ class Match:
             1.0 - feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
 
         # Current position in a table (if regular match, -1 otherwise)
+        # TODO: Check this by debug - shouldn't be here check for both teams regularity, instead of round regularity?
         if self.round.is_regular:
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
             new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team.id,
