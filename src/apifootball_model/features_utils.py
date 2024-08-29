@@ -4,7 +4,7 @@ feature_utils.py
 
 import numpy as np
 import utils as ut
-from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW
+from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -300,6 +300,11 @@ def calculate_elo_for_both_teams(curr_match):
     curr_match.away_elo_before_match_not_normalized = away_team_new_elo
 
     return normalize_elo(home_team_new_elo), normalize_elo(away_team_new_elo)
+
+
+def normalize_season(season):
+    normalized_season = (season - FIRST_SEASON) / (LAST_SEASON - FIRST_SEASON)
+    return max(0, min(1, normalized_season))
 
 
 def normalize_elo(elo, min_elo=1000, max_elo=2000):

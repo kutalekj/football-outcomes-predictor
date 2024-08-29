@@ -293,7 +293,9 @@ class Match:
         global_instance = Global.get_instance()
         comp_id_encoded = global_instance.one_hot_encoder_comps.transform([[self.comp.id]]).toarray()
 
-        new_match_features = MatchFeatures(comp_id_encoded, self.season, self.relative_position_in_comp_season,
+        # Create new instance
+        normalized_season = feature_ut.normalize_season(self.season)
+        new_match_features = MatchFeatures(comp_id_encoded, normalized_season, self.relative_position_in_comp_season,
                                            home_team_id_encoded, away_team_id_encoded)
 
         # Hour & month
