@@ -8,6 +8,7 @@ import http.client
 import json
 from dateutil.parser import parse
 from datetime import datetime, timedelta
+import numpy as np
 import settings
 import utils as ut
 import time
@@ -289,8 +290,10 @@ class Match:
         new_match_features = MatchFeatures(comp_id_encoded, self.season, self.relative_position_in_comp_season,
                                            home_team_id_encoded, away_team_id_encoded)
 
-        new_match_features.hours = self.hour
-        new_match_features.month = self.month
+        new_match_features.hours_sin = np.sin(2 * np.pi * self.hour / 24)
+        new_match_features.hours_cos = np.cos(2 * np.pi * self.hour / 24)
+        new_match_features.month_sin = np.sin(2 * np.pi * self.month / 12)
+        new_match_features.month_cos = np.cos(2 * np.pi * self.month / 12)
 
         (new_match_features.home_elo, new_match_features.away_elo) = \
             feature_ut.calculate_elo_for_both_teams(self)

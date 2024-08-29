@@ -12,8 +12,10 @@ class MatchFeatures:
         self.home_team_id = home_team_id_encoded
         self.away_team_id = away_team_id_encoded
 
-        self.hours = None
-        self.month = None
+        self.hours_sin = None
+        self.hours_cos = None
+        self.month_sin = None
+        self.month_cos = None
 
         self.home_elo = None
         self.away_elo = None
