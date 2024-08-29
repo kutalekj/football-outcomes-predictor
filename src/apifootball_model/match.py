@@ -277,8 +277,17 @@ class Match:
         return None
 
     def calculate_match_features(self):
-        new_match_features = MatchFeatures(self.comp.id, self.season, self.relative_position_in_comp_season,
-                                           self.home_team.id, self.away_team.id)
+        # Transform team IDs and comp ID to one-hot encoding
+        table = ut.get_table_by_comp_season(self.comp.id, self.season)
+
+        home_team_id_encoded = table.one_hot_encoder.transform([[self.home_team.id]]).toarray()
+        away_team_id_encoded = table.one_hot_encoder.transform([[self.away_team.id]]).toarray()
+
+        global_instance = Global.get_instance()
+        comp_id_encoded = global_instance.one_hot_encoder_comps.transform([[self.comp.id]]).toarray()
+
+        new_match_features = MatchFeatures(comp_id_encoded, self.season, self.relative_position_in_comp_season,
+                                           home_team_id_encoded, away_team_id_encoded)
 
         new_match_features.hours = self.hour
         new_match_features.month = self.month

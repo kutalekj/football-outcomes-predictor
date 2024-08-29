@@ -7,6 +7,7 @@ import json
 import settings
 import utils as ut
 from globals import Global
+from sklearn.preprocessing import OneHotEncoder
 
 
 class SeasonCompTable:
@@ -16,6 +17,8 @@ class SeasonCompTable:
         self.season = season
         self.teams = None
         self.team_stats = None
+
+        self.one_hot_encoder = None
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
@@ -46,6 +49,12 @@ class SeasonCompTable:
         self.teams = teams
         self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
                                                   'avg_points_per_game': 0} for team in self.teams}
+
+        # One-hot encoder
+        team_ids = [team.id for team in self.teams]
+
+        self.one_hot_encoder = OneHotEncoder()
+        self.one_hot_encoder.fit(team_ids)
 
     def update_table(self, matches):
         for match in matches:

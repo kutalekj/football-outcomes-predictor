@@ -3,14 +3,14 @@ feature.py
 """
 
 
-# TODO: Relativize features (only Elo, or comp_id, season, ... as well?)
 class MatchFeatures:
-    def __init__(self, comp_id, season, relative_match_position, home_team_id, away_team_id):
+    def __init__(self, comp_id, season, relative_match_position, home_team_id_encoded, away_team_id_encoded):
         self.comp_id = comp_id
         self.season = season
         self.relative_match_position = relative_match_position
-        self.home_team_id = home_team_id
-        self.away_team_id = away_team_id
+
+        self.home_team_id = home_team_id_encoded
+        self.away_team_id = away_team_id_encoded
 
         self.hours = None
         self.month = None

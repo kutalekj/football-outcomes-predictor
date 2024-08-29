@@ -4,6 +4,7 @@ import datetime
 import features_utils as feature_ut
 import utils as ut
 import numpy as np
+from sklearn.preprocessing import OneHotEncoder
 import settings
 from comp import Comp
 from season_comp_table import SeasonCompTable
@@ -25,6 +26,11 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League",
 
     global_instance.all_comps.append(new_comp)
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
+
+# Init one-ht encoder for comps
+comp_ids = [comp.id for comp in global_instance.all_comps]
+global_instance.one_hot_encoder_comps = OneHotEncoder()
+global_instance.one_hot_encoder_comps.fit(comp_ids)
 
 # 2. Init tables for comp seasons
 for comp in global_instance.all_comps:
