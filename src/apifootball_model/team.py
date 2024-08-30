@@ -10,7 +10,6 @@ class Team:
         self.regularity_in_comp_season = []
 
         self.matches = []  # just list of all matches of the team sorted by the datetime played asc
-        # {'comp_id': comp_id, 'comp_name': comp_name, 'season': season_num, 'matches': matches_list} - NO!
 
     def __eq__(self, other):
         if isinstance(other, Team):

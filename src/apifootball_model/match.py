@@ -282,10 +282,17 @@ class Match:
 
         # TODO: Check this by debug - shouldn't be here check for both teams regularity, instead of round regularity?
         if self.round.is_regular:
+
+            # DEBUG CHECK
+            for team in [self.home_team, self.away_team]:
+                for season_elem in team.regularity_in_comp_season:
+                    if season_elem['season'] == self.season and season_elem['is_regular'] is False:
+                        stop_here = True
+
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
 
-            home_team_id_encoded = table.one_hot_encoder.transform([[self.home_team.id]]).toarray()
-            away_team_id_encoded = table.one_hot_encoder.transform([[self.away_team.id]]).toarray()
+            home_team_id_encoded = table.one_hot_encoder.transform(np.array([[self.home_team.id]])).toarray()
+            away_team_id_encoded = table.one_hot_encoder.transform(np.array([[self.away_team.id]])).toarray()
         else:
             home_team_id_encoded = [[0]]  # if not regular, encoder might not know the teams
             away_team_id_encoded = [[0]]
@@ -357,6 +364,13 @@ class Match:
         # Current position in a table (if regular match, -1 otherwise)
         # TODO: Check this by debug - shouldn't be here check for both teams regularity, instead of round regularity?
         if self.round.is_regular:
+
+            # DEBUG CHECK
+            for team in [self.home_team, self.away_team]:
+                for season_elem in team.regularity_in_comp_season:
+                    if season_elem['season'] == self.season and season_elem['is_regular'] is False:
+                        stop_here = True
+
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
             new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team.id,
                                                                                                       self.datetime)

@@ -30,7 +30,7 @@ global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: 
 # Init one-ht encoder for comps
 comp_ids = [comp.id for comp in global_instance.all_comps]
 global_instance.one_hot_encoder_comps = OneHotEncoder()
-global_instance.one_hot_encoder_comps.fit(comp_ids)
+global_instance.one_hot_encoder_comps.fit(np.array([comp_ids]))
 
 # 2. Init tables for comp seasons
 for comp in global_instance.all_comps:
@@ -59,6 +59,13 @@ for team in global_instance.all_teams:
 
 # Exclude irregular teams from tables calculation
 SeasonCompTable.exclude_irregular_teams_from_table_calculations()
+
+# Init one-hot encoder for tables (must be done after excluding irregular teams)
+for table in global_instance.all_comps:
+    team_ids = [team.id for team in table.teams]
+
+    table.one_hot_encoder = OneHotEncoder()
+    table.one_hot_encoder.fit(np.array([team_ids]))
 
 # 4. Calculate features for each match (must be done chronologically asc.!)
 global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)

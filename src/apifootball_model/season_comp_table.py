@@ -4,6 +4,7 @@ season_comp_table.py
 
 import http.client
 import json
+import numpy as np
 import settings
 import utils as ut
 from globals import Global
@@ -49,12 +50,6 @@ class SeasonCompTable:
         self.teams = teams
         self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
                                                   'avg_points_per_game': 0} for team in self.teams}
-
-        # One-hot encoder
-        team_ids = [team.id for team in self.teams]
-
-        self.one_hot_encoder = OneHotEncoder()
-        self.one_hot_encoder.fit(team_ids)
 
     def update_table(self, matches):
         for match in matches:
