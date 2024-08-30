@@ -326,3 +326,7 @@ def normalize_sog(sog):
 
 def normalize_match_loads(match_loads):
     return ut.min_max_scaling_with_clipping(match_loads, 0.246)
+
+
+def normalized_hour_month_cyclic(cyclic_value):
+    return (cyclic_value + 1) / 2

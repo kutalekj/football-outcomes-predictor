@@ -279,29 +279,16 @@ class Match:
 
     def calculate_match_features(self):
         # Transform team IDs and comp ID to one-hot encoding
-
-        # TODO: Check this by debug - shouldn't be here check for both teams regularity, instead of round regularity?
         if self.round.is_regular:
-
-            # DEBUG CHECK
-            for team in [self.home_team, self.away_team]:
-                for season_elem in team.regularity_in_comp_season:
-                    if season_elem['season'] == self.season and not season_elem['is_regular']:
-                        stop_here = True
-
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
 
             home_team_id_encoded = table.one_hot_encoder.transform([[self.home_team.id]])
             away_team_id_encoded = table.one_hot_encoder.transform([[self.away_team.id]])
 
-            print(f"\t\tIF branch: Home team encoded as {home_team_id_encoded}")
-
         # If not regular, encoder might not know the teams
         else:
             home_team_id_encoded = np.zeros((1, settings.ONE_HOT_ENCODED_VECTOR_LENGTH))
             away_team_id_encoded = np.zeros((1, settings.ONE_HOT_ENCODED_VECTOR_LENGTH))
-
-            print(f"\t\t\tELSE branch: Home team encoded as {home_team_id_encoded}")
 
         global_instance = Global.get_instance()
         comp_id_encoded = global_instance.one_hot_encoder_comps.transform([[self.comp.id]])
@@ -312,10 +299,10 @@ class Match:
                                            home_team_id_encoded, away_team_id_encoded)
 
         # Hour & month
-        new_match_features.hours_sin = np.sin(2 * np.pi * self.hour / 24)
-        new_match_features.hours_cos = np.cos(2 * np.pi * self.hour / 24)
-        new_match_features.month_sin = np.sin(2 * np.pi * self.month / 12)
-        new_match_features.month_cos = np.cos(2 * np.pi * self.month / 12)
+        new_match_features.hours_sin = feature_ut.normalized_hour_month_cyclic(np.sin(2 * np.pi * self.hour / 24))
+        new_match_features.hours_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.hour / 24))
+        new_match_features.month_sin = feature_ut.normalized_hour_month_cyclic(np.sin(2 * np.pi * self.month / 12))
+        new_match_features.month_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.month / 12))
 
         # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = \
@@ -368,15 +355,7 @@ class Match:
             1.0 - feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 20, "away", "conceded")
 
         # Current position in a table (if regular match, -1 otherwise)
-        # TODO: Check this by debug - shouldn't be here check for both teams regularity, instead of round regularity?
         if self.round.is_regular:
-
-            # DEBUG CHECK
-            for team in [self.home_team, self.away_team]:
-                for season_elem in team.regularity_in_comp_season:
-                    if season_elem['season'] == self.season and not season_elem['is_regular']:
-                        stop_here = True
-
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
             new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team.id,
                                                                                                       self.datetime)
