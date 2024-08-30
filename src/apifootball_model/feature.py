@@ -3,9 +3,12 @@ feature.py
 """
 
 
+import numpy as np
+
+
 class MatchFeatures:
-    def __init__(self, comp_id, season, relative_match_position, home_team_id_encoded, away_team_id_encoded):
-        self.comp_id = comp_id
+    def __init__(self, comp_id_encoded, season, relative_match_position, home_team_id_encoded, away_team_id_encoded):
+        self.comp_id = comp_id_encoded
         self.season = season
         self.relative_match_position = relative_match_position
 
@@ -55,10 +58,22 @@ class MatchFeatures:
 
     @staticmethod
     def match_features_to_vector(match_features):
-        # Get a dict of all attributes and their values
-        attributes = vars(match_features)
+        # Convert the match_features object to a dictionary
+        features_dict = vars(match_features)
 
-        # Convert the values to a list
-        vector = list(attributes.values())
+        # Separate out one-hot encoded features and numerical features
+        one_hot_encoded_features = []
+        numerical_features = []
 
-        return vector
+        for key, value in features_dict.items():
+            if isinstance(value, np.ndarray):
+                # It's a one-hot encoded feature (since it's a NumPy array)
+                one_hot_encoded_features.extend(value.flatten().tolist())
+            else:
+                # It's a numerical feature (or something else), add it to the list
+                numerical_features.append(value)
+
+        # Combine all features into one vector
+        full_vector = numerical_features + one_hot_encoded_features
+
+        return np.array(full_vector)
