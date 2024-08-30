@@ -61,11 +61,9 @@ class Match:
         return hash(self.id)
 
     @staticmethod
-    def get_new_matches_data_using_api(from_season=None, from_date=None):
+    def get_new_matches_data_using_api(from_date=None):
         global_instance = Global.get_instance()
-
-        seasons = [x for x in range(from_season, settings.LAST_SEASON + 1)] \
-            if from_season is not None else [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
+        seasons = [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
 
         for comp in global_instance.all_comps:
             for season in seasons:

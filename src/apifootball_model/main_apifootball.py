@@ -50,9 +50,12 @@ for comp in global_instance.all_comps:
 
         global_instance.all_tables.append(new_table)
 
-# 3. Get matches
+# 3. Get matches (first existing locally saved, then new from API)
 in_out.load_matches("tmp_csv_store.csv")
-Match.get_new_matches_data_using_api()
+global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
+
+latest_existing_match_date = global_instance.all_matches[-1]
+Match.get_new_matches_data_using_api(from_date=latest_existing_match_date)
 
 # Sort matches by datetime played (asc.)
 for team in global_instance.all_teams:
