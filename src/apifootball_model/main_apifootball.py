@@ -28,9 +28,13 @@ for comp in [{'id': 144, 'name': "Jupiler Pro League",
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
 # Init one-ht encoder for comps
-comp_ids = [comp.id for comp in global_instance.all_comps]
-global_instance.one_hot_encoder_comps = OneHotEncoder()
-global_instance.one_hot_encoder_comps.fit(np.array([comp_ids]))
+comp_ids = [[comp.id] for comp in global_instance.all_comps]
+dummy_comp_ids = list(range(-1, -1 - (settings.ONE_HOT_ENCODED_VECTOR_LENGTH - len(comp_ids)), -1))
+dummy_comp_ids = [[x] for x in dummy_comp_ids]
+print(f"All comp IDs: {comp_ids + dummy_comp_ids}")
+
+global_instance.one_hot_encoder_comps = OneHotEncoder(sparse_output=False)
+global_instance.one_hot_encoder_comps.fit(np.array(comp_ids + dummy_comp_ids))
 
 # 2. Init tables for comp seasons
 for comp in global_instance.all_comps:
@@ -61,11 +65,14 @@ for team in global_instance.all_teams:
 SeasonCompTable.exclude_irregular_teams_from_table_calculations()
 
 # Init one-hot encoder for tables (must be done after excluding irregular teams)
-for table in global_instance.all_comps:
-    team_ids = [team.id for team in table.teams]
+for table in global_instance.all_tables:
+    team_ids = [[team.id] for team in table.teams]
+    dummy_team_ids = list(range(-1, -1 - (settings.ONE_HOT_ENCODED_VECTOR_LENGTH - len(team_ids)), -1))
+    dummy_team_ids = [[x] for x in dummy_team_ids]
+    print(f"All team IDs for table {table.comp_name} {str(table.season)}: {dummy_team_ids}")
 
-    table.one_hot_encoder = OneHotEncoder()
-    table.one_hot_encoder.fit(np.array([team_ids]))
+    table.one_hot_encoder = OneHotEncoder(sparse_output=False)
+    table.one_hot_encoder.fit(team_ids + dummy_team_ids)
 
 # 4. Calculate features for each match (must be done chronologically asc.!)
 global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)

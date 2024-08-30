@@ -304,12 +304,12 @@ def calculate_elo_for_both_teams(curr_match):
 
 def normalize_season(season):
     normalized_season = (season - FIRST_SEASON) / (LAST_SEASON - FIRST_SEASON)
-    return max(0, min(1, normalized_season))
+    return float(max(0, min(1, normalized_season)))
 
 
 def normalize_elo(elo, min_elo=1000, max_elo=2000):
     normalized_elo = (elo - min_elo) / (max_elo - min_elo)
-    return max(0, min(1, normalized_elo))
+    return float(max(0, min(1, normalized_elo)))
 
 
 def normalize_points(points):
