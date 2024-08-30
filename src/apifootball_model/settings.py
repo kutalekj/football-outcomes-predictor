@@ -69,3 +69,5 @@ ZERO = 0.000000
 ALMOST_ONE = 0.999999
 
 ONE_HOT_ENCODED_VECTOR_LENGTH = 36  # Assuming no comp season table has more than THIS teams and there no more comps!
+
+SOG_NORM_COEFFICIENT = 11.85

@@ -56,6 +56,7 @@ class MatchFeatures:
         self.away_avg_goals_conceded_away_last_5 = 0
         self.away_avg_goals_conceded_away_last_20 = 0
 
+    # TODO: Once designing model architecture, consider adding Embedding layer to make the vector denser (less zeros)
     @staticmethod
     def match_features_to_vector(match_features):
         # Convert the match_features object to a dictionary

@@ -4,7 +4,7 @@ feature_utils.py
 
 import numpy as np
 import utils as ut
-from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON
+from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -321,7 +321,7 @@ def normalize_goals(goals):
 
 
 def normalize_sog(sog):
-    return ut.min_max_scaling_with_clipping(sog, 11.85)
+    return ut.min_max_scaling_with_clipping(sog, SOG_NORM_COEFFICIENT)
 
 
 def normalize_match_loads(match_loads):

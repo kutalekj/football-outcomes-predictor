@@ -9,6 +9,8 @@ import json
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 import numpy as np
+from selenium.webdriver.common.devtools.v85.target import send_message_to_target
+
 import settings
 import utils as ut
 import time
@@ -57,19 +59,6 @@ class Match:
 
     def __hash__(self):
         return hash(self.id)
-
-    @staticmethod
-    def load_existing_matches():
-        existing_matches = []
-
-        # File exists, load existing matches
-        if os.path.exists(settings.MATCHES_FILENAME):
-            with open(settings.MATCHES_FILENAME, mode='r', newline='') as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    existing_matches.append(row)
-
-        return existing_matches
 
     @staticmethod
     def get_new_matches_data_using_api(from_season=None, from_date=None):
@@ -130,6 +119,11 @@ class Match:
                         if new_match.status == "WO":
                             print(
                                 f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was not played - WalkOver")
+                            continue
+
+                        if new_match.status in ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT"]:
+                            print(
+                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} is now in play! Skipping...")
                             continue
 
                         print(f"WARNING: Match {new_match.id} not finished")
@@ -227,7 +221,8 @@ class Match:
                 print(
                     f"Statistics [{stat_name}] estimated for a match between {self.home_team.name} and {self.away_team.name} played at {self.datetime}")
 
-            return feature_ut.get_avg_shots_on_target_last_n(self, 5, home_away)
+            # The value returned (used for features) is already normalized - denormalize it for now and round it
+            return round(feature_ut.get_avg_shots_on_target_last_n(self, 5, home_away) * settings.SOG_NORM_COEFFICIENT)
 
         if len(stats) != 2:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."

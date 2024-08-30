@@ -11,6 +11,7 @@ from season_comp_table import SeasonCompTable
 from match import Match
 from feature import MatchFeatures
 from globals import Global
+import in_out
 
 global_instance = Global.get_instance()
 
@@ -50,7 +51,7 @@ for comp in global_instance.all_comps:
         global_instance.all_tables.append(new_table)
 
 # 3. Get matches
-global_instance.all_matches = Match.load_existing_matches()
+in_out.load_matches("tmp_csv_store.csv")
 Match.get_new_matches_data_using_api()
 
 # Sort matches by datetime played (asc.)
@@ -85,5 +86,7 @@ for match in global_instance.all_matches:
     match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
         match.features_before_match_played)
 
+# 5. Store matches
+in_out.store_matches("tmp_csv_store.csv")
 # TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
 print("breakpoint")
