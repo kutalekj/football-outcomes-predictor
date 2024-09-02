@@ -17,7 +17,10 @@ global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
 for comp in [{'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}]:
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
+             {'id': 147, 'name': "Cup", 'regular_round_keywords': []},
+             {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+             {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []}]:
 # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
@@ -51,7 +54,7 @@ for comp in global_instance.all_comps:
         global_instance.all_tables.append(new_table)
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store.csv")
+in_out.load_matches("tmp_csv_store_FALSE.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -88,5 +91,5 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store2.csv")
+in_out.store_matches("tmp_csv_store3.csv")
 print("breakpoint")

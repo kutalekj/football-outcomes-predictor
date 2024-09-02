@@ -304,17 +304,7 @@ class Match:
         new_match_features.month_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.month / 12))
 
         # Elo
-
-        # If loaded as existing match, Elo already calculated, just normalize it for the feature
-        if self.home_elo_before_match_not_normalized is not None and self.away_elo_before_match_not_normalized is not None:
-            new_match_features.home_elo = feature_ut.normalize_elo(self.home_elo_before_match_not_normalized)
-
-        # Otherwise, calculate Elo
-        elif self.home_elo_before_match_not_normalized is None and self.away_elo_before_match_not_normalized is None:
-            (new_match_features.home_elo, new_match_features.away_elo) = \
-                feature_ut.calculate_elo_for_both_teams(self)
-        else:
-            raise ValueError("ERROR: Elo for one team in match found and for the other not - should never happen!")
+        (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
 
         # Other numerical features
         new_match_features.home_match_load_per_day_last_10_days = \

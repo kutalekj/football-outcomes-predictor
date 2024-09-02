@@ -47,8 +47,6 @@ def store_matches(file_name):
                 match.away_team_points,
                 match.home_team_shots_on_target,
                 match.away_team_shots_on_target,
-                match.home_elo_before_match_not_normalized,
-                match.away_elo_before_match_not_normalized,
                 match.relative_position_in_comp_season,
                 match.winner_team_id,
                 repr(match.features_before_match_played.__dict__)  # Store all features
@@ -97,47 +95,8 @@ def load_matches(file_name):
                 match.home_team_shots_on_target = int(row['home_team_shots_on_target'])
                 match.away_team_shots_on_target = int(row['away_team_shots_on_target'])
 
-                match.home_elo_before_match_not_normalized = float(row['home_elo_before_match_not_normalized'])
-                match.away_elo_before_match_not_normalized = float(row['away_elo_before_match_not_normalized'])
-
                 match.relative_position_in_comp_season = float(row['relative_position_in_comp_season'])
                 match.winner_team_id = int(row['winner_team_id']) if row['winner_team_id'] else None
-
-                """
-                # Recalculate the one-hot encoded values based on IDs
-                table = ut.get_table_by_comp_season(match.comp.id, match.season)
-                if match.round.is_regular:
-                    match.features_before_match_played.home_team_id = table.one_hot_encoder.transform(
-                        [[match.home_team.id]])
-                    match.features_before_match_played.away_team_id = table.one_hot_encoder.transform(
-                        [[match.away_team.id]])
-                else:
-                    match.features_before_match_played.home_team_id = np.zeros(
-                        (1, settings.ONE_HOT_ENCODED_VECTOR_LENGTH))
-                    match.features_before_match_played.away_team_id = np.zeros(
-                        (1, settings.ONE_HOT_ENCODED_VECTOR_LENGTH))
-
-                match.features_before_match_played.comp_id = global_instance.one_hot_encoder_comps.transform(
-                    [[match.comp.id]])
-
-                # Recalculate cyclic encoded features
-                match.features_before_match_played.hours_sin = feature_ut.normalized_hour_month_cyclic(
-                    np.sin(2 * np.pi * match.hour / 24))
-                match.features_before_match_played.hours_cos = feature_ut.normalized_hour_month_cyclic(
-                    np.cos(2 * np.pi * match.hour / 24))
-                match.features_before_match_played.month_sin = feature_ut.normalized_hour_month_cyclic(
-                    np.sin(2 * np.pi * match.month / 12))
-                match.features_before_match_played.month_cos = feature_ut.normalized_hour_month_cyclic(
-                    np.cos(2 * np.pi * match.month / 12))
-
-                # Load the stored features before match played
-                features_dict = eval(row['features_before_match_played'])
-                for key, value in features_dict.items():
-                    setattr(match.features_before_match_played, key, value)
-
-                # Recompute the rest of the feature vector
-                match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(match.features_before_match_played)
-                """
 
                 # Add the match to the global instance
                 global_instance.all_matches.append(match)
