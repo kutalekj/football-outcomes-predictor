@@ -52,10 +52,8 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 in_out.load_matches("tmp_csv_store.csv")
-global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
-
-latest_existing_match_date = global_instance.all_matches[-1]
-Match.get_new_matches_data_using_api(from_date=latest_existing_match_date)
+all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
+Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
 # Sort matches by datetime played (asc.)
 for team in global_instance.all_teams:
@@ -90,6 +88,5 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store.csv")
-# TODO: Save matches...Add-note: Maybe do this already after loading match data, before adding missing statistics?
+in_out.store_matches("tmp_csv_store2.csv")
 print("breakpoint")

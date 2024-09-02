@@ -115,7 +115,7 @@ class SeasonCompTable:
         # Get relative position (1.0 as the best, 0.0 as the worst!)
         for position, team in enumerate(sorted_teams, start=1):
             if team.id == team_id:
-                return 1.0 - (position / len(self.teams))
+                return float(1.0 - (position / len(self.teams)))
 
         raise Exception(f"Unable to calculate team [{str(team_id)}] position in the current comp season "
                         f"[{self.comp_name}, {str(self.season)}]")

@@ -68,23 +68,38 @@ def load_matches(file_name):
                 match.datetime = date_parse(row['datetime'])
                 match.hour = int(row['hour'])
                 match.month = int(row['month'])
+
                 match.country = row['country']
                 match.comp = next((comp for comp in global_instance.all_comps if comp.id == int(row['comp_id'])), None)
                 match.season = int(row['season'])
-
-                print(match.datetime)
-
                 match.round = match.comp.get_round_by_comp_season_round_name(match.season, row['round_name'])
-                match.home_team = ut.get_team_if_exists(int(row['home_team_id']))
-                match.away_team = ut.get_team_if_exists(int(row['away_team_id']))
+
+                # Home team
+                home_team = ut.get_team_if_exists(int(row['home_team_id']))
+                if home_team is None:
+                    raise Exception(f"Failed to find a home team with ID {int(row['home_team_id'])} to assign a match.")
+
+                match.home_team = home_team
+                home_team.matches.append(match)
+
+                # Away team
+                away_team = ut.get_team_if_exists(int(row['away_team_id']))
+                if away_team is None:
+                    raise Exception(f"Failed to find an away team with ID {int(row['away_team_id'])} to assign a match.")
+
+                match.away_team = away_team
+                away_team.matches.append(match)
+
                 match.home_team_goals = int(row['home_team_goals'])
                 match.away_team_goals = int(row['away_team_goals'])
                 match.home_team_points = int(row['home_team_points'])
                 match.away_team_points = int(row['away_team_points'])
                 match.home_team_shots_on_target = int(row['home_team_shots_on_target'])
                 match.away_team_shots_on_target = int(row['away_team_shots_on_target'])
+
                 match.home_elo_before_match_not_normalized = float(row['home_elo_before_match_not_normalized'])
                 match.away_elo_before_match_not_normalized = float(row['away_elo_before_match_not_normalized'])
+
                 match.relative_position_in_comp_season = float(row['relative_position_in_comp_season'])
                 match.winner_team_id = int(row['winner_team_id']) if row['winner_team_id'] else None
 

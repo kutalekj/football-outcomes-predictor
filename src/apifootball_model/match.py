@@ -61,24 +61,30 @@ class Match:
         return hash(self.id)
 
     @staticmethod
-    def get_new_matches_data_using_api(from_date=None):
+    def get_new_matches_data_using_api(existing=None):
         global_instance = Global.get_instance()
         seasons = [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]
 
         for comp in global_instance.all_comps:
             for season in seasons:
 
+                if existing is not None and (comp.id, season) in existing:
+                    existing_matches_sorted = sorted(
+                        [x for x in global_instance.all_matches if x.comp.id == comp.id and x.season == season],
+                        key=lambda match_: match_.datetime)
+                    latest_match_datetime = existing_matches_sorted[-1].datetime
+                    print(f"Latest existing match datetime for {comp.name} in {season} is {latest_match_datetime}")
+
+                    request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
+                                     "&from=" + latest_match_datetime.strftime("%Y-%m-%d") + \
+                                     "&to=" + datetime.today().strftime("%Y-%m-%d")
+                else:
+                    request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
+                                     "&from=" + str(settings.FIRST_SEASON) + "-01-01" + \
+                                     "&to=" + datetime.today().strftime("%Y-%m-%d")
+
                 # Get historic match data from API - up to current day
                 conn = http.client.HTTPSConnection(settings.HOST)
-
-                request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
-                                 "&from=" + str(settings.FIRST_SEASON) + "-01-01" + \
-                                 "&to=" + datetime.today().strftime("%Y-%m-%d") \
-                    if from_date is None else \
-                    "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
-                    "&from=" + from_date.strftime("%Y-%m-%d") + \
-                    "&to=" + datetime.today().strftime("%Y-%m-%d")
-
                 conn.request("GET", request_string, headers=settings.HEADERS)
                 res = conn.getresponse()
                 data = res.read()
@@ -205,9 +211,9 @@ class Match:
                     new_match.home_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "away")
 
-                    # Add match to list
-                    # TODO: Add check that this new match is not already in existing matches (all_matches)
-                    global_instance.all_matches.append(new_match)
+                    # Add new match to list
+                    if new_match.id not in [x.id for x in global_instance.all_matches]:
+                        global_instance.all_matches.append(new_match)
 
                     # Delay so that limit of requests per minute is not exceeded
                     time.sleep(0.1)
@@ -298,8 +304,17 @@ class Match:
         new_match_features.month_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.month / 12))
 
         # Elo
-        (new_match_features.home_elo, new_match_features.away_elo) = \
-            feature_ut.calculate_elo_for_both_teams(self)
+
+        # If loaded as existing match, Elo already calculated, just normalize it for the feature
+        if self.home_elo_before_match_not_normalized is not None and self.away_elo_before_match_not_normalized is not None:
+            new_match_features.home_elo = feature_ut.normalize_elo(self.home_elo_before_match_not_normalized)
+
+        # Otherwise, calculate Elo
+        elif self.home_elo_before_match_not_normalized is None and self.away_elo_before_match_not_normalized is None:
+            (new_match_features.home_elo, new_match_features.away_elo) = \
+                feature_ut.calculate_elo_for_both_teams(self)
+        else:
+            raise ValueError("ERROR: Elo for one team in match found and for the other not - should never happen!")
 
         # Other numerical features
         new_match_features.home_match_load_per_day_last_10_days = \
@@ -395,6 +410,7 @@ class Match:
 
             print("\n\tMATCH_STATISTICS:")
             print(f"{self.datetime}: {self.comp.name}, {self.season}, {self.round.name}")
-            print(f"{self.home_team.name} {self.home_team_goals} ({self.home_team_shots_on_target}) - {self.away_team.name} {self.away_team_goals} ({self.away_team_shots_on_target})")
+            print(
+                f"{self.home_team.name} {self.home_team_goals} ({self.home_team_shots_on_target}) - {self.away_team.name} {self.away_team_goals} ({self.away_team_shots_on_target})")
 
         return new_match_features
