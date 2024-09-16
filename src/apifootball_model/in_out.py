@@ -23,10 +23,10 @@ def store_matches(file_name):
             'season', 'round_name', 'home_team_id', 'away_team_id',
             'home_team_goals', 'away_team_goals', 'home_team_points',
             'away_team_points', 'home_team_shots_on_target', 'away_team_shots_on_target',
-            'home_elo_before_match_not_normalized', 'away_elo_before_match_not_normalized',
             'relative_position_in_comp_season', 'winner_team_id',
             'features_before_match_played'
         ])
+        # TODO: Remove "features_before_match_played" from storing
 
         for match in global_instance.all_matches:
             writer.writerow([
@@ -105,4 +105,3 @@ def load_matches(file_name):
         print(f"Error: The file '{file_name}' was not found. Please check the file name and try again.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        # TODO: Unexpected error....DEBUG
