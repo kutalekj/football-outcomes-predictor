@@ -7,21 +7,23 @@ import numpy as np
 
 
 class MatchFeatures:
-    def __init__(self, comp_id_encoded, season, relative_match_position, home_team_id_encoded, away_team_id_encoded):
+    def __init__(self, comp_id_encoded, season, home_team_id_encoded, away_team_id_encoded,
+                 hours_sin, hours_cos, month_sin, month_cos):
         self.comp_id = comp_id_encoded
         self.season = season
-        self.relative_match_position = relative_match_position
 
         self.home_team_id = home_team_id_encoded
         self.away_team_id = away_team_id_encoded
 
-        self.hours_sin = None
-        self.hours_cos = None
-        self.month_sin = None
-        self.month_cos = None
+        self.hours_sin = hours_sin
+        self.hours_cos = hours_cos
+        self.month_sin = month_sin
+        self.month_cos = month_cos
 
         self.home_elo = None
         self.away_elo = None
+
+        self.relative_match_position = None
 
         self.home_match_load_per_day_last_10_days = None
         self.home_match_load_per_day_last_25_days = None

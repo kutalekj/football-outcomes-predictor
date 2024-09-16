@@ -22,11 +22,8 @@ def store_matches(file_name):
             'id', 'status', 'datetime', 'hour', 'month', 'country', 'comp_id',
             'season', 'round_name', 'home_team_id', 'away_team_id',
             'home_team_goals', 'away_team_goals', 'home_team_points',
-            'away_team_points', 'home_team_shots_on_target', 'away_team_shots_on_target',
-            'relative_position_in_comp_season', 'winner_team_id',
-            'features_before_match_played'
+            'away_team_points', 'home_team_shots_on_target', 'away_team_shots_on_target', 'winner_team_id',
         ])
-        # TODO: Remove "features_before_match_played" from storing
 
         for match in global_instance.all_matches:
             writer.writerow([
@@ -47,9 +44,7 @@ def store_matches(file_name):
                 match.away_team_points,
                 match.home_team_shots_on_target,
                 match.away_team_shots_on_target,
-                match.relative_position_in_comp_season,
-                match.winner_team_id,
-                repr(match.features_before_match_played.__dict__)  # Store all features
+                match.winner_team_id
             ])
 
 
@@ -95,7 +90,6 @@ def load_matches(file_name):
                 match.home_team_shots_on_target = int(row['home_team_shots_on_target'])
                 match.away_team_shots_on_target = int(row['away_team_shots_on_target'])
 
-                match.relative_position_in_comp_season = float(row['relative_position_in_comp_season'])
                 match.winner_team_id = int(row['winner_team_id']) if row['winner_team_id'] else None
 
                 # Add the match to the global instance

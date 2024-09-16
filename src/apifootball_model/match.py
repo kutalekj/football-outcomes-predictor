@@ -32,7 +32,6 @@ class Match:
         self.comp = None
         self.season = None
         self.round = None
-        self.relative_position_in_comp_season = None
 
         self.home_team = None
         self.away_team = None
@@ -156,11 +155,6 @@ class Match:
                     if new_match.round is None:
                         raise ValueError(f"Unable to get round for the match {str(new_match.id)}")
 
-                    new_match.relative_position_in_comp_season = \
-                        new_match.calculate_relative_match_position_is_comp_season(comp, season)
-                    if new_match.relative_position_in_comp_season is None:
-                        raise ValueError(f"Unable to get relative position of match in {str(season)} {comp.name}")
-
                     # Home team
                     home_team_id = int(fixture['teams']['home']['id'])
 
@@ -252,7 +246,7 @@ class Match:
         else:
             raise ValueError(f"Unsupported statistic value found: {stat_name}")
 
-    def calculate_relative_match_position_is_comp_season(self, comp, season):
+    def calculate_relative_match_position_in_comp_season(self, comp, season):
         for comp_season_info in comp.start_end_dates_per_season:
             if comp_season_info['season'] == season:
 
@@ -292,19 +286,27 @@ class Match:
         global_instance = Global.get_instance()
         comp_id_encoded = global_instance.one_hot_encoder_comps.transform([[self.comp.id]])
 
-        # Create new instance
+        # Normalize season to [0,1]
         normalized_season = feature_ut.normalize_season(self.season)
-        new_match_features = MatchFeatures(comp_id_encoded, normalized_season, self.relative_position_in_comp_season,
-                                           home_team_id_encoded, away_team_id_encoded)
 
         # Hour & month
-        new_match_features.hours_sin = feature_ut.normalized_hour_month_cyclic(np.sin(2 * np.pi * self.hour / 24))
-        new_match_features.hours_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.hour / 24))
-        new_match_features.month_sin = feature_ut.normalized_hour_month_cyclic(np.sin(2 * np.pi * self.month / 12))
-        new_match_features.month_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.month / 12))
+        hours_sin = feature_ut.normalized_hour_month_cyclic(np.sin(2 * np.pi * self.hour / 24))
+        hours_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.hour / 24))
+        month_sin = feature_ut.normalized_hour_month_cyclic(np.sin(2 * np.pi * self.month / 12))
+        month_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.month / 12))
+
+        # Create new instance
+        new_match_features = MatchFeatures(comp_id_encoded, normalized_season, home_team_id_encoded,
+                                           away_team_id_encoded, hours_sin, hours_cos, month_sin, month_cos)
 
         # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
+
+        # Relative table position
+        new_match_features.relative_position_in_comp_season = \
+            self.calculate_relative_match_position_in_comp_season(self.comp, self.season)
+        if new_match_features.relative_position_in_comp_season is None:
+            raise ValueError(f"Unable to get relative position of match in {str(self.season)} {self.comp.name}")
 
         # Other numerical features
         new_match_features.home_match_load_per_day_last_10_days = \
