@@ -299,6 +299,10 @@ class Match:
         new_match_features = MatchFeatures(comp_id_encoded, normalized_season, home_team_id_encoded,
                                            away_team_id_encoded, hours_sin, hours_cos, month_sin, month_cos)
 
+        if self.id == 857245:
+            stop_here = True  # TODO: Debug this. Check if Elo calculated for home team - issue in its upcoming match
+            # TODO: Must be an issue with duplicate match loading/creating - Elo is calculated correctly
+
         # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
 

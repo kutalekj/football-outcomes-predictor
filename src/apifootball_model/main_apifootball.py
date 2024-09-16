@@ -52,7 +52,7 @@ for comp in global_instance.all_comps:
         global_instance.all_tables.append(new_table)
 
 # 3. Get matches (first existing locally saved, then new from API)
-# in_out.load_matches("tmp_csv_store4.csv")
+in_out.load_matches("tmp_csv_store5.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -89,5 +89,5 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store5.csv")
+in_out.store_matches("tmp_csv_store5_LS.csv")
 print("breakpoint")
