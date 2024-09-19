@@ -94,7 +94,14 @@ class Match:
 
                 # Loop over matches - get match info
                 for fixture in data_fixtures['response']:
-                    new_match = Match(int(fixture['fixture']['id']))
+
+                    # Do not create new match instance if match already present - it would overwrite the instance
+                    new_match_id = int(fixture['fixture']['id'])
+                    if new_match_id in [x.id for x in global_instance.all_matches]:
+                        print(f"Skipping match with ID={new_match_id} (already existing)")
+                        continue
+
+                    new_match = Match(new_match_id)
 
                     new_match.status = fixture['fixture']['status']['short']
                     if new_match.status not in ["FT", "AET", "PEN"]:
@@ -206,8 +213,7 @@ class Match:
                     new_match.away_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "away")
 
                     # Add new match to list
-                    if new_match.id not in [x.id for x in global_instance.all_matches]:
-                        global_instance.all_matches.append(new_match)
+                    global_instance.all_matches.append(new_match)
 
                     # Delay so that limit of requests per minute is not exceeded
                     time.sleep(0.1)
@@ -298,10 +304,6 @@ class Match:
         # Create new instance
         new_match_features = MatchFeatures(comp_id_encoded, normalized_season, home_team_id_encoded,
                                            away_team_id_encoded, hours_sin, hours_cos, month_sin, month_cos)
-
-        if self.id == 857245:
-            stop_here = True  # TODO: Debug this. Check if Elo calculated for home team - issue in its upcoming match
-            # TODO: Must be an issue with duplicate match loading/creating - Elo is calculated correctly
 
         # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
