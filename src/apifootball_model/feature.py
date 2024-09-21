@@ -23,7 +23,7 @@ class MatchFeatures:
         self.home_elo = None
         self.away_elo = None
 
-        self.relative_match_position = None
+        self.relative_match_position_in_comp_season = None
 
         self.home_match_load_per_day_last_10_days = None
         self.home_match_load_per_day_last_25_days = None

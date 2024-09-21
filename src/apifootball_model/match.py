@@ -126,12 +126,22 @@ class Match:
                                 f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} not scheduled yet - to be played")
                             continue
 
+                        if new_match.status == "ABD":
+                            print(
+                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was abandoned for some reason")
+                            continue
+
+                        if new_match.status == "AWD":
+                            print(
+                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was not played - TechnicalLoss")
+                            continue
+
                         if new_match.status == "WO":
                             print(
                                 f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was not played - WalkOver")
                             continue
 
-                        if new_match.status in ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT"]:
+                        if new_match.status in ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"]:
                             print(
                                 f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} is now in play! Skipping...")
                             continue
@@ -309,9 +319,9 @@ class Match:
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
 
         # Relative table position
-        new_match_features.relative_position_in_comp_season = \
+        new_match_features.relative_match_position_in_comp_season = \
             self.calculate_relative_match_position_in_comp_season(self.comp, self.season)
-        if new_match_features.relative_position_in_comp_season is None:
+        if new_match_features.relative_match_position_in_comp_season is None:
             raise ValueError(f"Unable to get relative position of match in {str(self.season)} {self.comp.name}")
 
         # Other numerical features
