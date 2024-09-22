@@ -321,6 +321,7 @@ class Match:
             self.calculate_relative_match_position_in_comp_season(self.comp, self.season)
         if new_match_features.relative_match_position_in_comp_season is None:
             raise ValueError(f"Unable to get relative position of match in {str(self.season)} {self.comp.name}")
+            # TODO: ValueError: Unable to get relative position of match in 2024 EFL Trophy/2023 Süper Lig/2023 Serie A
 
         # Other numerical features
         new_match_features.home_match_load_per_day_last_10_days = \

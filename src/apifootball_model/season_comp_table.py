@@ -64,6 +64,7 @@ class SeasonCompTable:
             self.team_stats[(home_team_id, home_team_name)]['goals_for'] += home_goals
             self.team_stats[(home_team_id, home_team_name)]['goals_against'] += away_goals
             self.team_stats[(away_team_id, away_team_name)]['games_played'] += 1
+            # TODO: KeyError: (101, 'Grenoble')  and (186, 'FC St. Pauli') issues
             self.team_stats[(away_team_id, away_team_name)]['goals_for'] += away_goals
             self.team_stats[(away_team_id, away_team_name)]['goals_against'] += home_goals
 

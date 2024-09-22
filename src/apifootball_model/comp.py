@@ -52,6 +52,7 @@ class Comp:
 
             data_comp_season = json.loads(data)
 
+            # TODO: Handle exception when competition season did not start yet - empty response (Coupe de France 2024)
             start_date_str = data_comp_season['response'][0]['seasons'][0]['start'] if \
                 data_comp_season['response'][0]['seasons'][0]['year'] == season else None
             end_date_str = data_comp_season['response'][0]['seasons'][0]['end'] if \
