@@ -146,8 +146,6 @@ class Match:
                                 f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} is now in play! Skipping...")
                             continue
 
-                        print(f"WARNING: Match {new_match.id} not finished")
-
                     new_match.datetime = parse(fixture['fixture']['date'])
                     new_match.hour = int(new_match.datetime.hour)
                     new_match.month = int(new_match.datetime.month)

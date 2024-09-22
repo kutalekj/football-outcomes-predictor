@@ -157,6 +157,34 @@ def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     return list(set(matches_up_to_date))
 
 
+def distribute_matches_into_rounds(matches):
+    rounds = []
+    current_round = []
+    teams_in_current_round = set()
+
+    for match in matches:
+        home_team_id = match.home_team.id
+        away_team_id = match.away_team.id
+
+        if home_team_id in teams_in_current_round or away_team_id in teams_in_current_round:
+
+            # Finish current round and start new one
+            rounds.append(current_round)
+            current_round = []
+            teams_in_current_round = set()
+
+        # Add match to current round
+        current_round.append(match)
+        teams_in_current_round.add(home_team_id)
+        teams_in_current_round.add(away_team_id)
+
+    # Append the last round if not empty
+    if current_round:
+        rounds.append(current_round)
+
+    return rounds
+
+
 def get_table_by_comp_season(comp_id, season):
     global_instance = Global.get_instance()
 
