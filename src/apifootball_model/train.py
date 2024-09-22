@@ -29,6 +29,7 @@ def train(regular_matches_in_rounds):
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+    # train_data, train_labels = get_data_up_to_round(regular_matches_in_rounds, NUM_TRAINING_ROUNDS)
     for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
         train_data, train_labels = get_data_for_window(regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS)
         val_data, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
@@ -40,7 +41,7 @@ def train(regular_matches_in_rounds):
         print(f"Round {round_number} - Loss: {loss}, Accuracy: {accuracy}")
         print(f"{len(train_data)} training data and {len(val_data)} validation data were used in this round training")
 
-        train_data, train_labels = append_to_training_data(train_data, train_labels, val_data, val_labels)
+        # train_data, train_labels = append_to_training_data(train_data, train_labels, val_data, val_labels)
 
 
 def get_data_for_window(regular_matches_in_rounds, round_number, window_size):
@@ -51,6 +52,26 @@ def get_data_for_window(regular_matches_in_rounds, round_number, window_size):
     labels = []
 
     for r in range(start_round, end_round):
+        matches = regular_matches_in_rounds[r]
+
+        for match in matches:
+            total_goals = match.home_team_goals + match.away_team_goals
+            label = 1 if total_goals < 2.5 else 0
+
+            data.append(match.feature_vector_before_match_played)
+            labels.append(label)
+
+    data = np.array(data)  # shape (num_matches, num_features)
+    labels = np.array(labels)  # shape (num_matches,)
+
+    return data, labels
+
+
+def get_data_up_to_round(regular_matches_in_rounds, round_number):
+    data = []
+    labels = []
+
+    for r in range(round_number - 1):  # round_number is 1-based, so exclude it
         matches = regular_matches_in_rounds[r]
 
         for match in matches:
