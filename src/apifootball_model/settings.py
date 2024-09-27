@@ -68,7 +68,6 @@ WINNER_TEAM_ID_CODE_FOR_DRAW = -1
 ZERO = 0.000000
 ALMOST_ONE = 0.999999
 
-ONE_HOT_ENCODED_VECTOR_LENGTH = 36  # Assuming no comp season table has more than THIS teams and there no more comps!
 NUM_NUMERICAL_FEATURES = 34
 NUM_CATEGORICAL_FEATURES = 3
 

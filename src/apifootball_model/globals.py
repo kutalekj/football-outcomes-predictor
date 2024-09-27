@@ -10,6 +10,9 @@ class Global:
             cls._instance.all_tables = []
             cls._instance.all_teams = []
 
+            cls._instance.num_unique_regular_teams = []
+            cls._instance.num_unique_regular_comps = []
+
         return cls._instance
 
     @classmethod

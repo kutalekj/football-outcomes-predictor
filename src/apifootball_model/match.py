@@ -175,7 +175,9 @@ class Match:
 
                     home_team = ut.get_team_if_exists(home_team_id)
                     if home_team is None:
-                        raise Exception(f"Failed to find a home team with ID {home_team_id} to assign a match.")
+                        # raise Exception(f"Failed to find a home team with ID {home_team_id} to assign a match.")
+                        # TODO: Exception: Failed to find a home team with ID 4869 to assign a match.
+                        continue
 
                     new_match.home_team = home_team
                     home_team.matches.append(new_match)
