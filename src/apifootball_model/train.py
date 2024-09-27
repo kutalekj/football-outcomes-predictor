@@ -1,3 +1,4 @@
+from datetime import datetime
 import numpy as np
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization
@@ -17,6 +18,7 @@ def train(regular_matches_in_rounds):
     global_instance = Global.get_instance()
 
     # Step 1a: Pre-train Team embedding model
+    # TODO: Normalize embeddings so that the values are not 0.0000000...
     home_team_input = Input(shape=(1,), dtype='int32', name='home_team_input')
     away_team_input = Input(shape=(1,), dtype='int32', name='away_team_input')
 
@@ -76,15 +78,15 @@ def train(regular_matches_in_rounds):
 
 def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embedding_model):
     total_rounds = len(regular_matches_in_rounds)
-    log_dir = os.path.join("logs", "fit", "rounds")
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), "rounds")
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
     # The main model
     main_model = Sequential()
-    main_model.add(Dense(64, input_dim=NUM_NUMERICAL_FEATURES + EMBEDDING_OUT_SIZE_TEAM * 2 + EMBEDDING_OUT_SIZE_COMP,
+    main_model.add(Dense(128, input_dim=NUM_NUMERICAL_FEATURES + EMBEDDING_OUT_SIZE_TEAM * 2 + EMBEDDING_OUT_SIZE_COMP,
                          activation='relu'))
-    main_model.add(Dense(32, activation='relu'))
+    main_model.add(Dense(64, activation='relu'))
     main_model.add(Dropout(0.3))
     main_model.add(Dense(1, activation='sigmoid'))
     main_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
@@ -125,12 +127,23 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
 
         val_input = np.concatenate([val_numerical_features, val_team_embeddings, val_comp_embeddings], axis=1)
 
+        print(f"\tRound {str(round_number)}: {str(train_input.shape[0])} train and {str(val_input.shape[0])} val. data")
+
         # Train the main model
         main_model.fit(train_input, train_labels, epochs=10, batch_size=16, validation_data=(val_input, val_labels),
                        callbacks=[early_stopping, tensorboard_callback])
 
         loss, accuracy = main_model.evaluate(val_input, val_labels)
-        print(f"Round {round_number} - Loss: {loss}, Accuracy: {accuracy}")
+
+        """
+        # Ensure loss and accuracy are scalar values
+        if isinstance(loss, (list, np.ndarray)):
+            loss = loss[0]
+        if isinstance(accuracy, (list, np.ndarray)):
+            accuracy = accuracy[0]
+        """
+
+        print(f"\t\t\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
 
 
 def get_data_for_window(regular_matches_in_rounds, round_number, window_size):

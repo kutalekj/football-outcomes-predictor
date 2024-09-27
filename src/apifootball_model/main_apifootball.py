@@ -39,14 +39,36 @@ global_instance = Global.get_instance()
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
     {'id': 45, 'name': "FA Cup", 'regular_round_keywords': []},
-    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []},
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []}
 """
 
 # 1. Init comps and their seasons and rounds
 for comp in [
+    {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season']},
+    {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
+    {'id': 207, 'name': "Super League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # SUI
+    {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']},
+    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': []},
+    {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': []},
+    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': []},
+    {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': []},
+    {'id': 212, 'name': "Cup", 'regular_round_keywords': []},  # CRO
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': []},  # TUR
+    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},
+    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season']},
+    {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']},
+    {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season']},
     {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
     {'id': 144, 'name': "Jupiler Pro League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
+    {'id': 45, 'name': "FA Cup", 'regular_round_keywords': []},
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []},
     {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
     {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []}
@@ -76,7 +98,7 @@ for comp in global_instance.all_comps:
         global_instance.all_tables.append(new_table)
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store7_BEL_POR.csv")
+in_out.load_matches("tmp_csv_store7_many.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -115,8 +137,12 @@ regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
 global_instance.num_unique_regular_teams = len(list(
     set([x.home_team.id for x in global_instance.all_matches if x.round.is_regular]
         + [x.away_team.id for x in global_instance.all_matches if x.round.is_regular])))
+print(f"\t\t\t{global_instance.num_unique_regular_teams} "
+      f"different regular teams are going to participate in the training process")
 global_instance.num_unique_regular_comps = len(list(
     set([x.comp.id for x in global_instance.all_matches if x.round.is_regular])))
+print(f"\t\t\t{global_instance.num_unique_regular_comps} "
+      f"different regular comps are going to participate in the training process")
 
 # 7. Train
 train(regular_matches_in_rounds)

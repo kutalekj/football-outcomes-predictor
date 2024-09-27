@@ -187,7 +187,9 @@ class Match:
 
                     away_team = ut.get_team_if_exists(away_team_id)
                     if away_team is None:
-                        raise Exception(f"Failed to find a home team with ID {away_team_id} to assign a match.")
+                        # raise Exception(f"Failed to find an away team with ID {away_team_id} to assign a match.")
+                        # TODO: Exception: Failed to find an away team with ID 14558 to assign a match.
+                        continue
 
                     new_match.away_team = away_team
                     away_team.matches.append(new_match)
