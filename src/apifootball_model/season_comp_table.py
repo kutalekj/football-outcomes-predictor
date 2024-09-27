@@ -8,7 +8,6 @@ import numpy as np
 import settings
 import utils as ut
 from globals import Global
-from sklearn.preprocessing import OneHotEncoder
 
 
 class SeasonCompTable:
@@ -18,8 +17,6 @@ class SeasonCompTable:
         self.season = season
         self.teams = None
         self.team_stats = None
-
-        self.one_hot_encoder = None
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 

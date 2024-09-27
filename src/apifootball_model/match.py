@@ -285,21 +285,6 @@ class Match:
         return None
 
     def calculate_match_features(self):
-        # Transform team IDs and comp ID to one-hot encoding
-        if self.round.is_regular:
-            table = ut.get_table_by_comp_season(self.comp.id, self.season)
-
-            home_team_id_encoded = table.one_hot_encoder.transform([[self.home_team.id]])
-            away_team_id_encoded = table.one_hot_encoder.transform([[self.away_team.id]])
-
-        # If not regular, encoder might not know the teams
-        else:
-            home_team_id_encoded = np.zeros((1, settings.ONE_HOT_ENCODED_VECTOR_LENGTH))
-            away_team_id_encoded = np.zeros((1, settings.ONE_HOT_ENCODED_VECTOR_LENGTH))
-
-        global_instance = Global.get_instance()
-        comp_id_encoded = global_instance.one_hot_encoder_comps.transform([[self.comp.id]])
-
         # Normalize season to [0,1]
         normalized_season = feature_ut.normalize_season(self.season)
 
@@ -310,8 +295,8 @@ class Match:
         month_cos = feature_ut.normalized_hour_month_cyclic(np.cos(2 * np.pi * self.month / 12))
 
         # Create new instance
-        new_match_features = MatchFeatures(comp_id_encoded, normalized_season, home_team_id_encoded,
-                                           away_team_id_encoded, hours_sin, hours_cos, month_sin, month_cos)
+        new_match_features = MatchFeatures(self.comp.id, normalized_season, self.home_team.id, self.away_team.id,
+                                           hours_sin, hours_cos, month_sin, month_cos)
 
         # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)

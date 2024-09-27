@@ -10,8 +10,6 @@ class Global:
             cls._instance.all_tables = []
             cls._instance.all_teams = []
 
-            cls._instance.one_hot_encoder_comps = []
-
         return cls._instance
 
     @classmethod
