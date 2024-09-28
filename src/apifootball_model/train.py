@@ -1,9 +1,10 @@
 from datetime import datetime
 import numpy as np
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization
+from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from sklearn.preprocessing import LabelEncoder
+import tensorflow.keras.backend as K
 import os
 from settings import NUM_NUMERICAL_FEATURES, NUM_CATEGORICAL_FEATURES
 from globals import Global
@@ -18,7 +19,6 @@ def train(regular_matches_in_rounds):
     global_instance = Global.get_instance()
 
     # Step 1a: Pre-train Team embedding model
-    # TODO: Normalize embeddings so that the values are not 0.0000000...
     home_team_input = Input(shape=(1,), dtype='int32', name='home_team_input')
     away_team_input = Input(shape=(1,), dtype='int32', name='away_team_input')
 
@@ -26,9 +26,12 @@ def train(regular_matches_in_rounds):
     home_team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams,
                                     output_dim=EMBEDDING_OUT_SIZE_TEAM)(home_team_input)
     home_team_embedding = BatchNormalization()(home_team_embedding)
+    home_team_embedding = Lambda(scale_to_0_1)(home_team_embedding)
+
     away_team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams,
                                     output_dim=EMBEDDING_OUT_SIZE_TEAM)(away_team_input)
     away_team_embedding = BatchNormalization()(away_team_embedding)
+    away_team_embedding = Lambda(scale_to_0_1)(away_team_embedding)
 
     home_team_flat = Flatten()(home_team_embedding)
     away_team_flat = Flatten()(away_team_embedding)
@@ -46,6 +49,7 @@ def train(regular_matches_in_rounds):
     comp_id_embedding = Embedding(input_dim=global_instance.num_unique_regular_comps,
                                   output_dim=EMBEDDING_OUT_SIZE_COMP)(comp_id_input)
     comp_id_embedding = BatchNormalization()(comp_id_embedding)
+    comp_id_embedding = Lambda(scale_to_0_1)(comp_id_embedding)
 
     comp_id_flat = Flatten()(comp_id_embedding)
 
@@ -222,3 +226,7 @@ def get_data_for_round(regular_matches_in_rounds, round_number):
     labels = np.array(labels)  # shape (num_matches,)
 
     return data, labels
+
+
+def scale_to_0_1(x):
+    return (x - K.min(x)) / (K.max(x) - K.min(x))
