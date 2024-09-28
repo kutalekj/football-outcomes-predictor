@@ -46,7 +46,10 @@ global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
 for comp in [
-    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': []}
+    {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season']},
+    {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season']},
+    {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season']}
 ]:
     # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
@@ -107,6 +110,8 @@ regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
+for i, r in enumerate(regular_matches_in_rounds):
+    print(f"{str(len(r))} matches found in round {str(i)}")
 # TODO: Maybe ensure that there are at least N matches in each round?
 
 global_instance.num_unique_regular_teams = len(list(

@@ -61,7 +61,6 @@ class SeasonCompTable:
             self.team_stats[(home_team_id, home_team_name)]['goals_for'] += home_goals
             self.team_stats[(home_team_id, home_team_name)]['goals_against'] += away_goals
             self.team_stats[(away_team_id, away_team_name)]['games_played'] += 1
-            # TODO: KeyError: (101, 'Grenoble')  and (186, 'FC St. Pauli') issues
             self.team_stats[(away_team_id, away_team_name)]['goals_for'] += away_goals
             self.team_stats[(away_team_id, away_team_name)]['goals_against'] += home_goals
 
@@ -125,11 +124,14 @@ class SeasonCompTable:
         for table in global_instance.all_tables:
             table.teams = [team for team in table.teams if
                            any([season_elem for season_elem in team.regularity_in_comp_season if
-                                season_elem['season'] == table.season and season_elem[
-                                    'is_regular']])]
+                                season_elem['comp'].id == table.comp_id and
+                                season_elem['season'] == table.season and
+                                season_elem['is_regular']])]
 
             table.team_stats = {(team_id, team_name): stats for (team_id, team_name), stats in table.team_stats.items()
                                 if
                                 any([season_elem for season_elem in
                                      ut.get_team_if_exists(team_id).regularity_in_comp_season
-                                     if season_elem['season'] == table.season and season_elem['is_regular']])}
+                                     if season_elem['comp'].id == table.comp_id and
+                                     season_elem['season'] == table.season and
+                                     season_elem['is_regular']])}

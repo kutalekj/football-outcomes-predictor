@@ -39,13 +39,17 @@ class Team:
             # If team participating in the season, check if it played some regular matches
             if len(team_matches_in_season) > 0:
 
-                regular_team_matches_in_season = [match.round.is_regular for match in team_matches_in_season]
-
-                # Team played some matches in the season, but none of them was regular
-                if any(regular_team_matches_in_season):
+                regular_team_matches_in_season = [match for match in team_matches_in_season if match.round.is_regular]
+                if any([match.round.is_regular for match in team_matches_in_season]):
 
                     # Set the "is_regular" team attribute to True
                     for season_elem in self.regularity_in_comp_season:
-                        if season_elem['season'] == season and len(season_elem['comp'].regular_round_keywords) > 0:
+                        regular_team_matches_in_comp_season_booleans = \
+                            [match.round.is_regular for match in regular_team_matches_in_season
+                             if match.comp.id == season_elem['comp'].id]
+
+                        if season_elem['season'] == season and \
+                                len(season_elem['comp'].regular_round_keywords) > 0 and \
+                                any(regular_team_matches_in_comp_season_booleans):
                             print(f"_DEBUG_: Setting team {self.name} as regular in {season_elem['comp'].name} in {season}.")
                             season_elem['is_regular'] = True

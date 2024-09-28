@@ -360,6 +360,9 @@ class Match:
 
         # Current position in a table (if regular match, -1 otherwise)
         if self.round.is_regular:
+            if self.id == 718354:
+                break_point = True
+
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
             new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team.id,
                                                                                                       self.datetime)
