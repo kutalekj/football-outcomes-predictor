@@ -108,42 +108,51 @@ class Match:
 
                         if new_match.status in ["Canc", "CANC"]:
                             print(
-                                f"Canceled match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
+                                f"Canceled match found between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
                             continue
 
                         if new_match.status == "PST":
                             print(
-                                f"Postponed match found between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
+                                f"Postponed match found between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} played at {fixture['fixture']['date']}")
                             continue
 
                         if new_match.status == "NS":
                             print(
-                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} did not start yet (should be played at {fixture['fixture']['date']})")
+                                f"Match between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} did not start yet"
+                                f" (should be played at {fixture['fixture']['date']})")
                             continue
 
                         if new_match.status == "TBD":
                             print(
-                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} not scheduled yet - to be played")
+                                f"Match between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} not scheduled yet - to be played")
                             continue
 
                         if new_match.status == "ABD":
                             print(
-                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was abandoned for some reason")
+                                f"Match between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} was abandoned for some reason")
                             continue
 
                         if new_match.status == "AWD":
                             print(
-                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was not played - TechnicalLoss")
+                                f"Match between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} was not played - TechnicalLoss")
                             continue
 
                         if new_match.status == "WO":
                             print(
-                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} was not played - WalkOver")
+                                f"Match between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} was not played - WalkOver")
                             continue
 
                         if new_match.status in ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"]:
                             print(
-                                f"Match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']} is now in play! Skipping...")
+                                f"Match between {fixture['teams']['home']['name']} and"
+                                f" {fixture['teams']['away']['name']} is now in play! Skipping...")
                             continue
 
                     new_match.datetime = parse(fixture['fixture']['date'])
@@ -233,7 +242,8 @@ class Match:
         if len(stats) == 0:
             if home_away == "home" and self.round.is_regular:
                 print(
-                    f"Statistics [{stat_name}] estimated for a match between {self.home_team.name} and {self.away_team.name} played at {self.datetime}")
+                    f"Statistics [{stat_name}] estimated for a match between {self.home_team.name} "
+                    f"and {self.away_team.name} played at {self.datetime}")
 
             # The value returned (used for features) is already normalized - denormalize it for now and round it
             return round(feature_ut.get_avg_shots_on_target_last_n(self, 5, home_away) * settings.SOG_NORM_COEFFICIENT)
@@ -265,9 +275,9 @@ class Match:
     def calculate_relative_match_position_in_country_season(self, season):
         global_instance = Global.get_instance()
 
-        start_date = global_instance.start_end_dates_per_country_season[self.country][season]['start'].\
+        start_date = global_instance.start_end_dates_per_country_season[self.country][season]['start']. \
             replace(tzinfo=self.datetime.tzinfo)
-        end_date = global_instance.start_end_dates_per_country_season[self.country][season]['end'].\
+        end_date = global_instance.start_end_dates_per_country_season[self.country][season]['end']. \
             replace(tzinfo=self.datetime.tzinfo)
 
         if start_date <= self.datetime <= end_date:
@@ -311,9 +321,9 @@ class Match:
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
 
         # Relative table position
-        new_match_features.relative_match_position_in_comp_season = \
+        new_match_features.relative_match_position_in_country_season = \
             self.calculate_relative_match_position_in_country_season(self.season)
-        if new_match_features.relative_match_position_in_comp_season is None:
+        if new_match_features.relative_match_position_in_country_season is None:
             raise ValueError(f"Unable to get relative position of match in {str(self.season)} {self.comp.name}")
 
         # Other numerical features
@@ -364,9 +374,6 @@ class Match:
 
         # Current position in a table (if regular match, -1 otherwise)
         if self.round.is_regular:
-            if self.id == 718354:
-                break_point = True
-
             table = ut.get_table_by_comp_season(self.comp.id, self.season)
             new_match_features.home_curr_position = table.get_curr_team_position_in_season_up_to_date(self.home_team.id,
                                                                                                       self.datetime)
@@ -382,38 +389,59 @@ class Match:
                 print("\n\n\tFeatures before match:")
                 print(f"ELO={new_match_features.home_elo}")
                 print(
-                    f"Match load last 10/25 days={new_match_features.home_match_load_per_day_last_10_days}/{new_match_features.home_match_load_per_day_last_25_days}")
+                    f"Relative match position in country season="
+                    f"{new_match_features.relative_match_position_in_country_season}")
                 print(
-                    f"Avg points last 5/20 matches={new_match_features.home_avg_points_last_5}/{new_match_features.home_avg_points_last_20}")
+                    f"Match load last 10/25 days={new_match_features.home_match_load_per_day_last_10_days}/"
+                    f"{new_match_features.home_match_load_per_day_last_25_days}")
                 print(
-                    f"Avg goals last 5/20 matches={new_match_features.home_avg_goals_last_5}/{new_match_features.home_avg_goals_last_20}")
+                    f"Avg points last 5/20 matches={new_match_features.home_avg_points_last_5}/"
+                    f"{new_match_features.home_avg_points_last_20}")
                 print(
-                    f"Avg shots on goal last 5/20 matches={new_match_features.home_avg_shots_on_target_last_5}/{new_match_features.home_avg_shots_on_target_last_20}")
+                    f"Avg goals last 5/20 matches={new_match_features.home_avg_goals_last_5}/"
+                    f"{new_match_features.home_avg_goals_last_20}")
                 print(
-                    f"Avg goals scored home last 5/20 matches={new_match_features.home_avg_goals_scored_home_last_5}/{new_match_features.home_avg_goals_scored_home_last_20}")
+                    f"Avg shots on goal last 5/20 matches={new_match_features.home_avg_shots_on_target_last_5}/"
+                    f"{new_match_features.home_avg_shots_on_target_last_20}")
                 print(
-                    f"Avg goals conceded home last 5/20 matches={new_match_features.home_avg_goals_conceded_home_last_5}/{new_match_features.home_avg_goals_conceded_home_last_20}")
+                    f"Avg goals scored home last 5/20 matches={new_match_features.home_avg_goals_scored_home_last_5}/"
+                    f"{new_match_features.home_avg_goals_scored_home_last_20}")
+                print(
+                    f"Avg goals conceded home last 5/20 matches="
+                    f"{new_match_features.home_avg_goals_conceded_home_last_5}/"
+                    f"{new_match_features.home_avg_goals_conceded_home_last_20}")
                 print(f"Table position={new_match_features.home_curr_position}")
             elif self.away_team.name == "Genk":
                 print("\n\n\tFeatures before match:")
                 print(f"ELO={new_match_features.away_elo}")
                 print(
-                    f"Match load last 10/25 days={new_match_features.away_match_load_per_day_last_10_days}/{new_match_features.away_match_load_per_day_last_25_days}")
+                    f"Relative match position in country season="
+                    f"{new_match_features.relative_match_position_in_country_season}")
                 print(
-                    f"Avg points last 5/20 matches={new_match_features.away_avg_points_last_5}/{new_match_features.away_avg_points_last_20}")
+                    f"Match load last 10/25 days={new_match_features.away_match_load_per_day_last_10_days}/"
+                    f"{new_match_features.away_match_load_per_day_last_25_days}")
                 print(
-                    f"Avg goals last 5/20 matches={new_match_features.away_avg_goals_last_5}/{new_match_features.away_avg_goals_last_20}")
+                    f"Avg points last 5/20 matches={new_match_features.away_avg_points_last_5}/"
+                    f"{new_match_features.away_avg_points_last_20}")
                 print(
-                    f"Avg shots on goal last 5/20 matches={new_match_features.away_avg_shots_on_target_last_5}/{new_match_features.away_avg_shots_on_target_last_20}")
+                    f"Avg goals last 5/20 matches={new_match_features.away_avg_goals_last_5}/"
+                    f"{new_match_features.away_avg_goals_last_20}")
                 print(
-                    f"Avg goals scored away last 5/20 matches={new_match_features.away_avg_goals_scored_away_last_5}/{new_match_features.away_avg_goals_scored_away_last_20}")
+                    f"Avg shots on goal last 5/20 matches={new_match_features.away_avg_shots_on_target_last_5}/"
+                    f"{new_match_features.away_avg_shots_on_target_last_20}")
                 print(
-                    f"Avg goals conceded away last 5/20 matches={new_match_features.away_avg_goals_conceded_away_last_5}/{new_match_features.away_avg_goals_conceded_away_last_20}")
+                    f"Avg goals scored away last 5/20 matches={new_match_features.away_avg_goals_scored_away_last_5}/"
+                    f"{new_match_features.away_avg_goals_scored_away_last_20}")
+                print(
+                    f"Avg goals conceded away last 5/20 matches="
+                    f"{new_match_features.away_avg_goals_conceded_away_last_5}/"
+                    f"{new_match_features.away_avg_goals_conceded_away_last_20}")
                 print(f"Table position={new_match_features.away_curr_position}")
 
             print("\n\tMATCH_STATISTICS:")
             print(f"{self.datetime}: {self.comp.name}, {self.season}, {self.round.name}")
             print(
-                f"{self.home_team.name} {self.home_team_goals} ({self.home_team_shots_on_target}) - {self.away_team.name} {self.away_team_goals} ({self.away_team_shots_on_target})")
+                f"{self.home_team.name} {self.home_team_goals} ({self.home_team_shots_on_target}) - "
+                f"{self.away_team.name} {self.away_team_goals} ({self.away_team_shots_on_target})")
 
         return new_match_features

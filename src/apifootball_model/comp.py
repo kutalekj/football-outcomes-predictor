@@ -52,11 +52,11 @@ class Comp:
 
             data_comp_season = json.loads(data)
 
-            self.country = data_comp_season['response'][0]['country']['name']
-
             # Comp season might not have started yet
             if len(data_comp_season['response']) == 0:
                 continue
+
+            self.country = data_comp_season['response'][0]['country']['name']
 
             # Start/End date
             start_date_str = data_comp_season['response'][0]['seasons'][0]['start'] if \
@@ -131,6 +131,10 @@ class Comp:
     def init_country_start_end_dates_in_seasons(self):
         global_instance = Global.get_instance()
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+
+            # For example, Coupe de France 2024 might not have started yet - unknown start/end dates
+            if season not in [s['season'] for s in self.start_end_dates_per_season]:
+                continue
 
             start_date = self.get_date_for_comp_season(season, "start")
             end_date = self.get_date_for_comp_season(season, "end")
