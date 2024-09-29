@@ -16,6 +16,7 @@ class Comp:
     def __init__(self, id_, name, regular_keywords):
         self.id = id_
         self.name = name
+        self.country = None
 
         self.rounds_per_season = []
         self.all_rounds_sorted = []  # Note the rounds are probably sorted in the order of when completely played...
@@ -52,10 +53,13 @@ class Comp:
 
             data_comp_season = json.loads(data)
 
+            self.country = data_comp_season['response'][0]['country']['name']
+
             # Comp season might not have started yet
             if len(data_comp_season['response']) == 0:
                 continue
 
+            # Start/End date
             start_date_str = data_comp_season['response'][0]['seasons'][0]['start'] if \
                 data_comp_season['response'][0]['seasons'][0]['year'] == season else None
             end_date_str = data_comp_season['response'][0]['seasons'][0]['end'] if \
@@ -124,3 +128,37 @@ class Comp:
                 self.all_rounds_sorted.append(new_round)  # TODO: Will these round listing variables be still needed?
 
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
+
+    def init_country_start_end_dates_in_seasons(self):
+        global_instance = Global.get_instance()
+        for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+
+            start_date = self.get_date_for_comp_season(season, "start")
+            end_date = self.get_date_for_comp_season(season, "end")
+
+            if self.country != "World":
+                if start_date < global_instance.start_end_dates_per_country_season[self.country][season]['start']:
+                    global_instance.start_end_dates_per_country_season[self.country][season]['start'] = start_date
+
+                if end_date > global_instance.start_end_dates_per_country_season[self.country][season]['end']:
+                    global_instance.start_end_dates_per_country_season[self.country][season]['end'] = end_date
+
+            # "World" competitions (EU cups) are common for all the countries - affect their season start/end dates
+            elif self.country == "World":
+                for country in global_instance.start_end_dates_per_country_season.keys():
+                    for seas in global_instance.start_end_dates_per_country_season[country].keys():
+                        if start_date < global_instance.start_end_dates_per_country_season[country][seas]['start']\
+                                and season == seas:
+                            global_instance.start_end_dates_per_country_season[country][seas]['start'] = start_date
+
+                        if end_date > global_instance.start_end_dates_per_country_season[country][seas]['end']\
+                                and season == seas:
+                            global_instance.start_end_dates_per_country_season[country][seas]['end'] = end_date
+
+    def get_date_for_comp_season(self, season, date_type):
+        # date_type should be either "start" or "end"
+        for season_dates in self.start_end_dates_per_season:
+            if season_dates['season'] == season:
+                return season_dates[date_type]
+
+        raise ValueError(f"Season {season} start/end date not found for competition {self.name}")

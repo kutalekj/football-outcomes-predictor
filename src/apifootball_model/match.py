@@ -264,27 +264,32 @@ class Match:
         else:
             raise ValueError(f"Unsupported statistic value found: {stat_name}")
 
-    def calculate_relative_match_position_in_comp_season(self, comp, season):
-        for comp_season_info in comp.start_end_dates_per_season:
-            if comp_season_info['season'] == season:
+    def calculate_relative_match_position_in_country_season(self, season):
+        global_instance = Global.get_instance()
 
-                start_date = comp_season_info['start'].replace(tzinfo=self.datetime.tzinfo)
-                end_date = comp_season_info['end'].replace(tzinfo=self.datetime.tzinfo)
+        start_date = global_instance.start_end_dates_per_country_season[self.country][season]['start'].\
+            replace(tzinfo=self.datetime.tzinfo)
+        end_date = global_instance.start_end_dates_per_country_season[self.country][season]['end'].\
+            replace(tzinfo=self.datetime.tzinfo)
 
-                if start_date <= self.datetime <= end_date:
-                    season_length = (end_date - start_date).days
-                    days_into_season = (self.datetime - start_date).days
-                    relative_position = days_into_season / season_length
+        if start_date <= self.datetime <= end_date:
+            season_length = (end_date - start_date).days
+            days_into_season = (self.datetime - start_date).days
+            relative_position = days_into_season / season_length
 
-                    return relative_position
+            return relative_position
 
-                # Case for matches finishing e.g. one day after the regular season end date
-                elif start_date <= self.datetime <= end_date + timedelta(days=7):
-                    return settings.ALMOST_ONE
+        # Case for matches finishing e.g. one day after the regular season end date
+        elif start_date <= self.datetime <= end_date + timedelta(days=14):
+            print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
+                  f"{str(self.datetime)} not fitting into the expected timedelta range...")
+            return settings.ALMOST_ONE
 
-                # Case for matches finishing e.g. one day before the regular season start date
-                elif start_date <= self.datetime + timedelta(days=7) <= end_date:
-                    return settings.ZERO
+        # Case for matches finishing e.g. one day before the regular season start date
+        elif start_date <= self.datetime + timedelta(days=14) <= end_date:
+            print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
+                  f"{str(self.datetime)} not fitting into the expected timedelta range...")
+            return settings.ZERO
 
         return None
 
@@ -307,10 +312,9 @@ class Match:
 
         # Relative table position
         new_match_features.relative_match_position_in_comp_season = \
-            self.calculate_relative_match_position_in_comp_season(self.comp, self.season)
+            self.calculate_relative_match_position_in_country_season(self.season)
         if new_match_features.relative_match_position_in_comp_season is None:
             raise ValueError(f"Unable to get relative position of match in {str(self.season)} {self.comp.name}")
-            # TODO: ValueError: Unable to get relative position of match in 2024 EFL Trophy/2023 Süper Lig/2023 Serie A
 
         # Other numerical features
         new_match_features.home_match_load_per_day_last_10_days = \

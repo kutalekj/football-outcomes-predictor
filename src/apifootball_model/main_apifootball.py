@@ -41,15 +41,21 @@ global_instance = Global.get_instance()
     {'id': 45, 'name': "FA Cup", 'regular_round_keywords': []},
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []},
     {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
-    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []}
-"""
-
-# 1. Init comps and their seasons and rounds
-for comp in [
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
     {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season']},
     {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season']},
     {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season']},
     {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season']}
+"""
+
+# 1. Init comps and their seasons and rounds
+for comp in [
+    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': []},
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']},
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},
+    {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season']},
+    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': []}
 ]:
     # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
@@ -61,19 +67,32 @@ for comp in [
     global_instance.all_comps.append(new_comp)
 global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
-# 2. Init tables for comp seasons
+# 2. Init country start/end dates and tables for comp seasons
 for comp in global_instance.all_comps:
-    # Omit the cups - do not create tables for them
-    if len(comp.regular_round_keywords) == 0:
-        continue
-
     for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
+
+        # Country start/end dates
+        if comp.country not in global_instance.start_end_dates_per_country_season:
+            global_instance.start_end_dates_per_country_season[comp.country] = {}
+
+        if season not in global_instance.start_end_dates_per_country_season[comp.country]:
+            global_instance.start_end_dates_per_country_season[comp.country][season] = {
+                'start': datetime.datetime.max, 'end': datetime.datetime.min}
+
+        # Omit the cups - do not create tables for them
+        if len(comp.regular_round_keywords) == 0:
+            continue
+
         new_table = SeasonCompTable(comp.id, comp.name, season)
         print(f"Initializing table for comp [{new_table.comp_name}].")
 
         new_table.init_teams_in_season_comp()
 
         global_instance.all_tables.append(new_table)
+
+# Country start/end dates
+for comp in global_instance.all_comps:
+    comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
 # in_out.load_matches("tmp_csv_store7_many.csv")
@@ -103,7 +122,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store7_many.csv")
+# in_out.store_matches("tmp_csv_store7_many2.csv")
 
 # 6. Distribute regular matches into rounds for training
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
@@ -114,16 +133,16 @@ for i, r in enumerate(regular_matches_in_rounds):
     print(f"{str(len(r))} matches found in round {str(i)}")
 # TODO: Maybe ensure that there are at least N matches in each round?
 
-global_instance.num_unique_regular_teams = len(list(
+global_instance.num_unique_regular_teams_for_training = len(list(
     set([x.home_team.id for x in global_instance.all_matches if x.round.is_regular]
         + [x.away_team.id for x in global_instance.all_matches if x.round.is_regular])))
-print(f"\t\t\t{global_instance.num_unique_regular_teams} "
+print(f"\t\t\t{global_instance.num_unique_regular_teams_for_training} "
       f"different regular teams are going to participate in the training process")
-global_instance.num_unique_regular_comps = len(list(
+global_instance.num_unique_regular_comps_for_training = len(list(
     set([x.comp.id for x in global_instance.all_matches if x.round.is_regular])))
-print(f"\t\t\t{global_instance.num_unique_regular_comps} "
+print(f"\t\t\t{global_instance.num_unique_regular_comps_for_training} "
       f"different regular comps are going to participate in the training process")
 
 # 7. Train
-train(regular_matches_in_rounds)
+# train(regular_matches_in_rounds)
 print("breakpoint")

@@ -23,12 +23,12 @@ def train(regular_matches_in_rounds):
     away_team_input = Input(shape=(1,), dtype='int32', name='away_team_input')
 
     # Embedding layers for the team IDs categorical features
-    home_team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams,
+    home_team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams_for_training,
                                     output_dim=EMBEDDING_OUT_SIZE_TEAM)(home_team_input)
     home_team_embedding = BatchNormalization()(home_team_embedding)
     home_team_embedding = Lambda(scale_to_0_1)(home_team_embedding)
 
-    away_team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams,
+    away_team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams_for_training,
                                     output_dim=EMBEDDING_OUT_SIZE_TEAM)(away_team_input)
     away_team_embedding = BatchNormalization()(away_team_embedding)
     away_team_embedding = Lambda(scale_to_0_1)(away_team_embedding)
@@ -46,7 +46,7 @@ def train(regular_matches_in_rounds):
     comp_id_input = Input(shape=(1,), dtype='int32', name='comp_id_input')
 
     # Embedding layer for the comp ID categorical feature
-    comp_id_embedding = Embedding(input_dim=global_instance.num_unique_regular_comps,
+    comp_id_embedding = Embedding(input_dim=global_instance.num_unique_regular_comps_for_training,
                                   output_dim=EMBEDDING_OUT_SIZE_COMP)(comp_id_input)
     comp_id_embedding = BatchNormalization()(comp_id_embedding)
     comp_id_embedding = Lambda(scale_to_0_1)(comp_id_embedding)
@@ -138,14 +138,6 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
                        callbacks=[early_stopping, tensorboard_callback])
 
         loss, accuracy = main_model.evaluate(val_input, val_labels)
-
-        """
-        # Ensure loss and accuracy are scalar values
-        if isinstance(loss, (list, np.ndarray)):
-            loss = loss[0]
-        if isinstance(accuracy, (list, np.ndarray)):
-            accuracy = accuracy[0]
-        """
 
         print(f"\t\t\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
 
