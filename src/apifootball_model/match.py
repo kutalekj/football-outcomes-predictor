@@ -175,8 +175,7 @@ class Match:
 
                     home_team = ut.get_team_if_exists(home_team_id)
                     if home_team is None:
-                        # raise Exception(f"Failed to find a home team with ID {home_team_id} to assign a match.")
-                        # TODO: Exception: Failed to find a home team with ID 4869 to assign a match.
+                        print(f"\t\t\t\t\tFAILED to find a home team with ID {home_team_id} to assign a match.")
                         continue
 
                     new_match.home_team = home_team
@@ -187,8 +186,7 @@ class Match:
 
                     away_team = ut.get_team_if_exists(away_team_id)
                     if away_team is None:
-                        # raise Exception(f"Failed to find an away team with ID {away_team_id} to assign a match.")
-                        # TODO: Exception: Failed to find an away team with ID 14558 to assign a match.
+                        print(f"\t\t\t\t\tFAILED to find an away team with ID {home_team_id} to assign a match.")
                         continue
 
                     new_match.away_team = away_team
@@ -282,13 +280,15 @@ class Match:
         # Case for matches finishing e.g. one day after the regular season end date
         elif start_date <= self.datetime <= end_date + timedelta(days=14):
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
-                  f"{str(self.datetime)} not fitting into the expected timedelta range...")
+                  f"{str(self.datetime)} not fitting into the expected timedelta range "
+                  f"[{str(start_date)},{str(end_date)}] - too late")
             return settings.ALMOST_ONE
 
         # Case for matches finishing e.g. one day before the regular season start date
         elif start_date <= self.datetime + timedelta(days=14) <= end_date:
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
-                  f"{str(self.datetime)} not fitting into the expected timedelta range...")
+                  f"{str(self.datetime)} not fitting into the expected timedelta range "
+                  f"[{str(start_date)},{str(end_date)}] - too early")
             return settings.ZERO
 
         return None

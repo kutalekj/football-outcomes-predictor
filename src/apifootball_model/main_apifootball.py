@@ -50,12 +50,11 @@ global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
 for comp in [
-    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': []},
-    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
-    {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']},
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},
-    {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season']},
-    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': []}
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
+    {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']},
+    {'id': 212, 'name': "Cup", 'regular_round_keywords': []},
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']}
 ]:
     # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])

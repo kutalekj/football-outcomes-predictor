@@ -43,7 +43,6 @@ class Comp:
         # Init teams + get start/end date of each comp season
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
 
-            # Season start/end date
             request_string = "/leagues?id=" + str(self.id) + "&season=" + str(season)
 
             self.conn.request("GET", request_string, headers=settings.HEADERS)
