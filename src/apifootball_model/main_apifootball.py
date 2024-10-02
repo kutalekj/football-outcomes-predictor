@@ -149,5 +149,5 @@ print(f"\t\t\t{global_instance.num_unique_regular_comps_for_training} "
       f"different regular comps are going to participate in the training process")
 
 # 7. Train
-# train(regular_matches_in_rounds)
+train(regular_matches_in_rounds)
 print("breakpoint")

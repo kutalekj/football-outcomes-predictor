@@ -3,6 +3,7 @@ import numpy as np
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
+from tensorflow.keras.optimizers import Adam
 from sklearn.preprocessing import LabelEncoder
 import tensorflow.keras.backend as K
 import os
@@ -11,14 +12,28 @@ from globals import Global
 
 
 NUM_TRAINING_ROUNDS = 25
-EMBEDDING_OUT_SIZE_TEAM = 8
-EMBEDDING_OUT_SIZE_COMP = 4
+EMBEDDING_OUT_SIZE_TEAM = 6
+EMBEDDING_OUT_SIZE_COMP = 3
 
 
 def train(regular_matches_in_rounds):
     global_instance = Global.get_instance()
 
     # Step 1a: Pre-train Team embedding model
+    team_input = Input(shape=(1,), dtype='int32', name='team_input')  # one input for both home and away teams
+
+    # Embedding layers for the team IDs categorical features
+    team_embedding = Embedding(input_dim=global_instance.num_unique_regular_teams_for_training,
+                               output_dim=EMBEDDING_OUT_SIZE_TEAM)(team_input)
+    team_embedding = BatchNormalization()(team_embedding)
+    team_embedding = Lambda(scale_to_0_1)(team_embedding)
+    team_flat = Flatten()(team_embedding)
+
+    team_embedding_model = Model(inputs=team_input, outputs=team_flat)
+    team_embedding_model.compile(optimizer='adam', loss='mse')
+    team_embedding_model.summary()
+
+    """
     home_team_input = Input(shape=(1,), dtype='int32', name='home_team_input')
     away_team_input = Input(shape=(1,), dtype='int32', name='away_team_input')
 
@@ -41,6 +56,11 @@ def train(regular_matches_in_rounds):
     team_embedding_model = Model(inputs=[home_team_input, away_team_input], outputs=team_embeddings)
     team_embedding_model.compile(optimizer='adam', loss='mse')
     team_embedding_model.summary()
+    """
+
+    # TensorBoard setup for the team Embedding model
+    log_dir_team = os.path.join("logs", "embedding_team_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
+    tensorboard_callback_team = TensorBoard(log_dir=log_dir_team, histogram_freq=1)
 
     # Step 1b: Pre-train Comp embedding model
     comp_id_input = Input(shape=(1,), dtype='int32', name='comp_id_input')
@@ -54,8 +74,13 @@ def train(regular_matches_in_rounds):
     comp_id_flat = Flatten()(comp_id_embedding)
 
     comp_embedding_model = Model(inputs=comp_id_input, outputs=comp_id_flat)
-    comp_embedding_model.compile(optimizer='adam', loss='mse')
+    embedding_optimizer = Adam(learning_rate=0.0005)
+    comp_embedding_model.compile(optimizer=embedding_optimizer, loss='mse')
     comp_embedding_model.summary()
+
+    # TensorBoard setup for the comp ID Embedding model
+    log_dir_comp = os.path.join("logs", "embedding_comp_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
+    tensorboard_callback_comp = TensorBoard(log_dir=log_dir_comp, histogram_freq=1)
 
     # Step 2: Train the embedding model
     for round_number in range(NUM_TRAINING_ROUNDS + 1, len(regular_matches_in_rounds)):
@@ -66,15 +91,21 @@ def train(regular_matches_in_rounds):
         home_team_input_data_mapped, away_team_input_data_mapped, comp_id_input_data_mapped \
             = map_categorical_to_zero_indexed(home_team_input_data, away_team_input_data, comp_id_input_data)
 
-        # Train the Team embedding model
+        # Train the Team embedding model using both home and away team inputs
+        combined_team_input_data = np.concatenate([home_team_input_data_mapped, away_team_input_data_mapped])
+        team_embedding_model.fit(combined_team_input_data,
+                                 np.zeros((len(combined_team_input_data), EMBEDDING_OUT_SIZE_TEAM)),
+                                 epochs=10, batch_size=16, callbacks=[tensorboard_callback_team])
+        """
         team_embedding_model.fit([home_team_input_data_mapped, away_team_input_data_mapped],
                                  np.zeros((len(home_team_input_data_mapped), EMBEDDING_OUT_SIZE_TEAM * 2)),
                                  epochs=10, batch_size=16)
+        """
 
         # Train the Comp embedding model
         comp_embedding_model.fit(comp_id_input_data_mapped,
                                  np.zeros((len(comp_id_input_data_mapped), EMBEDDING_OUT_SIZE_COMP)),
-                                 epochs=10, batch_size=16)
+                                 epochs=10, batch_size=16, callbacks=[tensorboard_callback_comp])
 
     # Step 3: Train the final model with precomputed embeddings
     train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embedding_model)
@@ -93,7 +124,8 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
     main_model.add(Dense(64, activation='relu'))
     main_model.add(Dropout(0.3))
     main_model.add(Dense(1, activation='sigmoid'))
-    main_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    main_mode_optimizer = Adam(learning_rate=0.005)
+    main_model.compile(optimizer=main_mode_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     main_model.summary()
 
     for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
@@ -109,12 +141,20 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
                 train_home_team_input_data, train_away_team_input_data, train_comp_id_input_data)
 
         # Predict embeddings for the round (training data)
+        train_home_team_embeddings = team_embedding_model.predict(train_home_team_input_data_mapped)
+        train_away_team_embeddings = team_embedding_model.predict(train_away_team_input_data_mapped)
+
+        """
         train_team_embeddings = team_embedding_model.predict([train_home_team_input_data_mapped,
                                                               train_away_team_input_data_mapped])
+        """
+
         train_comp_embeddings = comp_embedding_model.predict(train_comp_id_input_data_mapped)
 
         # Concatenate embeddings with other features (training data)
-        train_input = np.concatenate([train_numerical_features, train_team_embeddings, train_comp_embeddings], axis=1)
+        # train_input = np.concatenate([train_numerical_features, train_team_embeddings, train_comp_embeddings], axis=1)
+        train_input = np.concatenate([train_numerical_features, train_home_team_embeddings,
+                                      train_away_team_embeddings, train_comp_embeddings], axis=1)
 
         # Similarly for the validation data...
         val_numerical_features, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
@@ -125,11 +165,18 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
             = map_categorical_to_zero_indexed(
                 val_home_team_input_data, val_away_team_input_data, val_comp_id_input_data)
 
+        val_home_team_embeddings = team_embedding_model.predict(val_home_team_input_data_mapped)
+        val_away_team_embeddings = team_embedding_model.predict(val_away_team_input_data_mapped)
+        """
         val_team_embeddings = team_embedding_model.predict([val_home_team_input_data_mapped,
                                                             val_away_team_input_data_mapped])
+        """
+
         val_comp_embeddings = comp_embedding_model.predict(val_comp_id_input_data_mapped)
 
-        val_input = np.concatenate([val_numerical_features, val_team_embeddings, val_comp_embeddings], axis=1)
+        # val_input = np.concatenate([val_numerical_features, val_team_embeddings, val_comp_embeddings], axis=1)
+        val_input = np.concatenate([val_numerical_features, val_home_team_embeddings,
+                                    val_away_team_embeddings, val_comp_embeddings], axis=1)
 
         print(f"\tRound {str(round_number)}: {str(train_input.shape[0])} train and {str(val_input.shape[0])} val. data")
 
