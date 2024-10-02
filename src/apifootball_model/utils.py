@@ -213,4 +213,4 @@ def is_match_within_days(curr_datetime, match_datetime, n):
 
 def min_max_scaling_with_clipping(value, max_value):
     scaled_value = value / max_value
-    return np.clip(scaled_value, 0, 1)
+    return np.clip(scaled_value, settings.ALMOST_ZERO, settings.ALMOST_ONE)

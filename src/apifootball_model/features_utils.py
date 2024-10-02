@@ -4,7 +4,8 @@ feature_utils.py
 
 import numpy as np
 import utils as ut
-from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT
+from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
+    ALMOST_ZERO, ALMOST_ONE
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -313,7 +314,13 @@ def normalize_elo(elo, min_elo=1000, max_elo=2000):
 
 
 def normalize_points(points):
-    return points / 3.0
+    normalized_points = points / 3.0
+
+    if normalized_points == 0.0:
+        return ALMOST_ZERO
+    if normalized_points == 1.0:
+        return ALMOST_ONE
+    return normalized_points
 
 
 def normalize_goals(goals):
