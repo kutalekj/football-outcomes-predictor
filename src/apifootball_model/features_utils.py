@@ -20,7 +20,7 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 
     if home_away == "home":
         while True:
-            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.home_team.id, same_comp=False,
+            prev_match = ut.get_previous_match(new_curr_match, curr_match.home_team.id, same_comp=False,
                                                same_season=False, regular=False)
 
             if prev_match is None:
@@ -34,7 +34,7 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 
     elif home_away == "away":
         while True:
-            prev_match = ut.get_previous_match(new_curr_match, new_curr_match.away_team.id, same_comp=False,
+            prev_match = ut.get_previous_match(new_curr_match, curr_match.away_team.id, same_comp=False,
                                                same_season=False, regular=False)
 
             if prev_match is None:

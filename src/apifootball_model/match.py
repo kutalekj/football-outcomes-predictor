@@ -299,7 +299,7 @@ class Match:
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
                   f"{str(self.datetime)} not fitting into the expected timedelta range "
                   f"[{str(start_date)},{str(end_date)}] - too early")
-            return settings.ZERO
+            return settings.ALMOST_ZERO
 
         return None
 

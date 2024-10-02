@@ -50,14 +50,17 @@ global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
 for comp in [
-    {'id': 119, 'name': "Superliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round']},
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},
-    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': []},
-    {'id': 81, 'name': "DFB Pokal", 'regular_round_keywords': []},
-    {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season']},
-    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': []}
-
+    {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']},
+    {'id': 212, 'name': "Cup", 'regular_round_keywords': []},
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []},
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []}
 ]:
     # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
@@ -97,7 +100,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-# in_out.load_matches("tmp_csv_store7_many.csv")
+in_out.load_matches("tmp_csv_store8_BEL_POR_CRO.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
