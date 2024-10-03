@@ -138,6 +138,7 @@ for i, r in enumerate(regular_matches_in_rounds):
     print(f"{str(len(r))} matches found in round {str(i)}")
 # TODO: Maybe ensure that there are at least N matches in each round?
 
+"""
 global_instance.num_unique_regular_teams_for_training = len(list(
     set([x.home_team.id for x in global_instance.all_matches if x.round.is_regular]
         + [x.away_team.id for x in global_instance.all_matches if x.round.is_regular])))
@@ -147,6 +148,7 @@ global_instance.num_unique_regular_comps_for_training = len(list(
     set([x.comp.id for x in global_instance.all_matches if x.round.is_regular])))
 print(f"\t\t\t{global_instance.num_unique_regular_comps_for_training} "
       f"different regular comps are going to participate in the training process")
+"""
 
 # 7. Train
 train(regular_matches_in_rounds)
