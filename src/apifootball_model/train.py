@@ -65,6 +65,11 @@ def train(regular_matches_in_rounds):
     away_team_ids_mapped = away_team_ids_mapped.reshape(-1, 1)
     comp_ids_mapped = comp_ids_mapped.reshape(-1, 1)
 
+    print(numerical_features.shape)
+    print(home_team_ids_mapped.shape)
+    print(away_team_ids_mapped.shape)
+    print(comp_ids_mapped.shape)
+
     # Train the embedding model
     embedding_model.fit(
         {'numerical_input': numerical_features,
@@ -246,6 +251,7 @@ def build_embedding_pretrain_model(num_unique_teams, num_unique_comps, embedding
 
     # Concatenate embeddings with numerical input
     concatenated = Concatenate()([numerical_input, home_team_embedding, away_team_embedding, comp_embedding])
+    print("Concatenated input shape:", concatenated.shape)
 
     # Dense layers
     x = Dense(128, activation='relu')(concatenated)
