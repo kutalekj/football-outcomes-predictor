@@ -1,5 +1,6 @@
 from datetime import datetime
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
@@ -15,8 +16,12 @@ NUM_TRAINING_ROUNDS = 25
 EMBEDDING_OUT_SIZE_TEAM = 6
 EMBEDDING_OUT_SIZE_COMP = 3
 
+team_encoder = LabelEncoder()
+comp_encoder = LabelEncoder()
+
 
 def train(regular_matches_in_rounds):
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
     global_instance = Global.get_instance()
 
     # Extract all unique team and comp IDs globally
@@ -24,15 +29,16 @@ def train(regular_matches_in_rounds):
     all_team_ids = np.concatenate([all_home_team_ids, all_away_team_ids])
 
     # Map categorical IDs to zero-indexed values using LabelEncoder
-    team_encoder = LabelEncoder()
     all_team_ids_mapped = team_encoder.fit_transform(all_team_ids)
-
-    comp_encoder = LabelEncoder()
     all_comp_ids_mapped = comp_encoder.fit_transform(all_comp_ids)
 
     # Set the number of unique team IDs and comp IDs in the global instance
     global_instance.num_unique_regular_teams_for_training = len(np.unique(all_team_ids_mapped))
     global_instance.num_unique_regular_comps_for_training = len(np.unique(all_comp_ids_mapped))
+    print(f"\t\t\t{global_instance.num_unique_regular_teams_for_training} "
+          f"different regular teams are going to participate in the training process")
+    print(f"\t\t\t{global_instance.num_unique_regular_comps_for_training} "
+          f"different regular comps are going to participate in the training process")
 
     # TensorBoard callbacks for the Embedding models
     log_dir_team = os.path.join("logs", "embedding_team_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
@@ -51,13 +57,13 @@ def train(regular_matches_in_rounds):
     team_flat = Flatten()(team_embedding)
 
     team_embedding_model = Model(inputs=team_input, outputs=team_flat)
-    team_embedding_model_optimizer = Adam()
+    team_embedding_model_optimizer = Adam(learning_rate=0.0005)
     team_embedding_model.compile(optimizer=team_embedding_model_optimizer, loss='mse')
     team_embedding_model.summary()
 
     # Step 2a: Train the model using both home and away team IDs
     team_embedding_model.fit(all_team_ids_mapped, np.zeros((len(all_team_ids_mapped), EMBEDDING_OUT_SIZE_TEAM)),
-                             epochs=10, batch_size=32, callbacks=[tensorboard_callback_team])
+                             epochs=150, batch_size=32, callbacks=[tensorboard_callback_team])
 
     # Step 1b: Pre-train Comp embedding model
     comp_id_input = Input(shape=(1,), dtype='int32', name='comp_id_input')
@@ -70,34 +76,13 @@ def train(regular_matches_in_rounds):
     comp_id_flat = Flatten()(comp_id_embedding)
 
     comp_embedding_model = Model(inputs=comp_id_input, outputs=comp_id_flat)
-    comp_embedding_model_optimizer = Adam()
+    comp_embedding_model_optimizer = Adam(learning_rate=0.0005)
     comp_embedding_model.compile(optimizer=comp_embedding_model_optimizer, loss='mse')
     comp_embedding_model.summary()
 
     # Step 2b: Train the comp embedding model using all comp IDs
     comp_embedding_model.fit(all_comp_ids_mapped, np.zeros((len(all_comp_ids_mapped), EMBEDDING_OUT_SIZE_COMP)),
-                             epochs=10, batch_size=32, callbacks=[tensorboard_callback_comp])
-
-    """
-    for round_number in range(NUM_TRAINING_ROUNDS + 1, len(regular_matches_in_rounds)):
-        home_team_input_data, away_team_input_data, comp_id_input_data, _ = extract_embedding_inputs(
-            regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS)
-
-        # Map categorical IDs to zero-indexed values using LabelEncoder
-        home_team_input_data_mapped, away_team_input_data_mapped, comp_id_input_data_mapped \
-            = map_categorical_to_zero_indexed(home_team_input_data, away_team_input_data, comp_id_input_data)
-
-        # Train the Team embedding model using both home and away team inputs
-        combined_team_input_data = np.concatenate([home_team_input_data_mapped, away_team_input_data_mapped])
-        team_embedding_model.fit(combined_team_input_data,
-                                 np.zeros((len(combined_team_input_data), EMBEDDING_OUT_SIZE_TEAM)),
-                                 epochs=10, batch_size=16, callbacks=[tensorboard_callback_team])
-
-        # Train the Comp embedding model
-        comp_embedding_model.fit(comp_id_input_data_mapped,
-                                 np.zeros((len(comp_id_input_data_mapped), EMBEDDING_OUT_SIZE_COMP)),
-                                 epochs=10, batch_size=16, callbacks=[tensorboard_callback_comp])
-    """
+                             epochs=150, batch_size=32, callbacks=[tensorboard_callback_comp])
 
     # Step 3: Train the final model with precomputed embeddings
     train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embedding_model)
@@ -119,7 +104,7 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
     main_model.add(Dropout(0.3))
     main_model.add(Dense(1, activation='sigmoid'))
 
-    main_mode_optimizer = Adam()
+    main_mode_optimizer = Adam(learning_rate=0.001)
     main_model.compile(optimizer=main_mode_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     main_model.summary()
 
@@ -130,10 +115,10 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
         train_home_team_input_data, train_away_team_input_data, train_comp_id_input_data, _ = extract_embedding_inputs(
             regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS)
 
-        # Map categorical inputs to zero-indexed values using LabelEncoder
-        train_home_team_input_data_mapped, train_away_team_input_data_mapped, train_comp_id_input_data_mapped, \
-            = map_categorical_to_zero_indexed(
-                train_home_team_input_data, train_away_team_input_data, train_comp_id_input_data)
+        # Map categorical IDs to zero-indexed values using LabelEncoder
+        train_home_team_input_data_mapped = team_encoder.transform(train_home_team_input_data)
+        train_away_team_input_data_mapped = team_encoder.transform(train_away_team_input_data)
+        train_comp_id_input_data_mapped = comp_encoder.transform(train_comp_id_input_data)
 
         # Predict embeddings for the round (training data)
         train_home_team_embeddings = team_embedding_model.predict(train_home_team_input_data_mapped)
@@ -149,9 +134,9 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
         val_home_team_input_data, val_away_team_input_data, val_comp_id_input_data, _ = extract_embedding_inputs(
             regular_matches_in_rounds, round_number + 1, 1)
 
-        val_home_team_input_data_mapped, val_away_team_input_data_mapped, val_comp_id_input_data_mapped, \
-            = map_categorical_to_zero_indexed(
-                val_home_team_input_data, val_away_team_input_data, val_comp_id_input_data)
+        val_home_team_input_data_mapped = team_encoder.transform(val_home_team_input_data)
+        val_away_team_input_data_mapped = team_encoder.transform(val_away_team_input_data)
+        val_comp_id_input_data_mapped = comp_encoder.transform(val_comp_id_input_data)
 
         val_home_team_embeddings = team_embedding_model.predict(val_home_team_input_data_mapped)
         val_away_team_embeddings = team_embedding_model.predict(val_away_team_input_data_mapped)
@@ -163,7 +148,7 @@ def train_main_model(regular_matches_in_rounds, team_embedding_model, comp_embed
               f" {str(val_input.shape[0])} val. data")
 
         # Train the main model
-        main_model.fit(train_input, train_labels, epochs=10, batch_size=16, validation_data=(val_input, val_labels),
+        main_model.fit(train_input, train_labels, epochs=10, batch_size=32, validation_data=(val_input, val_labels),
                        callbacks=[early_stopping, tensorboard_callback])
 
         loss, accuracy = main_model.evaluate(val_input, val_labels)
@@ -229,18 +214,6 @@ def extract_embedding_inputs(regular_matches_in_rounds, round_number, window_siz
             labels.append(label)
 
     return np.array(home_team_input), np.array(away_team_input), np.array(comp_id_input), np.array(labels)
-
-
-def map_categorical_to_zero_indexed(home_team_input_data, away_team_input_data, comp_id_input_data):
-    home_team_encoder = LabelEncoder()
-    away_team_encoder = LabelEncoder()
-    comp_id_encoder = LabelEncoder()
-
-    home_team_input_data_mapped = home_team_encoder.fit_transform(home_team_input_data)
-    away_team_input_data_mapped = away_team_encoder.fit_transform(away_team_input_data)
-    comp_id_input_data_mapped = comp_id_encoder.fit_transform(comp_id_input_data)
-
-    return home_team_input_data_mapped, away_team_input_data_mapped, comp_id_input_data_mapped
 
 
 def get_data_for_round(regular_matches_in_rounds, round_number):
