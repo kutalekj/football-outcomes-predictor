@@ -77,8 +77,10 @@ def train_main_model(regular_matches_in_rounds):
     merged = Concatenate()([numerical_input, home_team_embedding, away_team_embedding, comp_embedding])
 
     # Build the rest of the model
-    x = Dense(128, activation='relu')(merged)
+    x = Dense(256, activation='relu')(merged)
     x = Dropout(0.5)(x)
+    x = Dense(128, activation='relu')(merged)
+    x = Dropout(0.4)(x)
     x = Dense(64, activation='relu')(x)
     x = Dropout(0.3)(x)
     output = Dense(1, activation='sigmoid')(x)
@@ -86,7 +88,7 @@ def train_main_model(regular_matches_in_rounds):
     # Define the model
     model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input], outputs=output)
 
-    model_optimizer = Adam(learning_rate=0.0001)
+    model_optimizer = Adam(learning_rate=0.00005)
     model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     model.summary()
 
