@@ -45,6 +45,8 @@ def train(regular_matches_in_rounds):
 
 
 def train_main_model(regular_matches_in_rounds):
+    weighted_accuracy = []
+    num_validation_matches = 0
     total_rounds = len(regular_matches_in_rounds)
 
     # Callbacks
@@ -76,6 +78,7 @@ def train_main_model(regular_matches_in_rounds):
 
     # Build the rest of the model
     x = Dense(128, activation='relu')(merged)
+    x = Dropout(0.5)(x)
     x = Dense(64, activation='relu')(x)
     x = Dropout(0.3)(x)
     output = Dense(1, activation='sigmoid')(x)
@@ -83,7 +86,7 @@ def train_main_model(regular_matches_in_rounds):
     # Define the model
     model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input], outputs=output)
 
-    model_optimizer = Adam(learning_rate=0.001)
+    model_optimizer = Adam(learning_rate=0.0001)
     model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     model.summary()
 
@@ -110,6 +113,7 @@ def train_main_model(regular_matches_in_rounds):
 
         print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape[0])} train and"
               f" {str(val_numerical_features.shape[0])} val. data")
+        num_validation_matches += val_numerical_features.shape[0]
 
         # Train the main model
         model.fit(
@@ -117,7 +121,7 @@ def train_main_model(regular_matches_in_rounds):
              train_comp_id_input_data_mapped],
             train_labels,
             epochs=10,
-            batch_size=32,
+            batch_size=16,
             validation_data=(
                 [val_numerical_features, val_home_team_input_data_mapped, val_away_team_input_data_mapped,
                  val_comp_id_input_data_mapped],
@@ -151,6 +155,10 @@ def train_main_model(regular_matches_in_rounds):
             embedding_vector = comp_embedding_weights[idx]
             print(f"Cop ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
         # TODO: The Embedding values are within (-1,1), so consider scaling other features like as well
+
+        weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
+
+    print(f"\tWeighted validation accuracy = "f"{float(np.sum(weighted_accuracy) / num_validation_matches)}")
 
 
 def extract_all_unique_ids(regular_matches_in_rounds):
