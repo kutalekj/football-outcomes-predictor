@@ -129,7 +129,7 @@ for comp in global_instance.all_comps:
 # 3. Get matches (first existing locally saved, then new from API)
 in_out.load_matches("tmp_csv_store9_full.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
-Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
+# Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
 # Sort matches by datetime played (asc.)
 for team in global_instance.all_teams:

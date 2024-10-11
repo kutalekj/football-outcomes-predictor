@@ -13,8 +13,8 @@ from globals import Global
 
 
 NUM_TRAINING_ROUNDS = 25
-EMBEDDING_OUT_SIZE_TEAM = 6
-EMBEDDING_OUT_SIZE_COMP = 3
+EMBEDDING_OUT_SIZE_TEAM = 9
+EMBEDDING_OUT_SIZE_COMP = 2
 
 team_encoder = LabelEncoder()
 comp_encoder = LabelEncoder()
@@ -79,7 +79,7 @@ def train_main_model(regular_matches_in_rounds):
     # Build the rest of the model
     x = Dense(256, activation='relu')(merged)
     x = Dropout(0.5)(x)
-    x = Dense(128, activation='relu')(merged)
+    x = Dense(128, activation='relu')(x)
     x = Dropout(0.4)(x)
     x = Dense(64, activation='relu')(x)
     x = Dropout(0.3)(x)
@@ -88,7 +88,7 @@ def train_main_model(regular_matches_in_rounds):
     # Define the model
     model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input], outputs=output)
 
-    model_optimizer = Adam(learning_rate=0.00005)
+    model_optimizer = Adam(learning_rate=0.00007)
     model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     model.summary()
 
@@ -113,8 +113,8 @@ def train_main_model(regular_matches_in_rounds):
         val_away_team_input_data_mapped = team_encoder.transform(val_away_team_input_data)
         val_comp_id_input_data_mapped = comp_encoder.transform(val_comp_id_input_data)
 
-        print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape[0])} train and"
-              f" {str(val_numerical_features.shape[0])} val. data")
+        print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape)} train and"
+              f" {str(val_numerical_features.shape)} val. data")
         num_validation_matches += val_numerical_features.shape[0]
 
         # Train the main model
@@ -123,7 +123,7 @@ def train_main_model(regular_matches_in_rounds):
              train_comp_id_input_data_mapped],
             train_labels,
             epochs=10,
-            batch_size=16,
+            batch_size=32,
             validation_data=(
                 [val_numerical_features, val_home_team_input_data_mapped, val_away_team_input_data_mapped,
                  val_comp_id_input_data_mapped],
@@ -144,19 +144,35 @@ def train_main_model(regular_matches_in_rounds):
         team_embedding_weights = model.get_layer('team_embedding').get_weights()[0]
         comp_embedding_weights = model.get_layer('comp_embedding').get_weights()[0]
 
-        # Print a sample mapping
-        sample_team_ids = team_encoder.classes_[:15]  # Get the first 15 team IDs
+        # DEBUG PRINTS
+        sample_team_ids = team_encoder.classes_[:5]
         for team_id in sample_team_ids:
             idx = team_encoder.transform([team_id])[0]
             embedding_vector = team_embedding_weights[idx]
             print(f"Team ID: {team_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
 
-        sample_comp_ids = comp_encoder.classes_[:5]  # Get the first 5 comp IDs
+        sample_team_ids = team_encoder.classes_[300:305]
+        for team_id in sample_team_ids:
+            idx = team_encoder.transform([team_id])[0]
+            embedding_vector = team_embedding_weights[idx]
+            print(f"Team ID: {team_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+
+        sample_comp_ids = comp_encoder.classes_[:3]
         for comp_id in sample_comp_ids:
             idx = comp_encoder.transform([comp_id])[0]
             embedding_vector = comp_embedding_weights[idx]
-            print(f"Cop ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
-        # TODO: The Embedding values are within (-1,1), so consider scaling other features like as well
+            print(f"Comp ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+
+        sample_comp_ids = comp_encoder.classes_[10:13]
+        for comp_id in sample_comp_ids:
+            idx = comp_encoder.transform([comp_id])[0]
+            embedding_vector = comp_embedding_weights[idx]
+            print(f"Comp ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+        # TODO: The Embedding values are within (-1,1) - scale them to (0,1) to match the features
+        # TODO: ...but the model still learns to map them close to zero, or? Maybe weights init close to 0?
+        # TODO: Try cumulative training, without sliding window
+        # TODO: Try RNN
+        # TODO: Find out which features contribute more and which less to the training
 
         weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
 
