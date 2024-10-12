@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation
+from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation, LSTM
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
 from sklearn.preprocessing import LabelEncoder
@@ -10,11 +10,13 @@ import tensorflow.keras.backend as K
 import os
 from settings import NUM_NUMERICAL_FEATURES, NUM_CATEGORICAL_FEATURES
 from globals import Global
+from utils import get_n_previous_matches
 
 
 NUM_TRAINING_ROUNDS = 25
 EMBEDDING_OUT_SIZE_TEAM = 9
 EMBEDDING_OUT_SIZE_COMP = 2
+SEQUENCE_LENGTH = 10
 
 team_encoder = LabelEncoder()
 comp_encoder = LabelEncoder()
@@ -26,7 +28,8 @@ def train(regular_matches_in_rounds):
 
     # Extract all unique team and comp IDs globally
     all_home_team_ids, all_away_team_ids, all_comp_ids = extract_all_unique_ids(regular_matches_in_rounds)
-    all_team_ids = np.concatenate([all_home_team_ids, all_away_team_ids])
+    all_team_ids = np.concatenate([all_home_team_ids, all_away_team_ids, np.array([0])])
+    all_comp_ids = np.concatenate([all_comp_ids, np.array([0])])  # Allows encoders to correctly transform 0 values
 
     # Map categorical IDs to zero-indexed values using LabelEncoder
     team_encoder.fit(all_team_ids)
@@ -41,142 +44,269 @@ def train(regular_matches_in_rounds):
           f"different regular comps are going to participate in the training process")
 
     # Step 3: Train the final model
-    train_main_model(regular_matches_in_rounds)
+    train_rnn_model(regular_matches_in_rounds)
 
 
-def train_main_model(regular_matches_in_rounds):
-    weighted_accuracy = []
-    num_validation_matches = 0
-    total_rounds = len(regular_matches_in_rounds)
-
+def train_rnn_model(regular_matches_in_rounds):
     # Callbacks
     log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), "rounds")
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
 
-    # Define the inputs
-    numerical_input = Input(shape=(NUM_NUMERICAL_FEATURES,), name='numerical_input')
-    home_team_input = Input(shape=(1,), dtype='int32', name='home_team_input')
-    away_team_input = Input(shape=(1,), dtype='int32', name='away_team_input')
-    comp_input = Input(shape=(1,), dtype='int32', name='comp_input')
+    # Define the model
+    model = build_rnn_model(
+        num_unique_teams=Global.get_instance().num_unique_regular_teams_for_training,
+        num_unique_comps=Global.get_instance().num_unique_regular_comps_for_training,
+        embedding_out_size_team=EMBEDDING_OUT_SIZE_TEAM,
+        embedding_out_size_comp=EMBEDDING_OUT_SIZE_COMP,
+        num_numerical_features=NUM_NUMERICAL_FEATURES,
+        sequence_length=SEQUENCE_LENGTH
+    )
 
-    # Embedding layers for team IDs
-    team_embedding_layer = Embedding(input_dim=Global.get_instance().num_unique_regular_teams_for_training,
-                                     output_dim=EMBEDDING_OUT_SIZE_TEAM, name='team_embedding')
+    # Prepare sequences and labels
+    train_sequences, train_labels = prepare_sequences(regular_matches_in_rounds, is_training=True)
+    val_sequences, val_labels = prepare_sequences(regular_matches_in_rounds, is_training=False)
 
-    home_team_embedding = Flatten()(team_embedding_layer(home_team_input))
-    away_team_embedding = Flatten()(team_embedding_layer(away_team_input))
+    # Unpack sequences
+    train_home_numerical_sequences, train_away_numerical_sequences, \
+        train_home_team_sequences, train_away_team_sequences, \
+        train_home_comp_sequences, train_away_comp_sequences = train_sequences
 
-    # Embedding layer for comp IDs
-    comp_embedding_layer = Embedding(input_dim=Global.get_instance().num_unique_regular_comps_for_training,
-                                     output_dim=EMBEDDING_OUT_SIZE_COMP, name='comp_embedding')
+    val_home_numerical_sequences, val_away_numerical_sequences, \
+        val_home_team_sequences, val_away_team_sequences, \
+        val_home_comp_sequences, val_away_comp_sequences = val_sequences
 
-    comp_embedding = Flatten()(comp_embedding_layer(comp_input))
+    # Map categorical IDs to zero-indexed values using LabelEncoder
+    train_home_team_sequences_mapped = team_encoder.transform(train_home_team_sequences.flatten()).reshape(
+        train_home_team_sequences.shape) + 1
+    train_away_team_sequences_mapped = team_encoder.transform(train_away_team_sequences.flatten()).reshape(
+        train_away_team_sequences.shape) + 1
+    train_home_comp_sequences_mapped = comp_encoder.transform(train_home_comp_sequences.flatten()).reshape(
+        train_home_comp_sequences.shape) + 1
+    train_away_comp_sequences_mapped = comp_encoder.transform(train_away_comp_sequences.flatten()).reshape(
+        train_away_comp_sequences.shape) + 1
 
-    # Concatenate all features
-    merged = Concatenate()([numerical_input, home_team_embedding, away_team_embedding, comp_embedding])
+    val_home_team_sequences_mapped = team_encoder.transform(val_home_team_sequences.flatten()).reshape(
+        val_home_team_sequences.shape) + 1
+    val_away_team_sequences_mapped = team_encoder.transform(val_away_team_sequences.flatten()).reshape(
+        val_away_team_sequences.shape) + 1
+    val_home_comp_sequences_mapped = comp_encoder.transform(val_home_comp_sequences.flatten()).reshape(
+        val_home_comp_sequences.shape) + 1
+    val_away_comp_sequences_mapped = comp_encoder.transform(val_away_comp_sequences.flatten()).reshape(
+        val_away_comp_sequences.shape) + 1
 
-    # Build the rest of the model
-    x = Dense(256, activation='relu')(merged)
+    print(f"Training data shapes:")
+    print(f"Home numerical sequences: {train_home_numerical_sequences.shape}")
+    print(f"Away numerical sequences: {train_away_numerical_sequences.shape}")
+    print(f"Home team sequences: {train_home_team_sequences_mapped.shape}")
+    print(f"Away team sequences: {train_away_team_sequences_mapped.shape}")
+    print(f"Home comp sequences: {train_home_comp_sequences_mapped.shape}")
+    print(f"Away comp sequences: {train_away_comp_sequences_mapped.shape}")
+    print(f"Labels: {train_labels.shape}")
+
+    # Train the model
+    model.fit(
+        [
+            train_home_numerical_sequences, train_away_numerical_sequences,
+            train_home_team_sequences_mapped, train_away_team_sequences_mapped,
+            train_home_comp_sequences_mapped, train_away_comp_sequences_mapped
+        ],
+        train_labels,
+        epochs=1000,
+        batch_size=32,
+        validation_data=(
+            [
+                val_home_numerical_sequences, val_away_numerical_sequences,
+                val_home_team_sequences_mapped, val_away_team_sequences_mapped,
+                val_home_comp_sequences_mapped, val_away_comp_sequences_mapped
+            ],
+            val_labels
+        ),
+        callbacks=[early_stopping, tensorboard_callback]
+    )
+
+    # Evaluate the model
+    loss, accuracy = model.evaluate(
+        [val_home_numerical_sequences, val_away_numerical_sequences, val_home_team_sequences_mapped,
+         val_away_team_sequences_mapped, val_home_comp_sequences_mapped, val_away_comp_sequences_mapped],
+        val_labels
+    )
+    print(f"Validation Loss: {loss}, Validation Accuracy: {accuracy}")
+
+    # TODO: Add output log saving with debug outputs, weighted acc (from last N epochs only) and...
+    # TODO: The model still learns to map embedding values close to zero... Maybe weights init close to 0?
+    # TODO: ...and with highest/lowest embedding value - see if really all values close to 0
+    # TODO: Try cumulative training, without sliding window
+    # TODO: Try RNN
+    # TODO: Find out which features contribute more and which less to the training
+
+
+def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
+                    embedding_out_size_comp, num_numerical_features, sequence_length):
+    # Inputs
+    home_numerical_input = Input(shape=(sequence_length, num_numerical_features), name='home_numerical_input')
+    away_numerical_input = Input(shape=(sequence_length, num_numerical_features), name='away_numerical_input')
+    home_team_input = Input(shape=(sequence_length,), name='home_team_input', dtype='int32')
+    away_team_input = Input(shape=(sequence_length,), name='away_team_input', dtype='int32')
+    home_comp_input = Input(shape=(sequence_length,), name='home_comp_input', dtype='int32')
+    away_comp_input = Input(shape=(sequence_length,), name='away_comp_input', dtype='int32')
+
+    # Embedding layers without masking
+    team_embedding_layer = Embedding(
+        input_dim=num_unique_teams + 1,  # adjusted for shifted IDs
+        output_dim=embedding_out_size_team,
+        mask_zero=False,
+        name='team_embedding'
+    )
+    comp_embedding_layer = Embedding(
+        input_dim=num_unique_comps + 1,
+        output_dim=embedding_out_size_comp,
+        mask_zero=False,
+        name='comp_embedding'
+    )
+
+    # Embedded sequences
+    home_team_embedded = team_embedding_layer(home_team_input)
+    away_team_embedded = team_embedding_layer(away_team_input)
+    home_comp_embedded = comp_embedding_layer(home_comp_input)
+    away_comp_embedded = comp_embedding_layer(away_comp_input)
+
+    # Concatenate numerical features with embeddings
+    home_sequence = Concatenate(axis=-1)([home_numerical_input, home_team_embedded, home_comp_embedded])
+    away_sequence = Concatenate(axis=-1)([away_numerical_input, away_team_embedded, away_comp_embedded])
+
+    # LSTM layers for home and away sequences
+    home_lstm_out = LSTM(64)(home_sequence)
+    away_lstm_out = LSTM(64)(away_sequence)
+
+    # Combine outputs
+    combined = Concatenate()([home_lstm_out, away_lstm_out])
+
+    # Dense layers
+    x = Dense(64, activation='relu')(combined)
     x = Dropout(0.5)(x)
-    x = Dense(128, activation='relu')(x)
-    x = Dropout(0.4)(x)
-    x = Dense(64, activation='relu')(x)
+    x = Dense(32, activation='relu')(x)
     x = Dropout(0.3)(x)
     output = Dense(1, activation='sigmoid')(x)
 
-    # Define the model
-    model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input], outputs=output)
+    # Define model
+    model = Model(inputs=[
+        home_numerical_input, away_numerical_input,
+        home_team_input, away_team_input,
+        home_comp_input, away_comp_input
+    ], outputs=output)
 
+    # Compile model
     model_optimizer = Adam(learning_rate=0.00007)
     model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     model.summary()
 
-    for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
-        # Extract features and labels (training data)
-        train_numerical_features, train_labels = get_data_for_window(regular_matches_in_rounds, round_number,
-                                                                     NUM_TRAINING_ROUNDS)
-        train_home_team_input_data, train_away_team_input_data, train_comp_id_input_data, _ = extract_embedding_inputs(
-            regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS)
+    return model
 
-        # Map categorical IDs to zero-indexed values using LabelEncoder
-        train_home_team_input_data_mapped = team_encoder.transform(train_home_team_input_data)
-        train_away_team_input_data_mapped = team_encoder.transform(train_away_team_input_data)
-        train_comp_id_input_data_mapped = comp_encoder.transform(train_comp_id_input_data)
 
-        # Similarly for the validation data...
-        val_numerical_features, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
-        val_home_team_input_data, val_away_team_input_data, val_comp_id_input_data, _ = extract_embedding_inputs(
-            regular_matches_in_rounds, round_number + 1, 1)
+def prepare_sequences(regular_matches_in_rounds, is_training=True):
+    # Prepare sequences of data for the RNN model
+    sequences = []
+    labels = []
 
-        val_home_team_input_data_mapped = team_encoder.transform(val_home_team_input_data)
-        val_away_team_input_data_mapped = team_encoder.transform(val_away_team_input_data)
-        val_comp_id_input_data_mapped = comp_encoder.transform(val_comp_id_input_data)
+    for matches in regular_matches_in_rounds:
+        for match in matches:
+            if match.datetime.tzinfo is None:
+                match.datetime = match.datetime.replace(tzinfo=timezone.utc)
 
-        print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape)} train and"
-              f" {str(val_numerical_features.shape)} val. data")
-        num_validation_matches += val_numerical_features.shape[0]
+            # Get previous matches for home and away teams
+            home_team_prev_matches = get_n_previous_matches(
+                SEQUENCE_LENGTH, match, match.home_team.id, regular=True
+            )
+            away_team_prev_matches = get_n_previous_matches(
+                SEQUENCE_LENGTH, match, match.away_team.id, regular=True
+            )
 
-        # Train the main model
-        model.fit(
-            [train_numerical_features, train_home_team_input_data_mapped, train_away_team_input_data_mapped,
-             train_comp_id_input_data_mapped],
-            train_labels,
-            epochs=10,
-            batch_size=32,
-            validation_data=(
-                [val_numerical_features, val_home_team_input_data_mapped, val_away_team_input_data_mapped,
-                 val_comp_id_input_data_mapped],
-                val_labels
-            ),
-            callbacks=[early_stopping, tensorboard_callback]
-        )
+            # Replace None values with dummy matches
+            home_team_prev_matches = [m if m is not None else create_dummy_match() for m in home_team_prev_matches]
+            away_team_prev_matches = [m if m is not None else create_dummy_match() for m in away_team_prev_matches]
 
-        loss, accuracy = model.evaluate(
-            [val_numerical_features, val_home_team_input_data_mapped, val_away_team_input_data_mapped,
-             val_comp_id_input_data_mapped],
-            val_labels
-        )
+            # After replacing None values, check sequence lengths
+            if len(home_team_prev_matches) < SEQUENCE_LENGTH:
+                home_team_prev_matches = pad_matches(home_team_prev_matches, SEQUENCE_LENGTH)
+            if len(away_team_prev_matches) < SEQUENCE_LENGTH:
+                away_team_prev_matches = pad_matches(away_team_prev_matches, SEQUENCE_LENGTH)
 
-        print(f"\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
+            # For validation, pad sequences if necessary
+            if not is_training:
+                home_team_prev_matches = pad_matches(home_team_prev_matches, SEQUENCE_LENGTH)
+                away_team_prev_matches = pad_matches(away_team_prev_matches, SEQUENCE_LENGTH)
 
-        # Access embedding weights
-        team_embedding_weights = model.get_layer('team_embedding').get_weights()[0]
-        comp_embedding_weights = model.get_layer('comp_embedding').get_weights()[0]
+            # Sort matches in ascending order
+            home_team_prev_matches.sort(key=lambda x: x.datetime)
+            away_team_prev_matches.sort(key=lambda x: x.datetime)
 
-        # DEBUG PRINTS
-        sample_team_ids = team_encoder.classes_[:5]
-        for team_id in sample_team_ids:
-            idx = team_encoder.transform([team_id])[0]
-            embedding_vector = team_embedding_weights[idx]
-            print(f"Team ID: {team_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+            # Extract features for home and away team sequences
+            home_numerical_sequence = [m.feature_vector_before_match_played for m in home_team_prev_matches]
+            away_numerical_sequence = [m.feature_vector_before_match_played for m in away_team_prev_matches]
 
-        sample_team_ids = team_encoder.classes_[300:305]
-        for team_id in sample_team_ids:
-            idx = team_encoder.transform([team_id])[0]
-            embedding_vector = team_embedding_weights[idx]
-            print(f"Team ID: {team_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+            # Extract team IDs for embedding (we can use match.home_team.id and match.away_team.id)
+            home_team_sequence = [match.home_team.id] * SEQUENCE_LENGTH
+            away_team_sequence = [match.away_team.id] * SEQUENCE_LENGTH
 
-        sample_comp_ids = comp_encoder.classes_[:3]
-        for comp_id in sample_comp_ids:
-            idx = comp_encoder.transform([comp_id])[0]
-            embedding_vector = comp_embedding_weights[idx]
-            print(f"Comp ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+            # Extract competition IDs for home and away team sequences
+            home_comp_sequence = [m.comp.id for m in home_team_prev_matches]
+            away_comp_sequence = [m.comp.id for m in away_team_prev_matches]
 
-        sample_comp_ids = comp_encoder.classes_[10:13]
-        for comp_id in sample_comp_ids:
-            idx = comp_encoder.transform([comp_id])[0]
-            embedding_vector = comp_embedding_weights[idx]
-            print(f"Comp ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
-        # TODO: The Embedding values are within (-1,1) - scale them to (0,1) to match the features
-        # TODO: ...but the model still learns to map them close to zero, or? Maybe weights init close to 0?
-        # TODO: Try cumulative training, without sliding window
-        # TODO: Try RNN
-        # TODO: Find out which features contribute more and which less to the training
+            sequences.append((
+                home_numerical_sequence, away_numerical_sequence,
+                home_team_sequence, away_team_sequence,
+                home_comp_sequence, away_comp_sequence
+            ))
 
-        weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
+            # Label: outcome of the current match
+            total_goals = match.home_team_goals + match.away_team_goals
+            label = 1 if total_goals < 2.5 else 0
+            labels.append(label)
 
-    print(f"\tWeighted validation accuracy = "f"{float(np.sum(weighted_accuracy) / num_validation_matches)}")
+    # Convert sequences to numpy arrays
+    home_numerical_sequences = np.array([seq[0] for seq in sequences])
+    away_numerical_sequences = np.array([seq[1] for seq in sequences])
+    home_team_sequences = np.array([seq[2] for seq in sequences])
+    away_team_sequences = np.array([seq[3] for seq in sequences])
+    home_comp_sequences = np.array([seq[4] for seq in sequences])
+    away_comp_sequences = np.array([seq[5] for seq in sequences])
+    labels = np.array(labels)
+
+    return (
+               home_numerical_sequences, away_numerical_sequences,
+               home_team_sequences, away_team_sequences,
+               home_comp_sequences, away_comp_sequences
+           ), labels
+
+
+def pad_matches(matches, sequence_length):
+    # Pad matches with dummy matches if necessary
+    padding_needed = sequence_length - len(matches)
+    if padding_needed > 0:
+        padding = [create_dummy_match()] * padding_needed
+        matches = padding + matches
+    return matches
+
+
+def create_dummy_match():
+    # Create a dummy match with zeroed features
+    class DummyTeam:
+        id = 0
+
+    class DummyComp:
+        id = 0
+
+    class DummyMatch:
+        home_team = DummyTeam()
+        away_team = DummyTeam()
+        comp = DummyComp()
+        datetime = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        feature_vector_before_match_played = np.zeros(NUM_NUMERICAL_FEATURES)
+        home_team_goals = 0
+        away_team_goals = 0
+
+    return DummyMatch()
 
 
 def extract_all_unique_ids(regular_matches_in_rounds):

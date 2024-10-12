@@ -25,7 +25,7 @@ def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, 
 
     if same_comp:
         if curr_match.comp != prev_match.comp:
-            return get_previous_match(prev_match, team, same_comp, same_season, regular)
+            return get_previous_match(prev_match, team.id, same_comp, same_season, regular)
 
     if same_season:
         if curr_match.season > prev_match.season:
@@ -33,7 +33,7 @@ def get_previous_match(curr_match, team_id, same_comp=False, same_season=False, 
 
     if regular:
         if not prev_match.round.is_regular:
-            return get_previous_match(prev_match, team, same_comp, same_season, regular)
+            return get_previous_match(prev_match, team.id, same_comp, same_season, regular)
 
     return prev_match
 
