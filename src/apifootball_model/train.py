@@ -5,7 +5,7 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation, LSTM
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import tensorflow.keras.backend as K
 import os
 from settings import NUM_NUMERICAL_FEATURES, NUM_CATEGORICAL_FEATURES
@@ -18,54 +18,46 @@ EMBEDDING_OUT_SIZE_TEAM = 9
 EMBEDDING_OUT_SIZE_COMP = 2
 SEQUENCE_LENGTH = 10
 
-team_encoder = LabelEncoder()
-comp_encoder = LabelEncoder()
-
 
 def train(regular_matches_in_rounds):
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-    global_instance = Global.get_instance()
 
-    # Extract all unique team and comp IDs globally
-    all_home_team_ids, all_away_team_ids, all_comp_ids = extract_all_unique_ids(regular_matches_in_rounds)
-    all_team_ids = np.concatenate([all_home_team_ids, all_away_team_ids, np.array([0])])
-    all_comp_ids = np.concatenate([all_comp_ids, np.array([0])])  # Allows encoders to correctly transform 0 values
+    # Flatten and sort the list of matches
+    all_matches = [match for matches in regular_matches_in_rounds for match in matches]
+    all_matches.sort(key=lambda x: x.datetime)
 
-    # Map categorical IDs to zero-indexed values using LabelEncoder
-    team_encoder.fit(all_team_ids)
-    comp_encoder.fit(all_comp_ids)
+    # Split data into training and validation sets
+    validation_fraction = 0.2
+    split_index = int(len(all_matches) * (1 - validation_fraction))
+    train_matches = all_matches[:split_index]
+    val_matches = all_matches[split_index:]
 
-    # Set the number of unique team IDs and comp IDs in the global instance
-    global_instance.num_unique_regular_teams_for_training = len(team_encoder.classes_)
-    global_instance.num_unique_regular_comps_for_training = len(comp_encoder.classes_)
-    print(f"\t\t\t{global_instance.num_unique_regular_teams_for_training} "
-          f"different regular teams are going to participate in the training process")
-    print(f"\t\t\t{global_instance.num_unique_regular_comps_for_training} "
-          f"different regular comps are going to participate in the training process")
+    # Build initial team match histories from training data
+    team_match_histories = {}
+    for match in train_matches:
+        if match.datetime.tzinfo is None:
+            match.datetime = match.datetime.replace(tzinfo=timezone.utc)
+        home_team_id = match.home_team.id
+        away_team_id = match.away_team.id
+        team_match_histories.setdefault(home_team_id, []).append(match)
+        team_match_histories.setdefault(away_team_id, []).append(match)
 
-    # Step 3: Train the final model
-    train_rnn_model(regular_matches_in_rounds)
+    # Prepare sequences and labels for training
+    train_sequences, train_labels = prepare_sequences(train_matches, team_match_histories, is_training=True)
 
+    # Prepare sequences and labels for validation
+    # Create a copy of team_match_histories to prevent contamination
+    val_team_match_histories = {team_id: matches.copy() for team_id, matches in team_match_histories.items()}
+    val_sequences, val_labels = prepare_sequences(val_matches, val_team_match_histories, is_training=False)
 
-def train_rnn_model(regular_matches_in_rounds):
-    # Callbacks
-    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), "rounds")
-    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
+    # After preparing sequences and labels
+    print("Training label distribution:")
+    unique, counts = np.unique(train_labels, return_counts=True)
+    print(dict(zip(unique, counts)))
 
-    # Define the model
-    model = build_rnn_model(
-        num_unique_teams=Global.get_instance().num_unique_regular_teams_for_training,
-        num_unique_comps=Global.get_instance().num_unique_regular_comps_for_training,
-        embedding_out_size_team=EMBEDDING_OUT_SIZE_TEAM,
-        embedding_out_size_comp=EMBEDDING_OUT_SIZE_COMP,
-        num_numerical_features=NUM_NUMERICAL_FEATURES,
-        sequence_length=SEQUENCE_LENGTH
-    )
-
-    # Prepare sequences and labels
-    train_sequences, train_labels = prepare_sequences(regular_matches_in_rounds, is_training=True)
-    val_sequences, val_labels = prepare_sequences(regular_matches_in_rounds, is_training=False)
+    print("Validation label distribution:")
+    unique, counts = np.unique(val_labels, return_counts=True)
+    print(dict(zip(unique, counts)))
 
     # Unpack sequences
     train_home_numerical_sequences, train_away_numerical_sequences, \
@@ -76,24 +68,69 @@ def train_rnn_model(regular_matches_in_rounds):
         val_home_team_sequences, val_away_team_sequences, \
         val_home_comp_sequences, val_away_comp_sequences = val_sequences
 
-    # Map categorical IDs to zero-indexed values using LabelEncoder
-    train_home_team_sequences_mapped = team_encoder.transform(train_home_team_sequences.flatten()).reshape(
-        train_home_team_sequences.shape) + 1
-    train_away_team_sequences_mapped = team_encoder.transform(train_away_team_sequences.flatten()).reshape(
-        train_away_team_sequences.shape) + 1
-    train_home_comp_sequences_mapped = comp_encoder.transform(train_home_comp_sequences.flatten()).reshape(
-        train_home_comp_sequences.shape) + 1
-    train_away_comp_sequences_mapped = comp_encoder.transform(train_away_comp_sequences.flatten()).reshape(
-        train_away_comp_sequences.shape) + 1
+    # Combine all team IDs from training sequences
+    all_team_ids = np.concatenate([
+        train_home_team_sequences.flatten(),
+        train_away_team_sequences.flatten(),
+        np.array([0])  # Include 0 for padding
+    ])
 
-    val_home_team_sequences_mapped = team_encoder.transform(val_home_team_sequences.flatten()).reshape(
-        val_home_team_sequences.shape) + 1
-    val_away_team_sequences_mapped = team_encoder.transform(val_away_team_sequences.flatten()).reshape(
-        val_away_team_sequences.shape) + 1
-    val_home_comp_sequences_mapped = comp_encoder.transform(val_home_comp_sequences.flatten()).reshape(
-        val_home_comp_sequences.shape) + 1
-    val_away_comp_sequences_mapped = comp_encoder.transform(val_away_comp_sequences.flatten()).reshape(
-        val_away_comp_sequences.shape) + 1
+    # Combine all competition IDs from training sequences
+    all_comp_ids = np.concatenate([
+        train_home_comp_sequences.flatten(),
+        train_away_comp_sequences.flatten(),
+        np.array([0])  # Include 0 for padding
+    ])
+
+    # Reshape for OrdinalEncoder
+    all_team_ids = all_team_ids.reshape(-1, 1)
+    all_comp_ids = all_comp_ids.reshape(-1, 1)
+
+    # Fit the encoders on training data
+    team_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+    team_encoder.fit(all_team_ids)
+
+    comp_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+    comp_encoder.fit(all_comp_ids)
+
+    # Transform training data
+    train_home_team_sequences_mapped = team_encoder.transform(
+        train_home_team_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
+        train_home_team_sequences.shape)
+    train_away_team_sequences_mapped = team_encoder.transform(
+        train_away_team_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
+        train_away_team_sequences.shape)
+    train_home_comp_sequences_mapped = comp_encoder.transform(
+        train_home_comp_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
+        train_home_comp_sequences.shape)
+    train_away_comp_sequences_mapped = comp_encoder.transform(
+        train_away_comp_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
+        train_away_comp_sequences.shape)
+
+    # Transform validation data
+    val_home_team_sequences_mapped = team_encoder.transform(val_home_team_sequences.flatten().reshape(-1, 1)).astype(
+        int).reshape(
+        val_home_team_sequences.shape)
+    val_away_team_sequences_mapped = team_encoder.transform(val_away_team_sequences.flatten().reshape(-1, 1)).astype(
+        int).reshape(
+        val_away_team_sequences.shape)
+    val_home_comp_sequences_mapped = comp_encoder.transform(val_home_comp_sequences.flatten().reshape(-1, 1)).astype(
+        int).reshape(
+        val_home_comp_sequences.shape)
+    val_away_comp_sequences_mapped = comp_encoder.transform(val_away_comp_sequences.flatten().reshape(-1, 1)).astype(
+        int).reshape(
+        val_away_comp_sequences.shape)
+
+    # Shift indices by +1 to make all indices non-negative
+    train_home_team_sequences_mapped += 1
+    train_away_team_sequences_mapped += 1
+    train_home_comp_sequences_mapped += 1
+    train_away_comp_sequences_mapped += 1
+
+    val_home_team_sequences_mapped += 1
+    val_away_team_sequences_mapped += 1
+    val_home_comp_sequences_mapped += 1
+    val_away_comp_sequences_mapped += 1
 
     print(f"Training data shapes:")
     print(f"Home numerical sequences: {train_home_numerical_sequences.shape}")
@@ -104,6 +141,25 @@ def train_rnn_model(regular_matches_in_rounds):
     print(f"Away comp sequences: {train_away_comp_sequences_mapped.shape}")
     print(f"Labels: {train_labels.shape}")
 
+    # Number of unique IDs plus one for unknown
+    num_unique_teams = len(team_encoder.categories_[0]) + 1
+    num_unique_comps = len(comp_encoder.categories_[0]) + 1
+
+    # Define the model
+    model = build_rnn_model(
+        num_unique_teams=num_unique_teams,
+        num_unique_comps=num_unique_comps,
+        embedding_out_size_team=EMBEDDING_OUT_SIZE_TEAM,
+        embedding_out_size_comp=EMBEDDING_OUT_SIZE_COMP,
+        num_numerical_features=NUM_NUMERICAL_FEATURES,
+        sequence_length=SEQUENCE_LENGTH
+    )
+
+    # Callbacks
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), "rounds")
+    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=100, restore_best_weights=True)
+
     # Train the model
     model.fit(
         [
@@ -112,7 +168,7 @@ def train_rnn_model(regular_matches_in_rounds):
             train_home_comp_sequences_mapped, train_away_comp_sequences_mapped
         ],
         train_labels,
-        epochs=1000,
+        epochs=200,
         batch_size=32,
         validation_data=(
             [
@@ -153,13 +209,13 @@ def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
 
     # Embedding layers without masking
     team_embedding_layer = Embedding(
-        input_dim=num_unique_teams + 1,  # adjusted for shifted IDs
+        input_dim=num_unique_teams,
         output_dim=embedding_out_size_team,
         mask_zero=False,
         name='team_embedding'
     )
     comp_embedding_layer = Embedding(
-        input_dim=num_unique_comps + 1,
+        input_dim=num_unique_comps,
         output_dim=embedding_out_size_comp,
         mask_zero=False,
         name='comp_embedding'
@@ -204,65 +260,85 @@ def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
     return model
 
 
-def prepare_sequences(regular_matches_in_rounds, is_training=True):
+def prepare_sequences(matches, team_match_histories, is_training=True):
     # Prepare sequences of data for the RNN model
     sequences = []
     labels = []
 
-    for matches in regular_matches_in_rounds:
-        for match in matches:
-            if match.datetime.tzinfo is None:
-                match.datetime = match.datetime.replace(tzinfo=timezone.utc)
+    matches.sort(key=lambda x: x.datetime)
 
-            # Get previous matches for home and away teams
-            home_team_prev_matches = get_n_previous_matches(
-                SEQUENCE_LENGTH, match, match.home_team.id, regular=True
-            )
-            away_team_prev_matches = get_n_previous_matches(
-                SEQUENCE_LENGTH, match, match.away_team.id, regular=True
-            )
+    for match in matches:
+        # Ensure match datetime has timezone
+        current_datetime = match.datetime
+        if current_datetime.tzinfo is None:
+            current_datetime = current_datetime.replace(tzinfo=timezone.utc)
 
-            # Replace None values with dummy matches
-            home_team_prev_matches = [m if m is not None else create_dummy_match() for m in home_team_prev_matches]
-            away_team_prev_matches = [m if m is not None else create_dummy_match() for m in away_team_prev_matches]
+        # Get previous matches for home and away teams up to the current match datetime
+        home_team_id = match.home_team.id
+        away_team_id = match.away_team.id
 
-            # After replacing None values, check sequence lengths
+        # Get home team previous matches
+        home_team_matches = team_match_histories.get(home_team_id, [])
+        home_team_prev_matches = [m for m in home_team_matches if m.datetime < current_datetime]
+
+        # Get away team previous matches
+        away_team_matches = team_match_histories.get(away_team_id, [])
+        away_team_prev_matches = [m for m in away_team_matches if m.datetime < current_datetime]
+
+        # Handle insufficient history
+        if len(home_team_prev_matches) < SEQUENCE_LENGTH:
+            # Pad with dummy matches
+            padding_needed = SEQUENCE_LENGTH - len(home_team_prev_matches)
+            home_team_prev_matches = [create_dummy_match()] * padding_needed + home_team_prev_matches
+        else:
+            # Get the last SEQUENCE_LENGTH matches
+            home_team_prev_matches = home_team_prev_matches[-SEQUENCE_LENGTH:]
+
+        if len(away_team_prev_matches) < SEQUENCE_LENGTH:
+            # Pad with dummy matches
+            padding_needed = SEQUENCE_LENGTH - len(away_team_prev_matches)
+            away_team_prev_matches = [create_dummy_match()] * padding_needed + away_team_prev_matches
+        else:
+            # Get the last SEQUENCE_LENGTH matches
+            away_team_prev_matches = away_team_prev_matches[-SEQUENCE_LENGTH:]
+
+        if not is_training:
+            # Ensure sequences are of length SEQUENCE_LENGTH
+            home_team_prev_matches = home_team_prev_matches[-SEQUENCE_LENGTH:]
+            away_team_prev_matches = away_team_prev_matches[-SEQUENCE_LENGTH:]
             if len(home_team_prev_matches) < SEQUENCE_LENGTH:
-                home_team_prev_matches = pad_matches(home_team_prev_matches, SEQUENCE_LENGTH)
+                padding_needed = SEQUENCE_LENGTH - len(home_team_prev_matches)
+                home_team_prev_matches = [create_dummy_match()] * padding_needed + home_team_prev_matches
             if len(away_team_prev_matches) < SEQUENCE_LENGTH:
-                away_team_prev_matches = pad_matches(away_team_prev_matches, SEQUENCE_LENGTH)
+                padding_needed = SEQUENCE_LENGTH - len(away_team_prev_matches)
+                away_team_prev_matches = [create_dummy_match()] * padding_needed + away_team_prev_matches
 
-            # For validation, pad sequences if necessary
-            if not is_training:
-                home_team_prev_matches = pad_matches(home_team_prev_matches, SEQUENCE_LENGTH)
-                away_team_prev_matches = pad_matches(away_team_prev_matches, SEQUENCE_LENGTH)
+        # Extract features for home and away team sequences
+        home_numerical_sequence = [m.feature_vector_before_match_played for m in home_team_prev_matches]
+        away_numerical_sequence = [m.feature_vector_before_match_played for m in away_team_prev_matches]
 
-            # Sort matches in ascending order
-            home_team_prev_matches.sort(key=lambda x: x.datetime)
-            away_team_prev_matches.sort(key=lambda x: x.datetime)
+        # Extract team IDs for embedding (we can use match.home_team.id and match.away_team.id)
+        home_team_sequence = [match.home_team.id] * SEQUENCE_LENGTH
+        away_team_sequence = [match.away_team.id] * SEQUENCE_LENGTH
 
-            # Extract features for home and away team sequences
-            home_numerical_sequence = [m.feature_vector_before_match_played for m in home_team_prev_matches]
-            away_numerical_sequence = [m.feature_vector_before_match_played for m in away_team_prev_matches]
+        # Extract competition IDs for home and away team sequences
+        home_comp_sequence = [m.comp.id for m in home_team_prev_matches]
+        away_comp_sequence = [m.comp.id for m in away_team_prev_matches]
 
-            # Extract team IDs for embedding (we can use match.home_team.id and match.away_team.id)
-            home_team_sequence = [match.home_team.id] * SEQUENCE_LENGTH
-            away_team_sequence = [match.away_team.id] * SEQUENCE_LENGTH
+        sequences.append((
+            home_numerical_sequence, away_numerical_sequence,
+            home_team_sequence, away_team_sequence,
+            home_comp_sequence, away_comp_sequence
+        ))
 
-            # Extract competition IDs for home and away team sequences
-            home_comp_sequence = [m.comp.id for m in home_team_prev_matches]
-            away_comp_sequence = [m.comp.id for m in away_team_prev_matches]
+        # Label: outcome of the current match
+        total_goals = match.home_team_goals + match.away_team_goals
+        label = 1 if total_goals < 2.5 else 0
+        labels.append(label)
 
-            sequences.append((
-                home_numerical_sequence, away_numerical_sequence,
-                home_team_sequence, away_team_sequence,
-                home_comp_sequence, away_comp_sequence
-            ))
-
-            # Label: outcome of the current match
-            total_goals = match.home_team_goals + match.away_team_goals
-            label = 1 if total_goals < 2.5 else 0
-            labels.append(label)
+        # Update team match histories with the current match
+        team_match_histories.setdefault(home_team_id, []).append(match)
+        team_match_histories.setdefault(away_team_id, []).append(match)
 
     # Convert sequences to numpy arrays
     home_numerical_sequences = np.array([seq[0] for seq in sequences])

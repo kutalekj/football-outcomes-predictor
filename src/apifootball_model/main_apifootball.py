@@ -127,7 +127,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store8_BEL_POR_CRO.csv")
+in_out.load_matches("tmp_csv_store9_full.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 # Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
