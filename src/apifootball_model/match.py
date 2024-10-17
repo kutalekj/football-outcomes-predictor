@@ -235,7 +235,7 @@ class Match:
                     global_instance.all_matches.append(new_match)
 
                     # Delay so that limit of requests per minute is not exceeded
-                    time.sleep(0.1)
+                    time.sleep(0.15)
 
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present

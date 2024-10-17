@@ -6,6 +6,7 @@ import http.client
 import json
 import settings
 import rounds
+import time
 from team import Team
 from dateutil.parser import parse
 from globals import Global
@@ -100,6 +101,9 @@ class Comp:
 
             self.teams_per_season.append({'season': season, 'teams': teams})
 
+            # Delay so that limit of requests per minute is not exceeded
+            time.sleep(0.15)
+
         global_instance.all_teams = list(set(global_instance.all_teams))  # Remove duplicates
 
     def init_all_rounds(self):
@@ -127,6 +131,9 @@ class Comp:
                 self.all_rounds_sorted.append(new_round)  # TODO: Will these round listing variables be still needed?
 
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
+
+            # Delay so that limit of requests per minute is not exceeded
+            time.sleep(0.15)
 
     def init_country_start_end_dates_in_seasons(self):
         global_instance = Global.get_instance()

@@ -13,7 +13,6 @@ from globals import Global
 from utils import get_n_previous_matches
 
 
-NUM_TRAINING_ROUNDS = 25
 EMBEDDING_OUT_SIZE_TEAM = 9
 EMBEDDING_OUT_SIZE_COMP = 2
 SEQUENCE_LENGTH = 10
@@ -34,13 +33,6 @@ def train(regular_matches_in_rounds):
 
     # Build initial team match histories from training data
     team_match_histories = {}
-    for match in train_matches:
-        if match.datetime.tzinfo is None:
-            match.datetime = match.datetime.replace(tzinfo=timezone.utc)
-        home_team_id = match.home_team.id
-        away_team_id = match.away_team.id
-        team_match_histories.setdefault(home_team_id, []).append(match)
-        team_match_histories.setdefault(away_team_id, []).append(match)
 
     # Prepare sequences and labels for training
     train_sequences, train_labels = prepare_sequences(train_matches, team_match_histories, is_training=True)
@@ -192,8 +184,7 @@ def train(regular_matches_in_rounds):
     # TODO: Add output log saving with debug outputs, weighted acc (from last N epochs only) and...
     # TODO: The model still learns to map embedding values close to zero... Maybe weights init close to 0?
     # TODO: ...and with highest/lowest embedding value - see if really all values close to 0
-    # TODO: Try cumulative training, without sliding window
-    # TODO: Try RNN
+    # TODO: Try cumulative training, without sliding window (non RNN)
     # TODO: Find out which features contribute more and which less to the training
 
 
@@ -239,8 +230,10 @@ def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
     combined = Concatenate()([home_lstm_out, away_lstm_out])
 
     # Dense layers
-    x = Dense(64, activation='relu')(combined)
+    x = Dense(128, activation='relu')(combined)
     x = Dropout(0.5)(x)
+    x = Dense(64, activation='relu')(x)
+    x = Dropout(0.4)(x)
     x = Dense(32, activation='relu')(x)
     x = Dropout(0.3)(x)
     output = Dense(1, activation='sigmoid')(x)
@@ -253,7 +246,7 @@ def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
     ], outputs=output)
 
     # Compile model
-    model_optimizer = Adam(learning_rate=0.00007)
+    model_optimizer = Adam(learning_rate=0.00001)
     model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     model.summary()
 
@@ -337,8 +330,9 @@ def prepare_sequences(matches, team_match_histories, is_training=True):
         labels.append(label)
 
         # Update team match histories with the current match
-        team_match_histories.setdefault(home_team_id, []).append(match)
-        team_match_histories.setdefault(away_team_id, []).append(match)
+        if is_training:
+            team_match_histories.setdefault(home_team_id, []).append(match)
+            team_match_histories.setdefault(away_team_id, []).append(match)
 
     # Convert sequences to numpy arrays
     home_numerical_sequences = np.array([seq[0] for seq in sequences])
