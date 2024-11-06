@@ -53,12 +53,15 @@ global_instance = Global.get_instance()
 for comp in [
     {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']},
     {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season']},
+    {'id': 41, 'name': "League One", 'regular_round_keywords': ['Regular Season']},
+    {'id': 42, 'name': "League Two", 'regular_round_keywords': ['Regular Season']},
     {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season']},
     {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season']},
     {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season']},
     {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season']},
     {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season']},
     {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season']},  # POL
     {'id': 119, 'name': "Superliga",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round']},  # DEN
     {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season']},
@@ -66,11 +69,15 @@ for comp in [
     {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season']},
     {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
     {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
+    {'id': 179, 'name': "Premiership", 'regular_round_keywords': ['Regular Season']},  # SCO
+    {'id': 188, 'name': "A-League", 'regular_round_keywords': ['Regular Season']},  # AUS
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},  # TUR
     {'id': 207, 'name': "Super League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # SUI
-    {'id': 210, 'name': "HNL", 'regular_round_keywords': ['Regular Season']},
+    {'id': 218, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season']},  # AUT
+    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season']},  # SA
+    {'id': 323, 'name': "Super League", 'regular_round_keywords': ['Regular Season']},  # IND
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
@@ -83,11 +90,17 @@ for comp in [
     {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': []},  # NED
     {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
     {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
+    {'id': 108, 'name': "Cup", 'regular_round_keywords': []},  # POL
     {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': []},
     {'id': 212, 'name': "Cup", 'regular_round_keywords': []},  # CRO
     {'id': 206, 'name': "Cup", 'regular_round_keywords': []},  # TUR
     {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},  # DEN
-    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []},  # BEL
+    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': []},  # SCO
+    {'id': 185, 'name': "League Cup", 'regular_round_keywords': []},  # SCO
+    {'id': 220, 'name': "Cup", 'regular_round_keywords': []},  # AUT
+    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': []},  # SA
+    {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': []}  # AUS
 ]:
     # for comp in settings.COMPS:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
@@ -129,7 +142,7 @@ for comp in global_instance.all_comps:
 # 3. Get matches (first existing locally saved, then new from API)
 in_out.load_matches("tmp_csv_store9_full.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
-# Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
+Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
 # Sort matches by datetime played (asc.)
 for team in global_instance.all_teams:

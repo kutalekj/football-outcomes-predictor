@@ -57,6 +57,8 @@ class Comp:
             if len(data_comp_season['response']) == 0:
                 continue
 
+            # print(f"{data_comp_season['response'][0]['seasons'][0]['coverage']}")  # This is just a check
+
             self.country = data_comp_season['response'][0]['country']['name']
 
             # Start/End date
@@ -123,6 +125,8 @@ class Comp:
             season_rounds_list = []
             for round_name in rounds_per_season['response']:
                 new_round = rounds.Round(self.id, self.name, season, round_name)
+
+                print(f"Comp: {self.name}, season: {season}, round: {round_name}")
 
                 # Regularity (season comp table is only updated by regular round matches)
                 new_round.is_regular = new_round.is_round_regular(self)

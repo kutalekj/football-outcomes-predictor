@@ -320,7 +320,7 @@ class Match:
         # Elo
         (new_match_features.home_elo, new_match_features.away_elo) = feature_ut.calculate_elo_for_both_teams(self)
 
-        # Relative table position
+        # Relative match position
         new_match_features.relative_match_position_in_country_season = \
             self.calculate_relative_match_position_in_country_season(self.season)
         if new_match_features.relative_match_position_in_country_season is None:
