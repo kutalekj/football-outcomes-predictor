@@ -57,8 +57,6 @@ class Comp:
             if len(data_comp_season['response']) == 0:
                 continue
 
-            print(f"{data_comp_season['response'][0]['seasons'][0]['coverage']}")  # This is just a check
-
             self.country = data_comp_season['response'][0]['country']['name']
 
             # Start/End date

@@ -70,14 +70,18 @@ for comp in [
     {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
     {'id': 144, 'name': "Jupiler Pro League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
-    {'id': 179, 'name': "Premiership", 'regular_round_keywords': ['Regular Season']},  # SCO
-    {'id': 188, 'name': "A-League", 'regular_round_keywords': ['Regular Season']},  # AUS
+    {'id': 179, 'name': "Premiership",
+     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -']},  # SCO
+    {'id': 188, 'name': "A-League",
+     'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final']},  # AUS
     {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},  # TUR
     {'id': 207, 'name': "Super League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # SUI
-    {'id': 218, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season']},  # AUT
+    {'id': 218, 'name': "Bundesliga",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # AUT
     {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season']},  # SA
-    {'id': 323, 'name': "Super League", 'regular_round_keywords': ['Regular Season']},  # IND
+    {'id': 323, 'name': "Super League",
+     'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -']},  # IND
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
@@ -92,7 +96,6 @@ for comp in [
     {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
     {'id': 108, 'name': "Cup", 'regular_round_keywords': []},  # POL
     {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': []},
-    {'id': 212, 'name': "Cup", 'regular_round_keywords': []},  # CRO
     {'id': 206, 'name': "Cup", 'regular_round_keywords': []},  # TUR
     {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},  # DEN
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []},  # BEL
