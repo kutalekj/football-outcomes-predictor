@@ -49,26 +49,32 @@ class SeasonCompTable:
             data = res.read()
             data_team_players_stats = json.loads(data)['response']
 
-            player_stats = {}
+            player_stats_list = []
             for player in data_team_players_stats:
-                if team_id != player_stats['statistics'][0]['team']['id']:
+                if team_id != player['statistics'][0]['team']['id']:
                     raise ValueError("Unable to match expected player's team with the found one.")
 
-                player_stats['id'] = int(player['player']['id'])
-                player_stats['name'] = player['player']['name']
-                player_stats['firstname'] = player['player']['firstname']
-                player_stats['lastname'] = player['player']['lastname']
-                player_stats['age'] = int(player['player']['age'])
-                player_stats['birth_date'] = datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d')
-                player_stats['birth_country'] = player['player']['birth']['country']
-                player_stats['nationality'] = player['player']['nationality']
-                player_stats['height'] = player['player']['height']
-                player_stats['weight'] = player['player']['weight']
+                player_stats = {'id': int(player['player']['id']),
+                                'name': player['player']['name'],
+                                'firstname': player['player']['firstname'],
+                                'lastname': player['player']['lastname'],
+                                'age': int(player['player']['age']),
+                                'birth_date': datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d'),
+                                'birth_country': player['player']['birth']['country'],
+                                'nationality': player['player']['nationality'],
+                                'height': player['player']['height'],
+                                'weight': player['player']['weight'],
+                                'position': player['statistics'][0]['games']['position'],
+                                'rating': float(player['statistics'][0]['games']['rating'])}
 
-                player_stats['position'] = player_stats['statistics'][0]['games']['position']
-                player_stats['rating'] = float(player_stats['statistics'][0]['games']['rating'])
+                player_stats_list.append(player_stats)
 
-            team.player_stats_comp_season[self.comp_name][str(self.season)].append(player_stats)
+            # Player stats
+            team.player_stats_comp_season[self.comp_name][str(self.season)].append(player_stats_list)
+
+            # Team rating
+            rating = np.mean(np.asarray([x['rating'] for x in player_stats_list]))
+            team.rating_comp_season[self.comp_name][str(self.season)].append(rating)
 
             teams.append(new_team)
 

@@ -10,6 +10,7 @@ class Team:
         self.regularity_in_comp_season = []
 
         self.player_stats_comp_season = {}
+        self.rating_comp_season = {}
 
         self.matches = []  # just list of all matches of the team sorted by the datetime played asc
 
