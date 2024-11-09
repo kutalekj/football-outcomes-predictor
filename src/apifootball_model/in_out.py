@@ -101,8 +101,10 @@ def load_matches(file_name):
                 home_lineup_json = row.get('home_team_lineup', '[]')
                 away_lineup_json = row.get('away_team_lineup', '[]')
 
-                match.home_team_lineup = [(int(player[0]), player[1]) for player in json.loads(home_lineup_json)]
-                match.away_team_lineup = [(int(player[0]), player[1]) for player in json.loads(away_lineup_json)]
+                match.home_team_lineup = \
+                    [(int(player[0]), player[1], player[2]) for player in json.loads(home_lineup_json)]
+                match.away_team_lineup = \
+                    [(int(player[0]), player[1], player[2]) for player in json.loads(away_lineup_json)]
 
                 # Add the match to the global instance
                 global_instance.all_matches.append(match)

@@ -287,9 +287,11 @@ class Match:
                     data_lineups = json.loads(data)['response']
 
                     new_match.home_team_lineup = \
-                        [(x['player']['id'], x['player']['name']) for x in data_lineups[0]['startXI']]
+                        [(x['player']['id'], x['player']['name'], x['player']['pos'])
+                         for x in data_lineups[0]['startXI']]
                     new_match.away_team_lineup = \
-                        [(x['player']['id'], x['player']['name']) for x in data_lineups[1]['startXI']]
+                        [(x['player']['id'], x['player']['name'], x['player']['pos'])
+                         for x in data_lineups[1]['startXI']]
 
                     # Add new match to list
                     global_instance.all_matches.append(new_match)

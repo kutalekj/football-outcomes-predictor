@@ -3,9 +3,10 @@ utils.py
 """
 
 import numpy as np
+from sklearn.decomposition import PCA
 import settings
 from globals import Global
-from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
+from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW, CSV_CATEGORIES
 from datetime import timedelta, datetime
 
 
@@ -203,6 +204,163 @@ def get_team_if_exists(team_id):
             return team
 
     return None
+
+
+def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):
+    # team_players_individual_stats: list of 11 dicts, each containing 7 categories, each category list of int values
+    # player_ratings: list of 11 float values from 0.0 to 10.0
+    # player_positions: list of 11 string values ({'G', 'D', 'M', 'F'})
+    # TODO: Debug that all these values and list and sorted similarly - that they refer to the same player always
+
+    # Basic: statistical aggregation taking into account player positions
+    if mode == "basic":
+        # Initialize team strength dictionary
+        team_strength = {}
+
+        # For each category, compute mean and standard deviation across all players
+        for category in CSV_CATEGORIES.keys():
+            # Collect all values from all players for this category
+            all_values = []
+            for player_stats in team_players_individual_stats:
+                values = player_stats.get(category, [])
+                # Filter out invalid or missing values (-1)
+                valid_values = [v for v in values if v != -1]
+                if valid_values:
+                    player_mean = np.mean(valid_values)
+                    all_values.append(player_mean)
+            if all_values:
+                category_mean = np.mean(all_values)
+                category_std = np.std(all_values)
+            else:
+                category_mean = -1
+                category_std = -1
+            team_strength[f"{category}_mean"] = category_mean
+            team_strength[f"{category}_std"] = category_std
+
+        # Positional categories mapping
+        position_categories = {
+            'G': ['goalkeeping'],
+            'D': ['defending', 'mentality'],
+            'M': ['skill', 'movement', 'mentality'],
+            'F': ['attacking', 'skill', 'movement']
+        }
+
+        # For each position, compute mean of relevant categories
+        for pos, relevant_categories in position_categories.items():
+            for category in relevant_categories:
+                pos_values = []
+                for i, player_stats in enumerate(team_players_individual_stats):
+                    if player_positions[i] == pos:
+                        values = player_stats.get(category, [])
+                        valid_values = [v for v in values if v != -1]
+                        if valid_values:
+                            player_mean = np.mean(valid_values)
+                            pos_values.append(player_mean)
+                if pos_values:
+                    pos_category_mean = np.mean(pos_values)
+                else:
+                    pos_category_mean = -1
+                team_strength[f"{pos}_{category}_mean"] = pos_category_mean
+
+        return team_strength
+
+    # Weighted: incorporates overall player ratings
+    elif mode == "weighted":
+        # Normalize player ratings to sum to 1
+        ratings = np.array(player_ratings)
+        ratings_sum = np.sum(ratings)
+        if ratings_sum > 0:
+            normalized_ratings = ratings / ratings_sum
+        else:
+            normalized_ratings = np.ones(len(player_ratings)) / len(player_ratings)
+
+        team_strength = {}
+
+        # For each category, compute weighted mean across all players
+        for category in CSV_CATEGORIES.keys():
+            weighted_values = []
+            weights = []
+            for i, player_stats in enumerate(team_players_individual_stats):
+                values = player_stats.get(category, [])
+                valid_values = [v for v in values if v != -1]
+                if valid_values:
+                    player_mean = np.mean(valid_values)
+                    weight = normalized_ratings[i]
+                    weighted_values.append(player_mean * weight)
+                    weights.append(weight)
+            if weighted_values and weights:
+                category_weighted_mean = np.sum(weighted_values)
+            else:
+                category_weighted_mean = -1
+            team_strength[f"{category}_weighted_mean"] = category_weighted_mean
+
+        # Positional categories mapping
+        position_categories = {
+            'G': ['goalkeeping'],
+            'D': ['defending', 'mentality'],
+            'M': ['skill', 'movement', 'mentality'],
+            'F': ['attacking', 'skill', 'movement']
+        }
+
+        # For each position, compute weighted mean of relevant categories
+        for pos, relevant_categories in position_categories.items():
+            for category in relevant_categories:
+                weighted_values = []
+                weights = []
+                for i, player_stats in enumerate(team_players_individual_stats):
+                    if player_positions[i] == pos:
+                        values = player_stats.get(category, [])
+                        valid_values = [v for v in values if v != -1]
+                        if valid_values:
+                            player_mean = np.mean(valid_values)
+                            weight = normalized_ratings[i]
+                            weighted_values.append(player_mean * weight)
+                            weights.append(weight)
+                if weighted_values and weights:
+                    pos_category_weighted_mean = np.sum(weighted_values)
+                else:
+                    pos_category_weighted_mean = -1
+                team_strength[f"{pos}_{category}_weighted_mean"] = pos_category_weighted_mean
+
+        return team_strength
+
+    # PCA: dimensionality reduction
+    elif mode == "pca":
+        # Create a matrix of player stats
+        player_vectors = []
+        for player_stats in team_players_individual_stats:
+            player_vector = []
+            for category in CSV_CATEGORIES.keys():
+                values = player_stats.get(category, [])
+                # Replace missing values (-1) with np.nan
+                valid_values = [v if v != -1 else np.nan for v in values]
+                player_vector.extend(valid_values)
+            player_vectors.append(player_vector)
+
+        # Convert to numpy array
+        player_matrix = np.array(player_vectors, dtype=np.float64)
+
+        # Impute missing values with column means
+        col_means = np.nanmean(player_matrix, axis=0)
+        inds = np.where(np.isnan(player_matrix))
+        player_matrix[inds] = np.take(col_means, inds[1])
+
+        # Apply PCA
+        n_components = min(10, player_matrix.shape[1])  # Adjust number of components as needed
+        pca = PCA(n_components=n_components)
+        pca.fit(player_matrix)
+        team_pca_features = pca.transform(player_matrix)
+
+        # Aggregate PCA features across players (e.g., take mean)
+        team_strength_vector = np.mean(team_pca_features, axis=0)
+
+        # Create a dictionary to return
+        team_strength = {f"pca_component_{i + 1}": team_strength_vector[i] for i in range(len(team_strength_vector))}
+
+        return team_strength
+
+    else:
+        raise ValueError(f"Unrecognized mode [{mode}]")
 
 
 def is_match_within_days(curr_datetime, match_datetime, n):

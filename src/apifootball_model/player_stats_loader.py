@@ -3,19 +3,10 @@ import glob
 import csv
 import difflib
 from datetime import datetime
+from settings import CSV_CATEGORIES
 
 NUM_FUZZY_MATCHES = 10
 FUZZY_CUTOFF = 0.2
-
-categories = {
-    "attacking": ["crossing", "finishing", "heading_accuracy", "short_passing", "volleys"],
-    "skill": ["dribbling", "curve", "fk_accuracy", "long_passing", "ball_control"],
-    "movement": ["acceleration", "sprint_speed", "agility", "reactions", "balance"],
-    "power": ["shot_power", "jumping", "stamina", "strength", "long_shots"],
-    "mentality": ["aggression", "interceptions", "positioning", "vision", "penalties", "composure"],
-    "defending": ["defensive_awareness", "standing_tackle", "sliding_tackle"],
-    "goalkeeping": ["gk_diving", "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes"]
-}
 
 
 def get_csv_file(match_datetime, directory_path):
@@ -79,7 +70,7 @@ def find_player_row(full_player_name, date_of_birth, csv_file):
 
 def extract_stats(player_row):
     stats = {}
-    for category, columns in categories.items():
+    for category, columns in CSV_CATEGORIES.items():
         values = []
 
         for column in columns:
@@ -107,17 +98,17 @@ def get_player_stats_for_team(team_lineup_info, match_datetime, directory_path):
     all_ok = True
 
     for player_info in team_lineup_info:
-        player_name, date_of_birth = player_info
+        player_name, date_of_birth, rating_in_comp_season = player_info
 
         player_row = find_player_row(player_name, date_of_birth, selected_csv)
 
         if player_row is None:
-            stats_dict = {category: [-1] * len(columns) for category, columns in categories.items()}
+            stats_dict = {category: [-1] * len(columns) for category, columns in CSV_CATEGORIES.items()}
             all_ok = False
             print(f"Failed to retrieve data from CSV for player {player_name} for matched played at {match_datetime}. "
                   f"Imputing...")
 
-            # TODO: Implement imputing missing player stats
+            # TODO: Implement imputing missing player stats (utilizing "rating_in_comp_season")
             stats.append(stats_dict)
 
         else:

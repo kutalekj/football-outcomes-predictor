@@ -366,21 +366,30 @@ def calculate_team_strength(curr_match, team_id):
     # Get stats about those which are in the current match lineup
     team_lineup_info = []
     for player in team_lineup:
-        p_id, _ = player  # (ID, name)
+        p_id, _, pos = player  # (ID, name, position)
 
         # Match player ID from match lineups with the ID in team player stats in comp season
         player_stats_in_comp_season = [x for x in team_players_stats_in_comp_season if x['id'] == p_id][0]
 
-        # Get (full_name, dob)
+        # Get (full_name, dob, rating)
         team_lineup_info.append((
             player_stats_in_comp_season['firstname'] + " " + player_stats_in_comp_season['lastname'],
-            player_stats_in_comp_season['birth_data']))
+            player_stats_in_comp_season['birth_data'],
+            player_stats_in_comp_season['rating']
+        ))
 
     if len(team_lineup_info) != 11:
         raise ValueError(f"Team lineup info list of length {len(team_lineup)}, but 11 expected")
 
     # Get player stats from CSV
-    players_individual_stats = get_player_stats_for_team(team_lineup_info, curr_match.datetime, CSV_PLAYERS_PATH)
+    team_players_individual_stats = get_player_stats_for_team(team_lineup_info, curr_match.datetime, CSV_PLAYERS_PATH)
+
+    # Calculate team strength vector
+    player_ratings = [z for (x, y, z) in team_lineup_info]
+    player_positions = [z for (x, y, z) in team_lineup]
+    team_strength_vector = ut.combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings,
+                                                                     player_positions, mode="basic")
+    return team_strength_vector
 
 
 def normalize_season(season):

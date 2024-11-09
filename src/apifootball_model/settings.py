@@ -138,3 +138,13 @@ BALL_POSSESSION_NORM_COEFFICIENT = -1  # TODO: Calculate
 PASS_ACC_NORM_COEFFICIENT = -1  # TODO: Calculate
 
 CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output\\test'
+
+CSV_CATEGORIES = {
+    "attacking": ["crossing", "finishing", "heading_accuracy", "short_passing", "volleys"],
+    "skill": ["dribbling", "curve", "fk_accuracy", "long_passing", "ball_control"],
+    "movement": ["acceleration", "sprint_speed", "agility", "reactions", "balance"],
+    "power": ["shot_power", "jumping", "stamina", "strength", "long_shots"],
+    "mentality": ["aggression", "interceptions", "positioning", "vision", "penalties", "composure"],
+    "defending": ["defensive_awareness", "standing_tackle", "sliding_tackle"],
+    "goalkeeping": ["gk_diving", "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes"]
+}
