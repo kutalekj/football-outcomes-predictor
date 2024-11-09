@@ -36,6 +36,9 @@ class Match:
         self.home_team = None
         self.away_team = None
 
+        self.home_team_lineup = None
+        self.away_team_lineup = None
+
         self.winner_team_id = None
         self.home_team_goals = None
         self.away_team_goals = None
@@ -276,12 +279,17 @@ class Match:
                     global_instance.pass_accuracy.append(new_match.home_team_passes_acc)
                     global_instance.pass_accuracy.append(new_match.away_team_passes_acc)
 
-                    # TODO: Lineups
+                    # Lineups
                     lineups_request_string = "/fixtures/lineups?fixture=" + str(new_match.id)
                     conn.request("GET", lineups_request_string, headers=settings.HEADERS)
                     res = conn.getresponse()
                     data = res.read()
                     data_lineups = json.loads(data)['response']
+
+                    new_match.home_team_lineup = \
+                        [(x['player']['id'], x['player']['name']) for x in data_lineups[0]['startXI']]
+                    new_match.away_team_lineup = \
+                        [(x['player']['id'], x['player']['name']) for x in data_lineups[1]['startXI']]
 
                     # TODO: Player statistics (all players in team)
                     home_players_stats_request_string = "/players?season=" + str(season) + "&league=" + str(

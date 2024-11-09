@@ -1,6 +1,7 @@
 import csv
 import datetime
 import os
+import json
 import numpy as np
 from dateutil.parser import parse as date_parse
 from globals import Global
@@ -23,6 +24,7 @@ def store_matches(file_name):
             'season', 'round_name', 'home_team_id', 'away_team_id',
             'home_team_goals', 'away_team_goals', 'home_team_points',
             'away_team_points', 'home_team_shots_on_target', 'away_team_shots_on_target', 'winner_team_id',
+            'home_team_lineup', 'away_team_lineup'
         ])
 
         for match in global_instance.all_matches:
@@ -44,7 +46,9 @@ def store_matches(file_name):
                 match.away_team_points,
                 match.home_team_shots_on_target,
                 match.away_team_shots_on_target,
-                match.winner_team_id
+                match.winner_team_id,
+                json.dumps(match.home_team_lineup),
+                json.dumps(match.away_team_lineup)
             ])
 
 
@@ -92,6 +96,13 @@ def load_matches(file_name):
                 match.away_team_shots_on_target = int(row['away_team_shots_on_target'])
 
                 match.winner_team_id = int(row['winner_team_id']) if row['winner_team_id'] else None
+
+                # Lineups
+                home_lineup_json = row.get('home_team_lineup', '[]')
+                away_lineup_json = row.get('away_team_lineup', '[]')
+
+                match.home_team_lineup = [(int(player[0]), player[1]) for player in json.loads(home_lineup_json)]
+                match.away_team_lineup = [(int(player[0]), player[1]) for player in json.loads(away_lineup_json)]
 
                 # Add the match to the global instance
                 global_instance.all_matches.append(match)
