@@ -17,6 +17,12 @@ class Global:
             # For example, for England 2021 there are PL, Championship, UEFA competitions, FA Cup and EFL Trophy
             cls._instance.start_end_dates_per_country_season = {}
 
+            cls._instance.total_shots = []
+            cls._instance.shots_inbox = []
+            cls._instance.corner_kicks = []
+            cls._instance.ball_possession = []
+            cls._instance.pass_accuracy = []
+
         return cls._instance
 
     @classmethod

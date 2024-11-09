@@ -210,11 +210,11 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
     if stat_name == "Shots on Goal":
         return normalize_sog(avg_value)
     elif stat_name == "Total Shots":
-        return None  # TODO: Implement normalization to (0,1)
+        return -1  # TODO: Implement normalization to (0,1)
     elif stat_name == "Shots insidebox":
-        return None  # TODO: Implement normalization to (0,1)
+        return -1  # TODO: Implement normalization to (0,1)
     elif stat_name == "Corner Kicks":
-        return None  # TODO: Implement normalization to (0,1)
+        return -1  # TODO: Implement normalization to (0,1)
     elif stat_name == "Ball Possession":
         return avg_value
     elif stat_name == "Passes %":

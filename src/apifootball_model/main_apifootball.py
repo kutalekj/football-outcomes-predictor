@@ -122,6 +122,18 @@ for comp in global_instance.all_comps:
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
+print(f"Mean total shots = {np.mean(np.asarray(global_instance.total_shots))}")
+print(f"Variance total shots = {np.var(np.asarray(global_instance.total_shots))}")
+print(f"StdDev total shots = {np.std(np.asarray(global_instance.total_shots))}")
+print(f"Mean shots inside box = {np.mean(np.asarray(global_instance.shots_inbox))}")
+print(f"Variance shots inside box = {np.var(np.asarray(global_instance.shots_inbox))}")
+print(f"StdDev shots inside box = {np.std(np.asarray(global_instance.shots_inbox))}")
+print(f"Mean corner kicks = {np.mean(np.asarray(global_instance.corner_kicks))}")
+print(f"Variance corner kicks = {np.var(np.asarray(global_instance.corner_kicks))}")
+print(f"StdDev corner kicks = {np.std(np.asarray(global_instance.corner_kicks))}")
+print(f"\nMean ball possession= {np.mean(np.asarray(global_instance.ball_possession))}")
+print(f"Mean pass accuracy = {np.mean(np.asarray(global_instance.pass_accuracy))}")
+
 # Sort matches by datetime played (asc.)
 for team in global_instance.all_teams:
     team.matches = sorted(team.matches, key=lambda match_: match_.datetime)
