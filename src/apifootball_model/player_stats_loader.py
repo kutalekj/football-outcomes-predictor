@@ -1,9 +1,12 @@
 import os
 import glob
 import csv
+import random
 import difflib
+import numpy as np
 from datetime import datetime
-from settings import CSV_CATEGORIES
+from settings import CSV_CATEGORIES, CSV_PLAYERS_PATH
+from globals import Global
 
 NUM_FUZZY_MATCHES = 10
 FUZZY_CUTOFF = 0.2
@@ -87,28 +90,31 @@ def extract_stats(player_row):
     return stats
 
 
-def get_player_stats_for_team(team_lineup_info, match_datetime, directory_path):
-    selected_csv = get_csv_file(match_datetime, directory_path)
+def get_player_stats_for_team(team_lineup_info, team_rating_comp_season, curr_match, directory_path):
+    selected_csv = get_csv_file(curr_match.datetime, directory_path)
 
     if not selected_csv:
-        raise Exception(f"Unable to find CSV file corresponding to match played at {match_datetime}")
+        raise Exception(f"Unable to find CSV file corresponding to match played at {curr_match.datetime}")
 
     # Loop over players in team roster
     stats = []
     all_ok = True
 
     for player_info in team_lineup_info:
-        player_name, date_of_birth, rating_in_comp_season = player_info
+        player_name, date_of_birth, player_rating_comp_season, usual_position = player_info
 
         player_row = find_player_row(player_name, date_of_birth, selected_csv)
 
         if player_row is None:
-            stats_dict = {category: [-1] * len(columns) for category, columns in CSV_CATEGORIES.items()}
-            all_ok = False
-            print(f"Failed to retrieve data from CSV for player {player_name} for matched played at {match_datetime}. "
-                  f"Imputing...")
+            # stats_dict = {category: [-1] * len(columns) for category, columns in CSV_CATEGORIES.items()}
+            # all_ok = False
+            print(f"Failed to retrieve data from CSV for player {player_name} for matched played at "
+                  f"{curr_match.datetime}. Imputing...")
 
-            # TODO: Implement imputing missing player stats (utilizing "rating_in_comp_season")
+            # Impute missing player stats
+            stats_dict = estimate_player_stats(curr_match,
+                                               player_rating_comp_season, usual_position, team_rating_comp_season)
+
             stats.append(stats_dict)
 
         else:
@@ -118,18 +124,79 @@ def get_player_stats_for_team(team_lineup_info, match_datetime, directory_path):
     return all_ok, stats
 
 
-"""
-player_name = 'Erling Haaland'
-match_datetime_str = '2024-10-02'
-directory_path = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output\\test'
+def estimate_player_stats(curr_match, player_rating_comp_season, usual_position, team_rating_comp_season):
+    global_instance = Global.get_instance()
 
-found, player_stats = get_player_stats(player_name, match_datetime_str, directory_path)
+    # Define the acceptable rating difference
+    rating_threshold = 0.5  # Adjust as needed
 
-if found:
-    print("Player stats found:")
-    for category, values in player_stats.items():
-        print(f"{category.capitalize()}: {values}")
-else:
-    print("Player not found or stats not available.")
-    print(player_stats)
-"""
+    # Mapping of positions to positions in data (if needed)
+    # Assuming 'usual_position' directly matches player_stats['position']
+    # If not, you may need to map 'Attacker' to 'F', 'Midfielder' to 'M', etc.
+
+    # Get all teams in the same competition and season
+    similar_players_stats = []
+    comp_name = curr_match.comp.name
+    season_str = str(curr_match.season)
+    for team in global_instance.all_teams:
+        # Check if team has stats for the same competition and season
+        team_player_stats_comp = team.player_stats_comp_season.get(comp_name, {}).get(season_str, [])
+        team_avg_rating = team.rating_comp_season.get(comp_name, {}).get(season_str, None)
+
+        if not team_player_stats_comp or team_avg_rating is None:
+            continue  # Skip teams without data
+
+        # Calculate team rating difference
+        team_rating_diff = abs(team_avg_rating - team_rating_comp_season)
+        # You can consider using team_rating_diff if desired
+
+        for player_stats in team_player_stats_comp:
+            # Check if player's position matches the usual_position
+            if player_stats['position'] == usual_position:
+                player_rating = player_stats['rating']
+                # Check if player's rating is within the acceptable range
+                if abs(player_rating - player_rating_comp_season) <= rating_threshold:
+                    # Try to find the player's stats from the CSV
+                    player_name = player_stats['name']
+                    date_of_birth = player_stats['birth_date']
+                    selected_csv = get_csv_file(curr_match.datetime, CSV_PLAYERS_PATH)
+                    if selected_csv:
+                        player_row = find_player_row(player_name, date_of_birth, selected_csv)
+                        if player_row:
+                            stats_dict = extract_stats(player_row)
+                            similar_players_stats.append(stats_dict)
+
+    if not similar_players_stats:
+        # If no similar players found, estimate stats based on average stats for the position
+        print(f"No similar players found for position {usual_position} and rating {player_rating_comp_season}.")
+        # Use default values or global averages
+        # For each category, assign random values within a reasonable range
+        estimated_stats = {}
+        for category, columns in CSV_CATEGORIES.items():
+            estimated_stats[category] = [random.randint(50, 70) for _ in columns]
+        return estimated_stats
+
+    # Aggregate stats from similar players
+    estimated_stats = {}
+    for category, columns in CSV_CATEGORIES.items():
+        # Collect stats for this category from all similar players
+        category_values = []
+        for stats in similar_players_stats:
+            values = stats.get(category, [])
+            if values:
+                category_values.append(values)
+        if category_values:
+            # Convert to numpy array for computation
+            category_array = np.array(category_values)
+            # Compute mean across similar players
+            category_mean = np.mean(category_array, axis=0)
+            # Convert to integer values
+            category_mean_int = [int(round(val)) for val in category_mean]
+            # Add some minor randomization
+            category_estimated = [min(99, max(1, val + random.randint(-2, 2))) for val in category_mean_int]
+            estimated_stats[category] = category_estimated
+        else:
+            # If no data available for this category, assign default values
+            estimated_stats[category] = [random.randint(50, 70) for _ in columns]
+
+    return estimated_stats

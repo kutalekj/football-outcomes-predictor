@@ -73,7 +73,8 @@ class SeasonCompTable:
             team.player_stats_comp_season[self.comp_name][str(self.season)].append(player_stats_list)
 
             # Team rating
-            rating = np.mean(np.asarray([x['rating'] for x in player_stats_list]))
+            top_15_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:15]
+            rating = np.mean(np.asarray(top_15_player_ratings))
             team.rating_comp_season[self.comp_name][str(self.season)].append(rating)
 
             teams.append(new_team)
