@@ -45,6 +45,31 @@ class MatchFeatures:
         self.away_avg_shots_on_target_last_5 = None
         self.away_avg_shots_on_target_last_20 = None
 
+        self.home_avg_total_shots_last_5 = None
+        self.home_avg_total_shots_last_20 = None
+        self.away_avg_total_shots_last_5 = None
+        self.away_avg_total_shots_last_20 = None
+
+        self.home_avg_shots_inside_box_last_5 = None
+        self.home_avg_shots_inside_box_last_20 = None
+        self.away_avg_shots_inside_box_last_5 = None
+        self.away_avg_shots_inside_box_last_20 = None
+
+        self.home_avg_corner_kicks_last_5 = None
+        self.home_avg_corner_kicks_last_20 = None
+        self.away_avg_corner_kicks_last_5 = None
+        self.away_avg_corner_kicks_last_20 = None
+
+        self.home_avg_ball_possession_last_5 = None
+        self.home_avg_ball_possession_last_20 = None
+        self.away_avg_ball_possession_last_5 = None
+        self.away_avg_ball_possession_last_20 = None
+
+        self.home_avg_passes_acc_last_5 = None
+        self.home_avg_passes_acc_last_20 = None
+        self.away_avg_passes_acc_last_5 = None
+        self.away_avg_passes_acc_last_20 = None
+
         self.home_curr_position = None
         self.away_curr_position = None
 

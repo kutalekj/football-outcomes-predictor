@@ -44,6 +44,16 @@ class Match:
 
         self.home_team_shots_on_target = None
         self.away_team_shots_on_target = None
+        self.home_team_total_shots = None
+        self.away_team_total_shots = None
+        self.home_team_shots_inside_box = None
+        self.away_team_shots_inside_box = None
+        self.home_team_corner_kicks = None
+        self.away_team_corner_kicks = None
+        self.home_team_ball_possession = None
+        self.away_team_ball_possession = None
+        self.home_team_passes_acc = None
+        self.away_team_passes_acc = None
 
         self.home_elo_before_match_not_normalized = None
         self.away_elo_before_match_not_normalized = None
@@ -231,6 +241,25 @@ class Match:
                     new_match.home_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "away")
 
+                    new_match.home_team_total_shots = new_match.get_stats_value(data_stats, "Total Shots", "home")
+                    new_match.away_team_total_shots = new_match.get_stats_value(data_stats, "Total Shots", "away")
+
+                    new_match.home_team_shots_inside_box = new_match.get_stats_value(data_stats, "Shots insidebox",
+                                                                                     "home")
+                    new_match.away_team_shots_inside_box = new_match.get_stats_value(data_stats, "Shots insidebox",
+                                                                                     "away")
+
+                    new_match.home_team_corner_kicks = new_match.get_stats_value(data_stats, "Corner Kicks", "home")
+                    new_match.away_team_corner_kicks = new_match.get_stats_value(data_stats, "Corner Kicks", "away")
+
+                    new_match.home_team_ball_possession = new_match.get_stats_value(data_stats, "Ball Possession",
+                                                                                    "home")
+                    new_match.away_team_ball_possession = new_match.get_stats_value(data_stats, "Ball Possession",
+                                                                                    "away")
+
+                    new_match.home_team_passes_acc = new_match.get_stats_value(data_stats, "Passes %", "home")
+                    new_match.away_team_passes_acc = new_match.get_stats_value(data_stats, "Passes %", "away")
+
                     # TODO: Lineups
                     lineups_request_string = "/fixtures/lineups?fixture=" + str(new_match.id)
                     conn.request("GET", lineups_request_string, headers=settings.HEADERS)
@@ -267,7 +296,7 @@ class Match:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."
                             f"Instead, {str(len(stat_name))} were found.")
 
-        if stat_name == "Shots on Goal":
+        if stat_name in ["Shots on Goal", "Total Shots", "Shots insidebox", "Corner Kicks"]:
 
             # Home team
             if home_away == "home":
@@ -280,6 +309,23 @@ class Match:
                 for statistic in stats[1]['statistics']:
                     if statistic['type'] == stat_name:
                         return statistic['value'] if statistic['value'] is not None else -1
+
+            else:
+                raise ValueError("The \"home_away\" parameter set to a wrong value.")
+
+        elif stat_name in ["Ball Possession", "Passes %"]:
+
+            # Home team
+            if home_away == "home":
+                for statistic in stats[0]['statistics']:
+                    if statistic['type'] == stat_name:
+                        return int(statistic['value'][:-1]) * 0.01 if statistic['value'] is not None else -1
+
+            # Away team
+            elif home_away == "away":
+                for statistic in stats[1]['statistics']:
+                    if statistic['type'] == stat_name:
+                        return int(statistic['value'][:-1]) * 0.01 if statistic['value'] is not None else -1
 
             else:
                 raise ValueError("The \"home_away\" parameter set to a wrong value.")
