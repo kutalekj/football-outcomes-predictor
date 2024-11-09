@@ -5,7 +5,8 @@ feature_utils.py
 import numpy as np
 import utils as ut
 from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
-    GOALS_NORM_COEFFICIENT, MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE
+    GOALS_NORM_COEFFICIENT, MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH
+from player_stats_loader import get_player_stats_for_team
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -357,10 +358,29 @@ def calculate_team_strength(curr_match, team_id):
     if len(team_lineup) != 11:
         raise ValueError(f"Team lineup list of length {len(team_lineup)}, but 11 expected")
 
-    # Players' stats
+    # Get players in current comp season team roster
+    team = ut.get_team_if_exists(team_id)
+
+    team_players_stats_in_comp_season = team.player_stats_comp_season[curr_match.comp.name][str(curr_match.season)]
+
+    # Get stats about those which are in the current match lineup
+    team_lineup_info = []
     for player in team_lineup:
-        p_id, p_name = player
-        # TODO: Continue here...
+        p_id, _ = player  # (ID, name)
+
+        # Match player ID from match lineups with the ID in team player stats in comp season
+        player_stats_in_comp_season = [x for x in team_players_stats_in_comp_season if x['id'] == p_id][0]
+
+        # Get (full_name, dob)
+        team_lineup_info.append((
+            player_stats_in_comp_season['firstname'] + " " + player_stats_in_comp_season['lastname'],
+            player_stats_in_comp_season['birth_data']))
+
+    if len(team_lineup_info) != 11:
+        raise ValueError(f"Team lineup info list of length {len(team_lineup)}, but 11 expected")
+
+    # Get player stats from CSV
+    players_individual_stats = get_player_stats_for_team(team_lineup_info, curr_match.datetime, CSV_PLAYERS_PATH)
 
 
 def normalize_season(season):

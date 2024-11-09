@@ -136,3 +136,5 @@ TOTAL_SHOTS_NORM_COEFFICIENT = -1  # TODO: Calculate
 CORNER_KICKS_NORM_COEFFICIENT = -1  # TODO: Calculate
 BALL_POSSESSION_NORM_COEFFICIENT = -1  # TODO: Calculate
 PASS_ACC_NORM_COEFFICIENT = -1  # TODO: Calculate
+
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output\\test'

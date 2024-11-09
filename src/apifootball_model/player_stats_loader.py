@@ -96,25 +96,35 @@ def extract_stats(player_row):
     return stats
 
 
-def get_player_stats_for_team(team_roster_info, match_datetime_str, directory_path):
-    match_datetime = datetime.strptime(match_datetime_str, '%Y-%m-%d')
+def get_player_stats_for_team(team_lineup_info, match_datetime, directory_path):
     selected_csv = get_csv_file(match_datetime, directory_path)
 
     if not selected_csv:
-        stats_dict = {category: [-1]*len(columns) for category, columns in categories.items()}
-        return False, stats_dict
+        raise Exception(f"Unable to find CSV file corresponding to match played at {match_datetime}")
 
     # Loop over players in team roster
-    for player_info in team_roster_info:
+    stats = []
+    all_ok = True
 
-        # TODO: Continue here...
-        player_row = find_player_row(player_name, selected_csv)
+    for player_info in team_lineup_info:
+        player_name, date_of_birth = player_info
+
+        player_row = find_player_row(player_name, date_of_birth, selected_csv)
+
         if player_row is None:
-            stats_dict = {category: [-1]*len(columns) for category, columns in categories.items()}
-            return False, stats_dict
+            stats_dict = {category: [-1] * len(columns) for category, columns in categories.items()}
+            all_ok = False
+            print(f"Failed to retrieve data from CSV for player {player_name} for matched played at {match_datetime}. "
+                  f"Imputing...")
+
+            # TODO: Implement imputing missing player stats
+            stats.append(stats_dict)
+
         else:
-            stats = extract_stats(player_row)
-            return True, stats
+            stats_dict = extract_stats(player_row)
+            stats.append(stats_dict)
+
+    return all_ok, stats
 
 
 """
