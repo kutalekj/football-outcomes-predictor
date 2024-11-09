@@ -5,7 +5,7 @@ feature_utils.py
 import numpy as np
 import utils as ut
 from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
-    ALMOST_ZERO, ALMOST_ONE
+    GOALS_NORM_COEFFICIENT, MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -363,7 +363,7 @@ def normalize_points(points):
 
 
 def normalize_goals(goals):
-    return ut.min_max_scaling_with_clipping(goals, 5.19)
+    return ut.min_max_scaling_with_clipping(goals, GOALS_NORM_COEFFICIENT)
 
 
 def normalize_sog(sog):
@@ -371,7 +371,7 @@ def normalize_sog(sog):
 
 
 def normalize_match_loads(match_loads):
-    return ut.min_max_scaling_with_clipping(match_loads, 0.246)
+    return ut.min_max_scaling_with_clipping(match_loads, MATCH_LOAD_NORM_COEFFICIENT)
 
 
 def normalized_hour_month_cyclic(cyclic_value):
