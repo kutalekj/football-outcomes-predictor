@@ -291,14 +291,6 @@ class Match:
                     new_match.away_team_lineup = \
                         [(x['player']['id'], x['player']['name']) for x in data_lineups[1]['startXI']]
 
-                    # TODO: Player statistics (all players in team)
-                    home_players_stats_request_string = "/players?season=" + str(season) + "&league=" + str(
-                        comp.id) + "&team=" + str(new_match.home_team.id)
-                    conn.request("GET", home_players_stats_request_string, headers=settings.HEADERS)
-                    res = conn.getresponse()
-                    data = res.read()
-                    data_home_team_players_stats = json.loads(data)['response']
-
                     # Add new match to list
                     global_instance.all_matches.append(new_match)
 

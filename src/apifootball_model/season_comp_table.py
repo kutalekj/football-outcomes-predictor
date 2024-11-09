@@ -4,6 +4,7 @@ season_comp_table.py
 
 import http.client
 import json
+from datetime import datetime
 import numpy as np
 import settings
 import utils as ut
@@ -24,10 +25,8 @@ class SeasonCompTable:
         request_string = "/teams?league=" + str(self.comp_id) + "&season=" + str(self.season)
 
         self.conn.request("GET", request_string, headers=settings.HEADERS)
-
         res = self.conn.getresponse()
         data = res.read()
-
         data_teams = json.loads(data)
 
         teams = []
@@ -41,6 +40,35 @@ class SeasonCompTable:
             if new_team is None:
                 raise Exception(f"Team {team_id}: {team_name} not found in existing ones. Should not happen here, "
                                 f"since teams were already initialized during the Comp initialization.")
+
+            # Team players statistics in comp season
+            home_players_stats_request_string = "/players?season=" + str(self.season) + "&league=" + str(self.comp_id) \
+                                                + "&team=" + str(team_id)
+            self.conn.request("GET", home_players_stats_request_string, headers=settings.HEADERS)
+            res = self.conn.getresponse()
+            data = res.read()
+            data_team_players_stats = json.loads(data)['response']
+
+            player_stats = {}
+            for player in data_team_players_stats:
+                if team_id != player_stats['statistics'][0]['team']['id']:
+                    raise ValueError("Unable to match expected player's team with the found one.")
+
+                player_stats['id'] = int(player['player']['id'])
+                player_stats['name'] = player['player']['name']
+                player_stats['firstname'] = player['player']['firstname']
+                player_stats['lastname'] = player['player']['lastname']
+                player_stats['age'] = int(player['player']['age'])
+                player_stats['birth_date'] = datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d')
+                player_stats['birth_country'] = player['player']['birth']['country']
+                player_stats['nationality'] = player['player']['nationality']
+                player_stats['height'] = player['player']['height']
+                player_stats['weight'] = player['player']['weight']
+
+                player_stats['position'] = player_stats['statistics'][0]['games']['position']
+                player_stats['rating'] = float(player_stats['statistics'][0]['games']['rating'])
+
+            team.player_stats_comp_season[self.comp_name][str(self.season)].append(player_stats)
 
             teams.append(new_team)
 
