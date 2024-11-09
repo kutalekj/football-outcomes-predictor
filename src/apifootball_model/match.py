@@ -290,7 +290,8 @@ class Match:
                     f"and {self.away_team.name} played at {self.datetime}")
 
             # The value returned (used for features) is already normalized - denormalize it for now and round it
-            return round(feature_ut.get_avg_shots_on_target_last_n(self, 5, home_away) * settings.SOG_NORM_COEFFICIENT)
+            return round(
+                feature_ut.get_avg_stat_value_last_n(self, 5, home_away, stat_name) * settings.SOG_NORM_COEFFICIENT)
 
         if len(stats) != 2:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."
@@ -407,12 +408,59 @@ class Match:
         new_match_features.away_avg_goals_last_5 = feature_ut.get_avg_goals_last_n(self, 5, "away")
         new_match_features.away_avg_goals_last_20 = feature_ut.get_avg_goals_last_n(self, 20, "away")
 
-        new_match_features.home_avg_shots_on_target_last_5 = feature_ut.get_avg_shots_on_target_last_n(self, 5, "home")
-        new_match_features.home_avg_shots_on_target_last_20 = feature_ut.get_avg_shots_on_target_last_n(self, 20,
-                                                                                                        "home")
-        new_match_features.away_avg_shots_on_target_last_5 = feature_ut.get_avg_shots_on_target_last_n(self, 5, "away")
-        new_match_features.away_avg_shots_on_target_last_20 = feature_ut.get_avg_shots_on_target_last_n(self, 20,
-                                                                                                        "away")
+        new_match_features.home_avg_shots_on_target_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                                  "Shots on Goal")
+        new_match_features.home_avg_shots_on_target_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                                   "Shots on Goal")
+        new_match_features.away_avg_shots_on_target_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                                  "Shots on Goal")
+        new_match_features.away_avg_shots_on_target_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                                   "Shots on Goal")
+
+        new_match_features.home_avg_total_shots_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                              "Total Shots")
+        new_match_features.home_avg_total_shots_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                               "Total Shots")
+        new_match_features.away_avg_total_shots_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                              "Total Shots")
+        new_match_features.away_avg_total_shots_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                               "Total Shots")
+
+        new_match_features.home_avg_shots_inside_box_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                                   "Shots insidebox")
+        new_match_features.home_avg_shots_inside_box_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                                    "Shots insidebox")
+        new_match_features.away_avg_shots_inside_box_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                                   "Shots insidebox")
+        new_match_features.away_avg_shots_inside_box_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                                    "Shots insidebox")
+
+        new_match_features.home_avg_corner_kicks_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                               "Corner Kicks")
+        new_match_features.home_avg_corner_kicks_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                                "Corner Kicks")
+        new_match_features.away_avg_corner_kicks_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                               "Corner Kicks")
+        new_match_features.away_avg_corner_kicks_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                                "Corner Kicks")
+
+        new_match_features.home_avg_ball_possession_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                                  "Ball Possession")
+        new_match_features.home_avg_ball_possession_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                                   "Ball Possession")
+        new_match_features.away_avg_ball_possession_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                                  "Ball Possession")
+        new_match_features.away_avg_ball_possession_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                                   "Ball Possession")
+
+        new_match_features.home_avg_passes_acc_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                             "Passes %")
+        new_match_features.home_avg_passes_acc_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                              "Passes %")
+        new_match_features.away_avg_passes_acc_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                             "Passes %")
+        new_match_features.away_avg_passes_acc_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                              "Passes %")
 
         new_match_features.home_avg_goals_scored_home_last_5 = \
             feature_ut.get_avg_goals_scored_conceded_home_or_away_last_n(self, 5, "home", "scored")
@@ -465,6 +513,21 @@ class Match:
                     f"Avg shots on goal last 5/20 matches={new_match_features.home_avg_shots_on_target_last_5}/"
                     f"{new_match_features.home_avg_shots_on_target_last_20}")
                 print(
+                    f"Avg total shots last 5/20 matches={new_match_features.home_avg_total_shots_last_5}/"
+                    f"{new_match_features.home_avg_total_shots_last_20}")
+                print(
+                    f"Avg shots inside box last 5/20 matches={new_match_features.home_avg_shots_inside_box_last_5}/"
+                    f"{new_match_features.home_avg_shots_inside_box_last_20}")
+                print(
+                    f"Avg corner kicks last 5/20 matches={new_match_features.home_avg_corner_kicks_last_5}/"
+                    f"{new_match_features.home_avg_corner_kicks_last_20}")
+                print(
+                    f"Avg ball possession last 5/20 matches={new_match_features.home_avg_ball_possession_last_5}/"
+                    f"{new_match_features.home_avg_ball_possession_last_20}")
+                print(
+                    f"Avg passes accuracy last 5/20 matches={new_match_features.home_avg_passes_acc_last_5}/"
+                    f"{new_match_features.home_avg_passes_acc_last_20}")
+                print(
                     f"Avg goals scored home last 5/20 matches={new_match_features.home_avg_goals_scored_home_last_5}/"
                     f"{new_match_features.home_avg_goals_scored_home_last_20}")
                 print(
@@ -490,6 +553,21 @@ class Match:
                 print(
                     f"Avg shots on goal last 5/20 matches={new_match_features.away_avg_shots_on_target_last_5}/"
                     f"{new_match_features.away_avg_shots_on_target_last_20}")
+                print(
+                    f"Avg total shots last 5/20 matches={new_match_features.away_avg_total_shots_last_5}/"
+                    f"{new_match_features.away_avg_total_shots_last_20}")
+                print(
+                    f"Avg shots inside box last 5/20 matches={new_match_features.away_avg_shots_inside_box_last_5}/"
+                    f"{new_match_features.away_avg_shots_inside_box_last_20}")
+                print(
+                    f"Avg corner kicks last 5/20 matches={new_match_features.away_avg_corner_kicks_last_5}/"
+                    f"{new_match_features.away_avg_corner_kicks_last_20}")
+                print(
+                    f"Avg ball possession last 5/20 matches={new_match_features.away_avg_ball_possession_last_5}/"
+                    f"{new_match_features.away_avg_ball_possession_last_20}")
+                print(
+                    f"Avg passes accuracy last 5/20 matches={new_match_features.away_avg_passes_acc_last_5}/"
+                    f"{new_match_features.away_avg_passes_acc_last_20}")
                 print(
                     f"Avg goals scored away last 5/20 matches={new_match_features.away_avg_goals_scored_away_last_5}/"
                     f"{new_match_features.away_avg_goals_scored_away_last_20}")

@@ -139,7 +139,8 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
 
 # home_avg_shots_on_target_last_5, home_avg_shots_on_target_last_20
 # away_avg_shots_on_target_last_5, away_avg_shots_on_target_last_20
-def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
+# ...
+def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 20 probably
     # Check if wanted for currently HOME or currently AWAY team
     if home_away == "home":
 
@@ -158,7 +159,7 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
     else:
         raise Exception("The \"home_away\" parameter set to a wrong value.")
 
-    total_shots_on_target = 0
+    total_value = 0
     total_none_values = 0
     for match in last_n_matches:
         if match is None:
@@ -167,9 +168,35 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
         # In each match the wanted team was either HOME or AWAY
         else:
             if team_id == match.home_team.id:
-                total_shots_on_target += match.home_team_shots_on_target
+
+                if stat_name == "Shots on Goal":
+                    total_value += match.home_team_shots_on_target
+                elif stat_name == "Total Shots":
+                    total_value += match.home_team_total_shots
+                elif stat_name == "Shots insidebox":
+                    total_value += match.home_team_shots_inside_box
+                elif stat_name == "Corner Kicks":
+                    total_value += match.home_team_corner_kicks
+                elif stat_name == "Ball Possession":
+                    total_value += match.home_team_ball_possession
+                elif stat_name == "Passes %":
+                    total_value += match.home_team_passes_acc
+
             elif team_id == match.away_team.id:
-                total_shots_on_target += match.away_team_shots_on_target
+
+                if stat_name == "Shots on Goal":
+                    total_value += match.away_team_shots_on_target
+                elif stat_name == "Total Shots":
+                    total_value += match.away_team_total_shots
+                elif stat_name == "Shots insidebox":
+                    total_value += match.away_team_shots_inside_box
+                elif stat_name == "Corner Kicks":
+                    total_value += match.away_team_corner_kicks
+                elif stat_name == "Ball Possession":
+                    total_value += match.away_team_ball_possession
+                elif stat_name == "Passes %":
+                    total_value += match.away_team_passes_acc
+
             else:
                 raise Exception(
                     "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
@@ -178,8 +205,20 @@ def get_avg_shots_on_target_last_n(curr_match, n, home_away):  # "N" 5 or 20 pro
     if n - total_none_values == 0:
         return 0
 
-    avg_shots_on_target = float(total_shots_on_target / (n - total_none_values))
-    return normalize_sog(avg_shots_on_target)
+    avg_value = float(total_value / (n - total_none_values))
+
+    if stat_name == "Shots on Goal":
+        return normalize_sog(avg_value)
+    elif stat_name == "Total Shots":
+        return None  # TODO: Implement normalization to (0,1)
+    elif stat_name == "Shots insidebox":
+        return None  # TODO: Implement normalization to (0,1)
+    elif stat_name == "Corner Kicks":
+        return None  # TODO: Implement normalization to (0,1)
+    elif stat_name == "Ball Possession":
+        return avg_value
+    elif stat_name == "Passes %":
+        return avg_value
 
 
 # home_avg_goals_scored_home_last_5, home_avg_goals_scored_home_last_20
