@@ -35,7 +35,6 @@ class Comp:
                 for round_ in season_rounds['rounds']:
                     if round_.name == round_name:
                         return round_
-
         return None
 
     def init_teams_in_comp(self):

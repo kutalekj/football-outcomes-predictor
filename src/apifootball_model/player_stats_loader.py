@@ -4,6 +4,9 @@ import csv
 import difflib
 from datetime import datetime
 
+NUM_FUZZY_MATCHES = 5
+FUZZY_CUTOFF = 0.2
+
 categories = {
     "attacking": ["crossing", "finishing", "heading_accuracy", "short_passing", "volleys"],
     "skill": ["dribbling", "curve", "fk_accuracy", "long_passing", "ball_control"],
@@ -34,6 +37,7 @@ def get_csv_file(match_datetime, directory_path):
 
 
 def find_player_row(player_name, csv_file):
+    # Open CSV with a corresponding historical version
     with open(csv_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         players = []
@@ -42,7 +46,11 @@ def find_player_row(player_name, csv_file):
             name = row['name']
             players.append(name)
             rows.append(row)
-    matches = difflib.get_close_matches(player_name, players, n=1, cutoff=0.2)
+
+    # Get close matches of players' names
+    matches = difflib.get_close_matches(player_name, players, n=NUM_FUZZY_MATCHES, cutoff=FUZZY_CUTOFF)
+
+    # TODO: Add logic here
     if matches:
         matched_name = matches[0]
         print(f'Name {player_name} matched to {matched_name}.')
@@ -69,8 +77,11 @@ def extract_stats(player_row):
 
 
 def get_player_stats(player_name, match_datetime_str, directory_path):
+    # TODO: Call this function for entire match so that CSV is chosen and opened (loaded all player rows) only once!
     match_datetime = datetime.strptime(match_datetime_str, '%Y-%m-%d')
     selected_csv = get_csv_file(match_datetime, directory_path)
+
+    # TODO: From here loop over both teams and all players
     if not selected_csv:
         stats_dict = {category: [-1]*len(columns) for category, columns in categories.items()}
         return False, stats_dict

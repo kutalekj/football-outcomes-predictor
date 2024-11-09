@@ -231,6 +231,21 @@ class Match:
                     new_match.home_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "home")
                     new_match.away_team_shots_on_target = new_match.get_stats_value(data_stats, "Shots on Goal", "away")
 
+                    # TODO: Lineups
+                    lineups_request_string = "/fixtures/lineups?fixture=" + str(new_match.id)
+                    conn.request("GET", lineups_request_string, headers=settings.HEADERS)
+                    res = conn.getresponse()
+                    data = res.read()
+                    data_lineups = json.loads(data)['response']
+
+                    # TODO: Player statistics (all players in team)
+                    home_players_stats_request_string = "/players?season=" + str(season) + "&league=" + str(
+                        comp.id) + "&team=" + str(new_match.home_team.id)
+                    conn.request("GET", home_players_stats_request_string, headers=settings.HEADERS)
+                    res = conn.getresponse()
+                    data = res.read()
+                    data_home_team_players_stats = json.loads(data)['response']
+
                     # Add new match to list
                     global_instance.all_matches.append(new_match)
 

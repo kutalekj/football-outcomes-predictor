@@ -14,7 +14,7 @@ import features_utils as feature_ut
 def store_matches(file_name):
     global_instance = Global.get_instance()
 
-    with open(file_name, mode='w', newline='') as file:
+    with open(file_name, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
 
         # Writing the header
@@ -52,7 +52,7 @@ def load_matches(file_name):
     global_instance = Global.get_instance()
 
     try:
-        with open(file_name, mode='r', newline='') as file:
+        with open(file_name, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.DictReader(file)
 
             for row in reader:
@@ -78,7 +78,8 @@ def load_matches(file_name):
                 # Away team
                 away_team = ut.get_team_if_exists(int(row['away_team_id']))
                 if away_team is None:
-                    raise Exception(f"Failed to find an away team with ID {int(row['away_team_id'])} to assign a match.")
+                    raise Exception(f"Failed to find an away team with ID "
+                                    f"{int(row['away_team_id'])} to assign a match.")
 
                 match.away_team = away_team
                 away_team.matches.append(match)
@@ -95,7 +96,7 @@ def load_matches(file_name):
                 # Add the match to the global instance
                 global_instance.all_matches.append(match)
 
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         print(f"Error: The file '{file_name}' was not found. Please check the file name and try again.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
