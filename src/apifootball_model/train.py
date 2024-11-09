@@ -19,7 +19,7 @@ SEQUENCE_LENGTH = 10
 
 
 def train(regular_matches_in_rounds):
-    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))  # TODO: Acceleration
 
     # Flatten and sort the list of matches
     all_matches = [match for matches in regular_matches_in_rounds for match in matches]

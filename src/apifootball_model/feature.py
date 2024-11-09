@@ -83,6 +83,9 @@ class MatchFeatures:
         self.away_avg_goals_conceded_away_last_5 = 0
         self.away_avg_goals_conceded_away_last_20 = 0
 
+        self.home_team_strength = None
+        self.away_team_strength = None
+
     @staticmethod
     def match_features_to_vector(match_features):
         # Convert the match_features object to a dictionary

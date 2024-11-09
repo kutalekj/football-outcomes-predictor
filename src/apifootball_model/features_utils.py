@@ -342,6 +342,27 @@ def calculate_elo_for_both_teams(curr_match):
     return normalize_elo(home_team_new_elo), normalize_elo(away_team_new_elo)
 
 
+# home_team_strength, away_team_strength
+def calculate_team_strength(curr_match, team_id):
+    # Get lineup
+    if team_id == curr_match.home_team.id:
+        team_lineup = curr_match.home_team_lineup
+    elif team_id == curr_match.away_team.id:
+        team_lineup = curr_match.away_team_lineup
+    else:
+        raise ValueError(f"Team ID {team_id} matches neither the home team {curr_match.home_team.name} "
+                         f"({curr_match.home_team.id}) or the away team {curr_match.away_team.name} "
+                         f"({curr_match.away_team.id})")
+
+    if len(team_lineup) != 11:
+        raise ValueError(f"Team lineup list of length {len(team_lineup)}, but 11 expected")
+
+    # Players' stats
+    for player in team_lineup:
+        p_id, p_name = player
+        # TODO: Continue here...
+
+
 def normalize_season(season):
     normalized_season = (season - FIRST_SEASON) / (LAST_SEASON - FIRST_SEASON)
     return float(max(0, min(1, normalized_season)))

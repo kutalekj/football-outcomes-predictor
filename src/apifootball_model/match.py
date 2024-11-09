@@ -508,6 +508,14 @@ class Match:
             new_match_features.home_curr_position = -1
             new_match_features.away_curr_position = -1
 
+        # Team strength
+        if self.round.is_regular:
+            new_match_features.home_team_strength = feature_ut.calculate_team_strength(self, self.home_team.id)
+            new_match_features.away_team_strength = feature_ut.calculate_team_strength(self, self.away_team.id)
+        else:
+            new_match_features.home_team_strength = -1
+            new_match_features.away_team_strength = -1
+
         # DEBUG PRINTS...
         if self.home_team.name == "Genk" or self.away_team.name == "Genk":
             if self.home_team.name == "Genk":
