@@ -96,73 +96,85 @@ class Comp:
 
                 new_team.regularity_in_comp_season.append({'comp': self, 'season': season, 'is_regular': False})
 
-                # Team players statistics in comp season
-                if self.name not in new_team.player_stats_comp_season:
-                    new_team.player_stats_comp_season[self.name] = dict()
-                new_team.player_stats_comp_season[self.name][str(season)] = []
+                # Team players statistics in comp season (only for comps with regular rounds!)
+                if len(self.regular_round_keywords) > 0:
+                    if self.name not in new_team.player_stats_comp_season:
+                        new_team.player_stats_comp_season[self.name] = dict()
+                    new_team.player_stats_comp_season[self.name][str(season)] = []
 
-                if self.name not in new_team.rating_comp_season:
-                    new_team.rating_comp_season[self.name] = dict()
-                new_team.rating_comp_season[self.name][str(season)] = None
+                    if self.name not in new_team.rating_comp_season:
+                        new_team.rating_comp_season[self.name] = dict()
+                    new_team.rating_comp_season[self.name][str(season)] = None
 
-                team_players_stats_request_string = "/players?season=" + str(season) + "&league=" + \
-                                                    str(self.id) + "&team=" + str(team_id)
-                self.conn.request("GET", team_players_stats_request_string, headers=settings.HEADERS)
-                res = self.conn.getresponse()
-                data = res.read()
-                data_team_players_stats = json.loads(data)['response']
+                    team_players_stats_request_string = "/players?season=" + str(season) + "&league=" + \
+                                                        str(self.id) + "&team=" + str(team_id)
+                    self.conn.request("GET", team_players_stats_request_string, headers=settings.HEADERS)
+                    res = self.conn.getresponse()
+                    data = res.read()
+                    data_team_players_stats = json.loads(data)['response']
 
-                player_stats_list = []
-                rating_not_found_count = 0
-                rating_found_count = 0
-                for player in data_team_players_stats:
-                    if team_id != player['statistics'][0]['team']['id']:
-                        raise ValueError("Unable to match expected player's team with the found one.")
+                    player_stats_list = []
+                    rating_not_found_count = 0
+                    rating_found_count = 0
+                    for player in data_team_players_stats:
+                        if team_id != player['statistics'][0]['team']['id']:
+                            # raise ValueError("Unable to match expected player's team with the found one.")
+                            print(f"__WARNING__: Expected team [{team_name}], "
+                                  f"got [{player['statistics'][0]['team']['name']}] instead")
 
-                    # TODO: Handle case if None rating, birth date or other missing values
-                    player_stats = {'id': int(player['player']['id']),
-                                    'name': player['player']['name'],
-                                    'firstname': player['player']['firstname'],
-                                    'lastname': player['player']['lastname'],
-                                    'age': int(player['player']['age']) if player['player']['age'] is not None else -1,
-                                    'birth_date': datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d') if
-                                    player['player']['birth']['date'] is not None else datetime(1970, 1, 1),
-                                    'birth_country': player['player']['birth']['country'],
-                                    'nationality': player['player']['nationality'],
-                                    'height': player['player']['height'],
-                                    'weight': player['player']['weight'],
-                                    'position': player['statistics'][0]['games']['position'],
-                                    'rating': float(player['statistics'][0]['games']['rating']) if
-                                    player['statistics'][0]['games']['rating'] is not None else 0.0}
+                        # TODO: Handle case if None rating, birth date or other missing values
+                        # TODO: If too many ratings missing for one season, look first for estimate in previous seasons
+                        player_stats = {'id': int(player['player']['id']),
+                                        'name': player['player']['name'],
+                                        'firstname': player['player']['firstname'],
+                                        'lastname': player['player']['lastname'],
+                                        'age': int(player['player']['age']) if
+                                        player['player']['age'] is not None else -1,
+                                        'birth_date': datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d')
+                                        if player['player']['birth']['date'] is not None else datetime(1970, 1, 1),
+                                        'birth_country': player['player']['birth']['country'],
+                                        'nationality': player['player']['nationality'],
+                                        'height': player['player']['height'],
+                                        'weight': player['player']['weight'],
+                                        'position': player['statistics'][0]['games']['position'],
+                                        'rating': float(player['statistics'][0]['games']['rating']) if
+                                        player['statistics'][0]['games']['rating'] is not None else 0.0}
 
-                    if player['statistics'][0]['games']['rating'] is None:
-                        # print(f"__No rating found for player {player['player']['id']}: {player['player']['name']} \t\t({team_name}, {str(season)}, {self.name})")
-                        rating_not_found_count += 1
-                    else:
-                        # print(f"Player {player['player']['id']}: {player['player']['name']} \t\t({team_name}, {str(season)}, {self.name}) has rating {player['statistics'][0]['games']['rating']}")
-                        rating_found_count += 1
+                        if player['player']['age'] is None:
+                            print(f"_player {player['player']['name']} AGE not found_")
+                        if player['player']['birth']['date'] is None:
+                            print(f"_player {player['player']['name']} BIRTH DATE not found_")
 
-                    player_stats_list.append(player_stats)
+                        if player['statistics'][0]['games']['rating'] is None:
+                            # print(f"__No rating found for player {player['player']['id']}: {player['player']['name']} \t\t({team_name}, {str(season)}, {self.name})")
+                            rating_not_found_count += 1
+                        else:
+                            # print(f"Player {player['player']['id']}: {player['player']['name']} \t\t({team_name}, {str(season)}, {self.name}) has rating {player['statistics'][0]['games']['rating']}")
+                            rating_found_count += 1
 
-                print(f"Player ratings found: {rating_found_count}/{rating_not_found_count + rating_found_count} "
-                      f"\t\t({self.name}, {str(season), {team_name}})")
+                        player_stats_list.append(player_stats)
 
-                # Player stats
-                new_team.player_stats_comp_season[self.name][str(season)] = player_stats_list
+                    print(f"Player ratings found: {rating_found_count}/{rating_not_found_count + rating_found_count} "
+                          f"\t\t({self.name}, {str(season)}, {team_name})")
 
-                # Team rating
-                top_10_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:10]
-                rating = np.mean(np.asarray(top_10_player_ratings))
-                new_team.rating_comp_season[self.name][str(season)] = rating
+                    # Player stats
+                    new_team.player_stats_comp_season[self.name][str(season)] = player_stats_list
+
+                    # Team rating  # TODO: There are too many missing ratings - modify this...
+                    top_10_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:10]
+                    rating = np.mean(np.asarray(top_10_player_ratings))
+                    new_team.rating_comp_season[self.name][str(season)] = rating
 
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 
                 global_instance.all_teams.append(new_team)  # Add team to the global teams list
 
+                time.sleep(0.15)
+
             self.teams_per_season.append({'season': season, 'teams': teams})
 
             # Delay so that limit of requests per minute is not exceeded
-            time.sleep(0.15)
+            time.sleep(1.0)
 
         global_instance.all_teams = list(set(global_instance.all_teams))  # Remove duplicates
 
@@ -193,7 +205,7 @@ class Comp:
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
 
             # Delay so that limit of requests per minute is not exceeded
-            time.sleep(0.15)
+            time.sleep(0.3)
 
     def init_country_start_end_dates_in_seasons(self):
         global_instance = Global.get_instance()

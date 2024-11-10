@@ -16,6 +16,7 @@ from train import train
 global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
+"""
 for comp in [
     {'id': 144, 'name': "Jupiler Pro League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
@@ -24,7 +25,8 @@ for comp in [
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
-    # for comp in settings.COMPS:
+"""
+for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
