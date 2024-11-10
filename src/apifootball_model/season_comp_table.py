@@ -41,42 +41,6 @@ class SeasonCompTable:
                 raise Exception(f"Team {team_id}: {team_name} not found in existing ones. Should not happen here, "
                                 f"since teams were already initialized during the Comp initialization.")
 
-            # Team players statistics in comp season
-            home_players_stats_request_string = "/players?season=" + str(self.season) + "&league=" + str(self.comp_id) \
-                                                + "&team=" + str(team_id)
-            self.conn.request("GET", home_players_stats_request_string, headers=settings.HEADERS)
-            res = self.conn.getresponse()
-            data = res.read()
-            data_team_players_stats = json.loads(data)['response']
-
-            player_stats_list = []
-            for player in data_team_players_stats:
-                if team_id != player['statistics'][0]['team']['id']:
-                    raise ValueError("Unable to match expected player's team with the found one.")
-
-                player_stats = {'id': int(player['player']['id']),
-                                'name': player['player']['name'],
-                                'firstname': player['player']['firstname'],
-                                'lastname': player['player']['lastname'],
-                                'age': int(player['player']['age']),
-                                'birth_date': datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d'),
-                                'birth_country': player['player']['birth']['country'],
-                                'nationality': player['player']['nationality'],
-                                'height': player['player']['height'],
-                                'weight': player['player']['weight'],
-                                'position': player['statistics'][0]['games']['position'],
-                                'rating': float(player['statistics'][0]['games']['rating'])}
-
-                player_stats_list.append(player_stats)
-
-            # Player stats
-            team.player_stats_comp_season[self.comp_name][str(self.season)].append(player_stats_list)
-
-            # Team rating
-            top_15_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:15]
-            rating = np.mean(np.asarray(top_15_player_ratings))
-            team.rating_comp_season[self.comp_name][str(self.season)].append(rating)
-
             teams.append(new_team)
 
         self.teams = teams
@@ -112,7 +76,7 @@ class SeasonCompTable:
             self.team_stats[(team.id, team.name)]['avg_points_per_game'] = \
                 self.team_stats[(team.id, team.name)]['points'] / \
                 self.team_stats[(team.id, team.name)]['games_played'] \
-                if self.team_stats[(team.id, team.name)]['games_played'] > 0 else 0.0
+                    if self.team_stats[(team.id, team.name)]['games_played'] > 0 else 0.0
 
     # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
     # TODO: Issue1: In a new season there might be a team that had no previous matches...
