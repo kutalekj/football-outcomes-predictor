@@ -286,35 +286,39 @@ class Match:
                     data = res.read()
                     data_lineups = json.loads(data)['response']
 
-                    if "startXI" in data_lineups[0]:
-                        new_match.home_team_lineup = \
-                            [(x['player']['id'], x['player']['name'], x['player']['pos'])
-                            for x in data_lineups[0]['startXI']]
+                    if len(data_lineups) == 0:
+                        print(f"\tLineups missing for both teams in match between {new_match.home_team.name} and "
+                              f"{new_match.away_team.name} played at {new_match.datetime}!")
                     else:
-                        new_match.home_team_lineup = []
-                        print(f"Lineups missing for a home team in match between {new_match.home_team.name} and "
-                              f"{new_match.away_team.name} played at {new_match.datetime}")
-                    if "startXI" in data_lineups[1]:
-                        new_match.away_team_lineup = \
-                            [(x['player']['id'], x['player']['name'], x['player']['pos'])
-                            for x in data_lineups[1]['startXI']]
-                    else:
-                        new_match.away_team_lineup = []
-                        print(f"Lineups missing for an away team in match between {new_match.home_team.name} and "
-                              f"{new_match.away_team.name} played at {new_match.datetime}")
+                        if "startXI" in data_lineups[0]:
+                            new_match.home_team_lineup = \
+                                [(x['player']['id'], x['player']['name'], x['player']['pos'])
+                                for x in data_lineups[0]['startXI']]
+                        else:
+                            new_match.home_team_lineup = []
+                            print(f"\tLineups missing for a home team in match between {new_match.home_team.name} and "
+                                  f"{new_match.away_team.name} played at {new_match.datetime}")
+                        if "startXI" in data_lineups[1]:
+                            new_match.away_team_lineup = \
+                                [(x['player']['id'], x['player']['name'], x['player']['pos'])
+                                for x in data_lineups[1]['startXI']]
+                        else:
+                            new_match.away_team_lineup = []
+                            print(f"\tLineups missing for an away team in match between {new_match.home_team.name} and "
+                                  f"{new_match.away_team.name} played at {new_match.datetime}")
 
                     # Add new match to list
                     global_instance.all_matches.append(new_match)
 
                     # Delay so that limit of requests per minute is not exceeded
-                    time.sleep(0.15)
+                    time.sleep(0.2)
 
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
         if len(stats) == 0:
             if home_away == "home" and self.round.is_regular:
                 print(
-                    f"Statistics [{stat_name}] estimated for a match between {self.home_team.name} "
+                    f"\tStatistics [{stat_name}] estimated for a match between {self.home_team.name} "
                     f"and {self.away_team.name} played at {self.datetime}")
 
             # The value returned (used for features) is already normalized - denormalize it for now and round it
