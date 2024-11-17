@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from webdriver_manager.chrome import ChromeDriverManager
@@ -18,7 +19,7 @@ def setup_driver():
     # chrome_options.add_argument('--headless')  # Run headless browser
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument("--window-size=1920,1080")  # Ensure all content is loaded
+    # chrome_options.add_argument("--window-size=1920,1080")  # Ensure all content is loaded
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
@@ -125,15 +126,53 @@ def select_date_in_calendar(driver, date):
     print(f"Date {date} not found in the calendar.")
 
 
-def close_overlays(driver):
-    wait = WebDriverWait(driver, 10)
-    try:
-        overlay = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.overlay-selector')))  # Replace with actual selector
-        close_button = overlay.find_element(By.CSS_SELECTOR, 'button.close')  # Adjust selector as needed
-        close_button.click()
-        print("Closed overlay.")
-    except:
-        pass  # No overlay found
+def scroll_down(driver, scroll_times=5, pause_time=1):
+    for _ in range(scroll_times):
+        driver.execute_script("window.scrollBy(0, document.body.scrollHeight);")
+        time.sleep(pause_time)  # Adjust pause time as needed to allow content to load
+
+
+def scroll_until_elements_loaded(driver, target_selector, max_scrolls=10, pause_time=2):
+    num_elements = 0
+    scroll_attempts = 0
+
+    while scroll_attempts < max_scrolls:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(pause_time)
+
+        # Get the current count of target elements
+        new_elements = driver.find_elements(By.CSS_SELECTOR, target_selector)
+        if len(new_elements) > num_elements:
+            num_elements = len(new_elements)
+            scroll_attempts = 0  # Reset attempt counter if new elements were found
+        else:
+            scroll_attempts += 1  # Increment if no new elements are loaded
+
+    return new_elements
+
+
+def scroll_with_down_arrow(driver, scroll_times=10, pause_time=1):
+    body = driver.find_element(By.TAG_NAME, "body")
+    for _ in range(scroll_times):
+        body.send_keys(Keys.DOWN)
+        time.sleep(pause_time)
+
+
+def load_all_content(driver):
+    """Uses JavaScript to scroll to the bottom and wait until all content loads."""
+    driver.execute_script("""
+        const callback = arguments[arguments.length - 1];
+        let lastHeight = document.body.scrollHeight;
+        const interval = setInterval(() => {
+            window.scrollTo(0, document.body.scrollHeight);
+            const newHeight = document.body.scrollHeight;
+            if (newHeight === lastHeight) {
+                clearInterval(interval);
+                callback();
+            }
+            lastHeight = newHeight;
+        }, 1000);
+    """)
 
 
 def scroll_to_load_all_fixtures(driver):
@@ -151,6 +190,13 @@ def scroll_to_load_all_fixtures(driver):
 
 
 def get_laliga2_fixtures(driver):
+    WebDriverWait(driver, 10)
+    scroll_down(driver, scroll_times=5, pause_time=2)  # Scroll to load all fixtures
+    # scroll_to_load_all_fixtures(driver)
+    # scroll_until_elements_loaded(driver, 'div.card.m-1.py-1', max_scrolls=10, pause_time=2)
+    # scroll_with_down_arrow(driver, pause_time=2)
+    # load_all_content(driver)
+
     wait = WebDriverWait(driver, 10)
     fixture_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div.card.m-1.py-1')))
 
@@ -164,6 +210,8 @@ def get_laliga2_fixtures(driver):
                 laliga2_fixtures.append(fixture)
         except Exception as e:
             continue
+    if len(laliga2_fixtures) == 0:
+        print(f"still empty...")
     return laliga2_fixtures
 
 
@@ -248,7 +296,11 @@ def scrape_xg_data():
     for date in date_list:
         try:
             print(f"Processing date: {date}")
-            navigate_to_date(driver, date)
+            # navigate_to_date(driver, date)
+            driver.get('https://makeyourstats.com/?date=2024-10-18')
+
+            # TODO: Here scroll down to load all the matches
+
             laliga2_fixtures = get_laliga2_fixtures(driver)
             print(f"Found {len(laliga2_fixtures)} LaLiga2 fixtures on {date}")
 
