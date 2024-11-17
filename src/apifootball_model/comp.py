@@ -161,9 +161,12 @@ class Comp:
                     new_team.player_stats_comp_season[self.name][str(season)] = player_stats_list
 
                     # Team rating  # TODO: There are too many missing ratings - modify this...
-                    top_10_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:10]
-                    rating = np.mean(np.asarray(top_10_player_ratings))
-                    new_team.rating_comp_season[self.name][str(season)] = rating
+                    if rating_found_count >= 10:
+                        top_10_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:10]
+                        rating = np.mean(np.asarray(top_10_player_ratings))
+                        new_team.rating_comp_season[self.name][str(season)] = rating
+                    else:
+                        new_team.rating_comp_season[self.name][str(season)] = 0.0
 
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 
@@ -215,6 +218,8 @@ class Comp:
             if season not in [s['season'] for s in self.start_end_dates_per_season]:
                 continue
 
+            # TODO: Minor adjustment possible: for current season the final end dates are usually not available yet,...
+            # TODO ...resulting in "January", for instance - copy end dates from prev season (if lesser value for curr.)
             start_date = self.get_date_for_comp_season(season, "start")
             end_date = self.get_date_for_comp_season(season, "end")
 
