@@ -286,12 +286,22 @@ class Match:
                     data = res.read()
                     data_lineups = json.loads(data)['response']
 
-                    new_match.home_team_lineup = \
-                        [(x['player']['id'], x['player']['name'], x['player']['pos'])
-                         for x in data_lineups[0]['startXI']]
-                    new_match.away_team_lineup = \
-                        [(x['player']['id'], x['player']['name'], x['player']['pos'])
-                         for x in data_lineups[1]['startXI']]
+                    if "startXI" in data_lineups[0]:
+                        new_match.home_team_lineup = \
+                            [(x['player']['id'], x['player']['name'], x['player']['pos'])
+                            for x in data_lineups[0]['startXI']]
+                    else:
+                        new_match.home_team_lineup = []
+                        print(f"Lineups missing for a home team in match between {new_match.home_team.name} and "
+                              f"{new_match.away_team.name} played at {new_match.datetime}")
+                    if "startXI" in data_lineups[1]:
+                        new_match.away_team_lineup = \
+                            [(x['player']['id'], x['player']['name'], x['player']['pos'])
+                            for x in data_lineups[1]['startXI']]
+                    else:
+                        new_match.away_team_lineup = []
+                        print(f"Lineups missing for an away team in match between {new_match.home_team.name} and "
+                              f"{new_match.away_team.name} played at {new_match.datetime}")
 
                     # Add new match to list
                     global_instance.all_matches.append(new_match)
