@@ -5,7 +5,8 @@ feature_utils.py
 import numpy as np
 import utils as ut
 from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
-    GOALS_NORM_COEFFICIENT, MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH
+    GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\
+    MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH
 from player_stats_loader import get_player_stats_for_team
 
 ELO_C = 10.0
@@ -222,11 +223,11 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
     if stat_name == "Shots on Goal":
         return normalize_sog(avg_value)
     elif stat_name == "Total Shots":
-        return -1  # TODO: Implement normalization to (0,1)
+        return normalize_total_shots(avg_value)
     elif stat_name == "Shots insidebox":
-        return -1  # TODO: Implement normalization to (0,1)
+        return normalize_shots_in_box(avg_value)
     elif stat_name == "Corner Kicks":
-        return -1  # TODO: Implement normalization to (0,1)
+        return normalize_corner_kicks(avg_value)
     elif stat_name == "Ball Possession":
         return avg_value
     elif stat_name == "Passes %":
@@ -434,6 +435,18 @@ def normalize_goals(goals):
 
 def normalize_sog(sog):
     return ut.min_max_scaling_with_clipping(sog, SOG_NORM_COEFFICIENT)
+
+
+def normalize_total_shots(total_shots):
+    return ut.min_max_scaling_with_clipping(total_shots, TOTAL_SHOTS_NORM_COEFFICIENT)
+
+
+def normalize_shots_in_box(shots_in_box):
+    return ut.min_max_scaling_with_clipping(shots_in_box, SHOTS_IN_BOX_NORM_COEFFICIENT)
+
+
+def normalize_corner_kicks(corner_kicks):
+    return ut.min_max_scaling_with_clipping(corner_kicks, CORNER_KICKS_NORM_COEFFICIENT)
 
 
 def normalize_match_loads(match_loads):
