@@ -358,6 +358,7 @@ def calculate_elo_for_both_teams(curr_match):
 # home_team_strength, away_team_strength
 def calculate_team_strength(curr_match, team_id):
     # Get lineup
+    # TODO: If no team lineup present, return a default team strength?
     if team_id == curr_match.home_team.id:
         team_lineup = curr_match.home_team_lineup
     elif team_id == curr_match.away_team.id:
@@ -376,25 +377,38 @@ def calculate_team_strength(curr_match, team_id):
     team_rating_in_comp_season = team.rating_comp_season[curr_match.comp.name][str(curr_match.season)]
 
     team_players_stats_in_comp_season = team.player_stats_comp_season[curr_match.comp.name][str(curr_match.season)]
+    print(team_players_stats_in_comp_season)
 
     # Get stats about those players which are in the current match lineup
     team_lineup_info = []
     for player in team_lineup:
-        p_id, _, _ = player  # (ID, name, position)
+        print(player)
+        p_id, p_name, _ = player  # (ID, name, position)
 
         # Match player ID from match lineups with the ID in team player stats in comp season
-        player_stats_in_comp_season = [x for x in team_players_stats_in_comp_season if x['id'] == p_id][0]
+        # TODO: What if a player from the match lineup (p_id) is not in the players list for team's comp season?
+        player_stats_in_comp_season = [x for x in team_players_stats_in_comp_season if x['id'] == p_id]
+
+        if len(player_stats_in_comp_season) == 0:
+            print(f"Player {str(p_id)}:{p_name} was not found in the {team.name} team's comp season players list...")
+            continue
+        elif len(player_stats_in_comp_season) > 1:
+            raise ValueError(f"Found more players matching {str(p_id)}:{p_name}. This should not happen.")
+        else:
+            player_stats_in_comp_season = player_stats_in_comp_season[0]
 
         # Get (full_name, dob, rating)
         team_lineup_info.append((
             player_stats_in_comp_season['firstname'] + " " + player_stats_in_comp_season['lastname'],
-            player_stats_in_comp_season['birth_data'],
+            player_stats_in_comp_season['birth_date'],
             player_stats_in_comp_season['rating'],
             player_stats_in_comp_season['position']
         ))
 
-    if len(team_lineup_info) != 11:
-        raise ValueError(f"Team lineup info list of length {len(team_lineup)}, but 11 expected")
+    print(f"{len(team_lineup_info)} players matched for team strength calculation for team {team.name} "
+          f"(match {str(curr_match.id)})")  # TODO: Check how many players are actually matched here...
+    # if len(team_lineup_info) != 11:
+        # raise ValueError(f"Team lineup info list of length {len(team_lineup)}, but 11 expected")
 
     player_ratings = [z for (x, y, z, _) in team_lineup_info]
     player_positions = [z for (x, y, z) in team_lineup]

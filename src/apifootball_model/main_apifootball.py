@@ -28,8 +28,7 @@ for comp in [
 """
 for comp in [
     {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
-    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []}
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}
 ]:
 # for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
