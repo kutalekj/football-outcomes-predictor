@@ -358,7 +358,6 @@ def calculate_elo_for_both_teams(curr_match):
 # home_team_strength, away_team_strength
 def calculate_team_strength(curr_match, team_id):
     # Get lineup
-    # TODO: If no team lineup present, return a default team strength?
     if team_id == curr_match.home_team.id:
         team_lineup = curr_match.home_team_lineup
     elif team_id == curr_match.away_team.id:
@@ -369,11 +368,13 @@ def calculate_team_strength(curr_match, team_id):
                          f"({curr_match.away_team.id})")
 
     if len(team_lineup) != 11:
+        # TODO: If no team lineup present, return a default team strength?
         raise ValueError(f"Team lineup list of length {len(team_lineup)}, but 11 expected")
 
     # Get players in current comp season team roster
     team = ut.get_team_if_exists(team_id)
 
+    # TODO: Note that not every team has rating in a comp season
     team_rating_in_comp_season = team.rating_comp_season[curr_match.comp.name][str(curr_match.season)]
 
     team_players_stats_in_comp_season = team.player_stats_comp_season[curr_match.comp.name][str(curr_match.season)]
@@ -412,6 +413,7 @@ def calculate_team_strength(curr_match, team_id):
 
     player_ratings = [z for (x, y, z, _) in team_lineup_info]
     player_positions = [z for (x, y, z) in team_lineup]
+    # TODO: Note that might end up e.g. with 11 positions, but only 3 ratings...
 
     # Get player stats from CSV
     team_players_individual_stats = get_player_stats_for_team(team_lineup_info, team_rating_in_comp_season,

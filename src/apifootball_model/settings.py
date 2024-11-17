@@ -136,7 +136,7 @@ TOTAL_SHOTS_NORM_COEFFICIENT = 29.86
 SHOTS_IN_BOX_NORM_COEFFICIENT = 20.29
 CORNER_KICKS_NORM_COEFFICIENT = 13.46
 
-CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output\\test'
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output\\full'
 
 CSV_CATEGORIES = {
     "attacking": ["crossing", "finishing", "heading_accuracy", "short_passing", "volleys"],
