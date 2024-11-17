@@ -26,7 +26,8 @@ def get_csv_file(match_datetime, directory_path):
         except ValueError:
             continue
 
-    files_before_match = [(file, date) for (file, date) in csv_files_dates if date <= match_datetime]
+    files_before_match = [(file, date) for (file, date) in csv_files_dates
+                          if date.replace(tzinfo=match_datetime.tzinfo) <= match_datetime]
     if not files_before_match:
         return None
 
@@ -46,6 +47,8 @@ def find_player_row(full_player_name, date_of_birth, csv_file):
             rows.append(row)
 
     # Get close matches of players' names
+    # TODO: Maybe will need to require same birth dates for match - otherwise a match could be found always, ...
+    # TODO: ...even in situation where it shouldn't have been (because the player is actually not in the 18k list)
     matches = difflib.get_close_matches(full_player_name, players, n=NUM_FUZZY_MATCHES, cutoff=FUZZY_CUTOFF)
     # TODO: Check if sorted by match probability (desc.)
 
@@ -121,7 +124,9 @@ def get_player_stats_for_team(team_lineup_info, team_rating_comp_season, curr_ma
             stats_dict = extract_stats(player_row)
             stats.append(stats_dict)
 
-    return all_ok, stats
+    # return all_ok, stats
+    print(f"Returning stats dict: {stats}")
+    return stats
 
 
 def estimate_player_stats(curr_match, player_rating_comp_season, usual_position, team_rating_comp_season):
@@ -134,7 +139,7 @@ def estimate_player_stats(curr_match, player_rating_comp_season, usual_position,
     # Assuming 'usual_position' directly matches player_stats['position']
     # If not, you may need to map 'Attacker' to 'F', 'Midfielder' to 'M', etc.
 
-    # Get all teams in the same competition and season
+    # Get all teams in the same competition and season  # TODO: ???
     similar_players_stats = []
     comp_name = curr_match.comp.name
     season_str = str(curr_match.season)
@@ -199,4 +204,5 @@ def estimate_player_stats(curr_match, player_rating_comp_season, usual_position,
             # If no data available for this category, assign default values
             estimated_stats[category] = [random.randint(50, 70) for _ in columns]
 
+    print(f"Returning estimated player stats {estimated_stats}")
     return estimated_stats
