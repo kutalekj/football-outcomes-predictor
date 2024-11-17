@@ -264,6 +264,9 @@ class Match:
                     new_match.away_team_passes_acc = new_match.get_stats_value(data_stats, "Passes %", "away")
 
                     # TODO: Remove the following statistics calculations
+                    global_instance.shots_on_goal.append(new_match.home_team_shots_on_target)
+                    global_instance.shots_on_goal.append(new_match.away_team_shots_on_target)
+
                     global_instance.total_shots.append(new_match.home_team_total_shots)
                     global_instance.total_shots.append(new_match.away_team_total_shots)
 

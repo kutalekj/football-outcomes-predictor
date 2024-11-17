@@ -18,6 +18,7 @@ class Global:
             cls._instance.start_end_dates_per_country_season = {}
 
             # TODO: Remove the following ones once got normalization constants
+            cls._instance.shots_on_goal = []
             cls._instance.total_shots = []
             cls._instance.shots_inbox = []
             cls._instance.corner_kicks = []
