@@ -142,6 +142,9 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
 # away_avg_shots_on_target_last_5, away_avg_shots_on_target_last_20
 # ...
 def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 20 probably
+    # For stats, irregular matches allowed too, but if there are no stats (-1) for any of them, ...
+    # ...this match value is excluded from the avg_values calculation
+
     # Check if wanted for currently HOME or currently AWAY team
     if home_away == "home":
 
@@ -168,39 +171,47 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
 
         # In each match the wanted team was either HOME or AWAY
         else:
+            new_value = 0
             if team_id == match.home_team.id:
 
                 if stat_name == "Shots on Goal":
-                    total_value += match.home_team_shots_on_target
+                    new_value += match.home_team_shots_on_target
                 elif stat_name == "Total Shots":
-                    total_value += match.home_team_total_shots
+                    new_value += match.home_team_total_shots
                 elif stat_name == "Shots insidebox":
-                    total_value += match.home_team_shots_inside_box
+                    new_value += match.home_team_shots_inside_box
                 elif stat_name == "Corner Kicks":
-                    total_value += match.home_team_corner_kicks
+                    new_value += match.home_team_corner_kicks
                 elif stat_name == "Ball Possession":
-                    total_value += match.home_team_ball_possession
+                    new_value += match.home_team_ball_possession
                 elif stat_name == "Passes %":
-                    total_value += match.home_team_passes_acc
+                    new_value += match.home_team_passes_acc
 
             elif team_id == match.away_team.id:
 
                 if stat_name == "Shots on Goal":
-                    total_value += match.away_team_shots_on_target
+                    new_value += match.away_team_shots_on_target
                 elif stat_name == "Total Shots":
-                    total_value += match.away_team_total_shots
+                    new_value += match.away_team_total_shots
                 elif stat_name == "Shots insidebox":
-                    total_value += match.away_team_shots_inside_box
+                    new_value += match.away_team_shots_inside_box
                 elif stat_name == "Corner Kicks":
-                    total_value += match.away_team_corner_kicks
+                    new_value += match.away_team_corner_kicks
                 elif stat_name == "Ball Possession":
-                    total_value += match.away_team_ball_possession
+                    new_value += match.away_team_ball_possession
                 elif stat_name == "Passes %":
-                    total_value += match.away_team_passes_acc
+                    new_value += match.away_team_passes_acc
 
             else:
                 raise Exception(
                     "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
+
+            # This is the correction of case an irregular match misses a stats value (-1)
+            if new_value != -1:
+                # TODO: Check this functionality via debug
+                total_value += new_value
+            else:
+                total_none_values += 1
 
     # Avoid division by zero
     if n - total_none_values == 0:

@@ -316,14 +316,12 @@ class Match:
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
         if len(stats) == 0:
-            if home_away == "home" and self.round.is_regular:
+            if home_away == "home" and self.round.is_regular:  # debug print only for regular matches!
                 print(
-                    f"\tStatistics [{stat_name}] estimated for a match between {self.home_team.name} "
+                    f"\tStatistics [{stat_name}] estimated for a regular match between {self.home_team.name} "
                     f"and {self.away_team.name} played at {self.datetime}")
 
-            # The value returned (used for features) is already normalized - denormalize it for now and round it
-            return round(
-                feature_ut.get_avg_stat_value_last_n(self, 5, home_away, stat_name) * settings.SOG_NORM_COEFFICIENT)
+            return -1  # Get rid of estimation if stats missing - simply output -1 and deal with in features_utils...
 
         if len(stats) != 2:
             raise Exception(f"Fixture statistics response expected to contain info for exactly two matches."
