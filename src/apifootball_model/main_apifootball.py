@@ -13,6 +13,9 @@ from globals import Global
 import in_out
 from train import train
 
+# import sys
+# sys.stdout = open('C:\\Users\\kutalekj\\tmp_output.txt', 'w')
+
 global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
@@ -28,7 +31,11 @@ for comp in [
 """
 for comp in [
     {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']}
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
 # for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
@@ -68,7 +75,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-# in_out.load_matches("tmp_csv_store9_full.csv")
+# in_out.load_matches("tmp_csv_store10_BEL.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -117,8 +124,12 @@ for match in global_instance.all_matches:
     match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
         match.features_before_match_played)
 
+# sys.stdout.close()
+
 # 5. Store matches
 in_out.store_matches("tmp_csv_store10_BEL.csv")
+
+"""
 
 # 6. Distribute regular matches into rounds for training
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
@@ -132,3 +143,5 @@ for i, r in enumerate(regular_matches_in_rounds):
 # 7. Train
 train(regular_matches_in_rounds)
 print("breakpoint")
+
+"""

@@ -94,7 +94,8 @@ class MatchFeatures:
         features = []
         for key, value in features_dict.items():
             # TODO: Pre-define list of categorical feature names
-            if key not in ["home_team_id", "away_team_id", "comp_id"]:
+            if key not in ["home_team_id", "away_team_id", "comp_id", "home_team_strength", "away_team_strength"]:
                 features.append(value)
 
+        # TODO: append team_strength vector
         return np.array(features)

@@ -35,7 +35,7 @@ def get_csv_file(match_datetime, directory_path):
     return selected_file
 
 
-def find_player_row(full_player_name, date_of_birth, csv_file):
+def find_player_row(full_player_name, date_of_birth, csv_file, num_matches=NUM_FUZZY_MATCHES, fuzzy_cutoff=FUZZY_CUTOFF):
     # Open CSV with a corresponding historical version
     with open(csv_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -49,14 +49,18 @@ def find_player_row(full_player_name, date_of_birth, csv_file):
     # Get close matches of players' names
     # TODO: Maybe will need to require same birth dates for match - otherwise a match could be found always, ...
     # TODO: ...even in situation where it shouldn't have been (because the player is actually not in the 18k list)
-    matches = difflib.get_close_matches(full_player_name, players, n=NUM_FUZZY_MATCHES, cutoff=FUZZY_CUTOFF)
+    matches = difflib.get_close_matches(full_player_name, players, n=num_matches, cutoff=fuzzy_cutoff)
     # TODO: Check if sorted by match probability (desc.)
 
     if matches:
-        matched_name = matches[0]
+        first_matched_name = matches[0]
 
-        index = players.index(matched_name)
+        index = players.index(first_matched_name)
         player_row = rows[index]
+
+        # TMP
+        if date_of_birth is None:
+            return first_matched_name, player_row
 
         # If date of birth matches, return the most probable match immediately
         dob_csv = datetime.strptime(rows[index]['dob'], '%Y-%m-%d')
@@ -65,13 +69,13 @@ def find_player_row(full_player_name, date_of_birth, csv_file):
             return player_row
 
         else:
-            print(f'Name {full_player_name} matched to {matched_name}, but dates of birth not matching '
+            print(f'Name {full_player_name} matched to {first_matched_name}, but dates of birth not matching '
                   f'({date_of_birth} vs. {dob_csv})...')
             return player_row
             # TODO: Might need to implement more complex logic here
 
     else:
-        return None
+        return None, None
 
 
 def extract_stats(player_row):
@@ -91,6 +95,29 @@ def extract_stats(player_row):
         stats[category] = values
 
     return stats
+
+
+def tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name(curr_match, player_names, directory_path):
+    selected_csv = get_csv_file(curr_match.datetime, directory_path)
+
+    if not selected_csv:
+        raise Exception(f"Unable to find CSV file corresponding to match played at {curr_match.datetime}")
+    else:
+        # print(f"\t\tFound CSV for the following match: {curr_match.comp.name}, {str(curr_match.season)}, "
+              # f"{curr_match.home_team.name} vs. {curr_match.away_team.name} ({curr_match.datetime})\t\t")
+        pass
+
+    for player_name in player_names:
+        first_matched_name, player_row = find_player_row(player_name, None, selected_csv, 1, 0.4)
+
+        if player_row is None:
+            # print(f"{curr_match.id}: {curr_match.home_team.name} - {curr_match.away_team.name}. "
+            #       f"Player row for {player_name} not found in the latest CSV. Going to browse older files...", end='\t')
+            pass  # TODO: Implement for more complex check (phase 1)
+
+        else:
+            # print(f'Name {player_name} matched to {first_matched_name}', end='\t')
+            pass
 
 
 def get_player_stats_for_team(team_lineup_info, team_rating_comp_season, curr_match, directory_path):

@@ -7,7 +7,7 @@ import utils as ut
 from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
     GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\
     MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH
-from player_stats_loader import get_player_stats_for_team
+from player_stats_loader import get_player_stats_for_team, tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -369,11 +369,16 @@ def calculate_team_strength(curr_match, team_id):
 
     if len(team_lineup) != 11:
         # TODO: If no team lineup present, return a default team strength?
-        raise ValueError(f"Team lineup list of length {len(team_lineup)}, but 11 expected")
+        # raise ValueError(f"Team lineup list of length {len(team_lineup)} found, but 11 expected (match "
+        #                 f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
+        print(f"Team lineup list of length {len(team_lineup)} found, but 11 expected (match "
+              f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
+        return []
 
     # Get players in current comp season team roster
     team = ut.get_team_if_exists(team_id)
 
+    """
     # TODO: Note that not every team has rating in a comp season
     team_rating_in_comp_season = team.rating_comp_season[curr_match.comp.name][str(curr_match.season)]
 
@@ -423,6 +428,12 @@ def calculate_team_strength(curr_match, team_id):
     team_strength_vector = ut.combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings,
                                                                      player_positions, mode="basic")
     return team_strength_vector
+    """
+
+    player_names = [p_name for (p_id, p_name, _) in team_lineup]
+    tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name(curr_match, player_names, CSV_PLAYERS_PATH)
+
+    return []
 
 
 def normalize_season(season):

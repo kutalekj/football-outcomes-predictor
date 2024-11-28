@@ -314,7 +314,7 @@ class Match:
                     global_instance.all_matches.append(new_match)
 
                     # Delay so that limit of requests per minute is not exceeded
-                    time.sleep(0.2)
+                    time.sleep(0.15)
 
     def get_stats_value(self, stats, stat_name, home_away):
         # Stats not present
@@ -530,8 +530,8 @@ class Match:
             new_match_features.home_team_strength = feature_ut.calculate_team_strength(self, self.home_team.id)
             new_match_features.away_team_strength = feature_ut.calculate_team_strength(self, self.away_team.id)
         else:
-            new_match_features.home_team_strength = -1
-            new_match_features.away_team_strength = -1
+            new_match_features.home_team_strength = []
+            new_match_features.away_team_strength = []
 
         # DEBUG PRINTS...
         if self.home_team.name == "Genk" or self.away_team.name == "Genk":
@@ -540,107 +540,119 @@ class Match:
                 print(f"ELO={new_match_features.home_elo}")
                 print(
                     f"Relative match position in country season="
-                    f"{new_match_features.relative_match_position_in_country_season}")
+                    f"{new_match_features.relative_match_position_in_country_season:.3f}")
                 print(
-                    f"Match load last 10/25 days={new_match_features.home_match_load_per_day_last_10_days}/"
-                    f"{new_match_features.home_match_load_per_day_last_25_days} "
-                    f"(denorm={1.0 - new_match_features.home_match_load_per_day_last_10_days * settings.MATCH_LOAD_NORM_COEFFICIENT}"
-                    f"/{1.0 - new_match_features.home_match_load_per_day_last_25_days * settings.MATCH_LOAD_NORM_COEFFICIENT})")
+                    f"Match load last 10/25 days={new_match_features.home_match_load_per_day_last_10_days:.3f}/"
+                    f"{new_match_features.home_match_load_per_day_last_25_days:.3f} "
+                    f"(denorm={(1.0 - (new_match_features.home_match_load_per_day_last_10_days * settings.MATCH_LOAD_NORM_COEFFICIENT)):.3f}"
+                    f"/{(1.0 - (new_match_features.home_match_load_per_day_last_25_days * settings.MATCH_LOAD_NORM_COEFFICIENT)):.3f})")
                 print(
-                    f"Avg points last 5/20 matches={new_match_features.home_avg_points_last_5}/"
-                    f"{new_match_features.home_avg_points_last_20} "
-                    f"(denorm={new_match_features.home_avg_points_last_5 * 3}"
-                    f"/{new_match_features.home_avg_points_last_20 * 3})")
+                    f"Avg points last 5/20 matches={new_match_features.home_avg_points_last_5:.3f}/"
+                    f"{new_match_features.home_avg_points_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_points_last_5 * 3):.3f}"
+                    f"/{(new_match_features.home_avg_points_last_20 * 3):.3f})")
                 print(
-                    f"Avg goals last 5/20 matches={new_match_features.home_avg_goals_last_5}/"
-                    f"{new_match_features.home_avg_goals_last_20} "
-                    f"(denorm={new_match_features.home_avg_goals_last_5 * settings.GOALS_NORM_COEFFICIENT}"
-                    f"/{new_match_features.home_avg_goals_last_20 * settings.GOALS_NORM_COEFFICIENT})")
+                    f"Avg goals last 5/20 matches={new_match_features.home_avg_goals_last_5:.3f}/"
+                    f"{new_match_features.home_avg_goals_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_goals_last_5 * settings.GOALS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_goals_last_20 * settings.GOALS_NORM_COEFFICIENT)}:.3f")
                 print(
-                    f"Avg shots on goal last 5/20 matches={new_match_features.home_avg_shots_on_target_last_5}/"
-                    f"{new_match_features.home_avg_shots_on_target_last_20} "
-                    f"(denorm={new_match_features.home_avg_shots_on_target_last_5 * settings.SOG_NORM_COEFFICIENT}"
-                    f"/{new_match_features.home_avg_shots_on_target_last_20 * settings.SOG_NORM_COEFFICIENT})")
+                    f"Avg shots on goal last 5/20 matches={new_match_features.home_avg_shots_on_target_last_5:.3f}/"
+                    f"{new_match_features.home_avg_shots_on_target_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_shots_on_target_last_5 * settings.SOG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_shots_on_target_last_20 * settings.SOG_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg total shots last 5/20 matches={new_match_features.home_avg_total_shots_last_5}/"
-                    f"{new_match_features.home_avg_total_shots_last_20}")
+                    f"Avg total shots last 5/20 matches={new_match_features.home_avg_total_shots_last_5:.3f}/"
+                    f"{new_match_features.home_avg_total_shots_last_20:.3f}"
+                    f"(denorm={(new_match_features.home_avg_total_shots_last_5 * settings.TOTAL_SHOTS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_total_shots_last_20 * settings.TOTAL_SHOTS_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg shots inside box last 5/20 matches={new_match_features.home_avg_shots_inside_box_last_5}/"
-                    f"{new_match_features.home_avg_shots_inside_box_last_20}")
+                    f"Avg shots inside box last 5/20 matches={new_match_features.home_avg_shots_inside_box_last_5:.3f}/"
+                    f"{new_match_features.home_avg_shots_inside_box_last_20:.3f}"
+                    f"(denorm={(new_match_features.home_avg_shots_inside_box_last_5 * settings.SHOTS_IN_BOX_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_shots_inside_box_last_20 * settings.SHOTS_IN_BOX_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg corner kicks last 5/20 matches={new_match_features.home_avg_corner_kicks_last_5}/"
-                    f"{new_match_features.home_avg_corner_kicks_last_20}")
+                    f"Avg corner kicks last 5/20 matches={new_match_features.home_avg_corner_kicks_last_5:.3f}/"
+                    f"{new_match_features.home_avg_corner_kicks_last_20:.3f}"
+                    f"(denorm={(new_match_features.home_avg_corner_kicks_last_5 * settings.CORNER_KICKS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_corner_kicks_last_20 * settings.CORNER_KICKS_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg ball possession last 5/20 matches={new_match_features.home_avg_ball_possession_last_5}/"
-                    f"{new_match_features.home_avg_ball_possession_last_20}")
+                    f"Avg ball possession last 5/20 matches={new_match_features.home_avg_ball_possession_last_5:.3f}/"
+                    f"{new_match_features.home_avg_ball_possession_last_20:.3f}")
                 print(
-                    f"Avg passes accuracy last 5/20 matches={new_match_features.home_avg_passes_acc_last_5}/"
-                    f"{new_match_features.home_avg_passes_acc_last_20}")
+                    f"Avg passes accuracy last 5/20 matches={new_match_features.home_avg_passes_acc_last_5:.3f}/"
+                    f"{new_match_features.home_avg_passes_acc_last_20:.3f}")
                 print(
-                    f"Avg goals scored home last 5/20 matches={new_match_features.home_avg_goals_scored_home_last_5}/"
-                    f"{new_match_features.home_avg_goals_scored_home_last_20} "
-                    f"(denorm={new_match_features.home_avg_goals_scored_home_last_5 * settings.GOALS_NORM_COEFFICIENT}"
-                    f"/{new_match_features.home_avg_goals_scored_home_last_20 * settings.GOALS_NORM_COEFFICIENT})")
+                    f"Avg goals scored home last 5/20 matches={new_match_features.home_avg_goals_scored_home_last_5:.3f}/"
+                    f"{new_match_features.home_avg_goals_scored_home_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_goals_scored_home_last_5 * settings.GOALS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_goals_scored_home_last_20 * settings.GOALS_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg goals conceded home last 5/20 matches="
-                    f"{new_match_features.home_avg_goals_conceded_home_last_5}/"
-                    f"{new_match_features.home_avg_goals_conceded_home_last_20} "
-                    f"(denorm={1.0 - new_match_features.home_avg_goals_conceded_home_last_5 * settings.GOALS_NORM_COEFFICIENT}"
-                    f"/{1.0 - new_match_features.home_avg_goals_conceded_home_last_20 * settings.GOALS_NORM_COEFFICIENT})")
-                print(f"Table position={new_match_features.home_curr_position}")
+                    f"{new_match_features.home_avg_goals_conceded_home_last_5:.3f}/"
+                    f"{new_match_features.home_avg_goals_conceded_home_last_20:.3f} "
+                    f"(denorm={(1.0 - (new_match_features.home_avg_goals_conceded_home_last_5 * settings.GOALS_NORM_COEFFICIENT)):.3f}"
+                    f"/{(1.0 - (new_match_features.home_avg_goals_conceded_home_last_20 * settings.GOALS_NORM_COEFFICIENT)):.3f})")
+                print(f"Table position={new_match_features.home_curr_position:.3f}")
             elif self.away_team.name == "Genk":
                 print("\n\n\tFeatures before match:")
-                print(f"ELO={new_match_features.away_elo}")
+                print(f"ELO={new_match_features.away_elo:.3f}")
                 print(
                     f"Relative match position in country season="
-                    f"{new_match_features.relative_match_position_in_country_season}")
+                    f"{new_match_features.relative_match_position_in_country_season:.3f}")
                 print(
-                    f"Match load last 10/25 days={new_match_features.away_match_load_per_day_last_10_days}/"
-                    f"{new_match_features.away_match_load_per_day_last_25_days} "
-                    f"(denorm={1.0 - new_match_features.away_match_load_per_day_last_10_days * settings.MATCH_LOAD_NORM_COEFFICIENT}"
-                    f"/{1.0 - new_match_features.away_match_load_per_day_last_25_days * settings.MATCH_LOAD_NORM_COEFFICIENT})")
+                    f"Match load last 10/25 days={new_match_features.away_match_load_per_day_last_10_days:.3f}/"
+                    f"{new_match_features.away_match_load_per_day_last_25_days:.3f} "
+                    f"(denorm={(1.0 - (new_match_features.away_match_load_per_day_last_10_days * settings.MATCH_LOAD_NORM_COEFFICIENT)):.3f}"
+                    f"/{(1.0 - (new_match_features.away_match_load_per_day_last_25_days * settings.MATCH_LOAD_NORM_COEFFICIENT)):.3f})")
                 print(
-                    f"Avg points last 5/20 matches={new_match_features.away_avg_points_last_5}/"
-                    f"{new_match_features.away_avg_points_last_20} "
-                    f"(denorm={new_match_features.away_avg_points_last_5 * 3}"
-                    f"/{new_match_features.away_avg_points_last_20 * 3})")
+                    f"Avg points last 5/20 matches={new_match_features.away_avg_points_last_5:.3f}/"
+                    f"{new_match_features.away_avg_points_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_points_last_5 * 3):.3f}"
+                    f"/{(new_match_features.away_avg_points_last_20 * 3):.3f})")
                 print(
-                    f"Avg goals last 5/20 matches={new_match_features.away_avg_goals_last_5}/"
-                    f"{new_match_features.away_avg_goals_last_20} "
-                    f"(denorm={new_match_features.away_avg_goals_last_5 * settings.GOALS_NORM_COEFFICIENT}"
-                    f"/{new_match_features.away_avg_goals_last_20 * settings.GOALS_NORM_COEFFICIENT})")
+                    f"Avg goals last 5/20 matches={new_match_features.away_avg_goals_last_5:.3f}/"
+                    f"{new_match_features.away_avg_goals_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_goals_last_5 * settings.GOALS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_goals_last_20 * settings.GOALS_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg shots on goal last 5/20 matches={new_match_features.away_avg_shots_on_target_last_5}/"
-                    f"{new_match_features.away_avg_shots_on_target_last_20} "
-                    f"(denorm={new_match_features.away_avg_shots_on_target_last_5 * settings.SOG_NORM_COEFFICIENT}"
-                    f"/{new_match_features.away_avg_shots_on_target_last_20 * settings.SOG_NORM_COEFFICIENT})")
+                    f"Avg shots on goal last 5/20 matches={new_match_features.away_avg_shots_on_target_last_5:.3f}/"
+                    f"{new_match_features.away_avg_shots_on_target_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_shots_on_target_last_5 * settings.SOG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_shots_on_target_last_20 * settings.SOG_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg total shots last 5/20 matches={new_match_features.away_avg_total_shots_last_5}/"
-                    f"{new_match_features.away_avg_total_shots_last_20}")
+                    f"Avg total shots last 5/20 matches={new_match_features.away_avg_total_shots_last_5:.3f}/"
+                    f"{new_match_features.away_avg_total_shots_last_20:.3f}",
+                    f"(denorm={(new_match_features.away_avg_total_shots_last_5 * settings.TOTAL_SHOTS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_total_shots_last_20 * settings.TOTAL_SHOTS_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg shots inside box last 5/20 matches={new_match_features.away_avg_shots_inside_box_last_5}/"
-                    f"{new_match_features.away_avg_shots_inside_box_last_20}")
+                    f"Avg shots inside box last 5/20 matches={new_match_features.away_avg_shots_inside_box_last_5:.3f}/"
+                    f"{new_match_features.away_avg_shots_inside_box_last_20:.3f}"
+                    f"(denorm={(new_match_features.away_avg_shots_inside_box_last_5 * settings.SHOTS_IN_BOX_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_shots_inside_box_last_20 * settings.SHOTS_IN_BOX_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg corner kicks last 5/20 matches={new_match_features.away_avg_corner_kicks_last_5}/"
-                    f"{new_match_features.away_avg_corner_kicks_last_20}")
+                    f"Avg corner kicks last 5/20 matches={new_match_features.away_avg_corner_kicks_last_5:.3f}/"
+                    f"{new_match_features.away_avg_corner_kicks_last_20:.3f}"
+                    f"(denorm={(new_match_features.away_avg_corner_kicks_last_5 * settings.CORNER_KICKS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_corner_kicks_last_20 * settings.CORNER_KICKS_NORM_COEFFICIENT):.3f})")
                 print(
-                    f"Avg ball possession last 5/20 matches={new_match_features.away_avg_ball_possession_last_5}/"
-                    f"{new_match_features.away_avg_ball_possession_last_20}")
+                    f"Avg ball possession last 5/20 matches={new_match_features.away_avg_ball_possession_last_5:.3f}/"
+                    f"{new_match_features.away_avg_ball_possession_last_20:.3f}")
                 print(
-                    f"Avg passes accuracy last 5/20 matches={new_match_features.away_avg_passes_acc_last_5}/"
-                    f"{new_match_features.away_avg_passes_acc_last_20}")
+                    f"Avg passes accuracy last 5/20 matches={new_match_features.away_avg_passes_acc_last_5:.3f}/"
+                    f"{new_match_features.away_avg_passes_acc_last_20:.3f}")
                 print(
-                    f"Avg goals scored away last 5/20 matches={new_match_features.away_avg_goals_scored_away_last_5}/"
-                    f"{new_match_features.away_avg_goals_scored_away_last_20} "
-                    f"(denorm={new_match_features.away_avg_goals_scored_away_last_5 * settings.GOALS_NORM_COEFFICIENT}"
-                    f"/{new_match_features.away_avg_goals_scored_away_last_20 * settings.GOALS_NORM_COEFFICIENT})")
+                    f"Avg goals scored away last 5/20 matches={new_match_features.away_avg_goals_scored_away_last_5:.3f}/"
+                    f"{new_match_features.away_avg_goals_scored_away_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_goals_scored_away_last_5 * settings.GOALS_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_goals_scored_away_last_20 * settings.GOALS_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg goals conceded away last 5/20 matches="
-                    f"{new_match_features.away_avg_goals_conceded_away_last_5}/"
-                    f"{new_match_features.away_avg_goals_conceded_away_last_20} "
-                    f"(denorm={1.0 - new_match_features.away_avg_goals_conceded_away_last_5 * settings.GOALS_NORM_COEFFICIENT}"
-                    f"/{1.0 - new_match_features.away_avg_goals_conceded_away_last_20 * settings.GOALS_NORM_COEFFICIENT})")
-                print(f"Table position={new_match_features.away_curr_position}")
+                    f"{new_match_features.away_avg_goals_conceded_away_last_5:.3f}/"
+                    f"{new_match_features.away_avg_goals_conceded_away_last_20:.3f} "
+                    f"(denorm={(1.0 - (new_match_features.away_avg_goals_conceded_away_last_5 * settings.GOALS_NORM_COEFFICIENT)):.3f}"
+                    f"/{(1.0 - (new_match_features.away_avg_goals_conceded_away_last_20 * settings.GOALS_NORM_COEFFICIENT)):.3f})")
+                print(f"Table position={new_match_features.away_curr_position:.3f}")
 
             print("\n\tMATCH_STATISTICS:")
             print(f"{self.datetime}: {self.comp.name}, {self.season}, {self.round.name}")
