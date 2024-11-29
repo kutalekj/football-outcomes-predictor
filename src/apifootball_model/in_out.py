@@ -114,10 +114,10 @@ def load_matches(file_name):
                 match.away_team_shots_inside_box = int(row['away_team_shots_inside_box'])
                 match.home_team_corner_kicks = int(row['home_team_corner_kicks'])
                 match.away_team_corner_kicks = int(row['away_team_corner_kicks'])
-                match.home_team_ball_possession = int(row['home_team_ball_possession'])
-                match.away_team_ball_possession = int(row['away_team_ball_possession'])
-                match.home_team_passes_acc = int(row['home_team_passes_acc'])
-                match.away_team_passes_acc = int(row['away_team_passes_acc'])
+                match.home_team_ball_possession = float(row['home_team_ball_possession'])
+                match.away_team_ball_possession = float(row['away_team_ball_possession'])
+                match.home_team_passes_acc = float(row['home_team_passes_acc'])
+                match.away_team_passes_acc = float(row['away_team_passes_acc'])
 
                 match.winner_team_id = int(row['winner_team_id']) if row['winner_team_id'] else None
 
