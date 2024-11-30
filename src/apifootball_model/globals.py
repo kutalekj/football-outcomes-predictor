@@ -17,6 +17,8 @@ class Global:
             # For example, for England 2021 there are PL, Championship, UEFA competitions, FA Cup and EFL Trophy
             cls._instance.start_end_dates_per_country_season = {}
 
+            cls._instance.fs_leagues_list = []
+
             # TODO: Remove the following ones once got normalization constants
             cls._instance.shots_on_goal = []
             cls._instance.total_shots = []

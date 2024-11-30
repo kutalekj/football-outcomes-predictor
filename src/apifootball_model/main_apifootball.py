@@ -19,6 +19,8 @@ from train import train
 global_instance = Global.get_instance()
 
 # 1. Init comps and their seasons and rounds
+Comp.get_fs_leagues_list()
+
 """
 for comp in [
     {'id': 144, 'name': "Jupiler Pro League",

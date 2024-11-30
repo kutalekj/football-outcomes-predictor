@@ -2,8 +2,6 @@
 settings.py
 """
 
-import datetime
-
 KEY = "4a9e20eecbec58c517cb485f31552caf"
 HOST = "v3.football.api-sports.io"
 
@@ -11,6 +9,9 @@ HEADERS = {
     'x-rapidapi-host': HOST,
     'x-rapidapi-key': KEY
 }
+
+FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
+FS_HOST = "https://api.football-data-api.com"
 
 MATCHES_FILENAME = "api_ftb_matches_.csv"
 
@@ -63,37 +64,46 @@ COMPS = [
 
 # {v3API_id, name, regular_round_keywords}
 COMPS_v2 = [
-    {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season']},
-    {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season']},
-    {'id': 41, 'name': "League One", 'regular_round_keywords': ['Regular Season']},
-    {'id': 42, 'name': "League Two", 'regular_round_keywords': ['Regular Season']},
-    {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season']},
-    {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season']},
-    {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season']},
-    {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season']},
-    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season']},
-    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
-    {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season']},  # POL
+    {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Premier League"},
+    {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"},
+    {'id': 41, 'name': "League One", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League One"},
+    {'id': 42, 'name': "League Two", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League Two"},
+    {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 1"},
+    {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 2"},
+    {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Bundesliga"},
+    {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "2. Bundesliga"},
+    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Eredivisie"},
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Liga NOS"},
+    {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ekstraklasa"},  # POL
     {'id': 119, 'name': "Superliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round']},  # DEN
-    {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season']},
-    {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season']},
-    {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season']},
-    {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
+     'fs_alias': "Superliga"},  # DEN
+    {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie A"},
+    {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie B"},
+    {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "La Liga"},
+    {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season'],
+     'fs_alias': "Segunda División"},
     {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
+     'fs_alias': "Pro League"},  # BEL
     {'id': 179, 'name': "Premiership",
-     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -']},  # SCO
+     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
+     'fs_alias': "Premiership"},  # SCO
     {'id': 188, 'name': "A-League",
-     'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final']},  # AUS
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season']},  # TUR
+     'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final'],
+     'fs_alias': "A-League"},  # AUS
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
     {'id': 207, 'name': "Super League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # SUI
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
+     'fs_alias': "Super League"},  # SUI
     {'id': 218, 'name': "Bundesliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -']},  # AUT
-    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season']},  # SA
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
+     'fs_alias': "Bundesliga"},  # AUT
+    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
+     'fs_alias': "Professional League"},  # SA
     {'id': 323, 'name': "Super League",
-     'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -']},  # IND
+     'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
+     'fs_alias': "Indian Super League"},  # IND
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},

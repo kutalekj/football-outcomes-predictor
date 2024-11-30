@@ -5,6 +5,7 @@ comp.py
 import http.client
 import json
 import settings
+import requests
 import rounds
 import time
 from datetime import datetime
@@ -72,6 +73,21 @@ class Comp:
             self.start_end_dates_per_season.append({'season': season, 'start': parse(start_date_str),
                                                     'end': parse(end_date_str)})
 
+            # Teas players statistics in comp season (only for comps with regular rounds!)
+            if len(self.regular_round_keywords) > 0:
+                fs_season_id = self.get_fs_season_id(self.id, self.country, season)
+                comp_season_players_stats_request_string = settings.FS_HOST + "/league-players?key=" + settings.FS_KEY + \
+                                                           "&season_id=" + str(fs_season_id) + "&include=stats"
+                res = requests.get(comp_season_players_stats_request_string)
+                data_comp_season_players_stats = res.json()
+
+                all_data_comp_season_players_stats = []
+                num_pages = data_comp_season_players_stats['pager']['max_page']
+                for page_num in range(1, num_pages + 1):
+                    request_url = comp_season_players_stats_request_string + "&page=" + str(page_num)
+                    res_json = requests.get(request_url).json()
+                    all_data_comp_season_players_stats += res_json['data']
+
             # Teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
 
@@ -102,16 +118,21 @@ class Comp:
                         new_team.player_stats_comp_season[self.name] = dict()
                     new_team.player_stats_comp_season[self.name][str(season)] = []
 
+                    """
                     if self.name not in new_team.rating_comp_season:
                         new_team.rating_comp_season[self.name] = dict()
                     new_team.rating_comp_season[self.name][str(season)] = None
+                    """
 
-                    team_players_stats_request_string = "/players?season=" + str(season) + "&league=" + \
-                                                        str(self.id) + "&team=" + str(team_id)
+                    """
+                    team_players_stats_request_string = "/players?season=" + str(season) + "&league=" + str(self.id) + "&team=" + str(team_id)
                     self.conn.request("GET", team_players_stats_request_string, headers=settings.HEADERS)
                     res = self.conn.getresponse()
                     data = res.read()
                     data_team_players_stats = json.loads(data)['response']
+                    """
+
+                    data_team_players_stats = None
 
                     player_stats_list = []
                     rating_not_found_count = 0
@@ -234,11 +255,11 @@ class Comp:
             elif self.country == "World":
                 for country in global_instance.start_end_dates_per_country_season.keys():
                     for seas in global_instance.start_end_dates_per_country_season[country].keys():
-                        if start_date < global_instance.start_end_dates_per_country_season[country][seas]['start']\
+                        if start_date < global_instance.start_end_dates_per_country_season[country][seas]['start'] \
                                 and season == seas:
                             global_instance.start_end_dates_per_country_season[country][seas]['start'] = start_date
 
-                        if end_date > global_instance.start_end_dates_per_country_season[country][seas]['end']\
+                        if end_date > global_instance.start_end_dates_per_country_season[country][seas]['end'] \
                                 and season == seas:
                             global_instance.start_end_dates_per_country_season[country][seas]['end'] = end_date
 
@@ -249,3 +270,35 @@ class Comp:
                 return season_dates[date_type]
 
         raise ValueError(f"Season {season} start/end date not found for competition {self.name}")
+
+    @staticmethod
+    def get_fs_leagues_list():
+        global_instance = Global().get_instance()
+
+        leagues_list_request_string = settings.FS_HOST + "/league-list?key=" + settings.FS_KEY
+        res = requests.get(leagues_list_request_string)
+        global_instance.fs_leagues_list = res.json()
+
+    @staticmethod
+    def get_fs_season_id(comp_id, comp_country, season):
+        global_instance = Global().get_instance()
+        league_list = global_instance.fs_leagues_list
+
+        if league_list['pager']['max_page'] != 1:
+            raise ValueError("Multiple pages were obtained from FS leagues list request. Add handling in code...")
+
+        comp_fs_alias = [x['fs_alias'] for x in settings.COMPS_v2 if x['id'] == comp_id]
+        if len(comp_fs_alias) != 1:
+            raise ValueError("Found none, or multiple FS aliases for a single competition")
+        comp_fs_alias = comp_fs_alias[0]
+
+        wanted_comp = [x for x in league_list['data'] if
+                       x['country'] == comp_country and x['league_name'] == comp_fs_alias]
+        if len(wanted_comp) != 1:
+            raise ValueError("Found none, or multiple FS competitions for a single competition")
+        wanted_comp = wanted_comp[0]
+
+        season_id = [x['id'] for x in wanted_comp['season'] if str(x['year']) == (str(season) + str(season + 1))]
+        if len(season_id) != 1:
+            raise ValueError("Found none, or multiple FS season IDs for a single competition")
+        return season_id[0]
