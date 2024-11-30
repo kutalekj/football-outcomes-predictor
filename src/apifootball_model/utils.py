@@ -4,6 +4,10 @@ utils.py
 
 import numpy as np
 from sklearn.decomposition import PCA
+import re
+import unicodedata
+import difflib
+from rapidfuzz import fuzz
 import settings
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW, CSV_CATEGORIES
@@ -204,6 +208,56 @@ def get_team_if_exists(team_id):
             return team
 
     return None
+
+
+def normalize_team_name(name):
+    name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('ASCII')  # to ASCII - remove accents
+    name = name.lower()
+    name = re.sub(r'[^a-z0-9\s]', '', name)  # remove all non-alphanumeric characters
+    name = ' '.join(name.split())  # remove whitespaces
+    return name
+
+
+def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
+    normalized_af_name = normalize_team_name(af_team_name)  # normalize AF team name
+
+    best_fs_match = None
+    highest_similarity = 0.0
+
+    for fs_team in fs_teams_in_comp_season['fs_teams']:
+        normalized_fs_name = normalize_team_name(fs_team['cleanName'])  # normalize FS team name
+
+        similarity = difflib.SequenceMatcher(None, normalized_af_name, normalized_fs_name).ratio()  # calc. similarity
+
+        if similarity > highest_similarity:
+            highest_similarity = similarity
+            best_fs_match = fs_team
+
+    print(f"\tAF team [{af_team_name}] matched to FS team [{best_fs_match['cleanName']}] "
+          f"(similarity={str(highest_similarity)})")
+
+    return best_fs_match['id'], best_fs_match['name']
+
+
+def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
+    normalized_af_name = normalize_team_name(af_team_name)  # normalize AF team name
+
+    best_fs_match = None
+    highest_similarity = 0.0
+
+    for fs_team in fs_teams_in_comp_season['fs_teams']:
+        normalized_fs_name = normalize_team_name(fs_team.name)  # normalize FS team name
+
+        similarity = fuzz.ratio(normalized_af_name, normalized_fs_name)  # calc. similarity
+
+        if similarity > highest_similarity:
+            highest_similarity = similarity
+            best_fs_match = fs_team
+
+    print(
+        f"AF team [{af_team_name}] matched to FS team [{best_fs_match['name']}] (similarity={str(highest_similarity)})")
+
+    return best_fs_match['id'], best_fs_match['name']
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):

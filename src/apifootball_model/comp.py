@@ -28,6 +28,7 @@ class Comp:
         self.regular_round_keywords = regular_keywords
 
         self.teams_per_season = []
+        self.fs_teams_per_season = []
         self.start_end_dates_per_season = []
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
@@ -73,20 +74,32 @@ class Comp:
             self.start_end_dates_per_season.append({'season': season, 'start': parse(start_date_str),
                                                     'end': parse(end_date_str)})
 
-            # Teas players statistics in comp season (only for comps with regular rounds!)
+            # Teams players statistics in comp season (only for comps with regular rounds!)
             if len(self.regular_round_keywords) > 0:
+                """
                 fs_season_id = self.get_fs_season_id(self.id, self.country, season)
-                comp_season_players_stats_request_string = settings.FS_HOST + "/league-players?key=" + settings.FS_KEY + \
-                                                           "&season_id=" + str(fs_season_id) + "&include=stats"
-                res = requests.get(comp_season_players_stats_request_string)
-                data_comp_season_players_stats = res.json()
+                comp_season_players_stats_request_string_fs = settings.FS_HOST + "/league-players?key=" + \ 
+                                                settings.FS_KEY + "&season_id=" + str(fs_season_id) + "&include=stats"
+                res = requests.get(comp_season_players_stats_request_string_fs)
+                data_comp_season_players_stats_fs = res.json()
 
-                all_data_comp_season_players_stats = []
-                num_pages = data_comp_season_players_stats['pager']['max_page']
+                all_data_comp_season_players_stats_fs = []
+                num_pages = data_comp_season_players_stats_fs['pager']['max_page']
                 for page_num in range(1, num_pages + 1):
-                    request_url = comp_season_players_stats_request_string + "&page=" + str(page_num)
+                    request_url = comp_season_players_stats_request_string_fs + "&page=" + str(page_num)
                     res_json = requests.get(request_url).json()
-                    all_data_comp_season_players_stats += res_json['data']
+                    all_data_comp_season_players_stats_fs += res_json['data']
+                """
+                fs_season_id = self.get_fs_season_id(self.id, self.country, season)
+                comp_season_teams_request_string_fs = settings.FS_HOST + "/league-teams?key=" + settings.FS_KEY \
+                                                           + "&season_id=" + str(fs_season_id) + "&include=stats"
+                res = requests.get(comp_season_teams_request_string_fs)
+                data_comp_season_teams_fs = res.json()
+
+                fs_teams_comp_season = [x for x in data_comp_season_teams_fs['data']]
+                if len(fs_teams_comp_season) == 0:
+                    raise ValueError(f"For an unknown reason to FS teams were found for comp {self.name} {str(season)}")
+                # TODO: Possible adj. - note that from this request is possible to get FS 'competition_is' as well...
 
             # Teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
@@ -132,6 +145,7 @@ class Comp:
                     data_team_players_stats = json.loads(data)['response']
                     """
 
+                    """
                     data_team_players_stats = None
 
                     player_stats_list = []
@@ -188,17 +202,18 @@ class Comp:
                         new_team.rating_comp_season[self.name][str(season)] = rating
                     else:
                         new_team.rating_comp_season[self.name][str(season)] = 0.0
+                    """
 
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 
                 global_instance.all_teams.append(new_team)  # Add team to the global teams list
 
-                time.sleep(0.15)
+                time.sleep(0.05)
 
-            self.teams_per_season.append({'season': season, 'teams': teams})
+            self.teams_per_season.append({'season': season, 'teams': teams})  # AF teams
 
-            # Delay so that limit of requests per minute is not exceeded
-            time.sleep(1.0)
+            if len(self.regular_round_keywords) > 0:
+                self.fs_teams_per_season.append({'season': season, 'fs_teams': fs_teams_comp_season})  # FS teams
 
         global_instance.all_teams = list(set(global_instance.all_teams))  # Remove duplicates
 
@@ -229,7 +244,7 @@ class Comp:
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
 
             # Delay so that limit of requests per minute is not exceeded
-            time.sleep(0.3)
+            time.sleep(0.2)
 
     def init_country_start_end_dates_in_seasons(self):
         global_instance = Global.get_instance()

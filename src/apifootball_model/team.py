@@ -1,4 +1,5 @@
 import settings
+import utils as ut
 
 
 class Team:
@@ -6,11 +7,14 @@ class Team:
         self.id = id_
         self.name = name
 
+        self.fs_id = None
+        self.fs_name = None
+
         # Exclude lower tier teams that played only relegation playoff match at the end of season from season tables
         self.regularity_in_comp_season = []
 
-        self.player_stats_comp_season = {}
-        self.rating_comp_season = {}
+        self.player_stats_comp_season = {}  # TODO: Rename - no stats, just players list
+        self.rating_comp_season = {}  # TODO: Remove
 
         self.matches = []  # just list of all matches of the team sorted by the datetime played asc
 
@@ -35,7 +39,7 @@ class Team:
         # This should never happen
         return None
 
-    def correct_team_regularity(self):
+    def correct_team_regularity_and_match_af_fs_teams(self):
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
             team_matches_in_season = [m for m in self.matches if m.season == season]
 
@@ -56,3 +60,18 @@ class Team:
                                 any(regular_team_matches_in_comp_season_booleans):
                             print(f"_DEBUG_: Setting team {self.name} as regular in {season_elem['comp'].name} in {season}.")
                             season_elem['is_regular'] = True
+
+                            # Match the regular AF team with FS team from the same comp_season
+                            if self.fs_id is None:  # if not matched yet (might have been done is previous seasons)
+                                self.assign_fs_team_id_team_name_by_comp_season(season_elem['comp'], season)
+
+    def assign_fs_team_id_team_name_by_comp_season(self, comp, season):
+        fs_teams_comp_season = [x for x in comp.fs_teams_per_season if x['season'] == season]
+        if len(fs_teams_comp_season) != 1:
+            raise ValueError(f"Unexpected to find none, or multiple FS teams for a single comp season "
+                             f"({comp.name}, {str(season)})")
+        fs_teams_comp_season = fs_teams_comp_season[0]
+
+        # Match AF team with FS team
+        self.fs_id, self.fs_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)
+        # TODO: Minor adj. might be forbidding to match teams already matched before

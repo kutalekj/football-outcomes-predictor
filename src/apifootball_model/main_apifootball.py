@@ -80,7 +80,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store10_BEL_v2.csv")
+in_out.load_matches("tmp_csv_store10_BEL_POR.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -110,7 +110,7 @@ for team in global_instance.all_teams:
     team.matches = sorted(team.matches, key=lambda match_: match_.datetime)
 
     # Check team regularity (assume each team plays exactly in one regular comp each season!)
-    team.correct_team_regularity()
+    team.correct_team_regularity_and_match_af_fs_teams()  # and match regular AF teams with FS teams !!!
 
 # TODO: Add debug print check for number of matches (both all and just regular ones) for each comp season
 
