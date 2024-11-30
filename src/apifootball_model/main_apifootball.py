@@ -130,7 +130,7 @@ for match in global_instance.all_matches:
 # sys.stdout.close()
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store10_BEL_POR.csv")
+# in_out.store_matches("tmp_csv_store10_BEL_POR.csv")
 
 """
 
