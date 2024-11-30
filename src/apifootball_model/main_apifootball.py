@@ -30,6 +30,9 @@ for comp in [
 ]:
 """
 for comp in [
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
     {'id': 144, 'name': "Jupiler Pro League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
@@ -127,7 +130,7 @@ for match in global_instance.all_matches:
 # sys.stdout.close()
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store10_BEL_v2.csv")
+in_out.store_matches("tmp_csv_store10_BEL_POR.csv")
 
 """
 
