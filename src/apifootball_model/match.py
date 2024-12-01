@@ -382,15 +382,17 @@ class Match:
 
             return relative_position
 
+        days_safe_margin = 16 if self.comp.id != 307 else 46  # exception for Saudi Professional League
+
         # Case for matches finishing e.g. one day after the regular season end date
-        elif start_date <= self.datetime <= end_date + timedelta(days=16):
+        if start_date <= self.datetime <= end_date + timedelta(days=days_safe_margin):
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
                   f"{str(self.datetime)} not fitting into the expected timedelta range "
                   f"[{str(start_date)},{str(end_date)}] - too late")
             return settings.ALMOST_ONE
 
         # Case for matches finishing e.g. one day before the regular season start date
-        elif start_date <= self.datetime + timedelta(days=16) <= end_date:
+        elif start_date <= self.datetime + timedelta(days=days_safe_margin) <= end_date:
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
                   f"{str(self.datetime)} not fitting into the expected timedelta range "
                   f"[{str(start_date)},{str(end_date)}] - too early")
