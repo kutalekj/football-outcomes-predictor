@@ -233,7 +233,7 @@ def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
             highest_similarity = similarity
             best_fs_match = fs_team
 
-    print(f"\tAF team [{af_team_name}] matched to FS team [{best_fs_match['cleanName']}] "
+    print(f"\t\t\t\t\tAF team matched to FS team: [{af_team_name}] [{best_fs_match['cleanName']}] "
           f"(similarity={str(highest_similarity)})")
 
     return best_fs_match['id'], best_fs_match['name']

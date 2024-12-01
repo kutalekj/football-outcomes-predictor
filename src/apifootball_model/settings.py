@@ -101,7 +101,7 @@ COMPS_v2 = [
      'fs_alias': "Bundesliga"},  # AUT
     {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
      'fs_alias': "Professional League"},  # SA
-    {'id': 323, 'name': "Super League",
+    {'id': 323, 'name': "Indian Super League",
      'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
      'fs_alias': "Indian Super League"},  # IND
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},

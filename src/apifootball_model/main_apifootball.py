@@ -23,15 +23,6 @@ Comp.get_fs_leagues_list()
 
 """
 for comp in [
-    {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
-    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
-    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
-    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
-    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
-]:
-"""
-for comp in [
     {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
     {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
     {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
@@ -42,7 +33,34 @@ for comp in [
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
-# for comp in settings.COMPS_v2:
+"""
+
+"""
+for comp in [
+    {'id': 323, 'name': "Indian Super League",
+     'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
+     'fs_alias': "Indian Super League"},  # IND
+    {'id': 188, 'name': "A-League",
+     'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final'],
+     'fs_alias': "A-League"},  # AUS
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
+    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
+     'fs_alias': "Professional League"},  # SA
+    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': []},  # SA
+    {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': []},  # AUS
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': []},  # TUR
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
+]:
+"""
+for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -132,7 +150,7 @@ for match in global_instance.all_matches:
 # sys.stdout.close()
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store10_BEL_POR.csv")
+# in_out.store_matches("tmp_csv_store10_BEL_POR_AUS_TUR_SA_IND.csv")
 
 """
 
