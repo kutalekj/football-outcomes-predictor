@@ -4,6 +4,7 @@ season_comp_table.py
 
 import http.client
 import json
+import requests
 from datetime import datetime
 import numpy as np
 import settings
@@ -18,6 +19,8 @@ class SeasonCompTable:
         self.season = season
         self.teams = None
         self.team_stats = None
+
+        self.all_fs_players_involved = None
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
@@ -134,3 +137,56 @@ class SeasonCompTable:
                                      if season_elem['comp'].id == table.comp_id and
                                      season_elem['season'] == table.season and
                                      season_elem['is_regular']])}
+
+    @staticmethod
+    def init_players_lists_in_regular_comp_season_teams():
+        global_instance = Global().get_instance()
+        for comp in global_instance.all_comps:
+            for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
+                # First, get all FS players from comp season and assign them to table (to avoid requests for each team)
+                table = ut.get_table_by_comp_season(comp.id, season)
+
+                fs_season_id = comp.get_fs_season_id(comp.id, comp.country, season)  # get FS season_id (comp season ID)
+
+                comp_season_players_stats_request_string_fs = settings.FS_HOST + "/league-players?key=" + \
+                                                              settings.FS_KEY + "&season_id=" + str(
+                    fs_season_id) + "&include=stats"
+                res = requests.get(comp_season_players_stats_request_string_fs)
+                data_comp_season_players_stats_fs = res.json()  # get data
+                num_pages = data_comp_season_players_stats_fs['pager']['max_page']
+
+                all_data_comp_season_players_stats_fs = []
+                for page_num in range(1, num_pages + 1):  # iterate over all pages
+                    request_url = comp_season_players_stats_request_string_fs + "&page=" + str(page_num)
+                    res_json = requests.get(request_url).json()
+                    print(f"\t\tFS req. remaining: {res_json['metadata']['request_remaining']}...")
+
+                    all_data_comp_season_players_stats_fs += [{
+                        'fs_id': x['id'],
+                        'fs_comp_id': x['competition_id'],
+                        'fs_full_name': x['full_name'],
+                        'fs_known_as': x['known_as'],
+                        'fs_birthday': datetime.utcfromtimestamp(x['birthday']),
+                        'fs_age': x['age'],
+                        'fs_weight': x['weight'],
+                        'fs_height': x['height'],
+                        'fs_league': x['league'],
+                        'fs_league_type': x['league_type'],
+                        'fs_club_team_id': x['club_team_id'],
+                        'fs_club_team_2_id': x['club_team_2_id'],
+                        'fs_position': x['position'],
+                        'fs_nationality': x['nationality'],
+                    } for x in res_json['data']]
+
+                table.all_fs_players_involved = all_data_comp_season_players_stats_fs
+
+                # Then, when irregular teams should be already excluded from tables, assign comp season players to teams
+                for team in table.teams:
+                    # Condition as follows, because player might have played for more teams in a comp season
+                    selected_fs_players = [x for x in table.all_fs_players_involved if
+                                           team.fs_id == x['fs_club_team_id']
+                                           or ('fs_club_team_2_id' in x and team.fs_id == x['fs_club_team_2_id'])]
+                    # TODO: Check this teams matching condition!
+
+                    team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
+                                                                'fs_players': selected_fs_players})

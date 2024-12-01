@@ -431,7 +431,8 @@ def calculate_team_strength(curr_match, team_id):
     """
 
     player_names = [p_name for (p_id, p_name, _) in team_lineup]
-    tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name(curr_match, player_names, CSV_PLAYERS_PATH)
+    # tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name(curr_match, player_names, CSV_PLAYERS_PATH)
+    # TODO: Uncomment for Phase 1 testing (and finish the implementation inside; and modify it - CSV caching)
 
     return []
 

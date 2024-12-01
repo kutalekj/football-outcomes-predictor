@@ -383,19 +383,22 @@ class Match:
             return relative_position
 
         # Case for matches finishing e.g. one day after the regular season end date
-        elif start_date <= self.datetime <= end_date + timedelta(days=14):
+        elif start_date <= self.datetime <= end_date + timedelta(days=16):
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
                   f"{str(self.datetime)} not fitting into the expected timedelta range "
                   f"[{str(start_date)},{str(end_date)}] - too late")
             return settings.ALMOST_ONE
 
         # Case for matches finishing e.g. one day before the regular season start date
-        elif start_date <= self.datetime + timedelta(days=14) <= end_date:
+        elif start_date <= self.datetime + timedelta(days=16) <= end_date:
             print(f"___WARNING: Found match between {self.home_team.name} and {self.away_team.name} played at "
                   f"{str(self.datetime)} not fitting into the expected timedelta range "
                   f"[{str(start_date)},{str(end_date)}] - too early")
             return settings.ALMOST_ZERO
 
+        print(f"ERROR: Found match between {self.home_team.name} and {self.away_team.name} played at "
+              f"{str(self.datetime)} not fitting into the expected timedelta range "
+              f"[{str(start_date)},{str(end_date)}] - too late")
         return None
 
     def calculate_match_features(self):
