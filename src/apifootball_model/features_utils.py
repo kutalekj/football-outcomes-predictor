@@ -367,8 +367,12 @@ def calculate_team_strength(curr_match, team_id):
                          f"({curr_match.home_team.id}) or the away team {curr_match.away_team.name} "
                          f"({curr_match.away_team.id})")
 
+    # TODO: If no team lineup present, return a default team strength?
+    if team_lineup is None:
+        print(f"None team lineup list found, but 11 expected (match "
+              f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
+        return []
     if len(team_lineup) != 11:
-        # TODO: If no team lineup present, return a default team strength?
         # raise ValueError(f"Team lineup list of length {len(team_lineup)} found, but 11 expected (match "
         #                 f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
         print(f"Team lineup list of length {len(team_lineup)} found, but 11 expected (match "
