@@ -253,27 +253,6 @@ in_out.load_matches("tmp_csv_store11_full_copy.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
-global_instance.shots_on_goal = [x for x in global_instance.shots_on_goal if x != -1]
-global_instance.total_shots = [x for x in global_instance.total_shots if x != -1]
-global_instance.shots_inbox = [x for x in global_instance.shots_inbox if x != -1]
-global_instance.corner_kicks = [x for x in global_instance.corner_kicks if x != -1]
-global_instance.ball_possession = [x for x in global_instance.ball_possession if x != -1]
-global_instance.pass_accuracy = [x for x in global_instance.pass_accuracy if x != -1]
-print(f"Mean shots on goal = {np.mean(np.asarray(global_instance.shots_on_goal))}")
-print(f"Variance shots on goal = {np.var(np.asarray(global_instance.shots_on_goal))}")
-print(f"StdDev shots on goal = {np.std(np.asarray(global_instance.shots_on_goal))}")
-print(f"Mean total shots = {np.mean(np.asarray(global_instance.total_shots))}")
-print(f"Variance total shots = {np.var(np.asarray(global_instance.total_shots))}")
-print(f"StdDev total shots = {np.std(np.asarray(global_instance.total_shots))}")
-print(f"Mean shots inside box = {np.mean(np.asarray(global_instance.shots_inbox))}")
-print(f"Variance shots inside box = {np.var(np.asarray(global_instance.shots_inbox))}")
-print(f"StdDev shots inside box = {np.std(np.asarray(global_instance.shots_inbox))}")
-print(f"Mean corner kicks = {np.mean(np.asarray(global_instance.corner_kicks))}")
-print(f"Variance corner kicks = {np.var(np.asarray(global_instance.corner_kicks))}")
-print(f"StdDev corner kicks = {np.std(np.asarray(global_instance.corner_kicks))}")
-print(f"\nMean ball possession= {np.mean(np.asarray(global_instance.ball_possession))}")
-print(f"Mean pass accuracy = {np.mean(np.asarray(global_instance.pass_accuracy))}")
-
 # Sort matches by datetime played (asc.)
 for team in global_instance.all_teams:
     team.matches = sorted(team.matches, key=lambda match_: match_.datetime)

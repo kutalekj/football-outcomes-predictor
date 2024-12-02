@@ -19,14 +19,6 @@ class Global:
 
             cls._instance.fs_leagues_list = []
 
-            # TODO: Remove the following ones once got normalization constants
-            cls._instance.shots_on_goal = []
-            cls._instance.total_shots = []
-            cls._instance.shots_inbox = []
-            cls._instance.corner_kicks = []
-            cls._instance.ball_possession = []
-            cls._instance.pass_accuracy = []
-
         return cls._instance
 
     @classmethod
