@@ -142,6 +142,9 @@ class SeasonCompTable:
     def init_players_lists_in_regular_comp_season_teams():
         global_instance = Global().get_instance()
         for comp in global_instance.all_comps:
+            if len(comp.regular_round_keywords) == 0:
+                continue  # skip for irregulars
+
             for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
                 # First, get all FS players from comp season and assign them to table (to avoid requests for each team)
                 table = ut.get_table_by_comp_season(comp.id, season)

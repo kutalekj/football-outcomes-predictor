@@ -76,20 +76,6 @@ class Comp:
 
             # Teams players statistics in comp season (only for comps with regular rounds!)
             if len(self.regular_round_keywords) > 0:
-                """
-                fs_season_id = self.get_fs_season_id(self.id, self.country, season)
-                comp_season_players_stats_request_string_fs = settings.FS_HOST + "/league-players?key=" + \ 
-                                                settings.FS_KEY + "&season_id=" + str(fs_season_id) + "&include=stats"
-                res = requests.get(comp_season_players_stats_request_string_fs)
-                data_comp_season_players_stats_fs = res.json()
-
-                all_data_comp_season_players_stats_fs = []
-                num_pages = data_comp_season_players_stats_fs['pager']['max_page']
-                for page_num in range(1, num_pages + 1):
-                    request_url = comp_season_players_stats_request_string_fs + "&page=" + str(page_num)
-                    res_json = requests.get(request_url).json()
-                    all_data_comp_season_players_stats_fs += res_json['data']
-                """
                 fs_season_id = self.get_fs_season_id(self.id, self.country, season)
                 comp_season_teams_request_string_fs = settings.FS_HOST + "/league-teams?key=" + settings.FS_KEY \
                                                            + "&season_id=" + str(fs_season_id) + "&include=stats"

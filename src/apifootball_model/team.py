@@ -9,7 +9,7 @@ class Team:
         self.name = name
 
         self.fs_id = None
-        self.fs_name = None
+        self.fs_clean_name = None
 
         # Exclude lower tier teams that played only relegation playoff match at the end of season from season tables
         self.regularity_in_comp_season = []
@@ -78,31 +78,29 @@ class Team:
         fs_teams_comp_season = fs_teams_comp_season[0]
 
         # Match AF team with FS team
-        self.fs_id, self.fs_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)
+        if comp.id in [61, 88, 119, 179, 307] and self.id in [80, 85, 197, 201, 254, 402, 405, 406, 413, 2944]:
+            if comp.id == 61 and self.id == 80:
+                self.fs_id, self.fs_clean_name = 57, "Olympique Lyonnais"
+            if comp.id == 61 and self.id == 85:
+                self.fs_id, self.fs_clean_name = 68, "PSG"
+            if comp.id == 88 and self.id == 197:
+                self.fs_id, self.fs_clean_name = 121, "PSV"
+            if comp.id == 88 and self.id == 201:
+                self.fs_id, self.fs_clean_name = 378, "AZ"
+            if comp.id == 88 and self.id == 413:
+                self.fs_id, self.fs_clean_name = 379, "NEC"  # Nijmegen
+            if comp.id == 119 and self.id == 402:
+                self.fs_id, self.fs_clean_name = 974, "AaB"  # Aalborg
+            if comp.id == 119 and self.id == 405:
+                self.fs_id, self.fs_clean_name = 2523, "OB"  # Odense
+            if comp.id == 119 and self.id == 406:
+                self.fs_id, self.fs_clean_name = 2516, "AGF"  # Aarhus
+            if comp.id == 179 and self.id == 254:
+                self.fs_id, self.fs_clean_name = 32, "Hearts"
+            if comp.id == 307 and self.id == 2944:
+                self.fs_id, self.fs_clean_name = 5071, "Al Feiha"  # Al-Fayha
+            print(f"\t\t\t\t\tAF team matched to FS team: [{self.name}] [{self.fs_clean_name}] (manually)")
+
+        else:
+            self.fs_id, self.fs_clean_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)
         # TODO: Minor adj. might be forbidding to match teams already matched before
-
-    # TODO: The following should be already implemented in SCT.init_players_lists_in_regular_comp_season_teams()
-    """
-    def get_players_in_regular_comp_season(self, regular_season_elem):
-        comp = regular_season_elem['comp']
-        season = regular_season_elem['season']
-        fs_season_id = comp.get_fs_season_id(comp.id, comp.country, season)  # get FS season_id (comp season ID)
-
-        comp_season_players_stats_request_string_fs = settings.FS_HOST + "/league-players?key=" + \
-                                                      settings.FS_KEY + "&season_id=" + str(
-            fs_season_id) + "&include=stats"
-        res = requests.get(comp_season_players_stats_request_string_fs)
-        data_comp_season_players_stats_fs = res.json()  # get data
-        num_pages = data_comp_season_players_stats_fs['pager']['max_page']
-
-        all_data_comp_season_players_stats_fs = []
-        for page_num in range(1, num_pages + 1):  # iterate over all pages
-            request_url = comp_season_players_stats_request_string_fs + "&page=" + str(page_num)
-            res_json = requests.get(request_url).json()
-
-            all_data_comp_season_players_stats_fs += res_json['data']
-
-        self.players_in_regular_comp_season.append({'comp': comp, 'season': season,
-                                                    'fs_players': all_data_comp_season_players_stats_fs})  # assign data
-        # TODO.........
-    """

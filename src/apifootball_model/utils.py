@@ -225,9 +225,9 @@ def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
     highest_similarity = 0.0
 
     for fs_team in fs_teams_in_comp_season['fs_teams']:
-        normalized_fs_name = normalize_team_name(fs_team['cleanName'])  # normalize FS team name
+        normalized_fs_clean_name = normalize_team_name(fs_team['cleanName'])  # normalize FS team name
 
-        similarity = difflib.SequenceMatcher(None, normalized_af_name, normalized_fs_name).ratio()  # calc. similarity
+        similarity = difflib.SequenceMatcher(None, normalized_af_name, normalized_fs_clean_name).ratio()  # similarity
 
         if similarity > highest_similarity:
             highest_similarity = similarity
@@ -236,7 +236,7 @@ def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
     print(f"\t\t\t\t\tAF team matched to FS team: [{af_team_name}] [{best_fs_match['cleanName']}] "
           f"(similarity={str(highest_similarity)})")
 
-    return best_fs_match['id'], best_fs_match['name']
+    return best_fs_match['id'], best_fs_match['cleanName']
 
 
 def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
@@ -246,9 +246,9 @@ def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
     highest_similarity = 0.0
 
     for fs_team in fs_teams_in_comp_season['fs_teams']:
-        normalized_fs_name = normalize_team_name(fs_team.name)  # normalize FS team name
+        normalized_fs_clean_name = normalize_team_name(fs_team.name)  # normalize FS team name
 
-        similarity = fuzz.ratio(normalized_af_name, normalized_fs_name)  # calc. similarity
+        similarity = fuzz.ratio(normalized_af_name, normalized_fs_clean_name)  # similarity
 
         if similarity > highest_similarity:
             highest_similarity = similarity

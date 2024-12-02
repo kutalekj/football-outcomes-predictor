@@ -84,9 +84,40 @@ for comp in [
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
 """
+"""
 for comp in [
-{'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
-     'fs_alias': "Professional League"}  # SA
+    {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 1"},
+    {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 2"},
+    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': []},
+    {'id': 179, 'name': "Premiership",
+     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
+     'fs_alias': "Premiership"},  # SCO
+    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': []},  # SCO
+    {'id': 185, 'name': "League Cup", 'regular_round_keywords': []},  # SCO
+    {'id': 119, 'name': "Superliga",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
+     'fs_alias': "Superliga"},  # DEN
+    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},  # DEN
+    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Eredivisie"},
+    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': []},  # NED
+    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
+     'fs_alias': "Professional League"},  # SA
+    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': []},  # SA
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
+]:
+"""
+for comp in [
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
 # for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
@@ -180,7 +211,7 @@ for match in global_instance.all_matches:
 # sys.stdout.close()
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store10_BEL_POR_etc.csv")
+# in_out.store_matches("tmp_csv_store11_BEL_POR_FRA_NED_SCO_DEN_SA.csv")
 
 """
 
