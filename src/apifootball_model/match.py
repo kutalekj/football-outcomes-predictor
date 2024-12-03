@@ -38,6 +38,8 @@ class Match:
 
         self.home_team_lineup = None
         self.away_team_lineup = None
+        self.home_fs_team_lineup = []
+        self.away_fs_team_lineup = []
 
         self.winner_team_id = None
         self.home_team_goals = None

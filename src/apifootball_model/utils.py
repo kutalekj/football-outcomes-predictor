@@ -210,7 +210,7 @@ def get_team_if_exists(team_id):
     return None
 
 
-def normalize_team_name(name):
+def normalize_name(name):
     name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('ASCII')  # to ASCII - remove accents
     name = name.lower()
     name = re.sub(r'[^a-z0-9\s]', '', name)  # remove all non-alphanumeric characters
@@ -219,13 +219,13 @@ def normalize_team_name(name):
 
 
 def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
-    normalized_af_name = normalize_team_name(af_team_name)  # normalize AF team name
+    normalized_af_name = normalize_name(af_team_name)  # normalize AF team name
 
     best_fs_match = None
     highest_similarity = 0.0
 
     for fs_team in fs_teams_in_comp_season['fs_teams']:
-        normalized_fs_clean_name = normalize_team_name(fs_team['cleanName'])  # normalize FS team name
+        normalized_fs_clean_name = normalize_name(fs_team['cleanName'])  # normalize FS team name
 
         similarity = difflib.SequenceMatcher(None, normalized_af_name, normalized_fs_clean_name).ratio()  # similarity
 
@@ -240,13 +240,13 @@ def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
 
 
 def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
-    normalized_af_name = normalize_team_name(af_team_name)  # normalize AF team name
+    normalized_af_name = normalize_name(af_team_name)  # normalize AF team name
 
     best_fs_match = None
     highest_similarity = 0.0
 
     for fs_team in fs_teams_in_comp_season['fs_teams']:
-        normalized_fs_clean_name = normalize_team_name(fs_team.name)  # normalize FS team name
+        normalized_fs_clean_name = normalize_name(fs_team.name)  # normalize FS team name
 
         similarity = fuzz.ratio(normalized_af_name, normalized_fs_clean_name)  # similarity
 
@@ -258,6 +258,86 @@ def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
         f"AF team [{af_team_name}] matched to FS team [{best_fs_match['name']}] (similarity={str(highest_similarity)})")
 
     return best_fs_match['id'], best_fs_match['name']
+
+
+def get_fs_match_lineups(curr_match):
+    home_team_fs_lineup = away_team_fs_lineup = [], []
+
+    if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
+        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
+              f" is irregular - no FS team lineup")
+        return home_team_fs_lineup, away_team_fs_lineup
+
+    # Home team
+    home_team_fs_players_in_comp_season = [x['fs_players'] for x in curr_match.home_team.players_in_regular_comp_season
+                                           if curr_match.comp == x['comp'] and curr_match.season == x['season']]
+    if len(home_team_fs_players_in_comp_season) == 0:
+        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
+              f" is regular, but no AF team lineup was found for the home team - no FS team lineups")
+        return home_team_fs_lineup, away_team_fs_lineup
+
+    if len(home_team_fs_players_in_comp_season) > 1:
+        raise ValueError(f"Multiple FS home team lineups found for match between {curr_match.home_team.name} and "
+                         f"{curr_match.away_team.name} ({curr_match.datetime}) - ERROR!")
+
+    for af_player in curr_match.home_team_lineup:
+        matches_fs_player = match_af_player_to_fs_player_alternative(af_player, home_team_fs_players_in_comp_season[0])
+        curr_match.home_fs_team_lineup.append(matches_fs_player)  # TODO: Currently matching by 'fs_known_as' name
+
+    # Away team
+    away_team_fs_players_in_comp_season = [x['fs_players'] for x in
+                                           curr_match.away_team.players_in_regular_comp_season
+                                           if curr_match.comp == x['comp'] and curr_match.season == x['season']]
+
+    if len(away_team_fs_players_in_comp_season) == 0: # skip for irregular matches
+        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
+              f" is regular, but no AF team lineup was found for the away team - no FS team lineups")
+        return home_team_fs_lineup, away_team_fs_lineup
+
+    if len(away_team_fs_players_in_comp_season) > 1:
+        raise ValueError(f"Multiple FS away team lineups found for match between {curr_match.home_team.name} and "
+                         f"{curr_match.away_team.name} ({curr_match.datetime}) - ERROR!")
+
+    for af_player in curr_match.away_team_lineup:
+        matches_fs_player = match_af_player_to_fs_player_alternative(af_player, away_team_fs_players_in_comp_season[0])
+        curr_match.away_fs_team_lineup.append(matches_fs_player)  # TODO: Currently matching by 'fs_known_as' name
+
+
+def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_season):
+    normalized_af_name = normalize_name(af_player[1])  # normalize AF player name (id, name, pos)
+
+    best_fs_match = None
+    highest_similarity = 0.0
+
+    # TODO: Try 1. match by FS 'fs_full_name'
+    for fs_player in fs_players_in_comp_season:
+        normalized_fs_full_name = normalize_name(fs_player['fs_full_name'])  # normalize FS player name
+
+        similarity = fuzz.ratio(normalized_af_name, normalized_fs_full_name)  # similarity
+
+        if similarity > highest_similarity:
+            highest_similarity = similarity
+            best_fs_match = fs_player
+
+    print(
+        f"AF player [{af_player[1]}] matched to FS player full name [{best_fs_match['fs_full_name']}] "
+        f"(similarity={str(highest_similarity)})")
+
+    # TODO: Try 2. match by FS 'fs_known_as'
+    for fs_player in fs_players_in_comp_season:
+        normalized_fs_known_as_name = normalize_name(fs_player['fs_known_as'])  # normalize FS player name
+
+        similarity = fuzz.ratio(normalized_af_name, normalized_fs_known_as_name)  # similarity
+
+        if similarity > highest_similarity:
+            highest_similarity = similarity
+            best_fs_match = fs_player
+
+    print(
+        f"AF player [{af_player[1]}] matched to FS player 'known as' name [{best_fs_match['fs_known_as']}] "
+        f"(similarity={str(highest_similarity)})")
+
+    return best_fs_match
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):
