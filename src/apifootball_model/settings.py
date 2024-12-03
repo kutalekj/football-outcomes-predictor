@@ -157,3 +157,6 @@ CSV_CATEGORIES = {
     "defending": ["defensive_awareness", "standing_tackle", "sliding_tackle"],
     "goalkeeping": ["gk_diving", "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes"]
 }
+
+SIMILARITY_THRESHOLD = 0.35
+MINIMUM_MATCHED_PLAYERS = 8
