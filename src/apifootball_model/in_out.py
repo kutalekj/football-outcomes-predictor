@@ -180,6 +180,8 @@ def load_player_stats():
 
     player_id_to_names = {}  # mapping from player_id to (name, full_name)
 
+    tmp_dob_counter = 0
+
     # Process each CSV file
     for index, (file_date, filename) in enumerate(files_with_dates):
         file_path = os.path.join(settings.CSV_PLAYERS_PATH, filename)
@@ -203,7 +205,7 @@ def load_player_stats():
                         break
 
                     if raw_value == '':
-                        if attr_name not in ['country_id', 'country_name']:  # these are missing too often - bad log
+                        if attr_name not in ['country_id', 'country_name', 'club_joined']:  # these missing too often
                             print(f"Missing value for '{attr_name}' in file '{filename}', "
                                   f"row {row_num}. Setting default val")
 
@@ -259,8 +261,8 @@ def load_player_stats():
                         break
 
                     if raw_value == '':
-                        print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
-                              f"Setting default val")
+                        # print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
+                        #       f"Setting default val")
                         player_data[skill_attr] = 0
                     else:
                         try:
@@ -286,7 +288,8 @@ def load_player_stats():
                 player_index_dict[player_id].append((index, file_date))
 
                 # Update name set for the player_id
-                name = player_data['name'].split(sep=' - FIFA')[0]
+                name = player_data['name'].split(sep=' - FIFA')[0] if \
+                    "FIFA" in player_data['name'] else player_data['name'].split(sep=' -')[0]
                 full_name = player_data['full_name']
                 player_id_to_names[player_id].add((name, full_name))
 
@@ -296,14 +299,51 @@ def load_player_stats():
                 # Update players_by_dob dict
                 dob = player_data['dob']
                 if dob not in players_by_dob:
-                    players_by_dob[dob] = set()
-                players_by_dob[dob].add((player_id, name, full_name))  # use player_id to ensure uniqueness
+                    players_by_dob[dob] = []
+                # players_by_dob[dob].add((player_id, name, full_name))  # use player_id to ensure uniqueness
+                # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
+                if player_id not in {player[0] for player in players_by_dob[dob]}:
+                    players_by_dob[dob].append((player_id, name, full_name))
+                    tmp_dob_counter += 1
 
         # Append to list_of_data
         list_of_data.append((file_date, players_dict))
 
     player_index_dict = dict(sorted(player_index_dict.items()))
     players_by_dob = dict(sorted(players_by_dob.items()))
+
+    # Create a new dictionary mapping player_id to a set of dates of birth
+    player_id_to_dobs = {}
+
+    for dob, player_list in players_by_dob.items():
+        for player_id, name, full_name in player_list:
+            if player_id not in player_id_to_dobs:
+                player_id_to_dobs[player_id] = set()
+            player_id_to_dobs[player_id].add(dob)
+
+    # Now, analyze the player_id_to_dobs dictionary
+
+    # Total number of unique player IDs
+    total_unique_player_ids = len(player_id_to_dobs)
+    print(f"Total unique player IDs: {total_unique_player_ids}")
+
+    # Check for player IDs associated with multiple dates of birth
+    players_with_multiple_dobs = {player_id: dobs for player_id, dobs in player_id_to_dobs.items() if len(dobs) > 1}
+
+    print(f"Number of players with multiple dates of birth: {len(players_with_multiple_dobs)}")
+
+    # If there are players with multiple dates of birth, list them
+    if players_with_multiple_dobs:
+        print("Players with multiple dates of birth:")
+        for player_id, dobs in players_with_multiple_dobs.items():
+            name_variations = player_id_to_names.get(player_id, set())
+            print(f"Player ID: {player_id}")
+            for name, full_name in name_variations:
+                print(f"  Name: {name}, Full Name: {full_name}")
+            print(f"  Dates of Birth: {', '.join([dob.strftime('%Y-%m-%d') for dob in sorted(dobs)])}")
+            print()
+    else:
+        print("No players with multiple dates of birth found.")
 
     return list_of_data, player_index_dict, players_by_dob
 
