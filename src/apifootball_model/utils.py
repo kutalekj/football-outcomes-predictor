@@ -286,10 +286,14 @@ def get_fs_match_lineups(curr_match):
 
     else:
         for af_player in curr_match.home_team_lineup:
-            matched_fs_player, similarity = match_af_player_to_fs_player_alternative(af_player,
-                                                                                     home_team_fs_players_in_comp_season[0])
+            matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
+                af_player, home_team_fs_players_in_comp_season[0])
+
             if similarity > settings.SIMILARITY_THRESHOLD:
                 curr_match.home_fs_team_lineup.append(matched_fs_player)
+            else:
+                print(f"WARNING! - Found player [{af_player[1]}] match below threshold ({curr_match.home_team.name} vs."
+                      f" {curr_match.away_team.name}, {curr_match.datetime})")
 
         if len(curr_match.home_fs_team_lineup) < settings.MINIMUM_MATCHED_PLAYERS:
             raise ValueError(f"There were only {len(curr_match.home_fs_team_lineup)} matched home team FS player, "
@@ -315,8 +319,8 @@ def get_fs_match_lineups(curr_match):
 
     else:
         for af_player in curr_match.away_team_lineup:
-            matched_fs_player, similarity = match_af_player_to_fs_player_alternative(af_player,
-                                                                                     away_team_fs_players_in_comp_season[0])
+            matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
+                af_player, away_team_fs_players_in_comp_season[0])
 
             if similarity > settings.SIMILARITY_THRESHOLD:
                 curr_match.away_fs_team_lineup.append(matched_fs_player)
@@ -347,9 +351,8 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
             best_fs_match = fs_player
 
     if highest_similarity > settings.SIMILARITY_THRESHOLD:
-        print(
-            f"AF player [{af_player[1]}] matched to FS player 'known as' name [{best_fs_match['fs_known_as']}] "
-            f"(similarity={str(highest_similarity)})")
+        # print(f"AF player [{af_player[1]}] matched to FS player 'known as' name [{best_fs_match['fs_known_as']}] (similarity={str(highest_similarity)})", end='\t')
+        print(f"[{af_player[1]}][{best_fs_match['fs_known_as']}]", end='\t')
 
     return best_fs_match, highest_similarity
 
