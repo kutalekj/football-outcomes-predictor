@@ -184,28 +184,33 @@ def load_player_stats():
         players_dict = {}
 
         with open(file_path, mode='r', encoding='utf-8') as csvfile:
-            reader = csv.DictReader(csvfile)
+            reader = csv.reader(csvfile)
+            headers = next(reader)
 
             # Read each player row
             for row_num, row in enumerate(reader, start=2):  # start=2 to account for header
 
-                player_row_valid = True
+                # Inconsistency between number of cells in a row and the CSV header
+                if len(row) != len(headers):
+                    print(f"Row {row_num} in file '{filename}' is misaligned.")
+
+                    # Realign the row (pad it with empty strings to match the header length)
+                    missing_cells = len(headers) - len(row)
+                    index_to_insert = 24  # insert empty strings  to this position (here usually values missing)
+                    if missing_cells > 0:
+                        row[index_to_insert:index_to_insert] = [''] * missing_cells
+
+                row_dict = dict(zip(headers, row))  # dict mapping headers to row values
+
+                skip_player = False
                 player_data = {}  # init player data dict
 
                 # Load player attributes
                 for attr_name, attr_type in attributes:
-                    try:
-                        raw_value = row.get(attr_name, '').strip()
-                    except AttributeError:
-                        player_row_valid = False  # some kind of unexpected row format in CSV (some data missing) - skip
-                        break
+                    raw_value = row_dict.get(attr_name, '').strip()
 
+                    # Attribute value missing
                     if raw_value == '':
-                        if attr_name not in ['country_id', 'country_name', 'club_joined']:  # these missing too often
-                            # print(f"Missing value for '{attr_name}' in file '{filename}', "
-                            #       f"row {row_num}. Setting default val")
-                            pass
-
                         if attr_name in ['player_id', 'name', 'full_name', 'dob']:
                             raise ValueError(f"Attributes player_id, name, full_name and dob cannot be missing! "
                                              f"(file {filename}, row {row_num})")
@@ -219,6 +224,7 @@ def load_player_stats():
                             player_data[attr_name] = []
                         else:
                             player_data[attr_name] = None
+
                     else:
                         try:
                             if attr_type == int:
@@ -231,10 +237,7 @@ def load_player_stats():
                                 player_data[attr_name] = [pos.strip() for pos in raw_value.split(',')]
                             else:
                                 player_data[attr_name] = raw_value
-                        except Exception as e:
-                            print(f"Error parsing '{attr_name}' in file '{filename}', row {row_num}: {e}."
-                                  f" Setting default val")
-
+                        except Exception:
                             if attr_name in ['player_id', 'name', 'full_name', 'dob']:
                                 raise ValueError(f"Attributes player_id, name, full_name and dob must be parsed! "
                                                  f"(file {filename}, row {row_num})")
@@ -251,25 +254,24 @@ def load_player_stats():
 
                 # Load player skills
                 for skill_attr in settings.PLAYER_SKILLS:
-                    try:
-                        raw_value = row.get(skill_attr, '').strip()
-                    except AttributeError:
-                        player_row_valid = False  # some kind of unexpected row format in CSV (some data missing) - skip
-                        break
+                    raw_value = row_dict.get(skill_attr, '').strip()
 
+                    # Skill value missing
                     if raw_value == '':
-                        # print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
-                        #       f"Setting default val")
-                        player_data[skill_attr] = 0
+                        print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
+                              f"SKIPPING PLAYER")
+                        skip_player = True
+                        break
                     else:
                         try:
                             player_data[skill_attr] = int(raw_value)
                         except ValueError:
                             print(f"Invalid integer for '{skill_attr}' in file '{filename}', row {row_num}."
-                                  f"Setting default val")
-                            player_data[skill_attr] = 0
+                                  f"SKIPPING PLAYER")
+                            skip_player = True
+                            break
 
-                if not player_row_valid:  # skip this player if invalid row
+                if skip_player:  # skip this player if invalid player skill found
                     print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row_num})")
                     continue
 
@@ -279,8 +281,7 @@ def load_player_stats():
                 # Update player occurrences dict
                 if player_id not in global_instance.sofifa_player_index_dict:
                     global_instance.sofifa_player_index_dict[player_id] = []
-                    # Initialize name set for this player_id
-                    player_id_to_names[player_id] = set()
+                    player_id_to_names[player_id] = set()  # init name set for this player_id
 
                 global_instance.sofifa_player_index_dict[player_id].append((index, file_date))
 
