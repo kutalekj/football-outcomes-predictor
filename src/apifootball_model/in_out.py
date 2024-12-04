@@ -140,9 +140,7 @@ def load_matches(file_name):
 
 
 def load_player_stats():
-    list_of_data = []  # list of tuples (datetime, dict_of_players)
-    player_index_dict = {}  # dict to keep track of player occurrences
-    players_by_dob = {}  # dict grouping players by date of birth (for matching with FS players)
+    global_instance = Global.get_instance()
 
     csv_files = [f for f in os.listdir(settings.CSV_PLAYERS_PATH) if f.endswith('.csv')]  # get CSV files files
     files_with_dates = []  # list to store tuples of (datetime, filename)
@@ -180,8 +178,6 @@ def load_player_stats():
 
     player_id_to_names = {}  # mapping from player_id to (name, full_name)
 
-    tmp_dob_counter = 0
-
     # Process each CSV file
     for index, (file_date, filename) in enumerate(files_with_dates):
         file_path = os.path.join(settings.CSV_PLAYERS_PATH, filename)
@@ -206,12 +202,13 @@ def load_player_stats():
 
                     if raw_value == '':
                         if attr_name not in ['country_id', 'country_name', 'club_joined']:  # these missing too often
-                            print(f"Missing value for '{attr_name}' in file '{filename}', "
-                                  f"row {row_num}. Setting default val")
+                            # print(f"Missing value for '{attr_name}' in file '{filename}', "
+                            #       f"row {row_num}. Setting default val")
+                            pass
 
                         if attr_name in ['player_id', 'name', 'full_name', 'dob']:
                             raise ValueError(f"Attributes player_id, name, full_name and dob cannot be missing! "
-                                             f"(file {filename}, row {row})")
+                                             f"(file {filename}, row {row_num})")
                         elif attr_type == int:
                             player_data[attr_name] = 0
                         elif attr_type == str:
@@ -240,7 +237,7 @@ def load_player_stats():
 
                             if attr_name in ['player_id', 'name', 'full_name', 'dob']:
                                 raise ValueError(f"Attributes player_id, name, full_name and dob must be parsed! "
-                                                 f"(file {filename}, row {row})")
+                                                 f"(file {filename}, row {row_num})")
                             elif attr_type == int:
                                 player_data[attr_name] = 0
                             elif attr_type == str:
@@ -273,19 +270,19 @@ def load_player_stats():
                             player_data[skill_attr] = 0
 
                 if not player_row_valid:  # skip this player if invalid row
-                    print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row})")
+                    print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row_num})")
                     continue
 
                 # Use 'player_id' as the key for player_index_dict
                 player_id = player_data['player_id']
 
                 # Update player occurrences dict
-                if player_id not in player_index_dict:
-                    player_index_dict[player_id] = []
+                if player_id not in global_instance.sofifa_player_index_dict:
+                    global_instance.sofifa_player_index_dict[player_id] = []
                     # Initialize name set for this player_id
                     player_id_to_names[player_id] = set()
 
-                player_index_dict[player_id].append((index, file_date))
+                global_instance.sofifa_player_index_dict[player_id].append((index, file_date))
 
                 # Update name set for the player_id
                 name = player_data['name'].split(sep=' - FIFA')[0] if \
@@ -298,52 +295,16 @@ def load_player_stats():
 
                 # Update players_by_dob dict
                 dob = player_data['dob']
-                if dob not in players_by_dob:
-                    players_by_dob[dob] = []
-                # players_by_dob[dob].add((player_id, name, full_name))  # use player_id to ensure uniqueness
+                if dob not in global_instance.sofifa_players_by_dob:
+                    global_instance.sofifa_players_by_dob[dob] = []
+
                 # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
-                if player_id not in {player[0] for player in players_by_dob[dob]}:
-                    players_by_dob[dob].append((player_id, name, full_name))
-                    tmp_dob_counter += 1
+                if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
+                    global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
 
         # Append to list_of_data
-        list_of_data.append((file_date, players_dict))
+        global_instance.sofifa_players_data.append((file_date, players_dict))
 
-    player_index_dict = dict(sorted(player_index_dict.items()))
-    players_by_dob = dict(sorted(players_by_dob.items()))
-
-    # Create a new dictionary mapping player_id to a set of dates of birth
-    player_id_to_dobs = {}
-
-    for dob, player_list in players_by_dob.items():
-        for player_id, name, full_name in player_list:
-            if player_id not in player_id_to_dobs:
-                player_id_to_dobs[player_id] = set()
-            player_id_to_dobs[player_id].add(dob)
-
-    # Now, analyze the player_id_to_dobs dictionary
-
-    # Total number of unique player IDs
-    total_unique_player_ids = len(player_id_to_dobs)
-    print(f"Total unique player IDs: {total_unique_player_ids}")
-
-    # Check for player IDs associated with multiple dates of birth
-    players_with_multiple_dobs = {player_id: dobs for player_id, dobs in player_id_to_dobs.items() if len(dobs) > 1}
-
-    print(f"Number of players with multiple dates of birth: {len(players_with_multiple_dobs)}")
-
-    # If there are players with multiple dates of birth, list them
-    if players_with_multiple_dobs:
-        print("Players with multiple dates of birth:")
-        for player_id, dobs in players_with_multiple_dobs.items():
-            name_variations = player_id_to_names.get(player_id, set())
-            print(f"Player ID: {player_id}")
-            for name, full_name in name_variations:
-                print(f"  Name: {name}, Full Name: {full_name}")
-            print(f"  Dates of Birth: {', '.join([dob.strftime('%Y-%m-%d') for dob in sorted(dobs)])}")
-            print()
-    else:
-        print("No players with multiple dates of birth found.")
-
-    return list_of_data, player_index_dict, players_by_dob
+    global_instance.sofifa_player_index_dict = dict(sorted(global_instance.sofifa_player_index_dict.items()))
+    global_instance.sofifa_players_by_dob = dict(sorted(global_instance.sofifa_players_by_dob.items()))
 

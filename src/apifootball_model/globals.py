@@ -19,6 +19,18 @@ class Global:
 
             cls._instance.fs_leagues_list = []
 
+            # Main list with sofifa players' data
+            # Each elem is tuple (datetime of CSV with data, big dict); big dict indexed by player IDs, values = dicts
+            cls._instance.sofifa_players_data = []
+
+            # Dict to keep track of player occurrences
+            # Indexed by sofifa player IDs; each elem is list of tuples (index to main list, datetime of CSV with data)
+            cls._instance.sofifa_player_index_dict = {}
+
+            # Dict grouping players by date of birth (for matching with FS players)
+            # Indexed by dates of birth; each elem is list of triples (player_id, name, full_name)
+            cls._instance.sofifa_players_by_dob = {}
+
         return cls._instance
 
     @classmethod
