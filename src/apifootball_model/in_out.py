@@ -137,3 +137,173 @@ def load_matches(file_name):
         print(f"Error: The file '{file_name}' was not found. Please check the file name and try again.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+
+def load_player_stats():
+    list_of_data = []  # list of tuples (datetime, dict_of_players)
+    player_index_dict = {}  # dict to keep track of player occurrences
+    players_by_dob = {}  # dict grouping players by date of birth (for matching with FS players)
+
+    csv_files = [f for f in os.listdir(settings.CSV_PLAYERS_PATH) if f.endswith('.csv')]  # get CSV files files
+    files_with_dates = []  # list to store tuples of (datetime, filename)
+
+    # Extract dates from filenames and sort them
+    for filename in csv_files:
+        date_str = os.path.splitext(filename)[0]
+        file_date = datetime.datetime.strptime(date_str, '%Y-%m-%d')  # assuming filename format 'YYYY-MM-DD.csv'
+        files_with_dates.append((file_date, filename))
+
+    files_with_dates.sort()  # sort CSV files by date (asc.)
+
+    attributes = [
+        ('player_id', int),
+        ('version', 'date'),
+        ('name', str),
+        ('full_name', str),
+        ('height_cm', int),
+        ('weight_kg', int),
+        ('dob', 'date'),
+        ('positions', 'list'),
+        ('overall_rating', int),
+        ('potential', int),
+        ('value', str),
+        ('club_id', int),
+        ('club_name', str),
+        ('club_league_id', int),
+        ('club_league_name', str),
+        ('club_rating', int),
+        ('club_kit_number', int),
+        ('club_joined', 'date'),
+        ('country_id', int),
+        ('country_name', str)
+    ]
+
+    player_id_to_names = {}  # mapping from player_id to (name, full_name)
+
+    # Process each CSV file
+    for index, (file_date, filename) in enumerate(files_with_dates):
+        file_path = os.path.join(settings.CSV_PLAYERS_PATH, filename)
+        players_dict = {}
+
+        with open(file_path, mode='r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+
+            # Read each player row
+            for row_num, row in enumerate(reader, start=2):  # start=2 to account for header
+
+                player_row_valid = True
+                player_data = {}  # init player data dict
+
+                # Load player attributes
+                for attr_name, attr_type in attributes:
+                    try:
+                        raw_value = row.get(attr_name, '').strip()
+                    except AttributeError:
+                        player_row_valid = False  # some kind of unexpected row format in CSV (some data missing) - skip
+                        break
+
+                    if raw_value == '':
+                        if attr_name not in ['country_id', 'country_name']:  # these are missing too often - bad log
+                            print(f"Missing value for '{attr_name}' in file '{filename}', "
+                                  f"row {row_num}. Setting default val")
+
+                        if attr_name in ['player_id', 'name', 'full_name', 'dob']:
+                            raise ValueError(f"Attributes player_id, name, full_name and dob cannot be missing! "
+                                             f"(file {filename}, row {row})")
+                        elif attr_type == int:
+                            player_data[attr_name] = 0
+                        elif attr_type == str:
+                            player_data[attr_name] = ''
+                        elif attr_type == 'date':
+                            player_data[attr_name] = None
+                        elif attr_type == 'list':
+                            player_data[attr_name] = []
+                        else:
+                            player_data[attr_name] = None
+                    else:
+                        try:
+                            if attr_type == int:
+                                player_data[attr_name] = int(raw_value)
+                            elif attr_type == str:
+                                player_data[attr_name] = raw_value
+                            elif attr_type == 'date':
+                                player_data[attr_name] = datetime.datetime.strptime(raw_value, '%Y-%m-%d')
+                            elif attr_type == 'list':
+                                player_data[attr_name] = [pos.strip() for pos in raw_value.split(',')]
+                            else:
+                                player_data[attr_name] = raw_value
+                        except Exception as e:
+                            print(f"Error parsing '{attr_name}' in file '{filename}', row {row_num}: {e}."
+                                  f" Setting default val")
+
+                            if attr_name in ['player_id', 'name', 'full_name', 'dob']:
+                                raise ValueError(f"Attributes player_id, name, full_name and dob must be parsed! "
+                                                 f"(file {filename}, row {row})")
+                            elif attr_type == int:
+                                player_data[attr_name] = 0
+                            elif attr_type == str:
+                                player_data[attr_name] = ''
+                            elif attr_type == 'date':
+                                player_data[attr_name] = None
+                            elif attr_type == 'list':
+                                player_data[attr_name] = []
+                            else:
+                                player_data[attr_name] = None
+
+                # Load player skills
+                for skill_attr in settings.PLAYER_SKILLS:
+                    try:
+                        raw_value = row.get(skill_attr, '').strip()
+                    except AttributeError:
+                        player_row_valid = False  # some kind of unexpected row format in CSV (some data missing) - skip
+                        break
+
+                    if raw_value == '':
+                        print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
+                              f"Setting default val")
+                        player_data[skill_attr] = 0
+                    else:
+                        try:
+                            player_data[skill_attr] = int(raw_value)
+                        except ValueError:
+                            print(f"Invalid integer for '{skill_attr}' in file '{filename}', row {row_num}."
+                                  f"Setting default val")
+                            player_data[skill_attr] = 0
+
+                if not player_row_valid:  # skip this player if invalid row
+                    print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row})")
+                    continue
+
+                # Use 'player_id' as the key for player_index_dict
+                player_id = player_data['player_id']
+
+                # Update player occurrences dict
+                if player_id not in player_index_dict:
+                    player_index_dict[player_id] = []
+                    # Initialize name set for this player_id
+                    player_id_to_names[player_id] = set()
+
+                player_index_dict[player_id].append((index, file_date))
+
+                # Update name set for the player_id
+                name = player_data['name'].split(sep=' - FIFA')[0]
+                full_name = player_data['full_name']
+                player_id_to_names[player_id].add((name, full_name))
+
+                # Add player data to players_dict
+                players_dict[player_id] = player_data
+
+                # Update players_by_dob dict
+                dob = player_data['dob']
+                if dob not in players_by_dob:
+                    players_by_dob[dob] = set()
+                players_by_dob[dob].add((player_id, name, full_name))  # use player_id to ensure uniqueness
+
+        # Append to list_of_data
+        list_of_data.append((file_date, players_dict))
+
+    player_index_dict = dict(sorted(player_index_dict.items()))
+    players_by_dob = dict(sorted(players_by_dob.items()))
+
+    return list_of_data, player_index_dict, players_by_dob
+

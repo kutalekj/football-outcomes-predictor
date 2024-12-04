@@ -15,11 +15,11 @@ from train import train
 
 global_instance = Global.get_instance()
 
-# 1. Init comps and their seasons and rounds
+# 1. Init FS comps and their seasons and rounds
 Comp.get_fs_leagues_list()
-"""
+
 for comp in [
-{'id': 179, 'name': "Premiership",
+    {'id': 179, 'name': "Premiership",
      'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
      'fs_alias': "Premiership"},  # SCO
     {'id': 181, 'name': "FA Cup", 'regular_round_keywords': []},  # SCO
@@ -43,8 +43,7 @@ for comp in [
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
-"""
-for comp in settings.COMPS_v2:
+# for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -82,7 +81,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store11_full_copy.csv")
+in_out.load_matches("tmp_csv_store11_BEL_POR_NED_SCO_DEN_SA.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -99,6 +98,9 @@ for team in global_instance.all_teams:
 # Exclude irregular teams from tables calc. + get FS players from all teams for each comp season (represented by table)
 SeasonCompTable.exclude_irregular_teams_from_table_calculations()
 SeasonCompTable.init_players_lists_in_regular_comp_season_teams()
+
+# Load individual player stats from sofifa CSV files
+in_out.load_player_stats()
 
 # 4. Calculate features for each match (must be done chronologically asc.!)
 global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
