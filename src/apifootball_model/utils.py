@@ -358,32 +358,40 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
 
 
 def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_dob):
-    normalized_fs_name = normalize_name(fs_player['fs_known_as'])
+    normalized_fs_known_as = normalize_name(fs_player['fs_known_as'])
+    normalized_fs_full_name = normalize_name(fs_player['fs_full_name'])
 
     similarities = []
 
     for sf_player in sf_players_with_same_dob:  # sf_player = (player_id, name, full_name)
-        normalized_sf_player_name = normalize_name(sf_player[1])
-        normalized_sf_player_full_name = normalize_name(sf_player[2])  # match both FS names, take the best match of all
+        normalized_sf_player_name = normalize_name(sf_player[1])  # SF player name
+        normalized_sf_player_full_name = normalize_name(sf_player[2])  # SF player full_name
 
-        similarity_1 = fuzz.ratio(normalized_fs_name, normalized_sf_player_name)  # similarity
-        similarity_2 = fuzz.ratio(normalized_fs_name, normalized_sf_player_full_name)  # similarity
+        # Try matching with 'fs_known_as'
+        similarity_1a = fuzz.ratio(normalized_fs_known_as, normalized_sf_player_name)
+        similarity_2a = fuzz.ratio(normalized_fs_known_as, normalized_sf_player_full_name)
 
-        similarities.append((similarity_1, sf_player[0], sf_player[1]))
-        similarities.append((similarity_2, sf_player[0], sf_player[2]))
+        # Try matching with 'fs_full_name'
+        similarity_1b = fuzz.ratio(normalized_fs_full_name, normalized_sf_player_name)
+        similarity_2b = fuzz.ratio(normalized_fs_full_name, normalized_sf_player_full_name)
+
+        similarities.append((similarity_1a, sf_player[0], sf_player[1]))
+        similarities.append((similarity_2a, sf_player[0], sf_player[2]))
+        similarities.append((similarity_1b, sf_player[0], sf_player[1]))
+        similarities.append((similarity_2b, sf_player[0], sf_player[2]))
 
     sorted_similarities = sorted(similarities, key=lambda x: x[0], reverse=True)
 
     # Debug print
     for sim in sorted_similarities:
-        print(f"[{normalized_fs_name}] to [{sim[2]}] ({sim[0]:.2f})")
+        print(f"[{normalized_fs_known_as}] to [{sim[2]}] ({sim[0]:.2f})")
 
     # Return SF player who belongs to the name that gave the highest similarity
     highest_similarity_sf_player_id = sorted_similarities[0][1]
     highest_similarity_sf_player = [x for x in sf_players_with_same_dob if x[0] == highest_similarity_sf_player_id][0]
 
     print(f"Matched [{fs_player['fs_known_as']} to [{highest_similarity_sf_player[2]}] "
-          f"({highest_similarity_sf_player[1]})")
+          f"({highest_similarity_sf_player[1]})\n")
 
     return highest_similarity_sf_player
 
