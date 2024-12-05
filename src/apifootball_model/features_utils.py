@@ -384,16 +384,20 @@ def calculate_team_strength(curr_match, team_id):
 
     # Iterate over FS lineup players
     for fs_player in team_fs_lineup:
+        fs_player['fs_birthday'] = fs_player['fs_birthday'].replace(hour=0)  # set hours=0 to match SF datetime formats
 
-        # Get sofifa player matching the FS player's date of birth
-        sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player['fs_birthday']]
-        if len(sf_players_with_same_dob) == 0:
-            raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
-                             f"of FS player {fs_player['fs_known_as']}")
+        if fs_player['fs_birthday'] in global_instance.sofifa_players_by_dob:
+            # Get sofifa player matching the FS player's date of birth
+            sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player['fs_birthday']]
+            if len(sf_players_with_same_dob) == 0:
+                raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
+                                 f"of FS player {fs_player['fs_known_as']}")
+        else:
+            print(f"Warning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
+            continue
 
-        sf_players_with_same_dob_names = [x[1] for x in sf_players_with_same_dob]
-        sf_players_with_same_dob_full_names = [x[2] for x in sf_players_with_same_dob]
-        # sf_player_id, sf_player_name, sf_player_full_name = TODO: Continue here...
+        sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players_alternative(
+            fs_player, sf_players_with_same_dob)  # TODO: Continue here
 
     """
     # Get players in current comp season team roster

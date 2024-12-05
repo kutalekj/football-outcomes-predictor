@@ -178,5 +178,5 @@ ALL_SOFIFA_HEADERS = [
         'sliding_tackle', 'gk_diving', 'gk_handling', 'gk_kicking', 'gk_positioning', 'gk_reflexes', 'play_styles'
     ]
 
-SIMILARITY_THRESHOLD = 0.35
+SIMILARITY_THRESHOLD_AF_FS = 0.35
 MINIMUM_MATCHED_PLAYERS = 8

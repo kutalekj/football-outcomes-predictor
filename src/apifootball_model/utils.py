@@ -264,8 +264,8 @@ def get_fs_match_lineups(curr_match):
     home_team_fs_lineup = away_team_fs_lineup = [], []
 
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
-        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
-              f" is irregular - no FS team lineup")
+        # print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
+        #       f" is irregular - no FS team lineup")
         return home_team_fs_lineup, away_team_fs_lineup
 
     # Home team
@@ -289,7 +289,7 @@ def get_fs_match_lineups(curr_match):
             matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
                 af_player, home_team_fs_players_in_comp_season[0])
 
-            if similarity > settings.SIMILARITY_THRESHOLD:
+            if similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
                 curr_match.home_fs_team_lineup.append(matched_fs_player)
             else:
                 print(f"WARNING! - Found player [{af_player[1]}] match below threshold ({curr_match.home_team.name} vs."
@@ -322,7 +322,7 @@ def get_fs_match_lineups(curr_match):
             matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
                 af_player, away_team_fs_players_in_comp_season[0])
 
-            if similarity > settings.SIMILARITY_THRESHOLD:
+            if similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
                 curr_match.away_fs_team_lineup.append(matched_fs_player)
 
         if len(curr_match.away_fs_team_lineup) < settings.MINIMUM_MATCHED_PLAYERS:
@@ -350,11 +350,42 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
             highest_similarity = similarity
             best_fs_match = fs_player
 
-    if highest_similarity > settings.SIMILARITY_THRESHOLD:
+    if highest_similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
         # print(f"AF player [{af_player[1]}] matched to FS player 'known as' name [{best_fs_match['fs_known_as']}] (similarity={str(highest_similarity)})", end='\t')
         print(f"[{af_player[1]}][{best_fs_match['fs_known_as']}]", end='\t')
 
     return best_fs_match, highest_similarity
+
+
+def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_dob):
+    normalized_fs_name = normalize_name(fs_player['fs_known_as'])
+
+    similarities = []
+
+    for sf_player in sf_players_with_same_dob:  # sf_player = (player_id, name, full_name)
+        normalized_sf_player_name = normalize_name(sf_player[1])
+        normalized_sf_player_full_name = normalize_name(sf_player[2])  # match both FS names, take the best match of all
+
+        similarity_1 = fuzz.ratio(normalized_fs_name, normalized_sf_player_name)  # similarity
+        similarity_2 = fuzz.ratio(normalized_fs_name, normalized_sf_player_full_name)  # similarity
+
+        similarities.append((similarity_1, sf_player[0], sf_player[1]))
+        similarities.append((similarity_2, sf_player[0], sf_player[2]))
+
+    sorted_similarities = sorted(similarities, key=lambda x: x[0], reverse=True)
+
+    # Debug print
+    for sim in sorted_similarities:
+        print(f"[{normalized_fs_name}] to [{sim[2]}] ({sim[0]:.2f})")
+
+    # Return SF player who belongs to the name that gave the highest similarity
+    highest_similarity_sf_player_id = sorted_similarities[0][1]
+    highest_similarity_sf_player = [x for x in sf_players_with_same_dob if x[0] == highest_similarity_sf_player_id][0]
+
+    print(f"Matched [{fs_player['fs_known_as']} to [{highest_similarity_sf_player[2]}] "
+          f"({highest_similarity_sf_player[1]})")
+
+    return highest_similarity_sf_player
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):
