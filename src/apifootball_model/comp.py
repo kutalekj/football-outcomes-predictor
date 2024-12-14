@@ -85,7 +85,7 @@ class Comp:
                 fs_teams_comp_season = [x for x in data_comp_season_teams_fs['data']]
                 if len(fs_teams_comp_season) == 0:
                     raise ValueError(f"For an unknown reason no FS teams were found for comp {self.name} {str(season)}")
-                # TODO: Possible adj. - note that from this request is possible to get FS 'competition_is' as well...
+                # TODO: Possible adj. - note that from this request is possible to get FS 'competition_id' as well...
 
             # Teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)

@@ -18,6 +18,7 @@ global_instance = Global.get_instance()
 # 1. Init FS comps and their seasons and rounds
 Comp.get_fs_leagues_list()
 
+"""
 for comp in [
     {'id': 179, 'name': "Premiership",
      'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
@@ -43,7 +44,8 @@ for comp in [
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
-# for comp in settings.COMPS_v2:
+"""
+for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -81,7 +83,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store11_BEL_POR_NED_SCO_DEN_SA.csv")
+in_out.load_matches("tmp_csv_store11_full.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -97,7 +99,7 @@ for team in global_instance.all_teams:
 
 # Exclude irregular teams from tables calc. + get FS players from all teams for each comp season (represented by table)
 SeasonCompTable.exclude_irregular_teams_from_table_calculations()
-SeasonCompTable.init_players_lists_in_regular_comp_season_teams()
+SeasonCompTable.init_fs_players_lists_in_regular_comp_season_teams()
 
 # Load individual player stats from sofifa CSV files
 in_out.load_player_stats()
@@ -118,7 +120,13 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store11_full.csv")
+in_out.store_matches("tmp_csv_store11_full_updated.csv")
+
+# TODO: Debug prints
+print(f"Number of teams for which no FS players were found for some comp season is equal to "
+      f"{str(global_instance.num_teams_missing_fs_comp_season_roster)}")
+print(f"Number of matches for which an AF team lineup is missing is equal to "
+      f"{str(global_instance.num_missing_af_match_lineups)}")
 
 """
 

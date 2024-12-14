@@ -139,7 +139,7 @@ class SeasonCompTable:
                                      season_elem['is_regular']])}
 
     @staticmethod
-    def init_players_lists_in_regular_comp_season_teams():
+    def init_fs_players_lists_in_regular_comp_season_teams():
         global_instance = Global().get_instance()
         for comp in global_instance.all_comps:
             if len(comp.regular_round_keywords) == 0:
@@ -190,6 +190,9 @@ class SeasonCompTable:
                                            team.fs_id == x['fs_club_team_id']
                                            or ('fs_club_team_2_id' in x and team.fs_id == x['fs_club_team_2_id'])]
                     # TODO: Check this teams matching condition!
+
+                    if len(selected_fs_players) == 0:
+                        global_instance.num_teams_missing_fs_comp_season_roster += 1
 
                     team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
                                                                 'fs_players': selected_fs_players})

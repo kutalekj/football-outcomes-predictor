@@ -261,20 +261,20 @@ def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
 
 
 def get_fs_match_lineups(curr_match):
-    home_team_fs_lineup = away_team_fs_lineup = [], []
+    global_instance = Global.get_instance()
 
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         # print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
         #       f" is irregular - no FS team lineup")
-        return home_team_fs_lineup, away_team_fs_lineup
+        return
 
     # Home team
     home_team_fs_players_in_comp_season = [x['fs_players'] for x in curr_match.home_team.players_in_regular_comp_season
                                            if curr_match.comp == x['comp'] and curr_match.season == x['season']]
     if len(home_team_fs_players_in_comp_season) == 0:
         print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
-              f" is regular, but no AF team lineup was found for the home team - no FS team lineups")
-        return home_team_fs_lineup, away_team_fs_lineup
+              f" is regular, but no FS players found for the home team comp season - no FS team lineups")
+        return
 
     if len(home_team_fs_players_in_comp_season) > 1:
         raise ValueError(f"Multiple FS home team lineups found for match between {curr_match.home_team.name} and "
@@ -283,6 +283,7 @@ def get_fs_match_lineups(curr_match):
     if len(curr_match.home_team_lineup) == 0:
         print(f"WARNING!!! - No AF home team lineup for match between {curr_match.home_team.name} and "
               f"{curr_match.away_team.name} ({curr_match.datetime})")
+        global_instance.num_missing_af_match_lineups += 1
 
     else:
         for af_player in curr_match.home_team_lineup:
@@ -306,8 +307,8 @@ def get_fs_match_lineups(curr_match):
 
     if len(away_team_fs_players_in_comp_season) == 0:  # skip for irregular matches
         print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
-              f" is regular, but no AF team lineup was found for the away team - no FS team lineups")
-        return home_team_fs_lineup, away_team_fs_lineup
+              f" is regular, but no FS players found for the away team comp season - no FS team lineups")
+        return
 
     if len(away_team_fs_players_in_comp_season) > 1:
         raise ValueError(f"Multiple FS away team lineups found for match between {curr_match.home_team.name} and "
@@ -316,6 +317,7 @@ def get_fs_match_lineups(curr_match):
     if len(curr_match.away_team_lineup) == 0:
         print(f"WARNING!!! - No AF away team lineup for match between {curr_match.home_team.name} and "
               f"{curr_match.away_team.name} ({curr_match.datetime})")
+        global_instance.num_missing_af_match_lineups += 1
 
     else:
         for af_player in curr_match.away_team_lineup:
