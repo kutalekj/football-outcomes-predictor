@@ -258,6 +258,7 @@ def load_player_stats():
                                 player_data[attr_name] = None
 
                 # Load player skills
+                num_missing_values = 0  # Exp. variable for checking how many rows are missing max five skills values...
                 for skill_attr in settings.PLAYER_SKILLS:
                     raw_value = row_dict.get(skill_attr, '').strip()
 
@@ -265,16 +266,24 @@ def load_player_stats():
                     if raw_value == '':
                         # print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
                         #       f"SKIPPING PLAYER")
-                        skip_player = True
-                        break
+                        if num_missing_values <= settings.MAX_MISSING_SF_SKILL_VALUES_ALLOWED:
+                            player_data[skill_attr] = -1
+                            num_missing_values += 1
+                        else:
+                            skip_player = True
+                            break
                     else:
                         try:
                             player_data[skill_attr] = int(raw_value)
                         except ValueError:  # This exception has never occurred so far...
                             # print(f"Invalid integer for '{skill_attr}' in file '{filename}', row {row_num}."
                             #       f"SKIPPING PLAYER")
-                            skip_player = True
-                            break
+                            if num_missing_values <= settings.MAX_MISSING_SF_SKILL_VALUES_ALLOWED:
+                                player_data[skill_attr] = -1
+                                num_missing_values += 1
+                            else:
+                                skip_player = True
+                                break
 
                 if skip_player:  # skip this player if invalid player skill found
                     # print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row_num})")
