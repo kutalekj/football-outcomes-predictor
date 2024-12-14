@@ -31,10 +31,6 @@ class Global:
             # Indexed by dates of birth; each elem is list of triples (player_id, name, full_name)
             cls._instance.sofifa_players_by_dob = {}
 
-            # TODO: Debug variables: remove them later
-            cls._instance.num_missing_af_match_lineups = 0
-            cls._instance.num_teams_missing_fs_comp_season_roster = 0
-
         return cls._instance
 
     @classmethod

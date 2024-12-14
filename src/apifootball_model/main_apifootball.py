@@ -83,7 +83,7 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store11_full.csv")
+in_out.load_matches("tmp_csv_store11_full_updated.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -120,13 +120,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store11_full_updated.csv")
-
-# TODO: Debug prints
-print(f"Number of teams for which no FS players were found for some comp season is equal to "
-      f"{str(global_instance.num_teams_missing_fs_comp_season_roster)}")
-print(f"Number of matches for which an AF team lineup is missing is equal to "
-      f"{str(global_instance.num_missing_af_match_lineups)}")
+# in_out.store_matches("tmp_csv_store11_full_updated.csv")
 
 """
 

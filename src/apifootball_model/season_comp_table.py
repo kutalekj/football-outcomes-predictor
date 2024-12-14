@@ -189,10 +189,7 @@ class SeasonCompTable:
                     selected_fs_players = [x for x in table.all_fs_players_involved if
                                            team.fs_id == x['fs_club_team_id']
                                            or ('fs_club_team_2_id' in x and team.fs_id == x['fs_club_team_2_id'])]
-                    # TODO: Check this teams matching condition!
-
-                    if len(selected_fs_players) == 0:
-                        global_instance.num_teams_missing_fs_comp_season_roster += 1
+                    # TODO: Maybe debug check this teams matching condition?
 
                     team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
                                                                 'fs_players': selected_fs_players})
