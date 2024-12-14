@@ -30,6 +30,12 @@ def process_csv_files(folder_path):
             # Read each row and store occurrences
             for index, row in enumerate(reader, start=1):
                 player_id = row[player_id_index]
+
+                # DNS error assertion
+                if row[2] == "DNS resolution error | sofifa.com | Cloudflare":
+                    print(f"DNS error found for player {player_id} in file {csv_file}. Skipping this player.")
+                    continue
+
                 if player_id in player_id_occurrences:
                     player_id_occurrences[player_id].append((index, row))
                 else:
@@ -70,6 +76,6 @@ def process_csv_files(folder_path):
                 os.remove(temp_file_path)
 
 # Specify the folder containing your CSV files
-folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized\\full'  # Replace with your folder path
+folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase2\\full'  # Replace with your folder path
 
 process_csv_files(folder_path)
