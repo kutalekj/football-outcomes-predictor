@@ -62,7 +62,7 @@ COMPS = [
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]
 
-# {v3API_id, name, regular_round_keywords}
+# {v3API_id, name, regular_round_keywords, fs_alias}
 COMPS_v2 = [
     {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Premier League"},
     {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"},
@@ -146,7 +146,7 @@ TOTAL_SHOTS_NORM_COEFFICIENT = 28.0
 SHOTS_IN_BOX_NORM_COEFFICIENT = 19.5
 CORNER_KICKS_NORM_COEFFICIENT = 13.5
 
-CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_2\\full'
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase2_copy\\full'
 
 PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling', 'curve',
                  'fk_accuracy', 'long_passing', 'ball_control', 'acceleration', 'sprint_speed', 'agility', 'reactions',
@@ -179,4 +179,4 @@ ALL_SOFIFA_HEADERS = [
     ]
 
 SIMILARITY_THRESHOLD_AF_FS = 0.35
-MINIMUM_MATCHED_PLAYERS = 8
+MINIMUM_MATCHED_LINEUP_PLAYERS = 8

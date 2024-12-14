@@ -393,11 +393,13 @@ def calculate_team_strength(curr_match, team_id):
                 raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
                                  f"of FS player {fs_player['fs_known_as']}")
         else:
-            print(f"Warning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
+            print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
             continue
 
         sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players_alternative(
             fs_player, sf_players_with_same_dob)  # TODO: Continue here
+
+        # TODO: Store successfully matched SF players in list and print out how many of them we finally got for the team strength calculation...
 
     """
     # Get players in current comp season team roster

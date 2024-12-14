@@ -187,12 +187,14 @@ def load_player_stats():
             reader = csv.reader(csvfile)
             headers = next(reader)
 
+            num_players_skipped_this_csv = 0
+
             # Read each player row
             for row_num, row in enumerate(reader, start=2):  # start=2 to account for header
 
                 # Inconsistency between number of cells in a row and the CSV header
                 if len(row) != len(headers):
-                    print(f"Row {row_num} in file '{filename}' is misaligned.")
+                    # print(f"Row {row_num} in file '{filename}' is misaligned.")
 
                     # Realign the row (pad it with empty strings to match the header length)
                     missing_cells = len(headers) - len(row)
@@ -210,8 +212,11 @@ def load_player_stats():
                     raw_value = row_dict.get(attr_name, '').strip()
 
                     # Attribute value missing
+                    # TODO: Now, only the following four attributes and then the 34 skills attributes are utilized...
+                    # TODO: ...meaning that the others can be set as empty value if missing for no harm. But, ...
+                    # TODO: ...if will want to work with some of them in the future as well, then this needs changes.
                     if raw_value == '':
-                        if attr_name in ['player_id', 'name', 'full_name', 'dob']:
+                        if attr_name in ['player_id', 'name', 'full_name', 'dob']:  # These can't be missing!
                             raise ValueError(f"Attributes player_id, name, full_name and dob cannot be missing! "
                                              f"(file {filename}, row {row_num})")
                         elif attr_type == int:
@@ -238,7 +243,7 @@ def load_player_stats():
                             else:
                                 player_data[attr_name] = raw_value
                         except Exception:
-                            if attr_name in ['player_id', 'name', 'full_name', 'dob']:
+                            if attr_name in ['player_id', 'name', 'full_name', 'dob']:  # These can't be missing!
                                 raise ValueError(f"Attributes player_id, name, full_name and dob must be parsed! "
                                                  f"(file {filename}, row {row_num})")
                             elif attr_type == int:
@@ -258,21 +263,22 @@ def load_player_stats():
 
                     # Skill value missing
                     if raw_value == '':
-                        print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
-                              f"SKIPPING PLAYER")
+                        # print(f"Missing value for '{skill_attr}' in file '{filename}', row {row_num}. "
+                        #       f"SKIPPING PLAYER")
                         skip_player = True
                         break
                     else:
                         try:
                             player_data[skill_attr] = int(raw_value)
-                        except ValueError:
-                            print(f"Invalid integer for '{skill_attr}' in file '{filename}', row {row_num}."
-                                  f"SKIPPING PLAYER")
+                        except ValueError:  # This exception has never occurred so far...
+                            # print(f"Invalid integer for '{skill_attr}' in file '{filename}', row {row_num}."
+                            #       f"SKIPPING PLAYER")
                             skip_player = True
                             break
 
                 if skip_player:  # skip this player if invalid player skill found
-                    print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row_num})")
+                    # print(f"\tSKIPPING AN INVALID PLAYER (file {filename}, row {row_num})")
+                    num_players_skipped_this_csv += 1
                     continue
 
                 # Use 'player_id' as the key for player_index_dict
@@ -302,6 +308,10 @@ def load_player_stats():
                 # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
                 if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
                     global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
+
+            # TODO: Debug print
+            print(f"{num_players_skipped_this_csv} player rows were skipped for this CSV ({filename}) "
+                  f"because of missing at least one skill value")
 
         # Append to list_of_data
         global_instance.sofifa_players_data.append((file_date, players_dict))

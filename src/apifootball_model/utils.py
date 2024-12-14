@@ -295,9 +295,9 @@ def get_fs_match_lineups(curr_match):
                 print(f"WARNING! - Found player [{af_player[1]}] match below threshold ({curr_match.home_team.name} vs."
                       f" {curr_match.away_team.name}, {curr_match.datetime})")
 
-        if len(curr_match.home_fs_team_lineup) < settings.MINIMUM_MATCHED_PLAYERS:
+        if len(curr_match.home_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
             raise ValueError(f"There were only {len(curr_match.home_fs_team_lineup)} matched home team FS player, "
-                             f"but the minimum required is {settings.MINIMUM_MATCHED_PLAYERS}")
+                             f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
 
     # Away team
     away_team_fs_players_in_comp_season = [x['fs_players'] for x in
@@ -325,9 +325,9 @@ def get_fs_match_lineups(curr_match):
             if similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
                 curr_match.away_fs_team_lineup.append(matched_fs_player)
 
-        if len(curr_match.away_fs_team_lineup) < settings.MINIMUM_MATCHED_PLAYERS:
+        if len(curr_match.away_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
             raise ValueError(f"There were only {len(curr_match.away_fs_team_lineup)} matched away team FS player, "
-                             f"but the minimum required is {settings.MINIMUM_MATCHED_PLAYERS}")
+                             f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
 
     # Summary print
     print(f"Successfully matched {len(curr_match.home_fs_team_lineup)} home team players and "
@@ -361,7 +361,7 @@ def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_do
     normalized_fs_known_as = normalize_name(fs_player['fs_known_as'])
     normalized_fs_full_name = normalize_name(fs_player['fs_full_name'])
 
-    similarities = []
+    similarities = []  # triples of (similarity_score, sf_player_id, some_sf_player_name)
 
     for sf_player in sf_players_with_same_dob:  # sf_player = (player_id, name, full_name)
         normalized_sf_player_name = normalize_name(sf_player[1])  # SF player name
@@ -382,16 +382,21 @@ def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_do
 
     sorted_similarities = sorted(similarities, key=lambda x: x[0], reverse=True)
 
-    # Debug print
+    # TODO: Remove this debug print after testing
+    """
     for sim in sorted_similarities:
         print(f"[{normalized_fs_known_as}] to [{sim[2]}] ({sim[0]:.2f})")
+    """
 
     # Return SF player who belongs to the name that gave the highest similarity
     highest_similarity_sf_player_id = sorted_similarities[0][1]
+    highest_similarity_score = sorted_similarities[0][0]
     highest_similarity_sf_player = [x for x in sf_players_with_same_dob if x[0] == highest_similarity_sf_player_id][0]
 
-    print(f"Matched [{fs_player['fs_known_as']} to [{highest_similarity_sf_player[2]}] "
-          f"({highest_similarity_sf_player[1]})\n")
+    # TODO: Add threshold for rejecting low score (probably false) matches between FS and SOFIFA players
+
+    print(f"Matched [{fs_player['fs_known_as']}] to [{highest_similarity_sf_player[2]}] "
+          f"({highest_similarity_sf_player[1]}) with score \t\t{highest_similarity_score:.2f}")
 
     return highest_similarity_sf_player
 
