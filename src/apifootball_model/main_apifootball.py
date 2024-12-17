@@ -121,7 +121,7 @@ for match in global_instance.all_matches:
         stop_here = True
 
     # Match AF/FS match lineups
-    if not settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
+    if settings.DO_AF_FS_LINEUPS_MATCHING:
         print(f"\t\tGoing to match AF players from match lineup [{match.home_team.name}] vs. [{match.away_team.name}] "
               f"({match.datetime}) with teams' FS players in comp season roster...")
         ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
