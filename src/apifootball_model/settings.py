@@ -13,7 +13,7 @@ HEADERS = {
 FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
-MATCHES_FILENAME = "api_ftb_matches_.csv"
+LOAD_MATCH_DATA_FROM_LOCAL_CSV = True
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024

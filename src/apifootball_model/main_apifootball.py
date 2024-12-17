@@ -45,7 +45,14 @@ for comp in [
     {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
 ]:
 """
-for comp in settings.COMPS_v2:
+
+for comp in [
+    {'id': 119, 'name': "Superliga",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
+     'fs_alias': "Superliga"}  # DEN
+]:
+
+# for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -83,7 +90,8 @@ for comp in global_instance.all_comps:
     comp.init_country_start_end_dates_in_seasons()
 
 # 3. Get matches (first existing locally saved, then new from API)
-in_out.load_matches("tmp_csv_store11_full_updated.csv")
+if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
+    in_out.load_matches("tmp_csv_store12_DEN_Superliga.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -112,15 +120,19 @@ for match in global_instance.all_matches:
     if match.home_team.name == "Genk" or match.away_team.name == "Genk":
         stop_here = True
 
-    print(f"\t\tGoing to match AF players from match lineup [{match.home_team.name}] vs. [{match.away_team.name}] "
-          f"({match.datetime}) with teams' FS players in comp season roster...")
-    ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
+    # Match AF/FS match lineups
+    if not settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
+        print(f"\t\tGoing to match AF players from match lineup [{match.home_team.name}] vs. [{match.away_team.name}] "
+              f"({match.datetime}) with teams' FS players in comp season roster...")
+        ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
+
+    # Feature calculation
     match.features_before_match_played = match.calculate_match_features()
     match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store11_full_updated.csv")
+in_out.store_matches("tmp_csv_store12_DEN_Superliga.csv")
 
 """
 

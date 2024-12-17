@@ -12,6 +12,13 @@ import settings
 import features_utils as feature_ut
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+
 def store_matches(file_name):
     global_instance = Global.get_instance()
 
@@ -27,7 +34,7 @@ def store_matches(file_name):
             'away_team_total_shots', 'home_team_shots_inside_box', 'away_team_shots_inside_box',
             'home_team_corner_kicks', 'away_team_corner_kicks', 'home_team_ball_possession',
             'away_team_ball_possession', 'home_team_passes_acc', 'away_team_passes_acc', 'winner_team_id',
-            'home_team_lineup', 'away_team_lineup'
+            'home_team_lineup', 'away_team_lineup', 'home_fs_team_lineup', 'away_fs_team_lineup'
         ])
 
         for match in global_instance.all_matches:
@@ -61,7 +68,9 @@ def store_matches(file_name):
                 match.away_team_passes_acc,
                 match.winner_team_id,
                 json.dumps(match.home_team_lineup),
-                json.dumps(match.away_team_lineup)
+                json.dumps(match.away_team_lineup),
+                json.dumps(match.home_fs_team_lineup, cls=DateTimeEncoder),
+                json.dumps(match.away_fs_team_lineup, cls=DateTimeEncoder)
             ])
 
 
@@ -121,7 +130,7 @@ def load_matches(file_name):
 
                 match.winner_team_id = int(row['winner_team_id']) if row['winner_team_id'] else None
 
-                # Lineups
+                # AF lineups
                 home_lineup_json = row.get('home_team_lineup', '[]')
                 away_lineup_json = row.get('away_team_lineup', '[]')
 
@@ -129,6 +138,44 @@ def load_matches(file_name):
                                           in json.loads(home_lineup_json)] if home_lineup_json != "null" else []
                 match.away_team_lineup = [(int(player[0]), player[1], player[2]) for player
                                           in json.loads(away_lineup_json)] if away_lineup_json != "null" else []
+
+                # FS lineups
+                home_fs_lineup_json = row.get('home_fs_team_lineup', '[]')
+                away_fs_lineup_json = row.get('away_fs_team_lineup', '[]')
+
+                match.home_fs_team_lineup = [{
+                    'fs_id': int(player['fs_id']),
+                    'fs_comp_id': int(player['fs_comp_id']),
+                    'fs_full_name': player['fs_full_name'],
+                    'fs_known_as': player['fs_known_as'],
+                    'fs_birthday': date_parse(player['fs_birthday']),
+                    'fs_age': int(player['fs_age']),
+                    'fs_weight': int(player['fs_weight']),
+                    'fs_height': int(player['fs_height']),
+                    'fs_league': player['fs_league'],
+                    'fs_league_type': player['fs_league_type'],
+                    'fs_club_team_id': int(player['fs_club_team_id']),
+                    'fs_club_team_2_id': int(player['fs_club_team_2_id']),
+                    'fs_position': player['fs_position'],
+                    'fs_nationality': player['fs_nationality']
+                } for player in json.loads(home_fs_lineup_json)] if home_fs_lineup_json != "null" else []
+
+                match.away_fs_team_lineup = [{
+                    'fs_id': int(player['fs_id']),
+                    'fs_comp_id': int(player['fs_comp_id']),
+                    'fs_full_name': player['fs_full_name'],
+                    'fs_known_as': player['fs_known_as'],
+                    'fs_birthday': date_parse(player['fs_birthday']),
+                    'fs_age': int(player['fs_age']),
+                    'fs_weight': int(player['fs_weight']),
+                    'fs_height': int(player['fs_height']),
+                    'fs_league': player['fs_league'],
+                    'fs_league_type': player['fs_league_type'],
+                    'fs_club_team_id': int(player['fs_club_team_id']),
+                    'fs_club_team_2_id': int(player['fs_club_team_2_id']),
+                    'fs_position': player['fs_position'],
+                    'fs_nationality': player['fs_nationality']
+                } for player in json.loads(away_fs_lineup_json)] if away_fs_lineup_json != "null" else []
 
                 # Add the match to the global instance
                 global_instance.all_matches.append(match)
