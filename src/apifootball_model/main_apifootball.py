@@ -127,12 +127,14 @@ for match in global_instance.all_matches:
         ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
 
     # Feature calculation
+    # TODO: Debug print
+    print(f"\n\t\tProcessing match between [{match.home_team.name}] and [{match.away_team.name}] ({match.datetime}).")
     match.features_before_match_played = match.calculate_match_features()
     match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store12_DEN_Superliga.csv")
+in_out.store_matches("tmp_csv_store12_DEN_Superliga_copy.csv")
 
 """
 

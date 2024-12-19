@@ -218,6 +218,81 @@ def normalize_name(name):
     return name
 
 
+def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict):
+    global_instance = Global.get_instance()
+
+    # Get the latest available CSV file older than the match date
+    sf_player_available_csv_files = global_instance.sofifa_player_index_dict[sf_player_id]
+    if len(sf_player_available_csv_files) == 0:
+        raise ValueError(f"If the FS player was matched to a SF player (id={sf_player_id}), "
+                         f"there should be always at least one CSV file for him, not zero (even if the players "
+                         f"were mismatched)! (match played at {match_datetime})")
+
+    available_player_csvs_sorted_by_timedelta_to_match = sorted(sf_player_available_csv_files,
+                                                                key=lambda x: abs(x[1].replace(tzinfo=match_datetime.tzinfo) - match_datetime))  # sort
+    available_player_csvs_sorted_by_timedelta_to_match = [x for x in available_player_csvs_sorted_by_timedelta_to_match
+                                                          if abs(x[1].replace(tzinfo=match_datetime.tzinfo) - match_datetime) < settings.MAX_TIMEDELTA_SF_PLAYER_SKILL]  # filter
+
+    if len(available_player_csvs_sorted_by_timedelta_to_match) == 0:
+        print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. Skip...")
+        return output_team_skills_dict
+
+    # TODO: Debug print
+    print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
+
+    # sorted_desc_available_player_files = sorted(sf_player_available_csv_files, key=lambda x: x[1], reverse=True)
+    # sorted_desc_available_player_files_older_than_match = [x for x in sorted_desc_available_player_files if x[1].replace(tzinfo=match_datetime.tzinfo) < match_datetime]
+    # latest_available_player_csv = sorted_desc_available_player_files_older_than_match[0]  # sofifa_player_index_dict
+    # index_to_player_data_list = latest_available_player_csv[0]
+    # datetime_of_csv_data_file = latest_available_player_csv[1]
+
+    skills_processed = set()  # keep track of already processed player skills
+
+    # Loop because the first list element (closest timedelta to match) may not contain all skill values...
+    while len(available_player_csvs_sorted_by_timedelta_to_match) > 0:
+        best_available_player_csv = available_player_csvs_sorted_by_timedelta_to_match.pop(0)  # date closest to match
+
+        index_to_player_data_list = best_available_player_csv[0]
+        datetime_of_csv_data_file = best_available_player_csv[1]
+
+        negative_value_found = False
+
+        # Get the SOFIFA player data
+        corresponding_player_data_dict = global_instance.sofifa_players_data[index_to_player_data_list]
+
+        if corresponding_player_data_dict[0] != datetime_of_csv_data_file:
+            raise ValueError(f"Datetime of the latest CSV file available for the player that is older than the match "
+                             f"date does not match the expected datetime in the main SOFIFA players data list: "
+                             f"({str(corresponding_player_data_dict[0])} vs. {str(datetime_of_csv_data_file)})")
+
+        sf_player_data = corresponding_player_data_dict[1][sf_player_id]  # get SOFIFA player data dict
+
+        # Get SOFIFA player skill values
+        for skill in settings.PLAYER_SKILLS:
+            value = sf_player_data.get(skill, -1)
+            if value != -1 and skill not in skills_processed:
+                output_team_skills_dict[skill].append(value)
+                skills_processed.add(skill)  # add skill name to set of already processed skills
+            if value != -1 and skill not in skills_processed:  # TODO: Remove this immediately after first check
+                raise ValueError("THIS SHOULD NEVER HAPPEN!")
+            else:
+                # print(f"No value (-1) found for player's skill {skill} in CSV file from {datetime_of_csv_data_file}. "
+                #       f"Next one is going to be explored.")
+                negative_value_found = True
+
+        if not negative_value_found:
+            print("After exploring multiple available CSV files, all skill values were finally successfully obtained.")
+            break  # if no -1 values found, end getting skills
+
+    # TODO: Just debug check
+    if len(skills_processed) < len(settings.PLAYER_SKILLS):  # still some skills missing, but no more available CSVs
+        print(f"Some skill values missing for this player...")
+    elif len(skills_processed) > len(settings.PLAYER_SKILLS):
+        raise ValueError("THIS SHOLS NEVER HAPPEN")  # TODO: Remove this immediately after first check
+
+    return output_team_skills_dict
+
+
 def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
     normalized_af_name = normalize_name(af_team_name)  # normalize AF team name
 
@@ -261,8 +336,6 @@ def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
 
 
 def get_fs_match_lineups(curr_match):
-    global_instance = Global.get_instance()
-
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         # print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
         #       f" is irregular - no FS team lineup")
@@ -393,10 +466,12 @@ def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_do
     highest_similarity_score = sorted_similarities[0][0]
     highest_similarity_sf_player = [x for x in sf_players_with_same_dob if x[0] == highest_similarity_sf_player_id][0]
 
-    # TODO: Add threshold for rejecting low score (probably false) matches between FS and SOFIFA players
-
     print(f"Matched [{fs_player['fs_known_as']}] to [{highest_similarity_sf_player[2]}] "
           f"({highest_similarity_sf_player[1]}) with score \t\t{highest_similarity_score:.2f}")
+
+    if highest_similarity_score < settings.SIMILARITY_THRESHOLD_FS_SOFIFA:
+        print("(but rejected for too low similarity score :/)")
+        return None, None, None
 
     return highest_similarity_sf_player
 

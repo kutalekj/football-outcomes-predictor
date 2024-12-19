@@ -7,7 +7,7 @@ import utils as ut
 from globals import Global
 from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
     GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\
-    MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH
+    MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH, PLAYER_SKILLS  # TODO: Minor adj. this
 from player_stats_loader import get_player_stats_for_team, tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name
 
 ELO_C = 10.0
@@ -370,17 +370,17 @@ def calculate_team_strength(curr_match, team_id):
                          f"({curr_match.home_team.id}) or the away team {curr_match.away_team.name} "
                          f"({curr_match.away_team.id})")
 
-    # No complete lineup found
-    if team_fs_lineup is None or len(team_fs_lineup) == 0:
-        print(f"None team FS lineup list found, but 11 expected (match "
+    # No lineup found
+    if team_fs_lineup is None or len(team_fs_lineup) > 11:
+        raise ValueError(f"FS team lineup should never be \"None\" or more than 11 (match {curr_match.home_team.name}"
+                         f" - {curr_match.away_team.name} played at {curr_match.datetime})")
+    if len(team_fs_lineup) == 0:
+        print(f"No team FS lineup list found, but 11 expected (match "
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
-        return []
-    if len(team_fs_lineup) != 11:
-        raise ValueError(f"Team FS lineup list of length {len(team_fs_lineup)} found, but 11 expected (match "
-                         f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
-        # print(f"Team lineup list of length {len(team_lineup)} found, but 11 expected (match "
-        #       f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
-        # return []
+        return []  # if there was no AF lineup, there could not be FS lineup
+
+    # Init players skills dict
+    sf_players_stats = {skill: [] for skill in PLAYER_SKILLS}
 
     # Iterate over FS lineup players
     for fs_player in team_fs_lineup:
@@ -396,69 +396,24 @@ def calculate_team_strength(curr_match, team_id):
             print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
             continue
 
+        # Match FS player to SOFIFA player
         sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players_alternative(
-            fs_player, sf_players_with_same_dob)  # TODO: Continue here
+            fs_player, sf_players_with_same_dob)
 
-        # TODO: Store successfully matched SF players in list and print out how many of them we finally got for the team strength calculation...
+        if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
+            continue  # no FS/SF match because of too low similarity score
 
-    """
-    # Get players in current comp season team roster
-    team = ut.get_team_if_exists(team_id)
-    
-    # TODO: Note that not every team has rating in a comp season
-    team_rating_in_comp_season = team.rating_comp_season[curr_match.comp.name][str(curr_match.season)]
+        # Get SOFIFA player skills
+        sf_players_stats = ut.get_sf_player_data(curr_match.datetime, sf_player_id, sf_players_stats)
 
-    team_players_stats_in_comp_season = team.player_stats_comp_season[curr_match.comp.name][str(curr_match.season)]
-    print(team_players_stats_in_comp_season)
+    # TODO: Debug check
+    print(f"Lengths of each skill's list for match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+          f"played at {curr_match.datetime}:")
+    for skill in PLAYER_SKILLS:
+        print(f"{skill}: {len(sf_players_stats[skill])}", end='\t')
+    print("\n")
 
-    # Get stats about those players which are in the current match lineup
-    team_lineup_info = []
-    for player in team_lineup:
-        print(player)
-        p_id, p_name, _ = player  # (ID, name, position)
-
-        # Match player ID from match lineups with the ID in team player stats in comp season
-        # TODO: What if a player from the match lineup (p_id) is not in the players list for team's comp season?
-        player_stats_in_comp_season = [x for x in team_players_stats_in_comp_season if x['id'] == p_id]
-
-        if len(player_stats_in_comp_season) == 0:
-            print(f"Player {str(p_id)}:{p_name} was not found in the {team.name} team's comp season players list...")
-            continue
-        elif len(player_stats_in_comp_season) > 1:
-            raise ValueError(f"Found more players matching {str(p_id)}:{p_name}. This should not happen.")
-        else:
-            player_stats_in_comp_season = player_stats_in_comp_season[0]
-
-        # Get (full_name, dob, rating)
-        team_lineup_info.append((
-            player_stats_in_comp_season['firstname'] + " " + player_stats_in_comp_season['lastname'],
-            player_stats_in_comp_season['birth_date'],
-            player_stats_in_comp_season['rating'],
-            player_stats_in_comp_season['position']
-        ))
-
-    print(f"{len(team_lineup_info)} players matched for team strength calculation for team {team.name} "
-          f"(match {str(curr_match.id)})")  # TODO: Check how many players are actually matched here...
-    # if len(team_lineup_info) != 11:
-        # raise ValueError(f"Team lineup info list of length {len(team_lineup)}, but 11 expected")
-
-    player_ratings = [z for (x, y, z, _) in team_lineup_info]
-    player_positions = [z for (x, y, z) in team_lineup]
-    # TODO: Note that might end up e.g. with 11 positions, but only 3 ratings...
-
-    # Get player stats from CSV
-    team_players_individual_stats = get_player_stats_for_team(team_lineup_info, team_rating_in_comp_season,
-                                                              curr_match, CSV_PLAYERS_PATH)
-
-    # Calculate team strength vector
-    team_strength_vector = ut.combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings,
-                                                                     player_positions, mode="basic")
-    return team_strength_vector
-    """
-    # player_names = [p_name for (p_id, p_name, _) in team_lineup]
-    # tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name(curr_match, player_names, CSV_PLAYERS_PATH)
-    # TODO: Uncomment for Phase 1 testing (and finish the implementation inside; and modify it - CSV caching)
-
+    # TODO: Add averaging (team strength dict -> team strength vector)
     return []
 
 
