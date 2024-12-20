@@ -273,8 +273,6 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict):
             if value != -1 and skill not in skills_processed:
                 output_team_skills_dict[skill].append(value)
                 skills_processed.add(skill)  # add skill name to set of already processed skills
-            if value != -1 and skill not in skills_processed:  # TODO: Remove this immediately after first check
-                raise ValueError("THIS SHOULD NEVER HAPPEN!")
             else:
                 # print(f"No value (-1) found for player's skill {skill} in CSV file from {datetime_of_csv_data_file}. "
                 #       f"Next one is going to be explored.")
@@ -480,6 +478,103 @@ def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_do
         return None, None, None
 
     return highest_similarity_sf_player
+
+
+def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
+    if default_vector is None:  # TODO: After get all API-football data and compute team strength for them, estimate it
+        default_vector = [0.0] * (len(CSV_CATEGORIES) * 4)  # mean, std, min, max per category
+
+    # If no integer skill values for any of the skills, return default vector instead calculation
+    for skill in settings.PLAYER_SKILLS:
+        if len(sf_players_stats.get(skill, [])) == 0:
+            print(f"No value found for skill [{skill}] - returning default team strength vector")
+            return default_vector
+
+    team_strength_vector = []
+
+    skill_min_val = settings.ALMOST_ZERO
+    skill_max_val = settings.ALMOST_ONE
+    skill_range = skill_max_val - skill_min_val
+
+    for category, skills in CSV_CATEGORIES.items():
+        category_values = []
+        for skill in skills:
+            category_values.extend(sf_players_stats.get(skill, []))
+
+        if len(category_values) == 0:
+            return default_vector
+
+        mean_val = np.mean(category_values)
+        std_val = np.std(category_values) if len(category_values) > 1 else 0.0
+        min_val = min(category_values)
+        max_val = max(category_values)
+
+        # Normalize values to [0,1]
+        mean_val_scaled = (mean_val - skill_min_val) / skill_range
+        min_val_scaled = (min_val - skill_min_val) / skill_range
+        max_val_scaled = (max_val - skill_min_val) / skill_range
+        std_val_scaled = std_val / skill_range  # why like this?
+
+        team_strength_vector.extend([mean_val_scaled, std_val_scaled, min_val_scaled, max_val_scaled])
+
+    for idx, val in enumerate(team_strength_vector):
+        if idx % 4 == 0:  # print mean values
+            print(f"{val:.2f}", end='\t')
+    print("")
+
+    return team_strength_vector
+
+
+def calculate_team_strength_pca(sf_players_stats, n_components=5, default_vector=None):
+    if default_vector is None:  # TODO: After get all API-football data and compute team strength for them, estimate it
+        default_vector = [0.0] * n_components
+
+    # Convert dict of skills->list into a matrix: rows=players, cols=skills
+    # First find the max number of players across all skills
+    player_counts = [len(vals) for vals in sf_players_stats.values()]
+    max_players = max(player_counts) if player_counts else 0
+    if max_players < 8:  # If fewer than 8 players, data might be incomplete
+        return default_vector
+
+    # Build the matrix
+    # If any skill is shorter, we can fill missing with np.nan or skip those players
+    skill_matrix = []
+    for skill in settings.PLAYER_SKILLS:
+        vals = sf_players_stats.get(skill, [])
+        if len(vals) < max_players:
+            # Pad with NaN for missing values
+            vals = vals + [np.nan]*(max_players - len(vals))
+        skill_matrix.append(vals)
+
+    skill_matrix = np.array(skill_matrix).T  # shape: (max_players, 34)
+
+    # Drop rows with NaN (players missing some skill)
+    # Alternatively, you could do imputation here
+    mask = ~np.isnan(skill_matrix).any(axis=1)
+    skill_matrix = skill_matrix[mask]
+
+    # If after filtering, not enough players remain, return default
+    if skill_matrix.shape[0] < 8:
+        return default_vector
+
+    # Apply PCA
+    pca = PCA(n_components=n_components)
+    # If skill values range up to 99, consider scaling them to [0,1] before PCA
+    scaled_matrix = skill_matrix / 99.0
+    pca_features = pca.fit_transform(scaled_matrix)  # shape: (num_players_filtered, n_components)
+
+    # Aggregate the PCA components across the players (e.g., mean)
+    team_pca_mean = np.mean(pca_features, axis=0)
+
+    # Normalize PCA results to [0,1]
+    # PCA scores can be negative. One simple approach: shift and scale based on min/max in your dataset.
+    # For simplicity, assume team_pca_mean are roughly in [-1,1] after scaling. Adjust as needed.
+    # Let's do a min-max scaling based on a guessed range [-2, 2]
+    pca_min, pca_max = -2, 2
+    pca_range = pca_max - pca_min
+    team_strength_pca_scaled = ((team_pca_mean - pca_min) / pca_range).tolist()
+
+    return team_strength_pca_scaled
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):

@@ -400,6 +400,7 @@ def calculate_team_strength(curr_match, team_id):
         sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players_alternative(
             fs_player, sf_players_with_same_dob)
 
+        # TODO: Start comment here for FS/SF matching acc check
         if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
             continue  # no FS/SF match because of too low similarity score
 
@@ -413,8 +414,9 @@ def calculate_team_strength(curr_match, team_id):
         print(f"{skill}: {len(sf_players_stats[skill])}", end='\t')
     print("\n")
 
-    # TODO: Add averaging (team strength dict -> team strength vector)
-    return []
+    # TODO: End comment here for FS/SF matching acc check
+
+    return ut.calculate_team_strength_scaled(sf_players_stats)
 
 
 def normalize_season(season):

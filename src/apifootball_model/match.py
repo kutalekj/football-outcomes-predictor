@@ -304,7 +304,7 @@ class Match:
         if len(stats) == 0:
             if home_away == "home" and self.round.is_regular:  # debug print only for regular matches!
                 print(
-                    f"\tStatistics [{stat_name}] estimated for a regular match between {self.home_team.name} "
+                    f"\tStatistics [{stat_name}] missing for a regular match between {self.home_team.name} "
                     f"and {self.away_team.name} played at {self.datetime}")
 
             return -1  # Get rid of estimation if stats missing - simply output -1 and deal with in features_utils...
