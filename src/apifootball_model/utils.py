@@ -341,6 +341,12 @@ def get_fs_match_lineups(curr_match):
         #       f" is irregular - no FS team lineup")
         return
 
+    if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
+        return  # case for matches loaded from CSV (already having FS lineups)
+
+    print(f"\t\tGoing to match AF players from match lineup [{curr_match.home_team.name}] vs. "
+          f"[{curr_match.away_team.name}] ({curr_match.datetime}) with teams' FS players in comp season roster...")
+
     # Home team
     home_team_fs_players_in_comp_season = [x['fs_players'] for x in curr_match.home_team.players_in_regular_comp_season
                                            if curr_match.comp == x['comp'] and curr_match.season == x['season']]
@@ -365,8 +371,8 @@ def get_fs_match_lineups(curr_match):
             if similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
                 curr_match.home_fs_team_lineup.append(matched_fs_player)
             else:
-                print(f"WARNING! - Found player [{af_player[1]}] match below threshold ({curr_match.home_team.name} vs."
-                      f" {curr_match.away_team.name}, {curr_match.datetime})")
+                print(f"WARNING! - Found AF player [{af_player[1]}] match below threshold ({curr_match.home_team.name} "
+                      f"vs. {curr_match.away_team.name}, {curr_match.datetime})")
 
         if len(curr_match.home_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
             raise ValueError(f"There were only {len(curr_match.home_fs_team_lineup)} matched home team FS player, "

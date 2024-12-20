@@ -16,8 +16,6 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 LOAD_MATCH_DATA_FROM_LOCAL_CSV = True
-DO_AF_FS_LINEUPS_MATCHING = False  # even if loading some local match data from CSV (including FS lineups, ...
-# ...there still might be some new others which requiring the matching to be done)
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -150,7 +148,7 @@ TOTAL_SHOTS_NORM_COEFFICIENT = 28.0
 SHOTS_IN_BOX_NORM_COEFFICIENT = 19.5
 CORNER_KICKS_NORM_COEFFICIENT = 13.5
 
-CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase2_copy\\full'
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase2\\full'
 
 PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling', 'curve',
                  'fk_accuracy', 'long_passing', 'ball_control', 'acceleration', 'sprint_speed', 'agility', 'reactions',
@@ -182,8 +180,8 @@ ALL_SOFIFA_HEADERS = [
         'sliding_tackle', 'gk_diving', 'gk_handling', 'gk_kicking', 'gk_positioning', 'gk_reflexes', 'play_styles'
     ]
 
-SIMILARITY_THRESHOLD_AF_FS = 0.35
-SIMILARITY_THRESHOLD_FS_SOFIFA = 0.55
+SIMILARITY_THRESHOLD_AF_FS = 35  # rapidfuzz ratio ranges from 0 to 100
+SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MINIMUM_MATCHED_LINEUP_PLAYERS = 8
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=150)  # 5 months

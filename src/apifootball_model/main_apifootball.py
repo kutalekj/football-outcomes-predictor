@@ -121,20 +121,17 @@ for match in global_instance.all_matches:
         stop_here = True
 
     # Match AF/FS match lineups
-    if settings.DO_AF_FS_LINEUPS_MATCHING:
-        print(f"\t\tGoing to match AF players from match lineup [{match.home_team.name}] vs. [{match.away_team.name}] "
-              f"({match.datetime}) with teams' FS players in comp season roster...")
-        ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
+    ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
 
     # Feature calculation
-    # TODO: Debug print
-    print(f"\n\t\tProcessing match between [{match.home_team.name}] and [{match.away_team.name}] ({match.datetime}).")
+    # TODO: Debug print (comment for FS/SF matching acc check)
+    # print(f"\n\t\tProcessing match between [{match.home_team.name}] and [{match.away_team.name}] ({match.datetime}).")
     match.features_before_match_played = match.calculate_match_features()
     match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store12_DEN_Superliga_copy.csv")
+# in_out.store_matches("tmp_csv_store12_DEN_Superliga_copy.csv")
 
 """
 
