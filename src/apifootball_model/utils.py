@@ -240,12 +240,6 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict):
     # TODO: Debug print
     print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
 
-    # sorted_desc_available_player_files = sorted(sf_player_available_csv_files, key=lambda x: x[1], reverse=True)
-    # sorted_desc_available_player_files_older_than_match = [x for x in sorted_desc_available_player_files if x[1].replace(tzinfo=match_datetime.tzinfo) < match_datetime]
-    # latest_available_player_csv = sorted_desc_available_player_files_older_than_match[0]  # sofifa_player_index_dict
-    # index_to_player_data_list = latest_available_player_csv[0]
-    # datetime_of_csv_data_file = latest_available_player_csv[1]
-
     skills_processed = set()  # keep track of already processed player skills
 
     # Loop because the first list element (closest timedelta to match) may not contain all skill values...
@@ -267,26 +261,46 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict):
 
         sf_player_data = corresponding_player_data_dict[1][sf_player_id]  # get SOFIFA player data dict
 
+        # Determine player's position categories
+        player_position_categories = map_player_positions_to_categories(sf_player_data['positions'])
+
         # Get SOFIFA player skill values
         for skill in settings.PLAYER_SKILLS:
-            value = sf_player_data.get(skill, -1)
-            if value != -1 and skill not in skills_processed:
-                output_team_skills_dict[skill].append(value)
-                skills_processed.add(skill)  # add skill name to set of already processed skills
-            else:
-                # print(f"No value (-1) found for player's skill {skill} in CSV file from {datetime_of_csv_data_file}. "
-                #       f"Next one is going to be explored.")
+            if skill in skills_processed:  # skill already processed in the previous iteration
+                continue
+
+            value = sf_player_data.get(skill, -1)  # get skill value
+
+            if value == -1:  # missing skill value
                 negative_value_found = True
+                continue
+
+            # Assign skill to skill category ("attacking", "power", "mentality", ...)
+            skill_category = settings.SKILL_TO_CATEGORY.get(skill, None)
+            if skill_category is None:
+                raise ValueError(f"Skill [{skill}] not found in any skill category - should never happen!")
+
+            # Check relevancy between player's position categories and the current skill's category
+            relevant_positions = settings.PLAYER_CATEGORY_RELEVANCE[skill_category]
+            if any(pos_cat in relevant_positions for pos_cat in player_position_categories):
+                output_team_skills_dict[skill].append(value)  # player position is relevant for this category - append
+                skills_processed.add(skill)  # keep track of already processed skills for the player
+            else:
+                pass  # player position not relevant for this category - skip (e.g. "CB" player and "goalkeeping" cat.)
 
         if not negative_value_found:
             print("After exploring multiple available CSV files, all skill values were finally successfully obtained.")
             break  # if no -1 values found, end getting skills
 
-    # TODO: Just debug check
-    if len(skills_processed) < len(settings.PLAYER_SKILLS):  # still some skills missing, but no more available CSVs
-        print(f"Some skill values missing for this player...")
-    elif len(skills_processed) > len(settings.PLAYER_SKILLS):
-        raise ValueError("THIS SHOLS NEVER HAPPEN")  # TODO: Remove this immediately after first check
+    # Handle possibly missing GK skills data - check if at least one value for each skill in the "goalkeeping" category
+    gk_skills = CSV_CATEGORIES['goalkeeping']
+    have_gk_data = any(output_team_skills_dict[sk] for sk in gk_skills if len(output_team_skills_dict[sk]) > 0)
+
+    if not have_gk_data:
+        for gk_skill in gk_skills:
+            print(f"Imputing value for missing GK skill [{gk_skill}]...")
+            default_value = getattr(settings, f"DEFAULT_{gk_skill.upper()}")  # if no GK skill value, impute default one
+            output_team_skills_dict[gk_skill].append(default_value)
 
     return output_team_skills_dict
 
@@ -459,12 +473,6 @@ def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_do
 
     sorted_similarities = sorted(similarities, key=lambda x: x[0], reverse=True)
 
-    # TODO: Remove this debug print after testing
-    """
-    for sim in sorted_similarities:
-        print(f"[{normalized_fs_known_as}] to [{sim[2]}] ({sim[0]:.2f})")
-    """
-
     # Return SF player who belongs to the name that gave the highest similarity
     highest_similarity_sf_player_id = sorted_similarities[0][1]
     highest_similarity_score = sorted_similarities[0][0]
@@ -478,6 +486,28 @@ def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_do
         return None, None, None
 
     return highest_similarity_sf_player
+
+
+def map_player_positions_to_categories(sofifa_positions):
+    categories = set()
+
+    for pos in sofifa_positions:
+        if pos == 'GK':
+            categories.add('goalkeeper')
+        elif pos in ['CB', 'LB', 'RB', 'RWB', 'LWB']:
+            categories.add('defender')
+        elif pos == 'CDM':
+            categories.update(['midfielder', 'defender'])
+        elif pos in ['CM', 'LM', 'RM']:
+            categories.add('midfielder')
+        elif pos == 'CAM':
+            categories.update(['midfielder', 'attacker'])
+        elif pos in ['ST', 'CF', 'LW', 'RW']:
+            categories.add('attacker')
+        else:
+            raise ValueError(f"Unknown player position [{pos}] found.")
+
+    return list(categories)
 
 
 def calculate_team_strength_scaled(sf_players_stats, default_vector=None):

@@ -166,6 +166,27 @@ CSV_CATEGORIES = {
     "goalkeeping": ["gk_diving", "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes"]
 }
 
+PLAYER_CATEGORY_RELEVANCE = {
+    "goalkeeping": ["goalkeeper"],
+    "defending": ["defender", "midfielder"],
+    "attacking": ["attacker", "midfielder"],
+    "movement": ["defender", "midfielder", "attacker"],
+    "power": ["defender", "midfielder", "attacker"],
+    "mentality": ["defender", "midfielder", "attacker"],
+    "skill": ["midfielder", "attacker"]
+}
+
+SKILL_TO_CATEGORY = {}  # dict of CSV_CATEGORIES (hash map)
+for cat_name, cat_skills in CSV_CATEGORIES.items():
+    for sk in cat_skills:
+        SKILL_TO_CATEGORY[sk] = cat_name
+
+DEFAULT_GK_DIVING = 0.0  # TODO:
+DEFAULT_GK_HANDLING = 0.0  # TODO:
+DEFAULT_GK_KICKING = 0.0  # TODO:
+DEFAULT_GK_POSITIONING = 0.0  # TODO:
+DEFAULT_GK_REFLEXES = 0.0  # TODO:
+
 ALL_SOFIFA_HEADERS = [
         'player_id', 'version', 'name', 'full_name', 'description', 'image', 'height_cm', 'weight_kg', 'dob',
         'positions', 'overall_rating', 'potential', 'value', 'wage', 'preferred_foot', 'weak_foot', 'skill_moves',
