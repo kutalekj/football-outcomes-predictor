@@ -390,6 +390,10 @@ def get_fs_match_lineups(curr_match):
         if len(curr_match.home_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
             raise ValueError(f"There were only {len(curr_match.home_fs_team_lineup)} matched home team FS player, "
                              f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
+        if len(curr_match.home_fs_team_lineup) > 11:
+            raise ValueError(f"Home team FS lineup: [{curr_match.home_fs_team_lineup}] should not contain more than "
+                             f"11 players (match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+                             f"played at {curr_match.datetime})")
 
     # Away team
     away_team_fs_players_in_comp_season = [x['fs_players'] for x in
@@ -421,6 +425,10 @@ def get_fs_match_lineups(curr_match):
         if len(curr_match.away_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
             raise ValueError(f"There were only {len(curr_match.away_fs_team_lineup)} matched away team FS player, "
                              f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
+        if len(curr_match.away_fs_team_lineup) > 11:
+            raise ValueError(f"Away team FS lineup: [{curr_match.away_fs_team_lineup}] should not contain more than "
+                             f"11 players (match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+                             f"played at {curr_match.datetime})")
 
     # Summary print
     print(f"Successfully matched {len(curr_match.home_fs_team_lineup)} home team players and "

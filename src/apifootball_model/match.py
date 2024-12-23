@@ -281,6 +281,12 @@ class Match:
                             new_match.home_team_lineup = \
                                 [(x['player']['id'], x['player']['name'], x['player']['pos'])
                                     for x in data_lineups[0]['startXI']]
+                            if len(new_match.home_team_lineup) > 11:  # if AF lineup is duplicated (API-football issue)
+                                if len(new_match.home_team_lineup) == 22:
+                                    new_match.home_team_lineup = new_match.home_team_lineup[:11]  # fix
+                                if len(new_match.home_team_lineup) != 11:  # check the fix
+                                    raise ValueError(f"AF match home team lineup: [{new_match.home_team_lineup}] "
+                                                     f"should contain more than 11 players")
                         else:
                             new_match.home_team_lineup = []
                             print(f"\tLineups missing for a home team in match between {new_match.home_team.name} and "
@@ -289,6 +295,12 @@ class Match:
                             new_match.away_team_lineup = \
                                 [(x['player']['id'], x['player']['name'], x['player']['pos'])
                                     for x in data_lineups[1]['startXI']]
+                            if len(new_match.away_team_lineup) > 11:  # if AF lineup is duplicated (API-football issue)
+                                if len(new_match.away_team_lineup) == 22:
+                                    new_match.away_team_lineup = new_match.away_team_lineup[:11]  # fix
+                                if len(new_match.away_team_lineup) != 11:  # check the fix
+                                    raise ValueError(f"AF match away team lineup: [{new_match.away_team_lineup}] "
+                                                     f"should contain more than 11 players")
                         else:
                             new_match.away_team_lineup = []
                             print(f"\tLineups missing for an away team in match between {new_match.home_team.name} and "
