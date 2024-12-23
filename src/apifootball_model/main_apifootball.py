@@ -47,9 +47,7 @@ for comp in [
 """
 
 for comp in [
-    {'id': 119, 'name': "Superliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
-     'fs_alias': "Superliga"}  # DEN
+    {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"}
 ]:
 
 # for comp in settings.COMPS_v2:
@@ -91,7 +89,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store12_DEN_Superliga_v2.csv")
+    in_out.load_matches("tmp_csv_store12_DEN_SCO_NED_SA_POR.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -131,7 +129,8 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store12_DEN_Superliga_v2.csv")
+# in_out.store_matches("tmp_csv_store12_DEN_SCO_NED_SA_POR_BEL_ENG.csv")
+in_out.store_matches("tmp_csv_store12_ENG_Championship.csv")
 
 """
 

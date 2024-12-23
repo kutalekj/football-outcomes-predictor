@@ -363,9 +363,10 @@ def get_fs_match_lineups(curr_match):
     home_team_fs_players_in_comp_season = [x['fs_players'] for x in curr_match.home_team.players_in_regular_comp_season
                                            if curr_match.comp == x['comp'] and curr_match.season == x['season']]
     if len(home_team_fs_players_in_comp_season) == 0:
-        raise ValueError(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-                         f"({curr_match.datetime}) is regular, but no FS players found for the home team comp season "
-                         f"- no FS team lineups")
+        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+              f"({curr_match.datetime}) is regular, but no FS players found for the home team comp season "
+              f"- no FS team lineups")
+        return []
 
     if len(home_team_fs_players_in_comp_season) > 1:
         raise ValueError(f"Multiple FS home team lineups found for match between {curr_match.home_team.name} and "
@@ -396,9 +397,10 @@ def get_fs_match_lineups(curr_match):
                                            if curr_match.comp == x['comp'] and curr_match.season == x['season']]
 
     if len(away_team_fs_players_in_comp_season) == 0:  # skip for irregular matches
-        raise ValueError(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-                         f"({curr_match.datetime}) is regular, but no FS players found for the away team comp season "
-                         f"- no FS team lineups")
+        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+              f"({curr_match.datetime}) is regular, but no FS players found for the away team comp season "
+              f"- no FS team lineups")
+        return []
 
     if len(away_team_fs_players_in_comp_season) > 1:
         raise ValueError(f"Multiple FS away team lineups found for match between {curr_match.home_team.name} and "
@@ -549,7 +551,7 @@ def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
 
     for idx, val in enumerate(team_strength_vector):
         if idx % 4 == 0:  # print mean values
-            print(f"{val:.2f}", end='\t')
+            print(f"{val:.3f}", end='\t')
     print("")
 
     return team_strength_vector

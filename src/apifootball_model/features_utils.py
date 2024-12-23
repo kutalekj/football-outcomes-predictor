@@ -372,12 +372,12 @@ def calculate_team_strength(curr_match, team_id):
 
     # No lineup found
     if team_fs_lineup is None or len(team_fs_lineup) > 11:
-        raise ValueError(f"FS team lineup should never be \"None\" or more than 11 (match {curr_match.home_team.name}"
-                         f" - {curr_match.away_team.name} played at {curr_match.datetime})")
+        raise ValueError(f"FS team lineup [{team_fs_lineup}] should never be \"None\" or more than 11 (match "
+                         f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
     if len(team_fs_lineup) == 0:
         print(f"No team FS lineup list found, but 11 expected (match "
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
-        return []  # if there was no AF lineup, there could not be FS lineup
+        return []  # TODO: Estimate by default team strength
 
     # Init players skills dict
     sf_players_stats = {skill: [] for skill in PLAYER_SKILLS}
