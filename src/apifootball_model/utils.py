@@ -523,7 +523,7 @@ def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
     team_strength_vector = []
 
     skill_min_val = settings.ALMOST_ZERO
-    skill_max_val = settings.ALMOST_ONE
+    skill_max_val = 99
     skill_range = skill_max_val - skill_min_val
 
     for category, skills in CSV_CATEGORIES.items():
@@ -543,7 +543,7 @@ def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
         mean_val_scaled = (mean_val - skill_min_val) / skill_range
         min_val_scaled = (min_val - skill_min_val) / skill_range
         max_val_scaled = (max_val - skill_min_val) / skill_range
-        std_val_scaled = std_val / skill_range  # why like this?
+        std_val_scaled = (std_val / skill_range) * 3  # stddev values are usually below 0.2, not in [0,1] (enlarge them)
 
         team_strength_vector.extend([mean_val_scaled, std_val_scaled, min_val_scaled, max_val_scaled])
 
@@ -556,6 +556,8 @@ def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
 
 
 def calculate_team_strength_pca(sf_players_stats, n_components=5, default_vector=None):
+    # TODO: Was not tested yet...
+
     if default_vector is None:  # TODO: After get all API-football data and compute team strength for them, estimate it
         default_vector = [0.0] * n_components
 

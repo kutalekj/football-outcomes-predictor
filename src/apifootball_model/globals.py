@@ -17,7 +17,8 @@ class Global:
             # For example, for England 2021 there are PL, Championship, UEFA competitions, FA Cup and EFL Trophy
             cls._instance.start_end_dates_per_country_season = {}
 
-            cls._instance.fs_leagues_list = []
+            cls._instance.fs_leagues_list = []  # all seasons of all comps
+            cls._instance.fs_leagues_matches = {}  # all matches in each comp season
 
             # Main list with sofifa players' data
             # Each elem is tuple (datetime of CSV with data, big dict); big dict indexed by player IDs, values = dicts

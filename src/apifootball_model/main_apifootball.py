@@ -131,7 +131,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store12_DEN_Superliga_v2.csv")
+# in_out.store_matches("tmp_csv_store12_DEN_Superliga_v2.csv")
 
 """
 

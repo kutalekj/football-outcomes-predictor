@@ -6,6 +6,7 @@ import os
 import csv
 import http.client
 import json
+import requests
 from dateutil.parser import parse
 from datetime import datetime, timedelta
 import numpy as np
@@ -236,7 +237,7 @@ class Match:
                         new_match.home_team_points = 1
                         new_match.away_team_points = 1
 
-                    # Statistics
+                    # Statistics (API-Football)
                     stats_request_string = "/fixtures/statistics?fixture=" + str(new_match.id)
                     conn.request("GET", stats_request_string, headers=settings.HEADERS)
                     res = conn.getresponse()
@@ -279,7 +280,7 @@ class Match:
                         if "startXI" in data_lineups[0]:
                             new_match.home_team_lineup = \
                                 [(x['player']['id'], x['player']['name'], x['player']['pos'])
-                                for x in data_lineups[0]['startXI']]
+                                    for x in data_lineups[0]['startXI']]
                         else:
                             new_match.home_team_lineup = []
                             print(f"\tLineups missing for a home team in match between {new_match.home_team.name} and "
@@ -287,7 +288,7 @@ class Match:
                         if "startXI" in data_lineups[1]:
                             new_match.away_team_lineup = \
                                 [(x['player']['id'], x['player']['name'], x['player']['pos'])
-                                for x in data_lineups[1]['startXI']]
+                                    for x in data_lineups[1]['startXI']]
                         else:
                             new_match.away_team_lineup = []
                             print(f"\tLineups missing for an away team in match between {new_match.home_team.name} and "
