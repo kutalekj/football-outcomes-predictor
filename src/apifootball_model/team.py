@@ -21,6 +21,8 @@ class Team:
         self.player_stats_comp_season = {}  # TODO: Rename - no stats, just players list
         self.rating_comp_season = {}  # TODO: Remove
 
+        # TODO: Add average team strength in comp season for each team - for imputing missing values
+
         self.matches = []  # just list of all matches of the team sorted by the datetime played asc
 
     def __eq__(self, other):

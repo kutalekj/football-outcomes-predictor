@@ -18,39 +18,7 @@ global_instance = Global.get_instance()
 # 1. Init FS comps and their seasons and rounds
 Comp.get_fs_leagues_list()
 
-"""
-for comp in [
-    {'id': 179, 'name': "Premiership",
-     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
-     'fs_alias': "Premiership"},  # SCO
-    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': []},  # SCO
-    {'id': 185, 'name': "League Cup", 'regular_round_keywords': []},  # SCO
-    {'id': 119, 'name': "Superliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
-     'fs_alias': "Superliga"},  # DEN
-    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},  # DEN
-    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Eredivisie"},
-    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': []},  # NED
-    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
-     'fs_alias': "Professional League"},  # SA
-    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': []},  # SA
-    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season']},
-    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
-    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
-    {'id': 144, 'name': "Jupiler Pro League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group']},  # BEL
-    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
-    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
-    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
-    {'id': 147, 'name': "Cup", 'regular_round_keywords': []}  # BEL
-]:
-"""
-
-for comp in [
-    {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"}
-]:
-
-# for comp in settings.COMPS_v2:
+for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -89,7 +57,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store12_DEN_SCO_NED_SA_POR.csv")
+    in_out.load_matches("tmp_csv_store12_NED_BEL_SCO_DEN_SA_POR_ENG_GER_FRA_ITA_SPA_POL_AUS.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -129,8 +97,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store12_DEN_SCO_NED_SA_POR_BEL_ENG.csv")
-in_out.store_matches("tmp_csv_store12_ENG_Championship.csv")
+in_out.store_matches("tmp_csv_store12_full.csv")
 
 """
 

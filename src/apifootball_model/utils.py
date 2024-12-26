@@ -347,14 +347,12 @@ def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
     return best_fs_match['id'], best_fs_match['name']
 
 
-def get_fs_match_lineups(curr_match):
+def get_fs_match_lineups(curr_match):  # for both home and away teams!
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
-        # print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} ({curr_match.datetime})"
-        #       f" is irregular - no FS team lineup")
         return
 
     if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
-        return  # case for matches loaded from CSV (already having FS lineups)
+        return  # case for both teams' FS lineups already loaded from CSV
 
     print(f"\t\tGoing to match AF players from match lineup [{curr_match.home_team.name}] vs. "
           f"[{curr_match.away_team.name}] ({curr_match.datetime}) with teams' FS players in comp season roster...")
@@ -362,21 +360,27 @@ def get_fs_match_lineups(curr_match):
     # Home team
     home_team_fs_players_in_comp_season = [x['fs_players'] for x in curr_match.home_team.players_in_regular_comp_season
                                            if curr_match.comp == x['comp'] and curr_match.season == x['season']]
-    if len(home_team_fs_players_in_comp_season) == 0:
-        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-              f"({curr_match.datetime}) is regular, but no FS players found for the home team comp season "
-              f"- no FS team lineups")
-        return []
 
-    if len(home_team_fs_players_in_comp_season) > 1:
-        raise ValueError(f"Multiple FS home team lineups found for match between {curr_match.home_team.name} and "
-                         f"{curr_match.away_team.name} ({curr_match.datetime}) - ERROR!")
+    if len(home_team_fs_players_in_comp_season) > 1:  # error
+        raise ValueError(f"Multiple FS home team comp season lineups found for match between "
+                         f"{curr_match.home_team.name} and {curr_match.away_team.name} "
+                         f"({curr_match.datetime}) - ERROR!")
 
-    if len(curr_match.home_team_lineup) == 0:
-        print(f"WARNING!!! - No AF home team lineup for match between {curr_match.home_team.name} and "
-              f"{curr_match.away_team.name} ({curr_match.datetime})")
+    if len(curr_match.home_fs_team_lineup) > 0 or \
+            len(home_team_fs_players_in_comp_season) == 0 or \
+            (curr_match.home_team_lineup is None or len(curr_match.home_team_lineup) == 0):  # empty
+        if len(curr_match.home_fs_team_lineup) > 0:
+            pass  # case for only home team's FS lineup already loaded from CSV - do nothing
+        elif len(home_team_fs_players_in_comp_season) == 0:
+            print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+                  f"({curr_match.datetime}) is regular, but no FS players found for the home team comp season "
+                  f"- no FS team lineups")
+        else:
+            print(f"WARNING!!! - No AF home team lineup for match between {curr_match.home_team.name} and "
+                  f"{curr_match.away_team.name} ({curr_match.datetime})")
+        curr_match.home_fs_team_lineup = []
 
-    else:
+    else:  # ok
         for af_player in curr_match.home_team_lineup:
             matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
                 af_player, home_team_fs_players_in_comp_season[0])
@@ -391,7 +395,8 @@ def get_fs_match_lineups(curr_match):
             raise ValueError(f"There were only {len(curr_match.home_fs_team_lineup)} matched home team FS player, "
                              f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
         if len(curr_match.home_fs_team_lineup) > 11:
-            raise ValueError(f"Home team FS lineup: [{curr_match.home_fs_team_lineup}] should not contain more than "
+            raise ValueError(f"Home team FS lineup of length {len(curr_match.home_fs_team_lineup)}:"
+                             f" [{curr_match.home_fs_team_lineup}] should not contain more than "
                              f"11 players (match between {curr_match.home_team.name} and {curr_match.away_team.name} "
                              f"played at {curr_match.datetime})")
 
@@ -400,21 +405,26 @@ def get_fs_match_lineups(curr_match):
                                            curr_match.away_team.players_in_regular_comp_season
                                            if curr_match.comp == x['comp'] and curr_match.season == x['season']]
 
-    if len(away_team_fs_players_in_comp_season) == 0:  # skip for irregular matches
-        print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-              f"({curr_match.datetime}) is regular, but no FS players found for the away team comp season "
-              f"- no FS team lineups")
-        return []
+    if len(away_team_fs_players_in_comp_season) > 1:  # error
+        raise ValueError(f"Multiple FS away team comp season lineups found for match between "
+                         f"{curr_match.home_team.name} and {curr_match.away_team.name} "
+                         f"({curr_match.datetime}) - ERROR!")
 
-    if len(away_team_fs_players_in_comp_season) > 1:
-        raise ValueError(f"Multiple FS away team lineups found for match between {curr_match.home_team.name} and "
-                         f"{curr_match.away_team.name} ({curr_match.datetime}) - ERROR!")
+    if len(curr_match.away_fs_team_lineup) > 0 or \
+            len(away_team_fs_players_in_comp_season) == 0 or \
+            (curr_match.away_team_lineup is None or len(curr_match.away_team_lineup) == 0):  # empty
+        if len(curr_match.away_fs_team_lineup) > 0:
+            pass  # case for only away team's FS lineup already loaded from CSV - do nothing
+        elif len(away_team_fs_players_in_comp_season) == 0:
+            print(f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
+                  f"({curr_match.datetime}) is regular, but no FS players found for the away team comp season "
+                  f"- no FS team lineups")
+        else:
+            print(f"WARNING!!! - No AF away team lineup for match between {curr_match.home_team.name} and "
+                  f"{curr_match.away_team.name} ({curr_match.datetime})")
+        curr_match.away_fs_team_lineup = []
 
-    if len(curr_match.away_team_lineup) == 0:
-        print(f"WARNING!!! - No AF away team lineup for match between {curr_match.home_team.name} and "
-              f"{curr_match.away_team.name} ({curr_match.datetime})")
-
-    else:
+    else:  # ok
         for af_player in curr_match.away_team_lineup:
             matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
                 af_player, away_team_fs_players_in_comp_season[0])
@@ -426,7 +436,8 @@ def get_fs_match_lineups(curr_match):
             raise ValueError(f"There were only {len(curr_match.away_fs_team_lineup)} matched away team FS player, "
                              f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
         if len(curr_match.away_fs_team_lineup) > 11:
-            raise ValueError(f"Away team FS lineup: [{curr_match.away_fs_team_lineup}] should not contain more than "
+            raise ValueError(f"Away team FS lineup of length {len(curr_match.away_fs_team_lineup)}:"
+                             f" [{curr_match.away_fs_team_lineup}] should not contain more than "
                              f"11 players (match between {curr_match.home_team.name} and {curr_match.away_team.name} "
                              f"played at {curr_match.datetime})")
 

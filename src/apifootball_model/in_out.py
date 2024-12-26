@@ -74,7 +74,6 @@ def store_matches(file_name):
             ])
 
 
-# TODO: Both these function will probably be needed to be further modified...(phase 1) - load and store fs_lineups !!!
 def load_matches(file_name):
     global_instance = Global.get_instance()
 
