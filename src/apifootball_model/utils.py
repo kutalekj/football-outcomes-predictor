@@ -533,7 +533,11 @@ def map_player_positions_to_categories(sofifa_positions):
     return list(categories)
 
 
-def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
+def calculate_team_strength_scaled(sf_players_stats, team_season_info, default_vector=None):
+    global_instance = Global.get_instance()
+
+    team_id, team_name, season = team_season_info
+
     if default_vector is None:  # TODO: After get all API-football data and compute team strength for them, estimate it
         default_vector = [0.0] * (len(CSV_CATEGORIES) * 4)  # mean, std, min, max per category
 
@@ -570,7 +574,17 @@ def calculate_team_strength_scaled(sf_players_stats, default_vector=None):
 
         team_strength_vector.extend([mean_val_scaled, std_val_scaled, min_val_scaled, max_val_scaled])
 
+    if len(team_strength_vector) != 4 * len(settings.CSV_CATEGORIES):
+        raise ValueError("Incomplete team strength vector found.")
+
     for idx, val in enumerate(team_strength_vector):
+        # TODO: Remove after imputing
+        if team_season_info not in global_instance.average_strength:
+            global_instance.average_strength[team_season_info] = {}
+        if idx not in global_instance.average_strength[team_season_info]:
+            global_instance.average_strength[team_season_info][idx] = []
+        global_instance.average_strength[team_season_info][idx].append(val)
+
         if idx % 4 == 0:  # print mean values
             print(f"{val:.3f}", end='\t')
     print("")

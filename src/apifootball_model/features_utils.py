@@ -419,7 +419,7 @@ def calculate_team_strength(curr_match, team_id):
 
     # TODO: End comment here for FS/SF matching acc check
 
-    return ut.calculate_team_strength_scaled(sf_players_stats)
+    return ut.calculate_team_strength_scaled(sf_players_stats, (team_id, team_name, curr_match.season))
 
 
 def normalize_season(season):
