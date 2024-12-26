@@ -107,7 +107,7 @@ for (team_id, team_name, season), val in global_instance.average_strength.items(
     for idx, values in val.items():
         mean_val = np.mean(values)
         if idx == 0:
-            print(f"{(team_id, team_name, season)}: {mean_val:.3f} (calculated from {len(values)} values)", end='\t')
+            print(f"{(team_id, team_name, season)}: {mean_val:.3f}", end='\t')
         else:
             print(f"{mean_val:.3f}", end='\t')
         mean_of_means[idx].append(mean_val)
