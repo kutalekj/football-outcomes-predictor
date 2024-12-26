@@ -21,11 +21,12 @@ class Team:
         self.player_stats_comp_season = {}  # TODO: Rename - no stats, just players list
         self.rating_comp_season = {}  # TODO: Remove
 
-        self.avg_gk_diving = None
-        self.avg_gk_diving = None
-        self.avg_gk_diving = None
-        self.avg_gk_diving = None
-        self.avg_gk_diving = None
+        # Average SOFIFA goalkeeper skills for cases when data is missing - for imputing
+        self.avg_gk_diving = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
+        self.avg_gk_handling = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
+        self.avg_gk_kicking = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
+        self.avg_gk_positioning = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
+        self.avg_gk_reflexes = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
 
         # TODO: Add average team strength in comp season for each team - for imputing missing values
 

@@ -286,28 +286,6 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
             if any(pos_cat in relevant_positions for pos_cat in player_position_categories):
                 output_team_skills_dict[skill].append(value)  # player position is relevant for this category - append
                 skills_processed.add(skill)  # keep track of already processed skills for the player
-
-                # TODO: Remove after imputing
-                if skill == "gk_diving":
-                    if team_season_info not in global_instance.gk_diving:
-                        global_instance.gk_diving[team_season_info] = []
-                    global_instance.gk_diving[team_season_info].append(value / 100)
-                elif skill == "gk_handling":
-                    if team_season_info not in global_instance.gk_handling:
-                        global_instance.gk_handling[team_season_info] = []
-                    global_instance.gk_handling[team_season_info].append(value / 100)
-                elif skill == "gk_kicking":
-                    if team_season_info not in global_instance.gk_kicking:
-                        global_instance.gk_kicking[team_season_info] = []
-                    global_instance.gk_kicking[team_season_info].append(value / 100)
-                elif skill == "gk_positioning":
-                    if team_season_info not in global_instance.gk_positioning:
-                        global_instance.gk_positioning[team_season_info] = []
-                    global_instance.gk_positioning[team_season_info].append(value / 100)
-                elif skill == "gk_reflexes":
-                    if team_season_info not in global_instance.gk_reflexes:
-                        global_instance.gk_reflexes[team_season_info] = []
-                    global_instance.gk_reflexes[team_season_info].append(value / 100)
             else:
                 pass  # player position not relevant for this category - skip (e.g. "CB" player and "goalkeeping" cat.)
 
@@ -322,8 +300,9 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
     if not have_gk_data:
         for gk_skill in gk_skills:
             print(f"Imputing value for missing GK skill [{gk_skill}]...")
-            default_value = getattr(settings, f"DEFAULT_{gk_skill.upper()}")  # if no GK skill value, impute default one
-            output_team_skills_dict[gk_skill].append(default_value)
+            team = get_team_if_exists(team_id)
+            imputed_value = team.avg_gk_handling[season]  # if no GK skill value, impute it
+            output_team_skills_dict[gk_skill].append(imputed_value)
 
     return output_team_skills_dict
 
@@ -651,6 +630,26 @@ def calculate_team_strength_pca(sf_players_stats, n_components=5, default_vector
     team_strength_pca_scaled = ((team_pca_mean - pca_min) / pca_range).tolist()
 
     return team_strength_pca_scaled
+
+
+def get_avg_skill_value(skill_name, team_id, season):
+    global_instance = Global.get_instance()
+
+    skill_name = skill_name.lower()
+
+    if skill_name not in global_instance.sf_avg_gk_skills:
+        raise ValueError(f"Skill '{skill_name}' not found.")
+
+    # Get value for the team and season
+    key = (team_id, season)
+    if key in global_instance.sf_avg_gk_skills[skill_name]:
+        return global_instance.sf_avg_gk_skills[skill_name][key]
+
+    # Return default value if the team is not found
+    if skill_name in global_instance.sf_default_gk_skills:
+        return global_instance.sf_default_gk_skills[skill_name]
+
+    raise ValueError(f"Default value for skill '{skill_name}' not found.")
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):

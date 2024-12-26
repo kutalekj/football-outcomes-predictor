@@ -2,6 +2,8 @@ import csv
 import datetime
 import os
 import json
+import re
+from collections import defaultdict
 import numpy as np
 from dateutil.parser import parse as date_parse
 from globals import Global
@@ -374,3 +376,33 @@ def load_player_stats():
     global_instance.sofifa_player_index_dict = dict(sorted(global_instance.sofifa_player_index_dict.items()))
     global_instance.sofifa_players_by_dob = dict(sorted(global_instance.sofifa_players_by_dob.items()))
 
+
+def load_avg_gk_skills():
+    global_instance = Global.get_instance()
+
+    global_instance.sf_avg_gk_skills = defaultdict(lambda: defaultdict(dict))  # skill -> (team_id, season) -> value
+    global_instance.sf_default_gk_skills = {}  # default averages for each skill
+
+    current_skill = None
+
+    with open(settings.AVR_GK_SKILLS, 'r', encoding='utf-8') as file:
+        for line in file:
+            line = line.strip()
+
+            # Detect skill section
+            if line.startswith("Mean GK"):
+                current_skill = line.split(" ")[2].lower()  # get skill name
+
+            elif current_skill and line:
+
+                # Parse team data: "(team_id, 'team_name', season): value"
+                match = re.match(r"\((\d+|\-1), '([^']*)', (\d{4})\): ([\d.]+)", line)
+                if match:
+                    team_id, team_name, season, avg_value = match.groups()
+                    team_id, season = int(team_id), int(season)
+                    avg_value = float(avg_value)
+
+                    if team_id == -1:  # default value for the season
+                        global_instance.sf_default_gk_skills[current_skill] = avg_value
+                    else:
+                        global_instance.sf_avg_gk_skills[current_skill][(team_id, season)] = avg_value

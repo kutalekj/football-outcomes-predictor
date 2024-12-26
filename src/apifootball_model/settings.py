@@ -149,6 +149,8 @@ SHOTS_IN_BOX_NORM_COEFFICIENT = 19.5
 CORNER_KICKS_NORM_COEFFICIENT = 13.5
 
 CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase2\\full'
+AVR_GK_SKILLS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\' \
+                'avg_sofifa_gk_skills_per_team_comp_season.txt'
 
 PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling', 'curve',
                  'fk_accuracy', 'long_passing', 'ball_control', 'acceleration', 'sprint_speed', 'agility', 'reactions',
@@ -180,12 +182,6 @@ SKILL_TO_CATEGORY = {}  # dict of CSV_CATEGORIES (hash map)
 for cat_name, cat_skills in CSV_CATEGORIES.items():
     for sk in cat_skills:
         SKILL_TO_CATEGORY[sk] = cat_name
-
-DEFAULT_GK_DIVING = 0.0  # TODO:
-DEFAULT_GK_HANDLING = 0.0  # TODO:
-DEFAULT_GK_KICKING = 0.0  # TODO:
-DEFAULT_GK_POSITIONING = 0.0  # TODO:
-DEFAULT_GK_REFLEXES = 0.0  # TODO:
 
 ALL_SOFIFA_HEADERS = [
         'player_id', 'version', 'name', 'full_name', 'description', 'image', 'height_cm', 'weight_kg', 'dob',

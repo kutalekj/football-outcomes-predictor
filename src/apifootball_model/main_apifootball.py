@@ -15,10 +15,18 @@ from train import train
 
 global_instance = Global.get_instance()
 
+# 0. Load avg SOFIFA goalkeeper skills values
+in_out.load_avg_gk_skills()
+
 # 1. Init FS comps and their seasons and rounds
 Comp.get_fs_leagues_list()
 
-for comp in settings.COMPS_v2:
+for comp in [
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': []}  # TUR
+]:
+
+# for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -57,7 +65,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store12_full.csv")
+    in_out.load_matches("tmp_csv_store12_TUR.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -98,42 +106,6 @@ for match in global_instance.all_matches:
 
 # 5. Store matches
 # in_out.store_matches("tmp_csv_store12_full.csv")
-
-print(f"Mean GK diving values:")
-mean_of_means = []
-for key, val in global_instance.gk_diving.items():
-    mean_val = np.mean(val)
-    print(f"\t{key}: {mean_val:.3f}")
-    mean_of_means.append(mean_val)
-print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
-mean_of_means = []
-print(f"Mean GK handling values:")
-for key, val in global_instance.gk_handling.items():
-    mean_val = np.mean(val)
-    print(f"\t{key}: {mean_val:.3f}")
-    mean_of_means.append(mean_val)
-print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
-mean_of_means = []
-print(f"Mean GK kicking values:")
-for key, val in global_instance.gk_kicking.items():
-    mean_val = np.mean(val)
-    print(f"\t{key}: {mean_val:.3f}")
-    mean_of_means.append(mean_val)
-print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
-mean_of_means = []
-print(f"Mean GK positioning values:")
-for key, val in global_instance.gk_positioning.items():
-    mean_val = np.mean(val)
-    print(f"\t{key}: {mean_val:.3f}")
-    mean_of_means.append(mean_val)
-print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
-mean_of_means = []
-print(f"Mean GK reflexes values:")
-for key, val in global_instance.gk_reflexes.items():
-    mean_val = np.mean(val)
-    print(f"\t{key}: {mean_val:.3f}")
-    mean_of_means.append(mean_val)
-print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
 
 """
 
