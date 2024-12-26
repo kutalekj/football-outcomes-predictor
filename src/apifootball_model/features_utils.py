@@ -362,8 +362,10 @@ def calculate_team_strength(curr_match, team_id):
 
     # Get FS lineup
     if team_id == curr_match.home_team.id:
+        team_name = curr_match.home_team.name
         team_fs_lineup = curr_match.home_fs_team_lineup
     elif team_id == curr_match.away_team.id:
+        team_name = curr_match.away_team.name
         team_fs_lineup = curr_match.away_fs_team_lineup
     else:
         raise ValueError(f"Team ID {team_id} matches neither the home team {curr_match.home_team.name} "
@@ -405,7 +407,8 @@ def calculate_team_strength(curr_match, team_id):
             continue  # no FS/SF match because of too low similarity score
 
         # Get SOFIFA player skills
-        sf_players_stats = ut.get_sf_player_data(curr_match.datetime, sf_player_id, sf_players_stats)
+        sf_players_stats = ut.get_sf_player_data(curr_match.datetime, sf_player_id, sf_players_stats,
+                                                 (team_id, team_name, curr_match.season))
 
     # TODO: Debug check
     print(f"Lengths of each skill's list for match between {curr_match.home_team.name} and {curr_match.away_team.name} "

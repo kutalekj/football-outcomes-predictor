@@ -57,7 +57,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store12_NED_BEL_SCO_DEN_SA_POR_ENG_GER_FRA_ITA_SPA_POL_AUS.csv")
+    in_out.load_matches("tmp_csv_store12_full.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -97,7 +97,43 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store12_full.csv")
+# in_out.store_matches("tmp_csv_store12_full.csv")
+
+print(f"Mean GK diving values:")
+mean_of_means = []
+for key, val in global_instance.gk_diving.items():
+    mean_val = np.mean(val)
+    print(f"\t{key}: {mean_val:.3f}")
+    mean_of_means.append(mean_val)
+print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
+mean_of_means = []
+print(f"Mean GK handling values:")
+for key, val in global_instance.gk_handling.items():
+    mean_val = np.mean(val)
+    print(f"\t{key}: {mean_val:.3f}")
+    mean_of_means.append(mean_val)
+print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
+mean_of_means = []
+print(f"Mean GK kicking values:")
+for key, val in global_instance.gk_kicking.items():
+    mean_val = np.mean(val)
+    print(f"\t{key}: {mean_val:.3f}")
+    mean_of_means.append(mean_val)
+print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
+mean_of_means = []
+print(f"Mean GK positioning values:")
+for key, val in global_instance.gk_positioning.items():
+    mean_val = np.mean(val)
+    print(f"\t{key}: {mean_val:.3f}")
+    mean_of_means.append(mean_val)
+print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
+mean_of_means = []
+print(f"Mean GK reflexes values:")
+for key, val in global_instance.gk_reflexes.items():
+    mean_val = np.mean(val)
+    print(f"\t{key}: {mean_val:.3f}")
+    mean_of_means.append(mean_val)
+print(f"\t{(-1, '', key[2])}: {np.mean(mean_of_means):.3f}")
 
 """
 

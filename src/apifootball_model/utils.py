@@ -218,8 +218,9 @@ def normalize_name(name):
     return name
 
 
-def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict):
+def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, team_season_info):
     global_instance = Global.get_instance()
+    team_id, team_name, season = team_season_info
 
     # Get the latest available CSV file older than the match date
     sf_player_available_csv_files = global_instance.sofifa_player_index_dict[sf_player_id]
@@ -285,6 +286,28 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict):
             if any(pos_cat in relevant_positions for pos_cat in player_position_categories):
                 output_team_skills_dict[skill].append(value)  # player position is relevant for this category - append
                 skills_processed.add(skill)  # keep track of already processed skills for the player
+
+                # TODO: Remove after imputing
+                if skill == "gk_diving":
+                    if team_season_info not in global_instance.gk_diving:
+                        global_instance.gk_diving[team_season_info] = []
+                    global_instance.gk_diving[team_season_info].append(value / 100)
+                elif skill == "gk_handling":
+                    if team_season_info not in global_instance.gk_handling:
+                        global_instance.gk_handling[team_season_info] = []
+                    global_instance.gk_handling[team_season_info].append(value / 100)
+                elif skill == "gk_kicking":
+                    if team_season_info not in global_instance.gk_kicking:
+                        global_instance.gk_kicking[team_season_info] = []
+                    global_instance.gk_kicking[team_season_info].append(value / 100)
+                elif skill == "gk_positioning":
+                    if team_season_info not in global_instance.gk_positioning:
+                        global_instance.gk_positioning[team_season_info] = []
+                    global_instance.gk_positioning[team_season_info].append(value / 100)
+                elif skill == "gk_reflexes":
+                    if team_season_info not in global_instance.gk_reflexes:
+                        global_instance.gk_reflexes[team_season_info] = []
+                    global_instance.gk_reflexes[team_season_info].append(value / 100)
             else:
                 pass  # player position not relevant for this category - skip (e.g. "CB" player and "goalkeeping" cat.)
 

@@ -20,6 +20,13 @@ class Global:
             cls._instance.fs_leagues_list = []  # all seasons of all comps
             cls._instance.fs_leagues_matches = {}  # all matches in each comp season
 
+            # TODO: Remove these after imputing
+            cls._instance.gk_diving = {}
+            cls._instance.gk_handling = {}
+            cls._instance.gk_kicking = {}
+            cls._instance.gk_positioning = {}
+            cls._instance.gk_reflexes = {}
+
             # Main list with sofifa players' data
             # Each elem is tuple (datetime of CSV with data, big dict); big dict indexed by player IDs, values = dicts
             cls._instance.sofifa_players_data = []
