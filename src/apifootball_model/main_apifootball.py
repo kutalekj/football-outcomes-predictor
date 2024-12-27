@@ -22,7 +22,12 @@ in_out.load_avg_team_strength_scaled()
 # 1. Init FS comps and their seasons and rounds
 Comp.get_fs_leagues_list()
 
-for comp in settings.COMPS_v2:
+for comp in [
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"}  # TUR
+]:
+
+# for comp in settings.COMPS_v2:
     new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
     print(f"Initializing comp [{new_comp.name}].")
 
@@ -61,7 +66,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store12_full.csv")
+    in_out.load_matches("tmp_csv_store12_TUR.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -101,7 +106,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store12_full_v2.csv")
+# in_out.store_matches("tmp_csv_store12_full_v2.csv")
 
 """
 

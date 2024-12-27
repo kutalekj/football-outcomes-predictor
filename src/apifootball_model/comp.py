@@ -8,7 +8,7 @@ import settings
 import requests
 import rounds
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 import numpy as np
 from team import Team
 from dateutil.parser import parse
@@ -78,7 +78,7 @@ class Comp:
             if len(self.regular_round_keywords) > 0:
                 fs_season_id = self.get_fs_season_id(self.id, self.country, season)
                 comp_season_teams_request_string_fs = settings.FS_HOST + "/league-teams?key=" + settings.FS_KEY \
-                                                           + "&season_id=" + str(fs_season_id) + "&include=stats"
+                    + "&season_id=" + str(fs_season_id) + "&include=stats"
                 res = requests.get(comp_season_teams_request_string_fs)
                 data_comp_season_teams_fs = res.json()
 
@@ -117,79 +117,6 @@ class Comp:
                         new_team.player_stats_comp_season[self.name] = dict()
                     new_team.player_stats_comp_season[self.name][str(season)] = []
 
-                    """
-                    if self.name not in new_team.rating_comp_season:
-                        new_team.rating_comp_season[self.name] = dict()
-                    new_team.rating_comp_season[self.name][str(season)] = None
-                    """
-
-                    """
-                    team_players_stats_request_string = "/players?season=" + str(season) + "&league=" + str(self.id) + "&team=" + str(team_id)
-                    self.conn.request("GET", team_players_stats_request_string, headers=settings.HEADERS)
-                    res = self.conn.getresponse()
-                    data = res.read()
-                    data_team_players_stats = json.loads(data)['response']
-                    """
-
-                    """
-                    data_team_players_stats = None
-
-                    player_stats_list = []
-                    rating_not_found_count = 0
-                    rating_found_count = 0
-                    for player in data_team_players_stats:
-                        if team_id != player['statistics'][0]['team']['id']:
-                            # raise ValueError("Unable to match expected player's team with the found one.")
-                            print(f"__WARNING__: Expected team [{team_name}], "
-                                  f"got [{player['statistics'][0]['team']['name']}] instead")
-
-                        # TODO: Handle case if None rating, birth date or other missing values
-                        # TODO: If too many ratings missing for one season, look first for estimate in previous seasons
-                        player_stats = {'id': int(player['player']['id']),
-                                        'name': player['player']['name'],
-                                        'firstname': player['player']['firstname'],
-                                        'lastname': player['player']['lastname'],
-                                        'age': int(player['player']['age']) if
-                                        player['player']['age'] is not None else -1,
-                                        'birth_date': datetime.strptime(player['player']['birth']['date'], '%Y-%m-%d')
-                                        if player['player']['birth']['date'] is not None else datetime(1970, 1, 1),
-                                        'birth_country': player['player']['birth']['country'],
-                                        'nationality': player['player']['nationality'],
-                                        'height': player['player']['height'],
-                                        'weight': player['player']['weight'],
-                                        'position': player['statistics'][0]['games']['position'],
-                                        'rating': float(player['statistics'][0]['games']['rating']) if
-                                        player['statistics'][0]['games']['rating'] is not None else 0.0}
-
-                        if player['player']['age'] is None:
-                            print(f"_player {player['player']['name']} AGE not found_")
-                        if player['player']['birth']['date'] is None:
-                            print(f"_player {player['player']['name']} BIRTH DATE not found_")
-
-                        if player['statistics'][0]['games']['rating'] is None:
-                            # print(f"__No rating found for player {player['player']['id']}: {player['player']['name']} \t\t({team_name}, {str(season)}, {self.name})")
-                            rating_not_found_count += 1
-                        else:
-                            # print(f"Player {player['player']['id']}: {player['player']['name']} \t\t({team_name}, {str(season)}, {self.name}) has rating {player['statistics'][0]['games']['rating']}")
-                            rating_found_count += 1
-
-                        player_stats_list.append(player_stats)
-
-                    print(f"Player ratings found: {rating_found_count}/{rating_not_found_count + rating_found_count} "
-                          f"\t\t({self.name}, {str(season)}, {team_name})")
-
-                    # Player stats
-                    new_team.player_stats_comp_season[self.name][str(season)] = player_stats_list
-
-                    # Team rating  # TODO: There are too many missing ratings - modify this...
-                    if rating_found_count >= 10:
-                        top_10_player_ratings = sorted([x['rating'] for x in player_stats_list], reverse=True)[:10]
-                        rating = np.mean(np.asarray(top_10_player_ratings))
-                        new_team.rating_comp_season[self.name][str(season)] = rating
-                    else:
-                        new_team.rating_comp_season[self.name][str(season)] = 0.0
-                    """
-
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 
                 global_instance.all_teams.append(new_team)  # Add team to the global teams list
@@ -200,6 +127,28 @@ class Comp:
 
             if len(self.regular_round_keywords) > 0:
                 self.fs_teams_per_season.append({'season': season, 'fs_teams': fs_teams_comp_season})  # FS teams
+
+            # Get all FS league matches for each comp season
+            fs_season_id = self.get_fs_season_id(self.id, self.country, season)
+            comp_season_matches_request_string_fs = settings.FS_HOST + "/league-matches?key=" + settings.FS_KEY \
+                + "&season_id=" + str(fs_season_id)
+            res = requests.get(comp_season_matches_request_string_fs)
+            data_comp_season_matches_fs = res.json()
+
+            fs_matches_comp_season = [x for x in data_comp_season_matches_fs['data']]
+            if len(fs_matches_comp_season) == 0:
+                raise ValueError(f"For an unknown reason no FS matches were found for comp {self.name} {str(season)}")
+
+            if (self.id, season) not in global_instance.fs_leagues_matches:
+                global_instance.fs_leagues_matches[(self.id, season)] = []
+            global_instance.fs_leagues_matches[(self.id, season)] = ([{
+                 'fs_match_id': int(x["id"]),
+                 'fs_home_team_id': int(x["homeID"]),
+                 'fs_away_team_id': int(x["awayID"]),
+                 'season': int(x["season"]) if "/" not in x['season'] else int(x['season'].split("/")[0]),
+                 'datetime': datetime.fromtimestamp(x["date_unix"], tz=timezone.utc).
+                 replace(hour=0, minute=0, second=0, microsecond=0)}
+                for x in fs_matches_comp_season])
 
         global_instance.all_teams = list(set(global_instance.all_teams))  # Remove duplicates
 

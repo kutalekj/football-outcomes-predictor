@@ -17,8 +17,8 @@ class Global:
             # For example, for England 2021 there are PL, Championship, UEFA competitions, FA Cup and EFL Trophy
             cls._instance.start_end_dates_per_country_season = {}
 
-            cls._instance.fs_leagues_list = []  # all seasons of all comps
-            cls._instance.fs_leagues_matches = {}  # all matches in each comp season
+            cls._instance.fs_leagues_list = []  # all FS seasons of all comps
+            cls._instance.fs_leagues_matches = {}  # all FS matches in each comp season
 
             cls._instance.sf_avg_gk_skills = None  # average SOFIFA goalkeeper skills for each team's season
             cls._instance.sf_default_gk_skills = None  # default SOFIFA goalkeeper skills
