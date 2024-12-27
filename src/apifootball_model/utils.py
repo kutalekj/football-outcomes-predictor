@@ -301,7 +301,21 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
         for gk_skill in gk_skills:
             print(f"Imputing value for missing GK skill [{gk_skill}]...")
             team = get_team_if_exists(team_id)
-            imputed_value = team.avg_gk_handling[season]  # if no GK skill value, impute it
+
+            # If no GK skill value, impute it
+            if gk_skill == "gk_diving":
+                imputed_value = team.avg_gk_diving[season]
+            elif gk_skill == "gk_handling":
+                imputed_value = team.avg_gk_handling[season]
+            elif gk_skill == "gk_kicking":
+                imputed_value = team.avg_gk_kicking[season]
+            elif gk_skill == "gk_positioning":
+                imputed_value = team.avg_gk_positioning[season]
+            elif gk_skill == "gk_reflexes":
+                imputed_value = team.avg_gk_reflexes[season]
+            else:
+                raise ValueError(f"Found non-existing GK skill name [{gk_skill}]")
+
             output_team_skills_dict[gk_skill].append(imputed_value)
 
     return output_team_skills_dict
@@ -533,19 +547,22 @@ def map_player_positions_to_categories(sofifa_positions):
     return list(categories)
 
 
-def calculate_team_strength_scaled(sf_players_stats, team_season_info, default_vector=None):
+def calculate_team_strength_scaled(sf_players_stats, team_season_info):
     global_instance = Global.get_instance()
 
     team_id, team_name, season = team_season_info
 
-    if default_vector is None:  # TODO: After get all API-football data and compute team strength for them, estimate it
-        default_vector = [0.0] * (len(CSV_CATEGORIES) * 4)  # mean, std, min, max per category
-
-    # If no integer skill values for any of the skills, return default vector instead calculation
+    # If no integer skill values for any of the skills, return average/default vector instead
     for skill in settings.PLAYER_SKILLS:
         if len(sf_players_stats.get(skill, [])) == 0:
-            print(f"No value found for skill [{skill}] - returning default team strength vector")
-            return default_vector
+
+            if (team_id, season) in global_instance.sf_avg_team_strength:
+                avg_team_strength = global_instance.sf_avg_team_strength[(team_id, season)]
+            else:
+                avg_team_strength = global_instance.sf_default_team_strength
+
+            print(f"No value found for skill [{skill}] - returning default team strength vector {avg_team_strength}")
+            return avg_team_strength
 
     team_strength_vector = []
 
@@ -559,7 +576,8 @@ def calculate_team_strength_scaled(sf_players_stats, team_season_info, default_v
             category_values.extend(sf_players_stats.get(skill, []))
 
         if len(category_values) == 0:
-            return default_vector
+            raise ValueError(f"Unexpected error occurred in team strength scaled calculation for {team_name} ({season})"
+                             f" - no category values found for category {category}")
 
         mean_val = np.mean(category_values)
         std_val = np.std(category_values) if len(category_values) > 1 else 0.0
@@ -578,13 +596,6 @@ def calculate_team_strength_scaled(sf_players_stats, team_season_info, default_v
         raise ValueError("Incomplete team strength vector found.")
 
     for idx, val in enumerate(team_strength_vector):
-        # TODO: Remove after imputing
-        if team_season_info not in global_instance.average_strength:
-            global_instance.average_strength[team_season_info] = {}
-        if idx not in global_instance.average_strength[team_season_info]:
-            global_instance.average_strength[team_season_info][idx] = []
-        global_instance.average_strength[team_season_info][idx].append(val)
-
         if idx % 4 == 0:  # print mean values
             print(f"{val:.3f}", end='\t')
     print("")
@@ -646,7 +657,7 @@ def calculate_team_strength_pca(sf_players_stats, n_components=5, default_vector
     return team_strength_pca_scaled
 
 
-def get_avg_skill_value(skill_name, team_id, season):
+def get_avg_gk_skill_value(skill_name, team_id, season):
     global_instance = Global.get_instance()
 
     skill_name = skill_name.lower()
@@ -664,6 +675,17 @@ def get_avg_skill_value(skill_name, team_id, season):
         return global_instance.sf_default_gk_skills[skill_name]
 
     raise ValueError(f"Default value for skill '{skill_name}' not found.")
+
+
+def get_avg_team_strength_vector_scaled(team_id, season):
+    global_instance = Global.get_instance()
+
+    # Return the team strength vector if it exists
+    if (team_id, season) in global_instance.sf_avg_team_strength:
+        return global_instance.sf_avg_team_strength[(team_id, season)]
+
+    # Return the default vector if team_id and season are not found
+    return global_instance.sf_default_team_strength
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):

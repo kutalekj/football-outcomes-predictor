@@ -45,12 +45,14 @@ class SeasonCompTable:
                                 f"since teams were already initialized during the Comp initialization.")
 
             # Assign average SOFIFA goalkeeper skills
-            new_team.avg_gk_diving[self.season] = ut.get_avg_skill_value("diving", new_team.id, self.season) * 100
-            new_team.avg_gk_handling[self.season] = ut.get_avg_skill_value("handling", new_team.id, self.season) * 100
-            new_team.avg_gk_kicking[self.season] = ut.get_avg_skill_value("kicking", new_team.id, self.season) * 100
+            new_team.avg_gk_diving[self.season] = ut.get_avg_gk_skill_value("diving", new_team.id, self.season) * 100
+            new_team.avg_gk_handling[self.season] = ut.get_avg_gk_skill_value("handling", new_team.id,
+                                                                              self.season) * 100
+            new_team.avg_gk_kicking[self.season] = ut.get_avg_gk_skill_value("kicking", new_team.id, self.season) * 100
             new_team.avg_gk_positioning[self.season] = \
-                ut.get_avg_skill_value("positioning", new_team.id, self.season) * 100
-            new_team.avg_gk_reflexes[self.season] = ut.get_avg_skill_value("reflexes", new_team.id, self.season) * 100
+                ut.get_avg_gk_skill_value("positioning", new_team.id, self.season) * 100
+            new_team.avg_gk_reflexes[self.season] = ut.get_avg_gk_skill_value("reflexes", new_team.id,
+                                                                              self.season) * 100
 
             teams.append(new_team)
 

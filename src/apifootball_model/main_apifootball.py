@@ -15,8 +15,9 @@ from train import train
 
 global_instance = Global.get_instance()
 
-# 0. Load avg SOFIFA goalkeeper skills values
+# 0. Load avg SOFIFA average goalkeeper skills values and average team strengths
 in_out.load_avg_gk_skills()
+in_out.load_avg_team_strength_scaled()
 
 # 1. Init FS comps and their seasons and rounds
 Comp.get_fs_leagues_list()
@@ -100,26 +101,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store12_full.csv")
-
-mean_of_means = {idx: [] for idx in range(0, (4 * len(settings.CSV_CATEGORIES)) + 1)}
-for (team_id, team_name, season), val in global_instance.average_strength.items():
-    for idx, values in val.items():
-        mean_val = np.mean(values)
-        if idx == 0:
-            print(f"{(team_id, team_name, season)}: {mean_val:.3f}", end='\t')
-        else:
-            print(f"{mean_val:.3f}", end='\t')
-        mean_of_means[idx].append(mean_val)
-    print("")
-
-print(f"{(-1, '', -1)}:", end='\t')
-for idx in range(0, (4 * len(settings.CSV_CATEGORIES)) + 1):
-    if len(mean_of_means[idx]) > 0:
-        print(f"{np.mean(mean_of_means[idx]):.3f}", end='\t')
-    else:
-        print(f"nan", end='\t')
-print("")
+in_out.store_matches("tmp_csv_store12_full_v2.csv")
 
 """
 
