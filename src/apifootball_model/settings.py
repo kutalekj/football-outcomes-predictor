@@ -106,28 +106,29 @@ COMPS_v2 = [
     {'id': 323, 'name': "Indian Super League",
      'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
      'fs_alias': "Indian Super League"},  # IND
-    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': []},
-    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': []},
-    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': []},
-    {'id': 45, 'name': "FA Cup", 'regular_round_keywords': []},
-    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': []},
-    {'id': 81, 'name': "DFB Pokal", 'regular_round_keywords': []},
-    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': []},
-    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': []},
-    {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': []},
-    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': []},  # NED
-    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': []},
-    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': []},
-    {'id': 108, 'name': "Cup", 'regular_round_keywords': []},  # POL
-    {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': []},
-    {'id': 206, 'name': "Cup", 'regular_round_keywords': []},  # TUR
-    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': []},  # DEN
-    {'id': 147, 'name': "Cup", 'regular_round_keywords': []},  # BEL
-    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': []},  # SCO
-    {'id': 185, 'name': "League Cup", 'regular_round_keywords': []},  # SCO
-    {'id': 220, 'name': "Cup", 'regular_round_keywords': []},  # AUT
-    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': []},  # SA
-    {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': []}  # AUS
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
+     'fs_alias': "UEFA Europa Conference League"},
+    {'id': 45, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "FA Cup"},
+    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': [], 'fs_alias': "EFL Trophy"},
+    {'id': 81, 'name': "DFB Pokal", 'regular_round_keywords': [], 'fs_alias': "DFB Pokal"},
+    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': [], 'fs_alias': "Coupe de France"},
+    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': [], 'fs_alias': "Coppa Italia"},
+    {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': [], 'fs_alias': "Copa del Rey"},
+    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': [], 'fs_alias': "KNVB Cup"},  # NED
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': [], 'fs_alias': "Taça de Portugal"},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
+    {'id': 108, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Polish Cup"},  # POL
+    {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': [], 'fs_alias': "Swiss Cup"},
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
+    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': [], 'fs_alias': "Danish Cup"},  # DEN
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"},  # BEL
+    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish Cup"},  # SCO
+    {'id': 185, 'name': "League Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish League Cup"},  # SCO
+    {'id': 220, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Austrian Cup"},  # AUT
+    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': [], 'fs_alias': "Kings Cup"},  # SA
+    {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': [], 'fs_alias': "FFA Cup"}  # AUS
 ]
 
 INIT_ELO = 1500
