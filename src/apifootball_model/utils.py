@@ -488,6 +488,7 @@ def get_fs_match_xg(curr_match):
     data_match_details_fs = res.json()
     fs_match_details_dict_comp_season = data_match_details_fs['data']
 
+    # TODO: Check this! It is possible the exception occurred because of exceeding FS request limit...
     try:
         curr_match.home_team_xg = float(fs_match_details_dict_comp_season["team_a_xg"]) \
             if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else -1
