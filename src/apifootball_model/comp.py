@@ -82,10 +82,16 @@ class Comp:
                 res = requests.get(comp_season_teams_request_string_fs)
                 data_comp_season_teams_fs = res.json()
 
-                fs_teams_comp_season = [x for x in data_comp_season_teams_fs['data']]
+                fs_teams_comp_season = [{'id': x['id'],
+                                         'name': x['name'],
+                                         'cleanName': x['cleanName'],
+                                         'english_name': x['english_name'],
+                                         'country': x['country'],
+                                         'season': x['season'],
+                                         'competition_id': x['competition_id'],
+                                         'full_name': x['full_name']} for x in data_comp_season_teams_fs['data']]
                 if len(fs_teams_comp_season) == 0:
                     raise ValueError(f"For an unknown reason no FS teams were found for comp {self.name} {str(season)}")
-                # TODO: Possible adj. - note that from this request is possible to get FS 'competition_id' as well...
 
             # Teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
