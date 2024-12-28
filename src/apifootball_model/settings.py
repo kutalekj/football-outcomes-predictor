@@ -15,7 +15,9 @@ HEADERS = {
 FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
-LOAD_MATCH_DATA_FROM_LOCAL_CSV = False
+LOAD_MATCH_DATA_FROM_LOCAL_CSV = True
+MEGA_STORE = False
+MEGA_LOAD = True
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -210,3 +212,8 @@ SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MINIMUM_MATCHED_LINEUP_PLAYERS = 8
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=150)  # 5 months
+
+MEGA_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_comps.csv"
+MEGA_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_teams.csv"
+MEGA_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
+MEGA_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"
