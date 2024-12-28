@@ -585,25 +585,25 @@ class Match:
                 print(
                     f"Avg home team xG last 5/20 matches={new_match_features.home_avg_xg_last_5:.3f}/"
                     f"{new_match_features.home_avg_xg_last_20:.3f} "
-                    f"(denorm={(new_match_features.home_avg_xg_last_5 * settings.AVG_HOME_TEAM_XG):.3f}"
-                    f"/{(new_match_features.home_avg_xg_last_20 * settings.AVG_HOME_TEAM_XG):.3f})")
+                    f"(denorm={(new_match_features.home_avg_xg_last_5 * settings.TEAM_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_xg_last_20 * settings.TEAM_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg home team total xG last 5/20 matches={new_match_features.home_avg_xg_total_last_5:.3f}/"
                     f"{new_match_features.home_avg_xg_total_last_20:.3f} "
-                    f"(denorm={(new_match_features.home_avg_xg_total_last_5 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f}"
-                    f"/{(new_match_features.home_avg_xg_total_last_20 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f})")
+                    f"(denorm={(new_match_features.home_avg_xg_total_last_5 * settings.TOTAL_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_xg_total_last_20 * settings.TOTAL_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg home team pre-match xG last 5/20 matches="
                     f"{new_match_features.home_avg_pre_match_xg_last_5:.3f}/"
                     f"{new_match_features.home_avg_pre_match_xg_last_20:.3f} "
-                    f"(denorm={(new_match_features.home_avg_pre_match_xg_last_5 * settings.AVG_HOME_TEAM_PRE_MATCH_XG):.3f}"
-                    f"/{(new_match_features.home_avg_pre_match_xg_last_20 * settings.AVG_HOME_TEAM_PRE_MATCH_XG):.3f})")
+                    f"(denorm={(new_match_features.home_avg_pre_match_xg_last_5 * settings.TEAM_PRE_MATCH_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_pre_match_xg_last_20 * settings.TEAM_PRE_MATCH_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg home team total pre-match xG last 5/20 matches="
                     f"{new_match_features.home_avg_pre_match_xg_total_last_5:.3f}/"
                     f"{new_match_features.home_avg_pre_match_xg_total_last_20:.3f} "
-                    f"(denorm={(new_match_features.home_avg_pre_match_xg_total_last_5 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f}"
-                    f"/{(new_match_features.home_avg_pre_match_xg_total_last_20 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f})")
+                    f"(denorm={(new_match_features.home_avg_pre_match_xg_total_last_5 * settings.TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.home_avg_pre_match_xg_total_last_20 * settings.TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Match load last 10/25 days={new_match_features.home_match_load_per_day_last_10_days:.3f}/"
                     f"{new_match_features.home_match_load_per_day_last_25_days:.3f} "
@@ -666,25 +666,25 @@ class Match:
                 print(
                     f"Avg away team xG last 5/20 matches={new_match_features.away_avg_xg_last_5:.3f}/"
                     f"{new_match_features.away_avg_xg_last_20:.3f} "
-                    f"(denorm={(new_match_features.away_avg_xg_last_5 * settings.AVG_AWAY_TEAM_XG):.3f}"
-                    f"/{(new_match_features.away_avg_xg_last_20 * settings.AVG_AWAY_TEAM_XG):.3f})")
+                    f"(denorm={(new_match_features.away_avg_xg_last_5 * settings.TEAM_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_xg_last_20 * settings.TEAM_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg away team total xG last 5/20 matches={new_match_features.away_avg_xg_total_last_5:.3f}/"
                     f"{new_match_features.away_avg_xg_total_last_20:.3f} "
-                    f"(denorm={(new_match_features.away_avg_xg_total_last_5 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f}"
-                    f"/{(new_match_features.away_avg_xg_total_last_20 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f})")
+                    f"(denorm={(new_match_features.away_avg_xg_total_last_5 * settings.TOTAL_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_xg_total_last_20 * settings.TOTAL_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg away team pre-match xG last 5/20 matches="
                     f"{new_match_features.away_avg_pre_match_xg_last_5:.3f}/"
                     f"{new_match_features.away_avg_pre_match_xg_last_20:.3f} "
-                    f"(denorm={(new_match_features.away_avg_pre_match_xg_last_5 * settings.AVG_AWAY_TEAM_PRE_MATCH_XG):.3f}"
-                    f"/{(new_match_features.away_avg_pre_match_xg_last_20 * settings.AVG_AWAY_TEAM_PRE_MATCH_XG):.3f})")
+                    f"(denorm={(new_match_features.away_avg_pre_match_xg_last_5 * settings.TEAM_PRE_MATCH_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_pre_match_xg_last_20 * settings.TEAM_PRE_MATCH_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Avg away team total pre-match xG last 5/20 matches="
                     f"{new_match_features.away_avg_pre_match_xg_total_last_5:.3f}/"
                     f"{new_match_features.away_avg_pre_match_xg_total_last_20:.3f} "
-                    f"(denorm={(new_match_features.away_avg_pre_match_xg_total_last_5 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f}"
-                    f"/{(new_match_features.away_avg_pre_match_xg_total_last_20 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f})")
+                    f"(denorm={(new_match_features.away_avg_pre_match_xg_total_last_5 * settings.TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT):.3f}"
+                    f"/{(new_match_features.away_avg_pre_match_xg_total_last_20 * settings.TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT):.3f})")
                 print(
                     f"Match load last 10/25 days={new_match_features.away_match_load_per_day_last_10_days:.3f}/"
                     f"{new_match_features.away_match_load_per_day_last_25_days:.3f} "

@@ -488,22 +488,17 @@ def get_fs_match_xg(curr_match):
     fs_match_details_dict_comp_season = data_match_details_fs['data']
 
     curr_match.home_team_xg = float(fs_match_details_dict_comp_season["team_a_xg"]) \
-        if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else settings.AVG_HOME_TEAM_XG
+        if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else -1
     curr_match.away_team_xg = float(fs_match_details_dict_comp_season["team_b_xg"]) \
-        if float(fs_match_details_dict_comp_season["team_b_xg"]) > 0.001 else settings.AVG_AWAY_TEAM_XG
+        if float(fs_match_details_dict_comp_season["team_b_xg"]) > 0.001 else -1
     curr_match.total_xg = float(fs_match_details_dict_comp_season["total_xg"]) \
-        if float(fs_match_details_dict_comp_season["total_xg"]) > 0.001 \
-        else curr_match.home_team_xg + curr_match.away_team_xg
+        if float(fs_match_details_dict_comp_season["total_xg"]) > 0.001 else -1
     curr_match.home_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) \
-        if float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) > 0.001 \
-        else settings.AVG_HOME_TEAM_PRE_MATCH_XG
+        if float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) > 0.001 else -1
     curr_match.away_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) \
-        if float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) > 0.001 \
-        else settings.AVG_AWAY_TEAM_PRE_MATCH_XG
+        if float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) > 0.001 else -1
     curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
-        if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 \
-        else curr_match.home_team_pre_match_xg + curr_match.away_team_pre_match_xg
-    # TODO: Check and fix for missing values - instead of imputing, act similarly as for AF match stats - handle in ut.
+        if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 else -1
 
     # TODO: Since FS request limis is 1800/hour, it may be needed to add a time.sleep(...) value here
 

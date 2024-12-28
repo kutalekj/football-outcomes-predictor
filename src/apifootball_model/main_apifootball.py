@@ -70,7 +70,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store13_TUR.csv")
+    in_out.load_matches("tmp_csv_store13_TUR_BEL.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -114,7 +114,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store13_TUR_BEL.csv")
+in_out.store_matches("tmp_csv_store13_TUR_BEL_v2.csv")
 
 # TODO: Remove these
 print(f"Mean home team xG: {np.mean(global_instance.home_team_xg)}")
