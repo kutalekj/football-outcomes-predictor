@@ -11,9 +11,6 @@ from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_
     TEAM_XG_NORM_COEFFICIENT, TOTAL_XG_NORM_COEFFICIENT, TEAM_PRE_MATCH_XG_NORM_COEFFICIENT, \
     TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT  # TODO: Minor adj. this
 
-
-from player_stats_loader import get_player_stats_for_team, tmp_try_find_team_players_in_so_fifa_csvs_by_lineup_name
-
 ELO_C = 10.0
 ELO_D = 400.0
 ELO_K = 32.0
