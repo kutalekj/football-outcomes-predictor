@@ -28,7 +28,15 @@ for comp in [
     {'id': 144, 'name': "Jupiler Pro League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
      'fs_alias': "Pro League"},  # BEL
-    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"}  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"},  # BEL
+    {'id': 179, 'name': "Premiership",
+     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
+     'fs_alias': "Premiership"},  # SCO
+    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish Cup"},  # SCO
+    {'id': 185, 'name': "League Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish League Cup"},  # SCO
+    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
+     'fs_alias': "Professional League"},  # SA
+    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': [], 'fs_alias': "Kings Cup"}  # SA
 ]:
 
 # for comp in settings.COMPS_v2:
@@ -70,7 +78,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store13_TUR_BEL.csv")
+    in_out.load_matches("tmp_csv_store13_TUR_BEL_SCO_SA.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -114,7 +122,7 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store13_TUR_BEL_v2.csv")
+# in_out.store_matches("tmp_csv_store13_TUR_BEL_SCO_SA_DEN_NED.csv")
 
 # TODO: Remove these
 print(f"Mean home team xG: {np.mean(global_instance.home_team_xg)}")

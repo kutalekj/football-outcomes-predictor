@@ -9,6 +9,7 @@ import unicodedata
 import difflib
 from rapidfuzz import fuzz
 import settings
+import time
 import requests
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW, CSV_CATEGORIES
@@ -487,18 +488,53 @@ def get_fs_match_xg(curr_match):
     data_match_details_fs = res.json()
     fs_match_details_dict_comp_season = data_match_details_fs['data']
 
-    curr_match.home_team_xg = float(fs_match_details_dict_comp_season["team_a_xg"]) \
-        if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else -1
-    curr_match.away_team_xg = float(fs_match_details_dict_comp_season["team_b_xg"]) \
-        if float(fs_match_details_dict_comp_season["team_b_xg"]) > 0.001 else -1
-    curr_match.total_xg = float(fs_match_details_dict_comp_season["total_xg"]) \
-        if float(fs_match_details_dict_comp_season["total_xg"]) > 0.001 else -1
-    curr_match.home_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) \
-        if float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) > 0.001 else -1
-    curr_match.away_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) \
-        if float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) > 0.001 else -1
-    curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
-        if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 else -1
+    try:
+        curr_match.home_team_xg = float(fs_match_details_dict_comp_season["team_a_xg"]) \
+            if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else -1
+    except:
+        print(f"WARNING !!! The unexpected home team xG error occurred for match between "
+              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
+        curr_match.home_team_xg = -1
+
+    try:
+        curr_match.away_team_xg = float(fs_match_details_dict_comp_season["team_b_xg"]) \
+            if float(fs_match_details_dict_comp_season["team_b_xg"]) > 0.001 else -1
+    except:
+        print(f"WARNING !!! The unexpected away team xG error occurred for match between "
+              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
+        curr_match.away_team_xg = -1
+
+    try:
+        curr_match.total_xg = float(fs_match_details_dict_comp_season["total_xg"]) \
+            if float(fs_match_details_dict_comp_season["total_xg"]) > 0.001 else -1
+    except:
+        print(f"WARNING !!! The unexpected total xG error occurred for match between "
+              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
+        curr_match.total_xg = -1
+
+    try:
+        curr_match.home_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) \
+            if float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) > 0.001 else -1
+    except:
+        print(f"WARNING !!! The unexpected home team pre-match xG error occurred for match between "
+              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
+        curr_match.home_team_pre_match_xg = -1
+
+    try:
+        curr_match.away_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) \
+            if float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) > 0.001 else -1
+    except:
+        print(f"WARNING !!! The unexpected away team pre-match xG error occurred for match between "
+              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
+        curr_match.away_team_pre_match_xg = -1
+
+    try:
+        curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
+            if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 else -1
+    except:
+        print(f"WARNING !!! The unexpected total pre-match xG error occurred for match between "
+              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
+        curr_match.total_pre_match_xg = -1
 
     # TODO: Since FS request limis is 1800/hour, it may be needed to add a time.sleep(...) value here
 
@@ -509,6 +545,8 @@ def get_fs_match_xg(curr_match):
     global_instance.home_team_pre_match_xg.append(curr_match.home_team_pre_match_xg)
     global_instance.away_team_pre_match_xg.append(curr_match.away_team_pre_match_xg)
     global_instance.total_pre_match_xg.append(curr_match.total_pre_match_xg)
+
+    # time.sleep(1.5)
 
 
 def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_season):
