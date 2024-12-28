@@ -25,6 +25,26 @@ class MatchFeatures:
 
         self.relative_match_position_in_country_season = None
 
+        self.home_avg_xg_last_5 = None
+        self.home_avg_xg_last_20 = None
+        self.away_avg_xg_last_5 = None
+        self.away_avg_xg_last_20 = None
+
+        self.home_avg_xg_total_last_5 = None
+        self.home_avg_xg_total_last_20 = None
+        self.away_avg_xg_total_last_5 = None
+        self.away_avg_xg_total_last_20 = None
+
+        self.home_avg_pre_match_xg_last_5 = None
+        self.home_avg_pre_match_xg_last_20 = None
+        self.away_avg_pre_match_xg_last_5 = None
+        self.away_avg_pre_match_xg_last_20 = None
+
+        self.home_avg_pre_match_xg_total_last_5 = None
+        self.home_avg_pre_match_xg_total_last_20 = None
+        self.away_avg_pre_match_xg_total_last_5 = None
+        self.away_avg_pre_match_xg_total_last_20 = None
+
         self.home_match_load_per_day_last_10_days = None
         self.home_match_load_per_day_last_25_days = None
         self.away_match_load_per_day_last_10_days = None

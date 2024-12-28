@@ -26,6 +26,14 @@ class Global:
             cls._instance.sf_avg_team_strength = None  # average SOFIFA team strength for each team's season
             cls._instance.sf_default_team_strength = None  # default SOFIFA team strength
 
+            # TODO: Remove these
+            cls._instance.home_team_xg = []
+            cls._instance.away_team_xg = []
+            cls._instance.total_xg = []
+            cls._instance.home_team_pre_match_xg = []
+            cls._instance.away_team_pre_match_xg = []
+            cls._instance.total_pre_match_xg = []
+
             # Main list with sofifa players' data
             # Each elem is tuple (datetime of CSV with data, big dict); big dict indexed by player IDs, values = dicts
             cls._instance.sofifa_players_data = []

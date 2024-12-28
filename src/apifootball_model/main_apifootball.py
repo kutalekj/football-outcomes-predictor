@@ -24,7 +24,11 @@ Comp.get_fs_leagues_list()
 
 for comp in [
     {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
-    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"}  # TUR
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
+     'fs_alias': "Pro League"},  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"}  # BEL
 ]:
 
 # for comp in settings.COMPS_v2:
@@ -66,7 +70,7 @@ for comp in global_instance.all_comps:
 
 # 3. Get matches (first existing locally saved, then new from API)
 if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-    in_out.load_matches("tmp_csv_store12_TUR.csv")
+    in_out.load_matches("tmp_csv_store13_TUR.csv")
 all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -98,6 +102,10 @@ for match in global_instance.all_matches:
     # Match AF/FS match lineups
     ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
 
+    # Get xG match stats (FS)
+    if match.round.is_regular:
+        ut.get_fs_match_xg(match)
+
     # Feature calculation
     # TODO: Debug print (comment for FS/SF matching acc check)
     # print(f"\n\t\tProcessing match between [{match.home_team.name}] and [{match.away_team.name}] ({match.datetime}).")
@@ -106,7 +114,27 @@ for match in global_instance.all_matches:
         match.features_before_match_played)
 
 # 5. Store matches
-# in_out.store_matches("tmp_csv_store12_full_v2.csv")
+in_out.store_matches("tmp_csv_store13_TUR_BEL.csv")
+
+# TODO: Remove these
+print(f"Mean home team xG: {np.mean(global_instance.home_team_xg)}")
+print(f"Var home team xG: {np.var(global_instance.home_team_xg)}")
+print(f"StdDev home team xG: {np.std(global_instance.home_team_xg)}")
+print(f"Mean away team xG: {np.mean(global_instance.away_team_xg)}")
+print(f"Var away team xG: {np.var(global_instance.away_team_xg)}")
+print(f"StdDev away team xG: {np.std(global_instance.away_team_xg)}")
+print(f"Mean total xG: {np.mean(global_instance.total_xg)}")
+print(f"Var total xG: {np.var(global_instance.total_xg)}")
+print(f"StdDev total xG: {np.std(global_instance.total_xg)}")
+print(f"Mean home team pre-match xG: {np.mean(global_instance.home_team_pre_match_xg)}")
+print(f"Var home team pre-match xG: {np.var(global_instance.home_team_pre_match_xg)}")
+print(f"StdDev home team pre-match xG: {np.std(global_instance.home_team_pre_match_xg)}")
+print(f"Mean away team pre-match xG: {np.mean(global_instance.away_team_pre_match_xg)}")
+print(f"Var away team pre-match xG: {np.var(global_instance.away_team_pre_match_xg)}")
+print(f"StdDev away team pre-match xG: {np.std(global_instance.away_team_pre_match_xg)}")
+print(f"Mean total pre-match xG: {np.mean(global_instance.total_pre_match_xg)}")
+print(f"Var total pre-match xG: {np.var(global_instance.total_pre_match_xg)}")
+print(f"StdDev total pre-match xG: {np.std(global_instance.total_pre_match_xg)}")
 
 """
 

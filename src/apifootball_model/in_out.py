@@ -31,9 +31,10 @@ def store_matches(file_name):
         writer.writerow([
             'id', 'status', 'datetime', 'hour', 'month', 'country', 'comp_id',
             'season', 'round_name', 'home_team_id', 'away_team_id',
-            'home_team_goals', 'away_team_goals', 'home_team_points',
-            'away_team_points', 'home_team_shots_on_target', 'away_team_shots_on_target', 'home_team_total_shots',
-            'away_team_total_shots', 'home_team_shots_inside_box', 'away_team_shots_inside_box',
+            'home_team_goals', 'away_team_goals', 'home_team_points', 'away_team_points',
+            'home_team_xg', 'away_team_xg', 'total_xg', 'home_team_pre_match_xg',  'away_team_pre_match_xg',
+            'total_pre_match_xg', 'home_team_shots_on_target', 'away_team_shots_on_target', 'home_team_total_shots',
+            'away_team_total_shots', 'home_team_shots_inside_box',  'away_team_shots_inside_box',
             'home_team_corner_kicks', 'away_team_corner_kicks', 'home_team_ball_possession',
             'away_team_ball_possession', 'home_team_passes_acc', 'away_team_passes_acc', 'winner_team_id',
             'home_team_lineup', 'away_team_lineup', 'home_fs_team_lineup', 'away_fs_team_lineup'
@@ -56,6 +57,12 @@ def store_matches(file_name):
                 match.away_team_goals,
                 match.home_team_points,
                 match.away_team_points,
+                match.home_team_xg,
+                match.away_team_xg,
+                match.total_xg,
+                match.home_team_pre_match_xg,
+                match.away_team_pre_match_xg,
+                match.total_pre_match_xg,
                 match.home_team_shots_on_target,
                 match.away_team_shots_on_target,
                 match.home_team_total_shots,
@@ -112,6 +119,15 @@ def load_matches(file_name):
                 match.away_team = away_team
                 away_team.matches.append(match)
 
+                # FS match xG
+                match.home_team_xg = float(row['home_team_xg'])
+                match.away_team_xg = float(row['away_team_xg'])
+                match.total_xg = float(row['total_xg'])
+                match.home_team_pre_match_xg = float(row['home_team_pre_match_xg'])
+                match.away_team_pre_match_xg = float(row['away_team_pre_match_xg'])
+                match.total_pre_match_xg = float(row['total_pre_match_xg'])
+
+                # AF match stats
                 match.home_team_goals = int(row['home_team_goals'])
                 match.away_team_goals = int(row['away_team_goals'])
                 match.home_team_points = int(row['home_team_points'])

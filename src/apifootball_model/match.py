@@ -48,6 +48,13 @@ class Match:
         self.home_team_points = None
         self.away_team_points = None
 
+        self.home_team_xg = -1
+        self.away_team_xg = -1
+        self.total_xg = -1
+        self.home_team_pre_match_xg = -1
+        self.away_team_pre_match_xg = -1
+        self.total_pre_match_xg = -1
+
         self.home_team_shots_on_target = None
         self.away_team_shots_on_target = None
         self.home_team_total_shots = None
@@ -432,6 +439,36 @@ class Match:
         new_match_features.away_match_load_per_day_last_25_days = \
             1.0 - feature_ut.get_match_load_per_day_last_n(self, 25, "away")
 
+        new_match_features.home_avg_xg_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home", "Team xG")
+        new_match_features.home_avg_xg_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home", "Team xG")
+        new_match_features.away_avg_xg_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away", "Team xG")
+        new_match_features.away_avg_xg_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away", "Team xG")
+
+        new_match_features.home_avg_xg_total_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home", "Total xG")
+        new_match_features.home_avg_xg_total_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                            "Total xG")
+        new_match_features.away_avg_xg_total_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away", "Total xG")
+        new_match_features.away_avg_xg_total_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                            "Total xG")
+
+        new_match_features.home_avg_pre_match_xg_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                               "Team pre-m xG")
+        new_match_features.home_avg_pre_match_xg_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                                "Team pre-m xG")
+        new_match_features.away_avg_pre_match_xg_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                               "Team pre-m xG")
+        new_match_features.away_avg_pre_match_xg_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                                "Team pre-m xG")
+
+        new_match_features.home_avg_pre_match_xg_total_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "home",
+                                                                                                     "Total pre-m xG")
+        new_match_features.home_avg_pre_match_xg_total_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "home",
+                                                                                                      "Total pre-m xG")
+        new_match_features.away_avg_pre_match_xg_total_last_5 = feature_ut.get_avg_stat_value_last_n(self, 5, "away",
+                                                                                                     "Total pre-m xG")
+        new_match_features.away_avg_pre_match_xg_total_last_20 = feature_ut.get_avg_stat_value_last_n(self, 20, "away",
+                                                                                                      "Total pre-m xG")
+
         new_match_features.home_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "home")
         new_match_features.home_avg_points_last_20 = feature_ut.get_avg_points_last_n(self, 20, "home")
         new_match_features.away_avg_points_last_5 = feature_ut.get_avg_points_last_n(self, 5, "away")
@@ -546,6 +583,28 @@ class Match:
                     f"Relative match position in country season="
                     f"{new_match_features.relative_match_position_in_country_season:.3f}")
                 print(
+                    f"Avg home team xG last 5/20 matches={new_match_features.home_avg_xg_last_5:.3f}/"
+                    f"{new_match_features.home_avg_xg_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_xg_last_5 * settings.AVG_HOME_TEAM_XG):.3f}"
+                    f"/{(new_match_features.home_avg_xg_last_20 * settings.AVG_HOME_TEAM_XG):.3f})")
+                print(
+                    f"Avg home team total xG last 5/20 matches={new_match_features.home_avg_xg_total_last_5:.3f}/"
+                    f"{new_match_features.home_avg_xg_total_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_xg_total_last_5 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f}"
+                    f"/{(new_match_features.home_avg_xg_total_last_20 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f})")
+                print(
+                    f"Avg home team pre-match xG last 5/20 matches="
+                    f"{new_match_features.home_avg_pre_match_xg_last_5:.3f}/"
+                    f"{new_match_features.home_avg_pre_match_xg_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_pre_match_xg_last_5 * settings.AVG_HOME_TEAM_PRE_MATCH_XG):.3f}"
+                    f"/{(new_match_features.home_avg_pre_match_xg_last_20 * settings.AVG_HOME_TEAM_PRE_MATCH_XG):.3f})")
+                print(
+                    f"Avg home team total pre-match xG last 5/20 matches="
+                    f"{new_match_features.home_avg_pre_match_xg_total_last_5:.3f}/"
+                    f"{new_match_features.home_avg_pre_match_xg_total_last_20:.3f} "
+                    f"(denorm={(new_match_features.home_avg_pre_match_xg_total_last_5 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f}"
+                    f"/{(new_match_features.home_avg_pre_match_xg_total_last_20 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f})")
+                print(
                     f"Match load last 10/25 days={new_match_features.home_match_load_per_day_last_10_days:.3f}/"
                     f"{new_match_features.home_match_load_per_day_last_25_days:.3f} "
                     f"(denorm={((1.0 - new_match_features.home_match_load_per_day_last_10_days) * settings.MATCH_LOAD_NORM_COEFFICIENT):.3f}"
@@ -604,6 +663,28 @@ class Match:
                 print(
                     f"Relative match position in country season="
                     f"{new_match_features.relative_match_position_in_country_season:.3f}")
+                print(
+                    f"Avg away team xG last 5/20 matches={new_match_features.away_avg_xg_last_5:.3f}/"
+                    f"{new_match_features.away_avg_xg_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_xg_last_5 * settings.AVG_AWAY_TEAM_XG):.3f}"
+                    f"/{(new_match_features.away_avg_xg_last_20 * settings.AVG_AWAY_TEAM_XG):.3f})")
+                print(
+                    f"Avg away team total xG last 5/20 matches={new_match_features.away_avg_xg_total_last_5:.3f}/"
+                    f"{new_match_features.away_avg_xg_total_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_xg_total_last_5 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f}"
+                    f"/{(new_match_features.away_avg_xg_total_last_20 * (settings.AVG_HOME_TEAM_XG + settings.AVG_AWAY_TEAM_XG)):.3f})")
+                print(
+                    f"Avg away team pre-match xG last 5/20 matches="
+                    f"{new_match_features.away_avg_pre_match_xg_last_5:.3f}/"
+                    f"{new_match_features.away_avg_pre_match_xg_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_pre_match_xg_last_5 * settings.AVG_AWAY_TEAM_PRE_MATCH_XG):.3f}"
+                    f"/{(new_match_features.away_avg_pre_match_xg_last_20 * settings.AVG_AWAY_TEAM_PRE_MATCH_XG):.3f})")
+                print(
+                    f"Avg away team total pre-match xG last 5/20 matches="
+                    f"{new_match_features.away_avg_pre_match_xg_total_last_5:.3f}/"
+                    f"{new_match_features.away_avg_pre_match_xg_total_last_20:.3f} "
+                    f"(denorm={(new_match_features.away_avg_pre_match_xg_total_last_5 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f}"
+                    f"/{(new_match_features.away_avg_pre_match_xg_total_last_20 * (settings.AVG_HOME_TEAM_PRE_MATCH_XG + settings.AVG_AWAY_TEAM_PRE_MATCH_XG)):.3f})")
                 print(
                     f"Match load last 10/25 days={new_match_features.away_match_load_per_day_last_10_days:.3f}/"
                     f"{new_match_features.away_match_load_per_day_last_25_days:.3f} "
@@ -667,5 +748,10 @@ class Match:
                 f"{self.away_team.name} {self.away_team_goals} ({self.away_team_shots_on_target}) "
                 f"({self.away_team_total_shots}) ({self.away_team_shots_inside_box}) ({self.away_team_corner_kicks}) "
                 f"({self.away_team_ball_possession}) ({self.away_team_passes_acc})")
+            print(
+                f"({self.home_team_xg}) ({self.home_team_pre_match_xg}) - "
+                f"({self.away_team_xg}) ({self.away_team_pre_match_xg}) "
+                f"[totals = ({self.total_xg}) ({self.total_pre_match_xg})]"
+            )
 
         return new_match_features

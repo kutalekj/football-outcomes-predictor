@@ -9,6 +9,7 @@ import unicodedata
 import difflib
 from rapidfuzz import fuzz
 import settings
+import requests
 from globals import Global
 from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW, CSV_CATEGORIES
 from datetime import timedelta, datetime
@@ -461,6 +462,58 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     print(f"Successfully matched {len(curr_match.home_fs_team_lineup)} home team players and "
           f"{len(curr_match.away_fs_team_lineup)} away team players!")
     # TODO: Minor adj.: note that there might be duplicates
+
+
+def get_fs_match_xg(curr_match):
+    global_instance = Global.get_instance()
+
+    all_fs_matches_this_comp_season = global_instance.fs_leagues_matches[(curr_match.comp.id, curr_match.season)]
+    fs_match_ids = [x["fs_match_id"] for x in all_fs_matches_this_comp_season if
+                    x["fs_home_team_id"] == curr_match.home_team.fs_id and
+                    x["fs_away_team_id"] == curr_match.away_team.fs_id and
+                    x["season"] == curr_match.season and
+                    x["datetime"].year == curr_match.datetime.year and
+                    x["datetime"].month == curr_match.datetime.month and
+                    x["datetime"].day == curr_match.datetime.day]
+    if len(fs_match_ids) != 1:
+        raise ValueError(f"Found none, or multiple FS match IDs for a single match "
+                         f"({curr_match.home_team.id}: {curr_match.home_team.name} vs. "
+                         f"{curr_match.away_team.id}: {curr_match.away_team.name} - {curr_match.datetime})")
+
+    fs_match_id = fs_match_ids[0]
+    match_details_request_string_fs = settings.FS_HOST + "/match?key=" + settings.FS_KEY \
+        + "&match_id=" + str(fs_match_id)
+    res = requests.get(match_details_request_string_fs)
+    data_match_details_fs = res.json()
+    fs_match_details_dict_comp_season = data_match_details_fs['data']
+
+    curr_match.home_team_xg = float(fs_match_details_dict_comp_season["team_a_xg"]) \
+        if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else settings.AVG_HOME_TEAM_XG
+    curr_match.away_team_xg = float(fs_match_details_dict_comp_season["team_b_xg"]) \
+        if float(fs_match_details_dict_comp_season["team_b_xg"]) > 0.001 else settings.AVG_AWAY_TEAM_XG
+    curr_match.total_xg = float(fs_match_details_dict_comp_season["total_xg"]) \
+        if float(fs_match_details_dict_comp_season["total_xg"]) > 0.001 \
+        else curr_match.home_team_xg + curr_match.away_team_xg
+    curr_match.home_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) \
+        if float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) > 0.001 \
+        else settings.AVG_HOME_TEAM_PRE_MATCH_XG
+    curr_match.away_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) \
+        if float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) > 0.001 \
+        else settings.AVG_AWAY_TEAM_PRE_MATCH_XG
+    curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
+        if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 \
+        else curr_match.home_team_pre_match_xg + curr_match.away_team_pre_match_xg
+    # TODO: Check and fix for missing values - instead of imputing, act similarly as for AF match stats - handle in ut.
+
+    # TODO: Since FS request limis is 1800/hour, it may be needed to add a time.sleep(...) value here
+
+    # TODO: Remove the following
+    global_instance.home_team_xg.append(curr_match.home_team_xg)
+    global_instance.away_team_xg.append(curr_match.away_team_xg)
+    global_instance.total_xg.append(curr_match.total_xg)
+    global_instance.home_team_pre_match_xg.append(curr_match.home_team_pre_match_xg)
+    global_instance.away_team_pre_match_xg.append(curr_match.away_team_pre_match_xg)
+    global_instance.total_pre_match_xg.append(curr_match.total_pre_match_xg)
 
 
 def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_season):
