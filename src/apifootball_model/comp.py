@@ -111,12 +111,6 @@ class Comp:
 
                 new_team.regularity_in_comp_season.append({'comp': self, 'season': season, 'is_regular': False})
 
-                # Team players statistics in comp season (only for comps with regular rounds!)
-                if len(self.regular_round_keywords) > 0:
-                    if self.name not in new_team.player_stats_comp_season:
-                        new_team.player_stats_comp_season[self.name] = dict()
-                    new_team.player_stats_comp_season[self.name][str(season)] = []
-
                 teams.append(new_team)  # Add team to teams list of a season of the current Comp
 
                 global_instance.all_teams.append(new_team)  # Add team to the global teams list

@@ -18,9 +18,6 @@ class Team:
         # (then, in team strength calc., each player from team's match lineup will be matched against one from these)
         self.players_in_regular_comp_season = []
 
-        self.player_stats_comp_season = {}  # TODO: Rename - no stats, just players list
-        self.rating_comp_season = {}  # TODO: Remove
-
         # Average SOFIFA goalkeeper skills for cases when data is missing - for imputing
         self.avg_gk_diving = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
         self.avg_gk_handling = {year: None for year in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)}
