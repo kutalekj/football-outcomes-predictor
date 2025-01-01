@@ -26,32 +26,23 @@ if not settings.MEGA_LOAD:
     Comp.get_fs_leagues_list()
 
     for comp in [
-        {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 1"},
-        {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 2"},
-        {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': [], 'fs_alias': "Coupe de France"},
-        {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Bundesliga"},
-        {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "2. Bundesliga"},
-        {'id': 81, 'name': "DFB Pokal", 'regular_round_keywords': [], 'fs_alias': "DFB Pokal"},
-        {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Eredivisie"},
-        {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': [], 'fs_alias': "KNVB Cup"},  # NED
-        {'id': 119, 'name': "Superliga",
-         'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
-         'fs_alias': "Superliga"},  # DEN
-        {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': [], 'fs_alias': "Danish Cup"},  # DEN
-        {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
-         'fs_alias': "Professional League"},  # SA
-        {'id': 504, 'name': "King's Cup", 'regular_round_keywords': [], 'fs_alias': "Kings Cup"},  # SA
-        {'id': 179, 'name': "Premiership",
-         'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
-         'fs_alias': "Premiership"},  # SCO
-        {'id': 181, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish Cup"},  # SCO
-        {'id': 185, 'name': "League Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish League Cup"},  # SCO
-        {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
-        {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
-        {'id': 144, 'name': "Jupiler Pro League",
-         'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
-         'fs_alias': "Pro League"},  # BEL
-        {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"}  # BEL
+        {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season'],
+         'fs_alias': "Premier League"},
+        {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"},
+        {'id': 41, 'name': "League One", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League One"},
+        {'id': 42, 'name': "League Two", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League Two"},
+        {'id': 45, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "FA Cup"},
+        {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': [], 'fs_alias': "EFL Trophy"},
+        {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie A"},
+        {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie B"},
+        {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "La Liga"},
+        {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
+        {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': [], 'fs_alias': "Coppa Italia"},
+        {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': [], 'fs_alias': "Copa del Rey"},
+        {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
+        {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
+        {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
+         'fs_alias': "UEFA Europa Conference League"},
     ]:
 
     # for comp in settings.COMPS_v2:
@@ -93,7 +84,7 @@ if not settings.MEGA_LOAD:
 
     # 3. Get matches (first existing locally saved, then new from API)
     if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-        in_out.load_matches("tmp_csv_store14_BEL_TUR_SCO_SA_DEN_NED.csv")
+        in_out.load_matches("tmp_csv_store14_BEL_TUR_SCO_SA_DEN_NED_FRA_GER.csv")
     all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -159,7 +150,7 @@ else:
     in_out_mega.load_all_matches_data()
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store14_BEL_TUR_SCO_SA_DEN_NED_FRA_GER.csv")
+in_out.store_matches("tmp_csv_store14_ENG_ITA_SPA.csv")
 
 if settings.MEGA_STORE:
     in_out_mega.store_all_matches_data()

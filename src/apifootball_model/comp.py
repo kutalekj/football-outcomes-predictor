@@ -246,6 +246,8 @@ class Comp:
             raise ValueError("Found none, or multiple FS aliases for a single competition")
         comp_fs_alias = comp_fs_alias[0]
 
+        if comp_country == "World":
+            comp_country = "Europe"  # UEFA competitions are under "Europe" in FS data, instead of "World" as in AF data
         wanted_comp = [x for x in league_list['data'] if
                        x['country'] == comp_country and x['league_name'] == comp_fs_alias]
         if len(wanted_comp) != 1:
