@@ -547,7 +547,7 @@ def get_fs_match_xg(curr_match):
     global_instance.away_team_pre_match_xg.append(curr_match.away_team_pre_match_xg)
     global_instance.total_pre_match_xg.append(curr_match.total_pre_match_xg)
 
-    time.sleep(1.5)
+    time.sleep(2.0)
 
 
 def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_season):
