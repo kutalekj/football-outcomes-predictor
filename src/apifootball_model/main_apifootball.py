@@ -26,23 +26,23 @@ if not settings.MEGA_LOAD:
     Comp.get_fs_leagues_list()
 
     for comp in [
-        {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season'],
-         'fs_alias': "Premier League"},
-        {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"},
-        {'id': 41, 'name': "League One", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League One"},
-        {'id': 42, 'name': "League Two", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League Two"},
-        {'id': 45, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "FA Cup"},
-        {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': [], 'fs_alias': "EFL Trophy"},
-        {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie A"},
-        {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie B"},
-        {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "La Liga"},
-        {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season']},
-        {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': [], 'fs_alias': "Coppa Italia"},
-        {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': [], 'fs_alias': "Copa del Rey"},
-        {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
-        {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
-        {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
-         'fs_alias': "UEFA Europa Conference League"},
+        {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Liga NOS"},
+        {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ekstraklasa"},
+        # POL
+        {'id': 207, 'name': "Super League",
+         'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
+         'fs_alias': "Super League"},  # SUI
+        {'id': 218, 'name': "Bundesliga",
+         'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
+         'fs_alias': "Bundesliga"},  # AUT
+        {'id': 323, 'name': "Indian Super League",
+         'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
+         'fs_alias': "Indian Super League"},  # IND
+        {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': [], 'fs_alias': "Taça de Portugal"},
+        {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
+        {'id': 108, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Polish Cup"},  # POL
+        {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': [], 'fs_alias': "Swiss Cup"},
+        {'id': 220, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Austrian Cup"}  # AUT
     ]:
 
     # for comp in settings.COMPS_v2:
@@ -150,7 +150,7 @@ else:
     in_out_mega.load_all_matches_data()
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store14_ENG_ITA_SPA.csv")
+in_out.store_matches("tmp_csv_store14_POR_POL_SUI_AUT_IND.csv")
 
 if settings.MEGA_STORE:
     in_out_mega.store_all_matches_data()

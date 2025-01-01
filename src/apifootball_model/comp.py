@@ -254,7 +254,8 @@ class Comp:
             raise ValueError("Found none, or multiple FS competitions for a single competition")
         wanted_comp = wanted_comp[0]
 
-        season_id = [x['id'] for x in wanted_comp['season'] if str(x['year']) == (str(season) + str(season + 1))]
+        season_id = [x['id'] for x in wanted_comp['season']
+                     if str(x['year']) == (str(season) + str(season + 1)) or str(x['year']) == (str(season))]
         if len(season_id) != 1:
             raise ValueError("Found none, or multiple FS season IDs for a single competition")
         return season_id[0]
