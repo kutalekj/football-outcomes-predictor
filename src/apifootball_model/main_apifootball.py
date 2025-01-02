@@ -64,7 +64,7 @@ if not settings.MEGA_LOAD:
 
     # 3. Get matches (first existing locally saved, then new from API)
     if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-        in_out.load_matches("tmp_csv_store14_full_merged.csv")
+        in_out.load_matches("tmp_csv_store14_full.csv")
     all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -110,15 +110,14 @@ else:
     in_out_mega.load_all_matches_data()
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store14_full.csv")
+# in_out.store_matches("tmp_csv_store14_full.csv")
 
 if settings.MEGA_STORE:
     in_out_mega.store_all_matches_data()
 
-"""
-
 # 6. Distribute regular matches into rounds for training
-regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
+# TODO: Fix the error that about 30 regular matches are missing team strength! (This exclusion is a temp. solution...)
+regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
@@ -128,6 +127,5 @@ for i, r in enumerate(regular_matches_in_rounds):
 
 # 7. Train
 train(regular_matches_in_rounds)
-"""
 
 print("breakpoint")

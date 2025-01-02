@@ -1,6 +1,7 @@
 import csv
 import json
 import datetime
+import numpy as np
 from team import Team
 from comp import Comp
 from rounds import Round
@@ -204,7 +205,8 @@ def store_matches(matches_csv_path):
         'home_elo_before_match_not_normalized',
         'away_elo_before_match_not_normalized',
         # We'll store MatchFeatures fully as JSON
-        'features_before_match_played_json'
+        'features_before_match_played_json',
+        'feature_vector_before_match_played_json'
     ]
 
     with open(matches_csv_path, mode='w', newline='', encoding='utf-8') as f:
@@ -274,6 +276,14 @@ def store_matches(matches_csv_path):
                 row['features_before_match_played_json'] = json.dumps(features_dict, default=str)
             else:
                 row['features_before_match_played_json'] = '{}'
+
+            # Feature Vector as JSON (convert np.array to list)
+            if match.feature_vector_before_match_played is not None:
+                row['feature_vector_before_match_played_json'] = json.dumps(
+                    match.feature_vector_before_match_played.tolist()
+                )
+            else:
+                row['feature_vector_before_match_played_json'] = '[]'
 
             writer.writerow(row)
 
@@ -453,6 +463,14 @@ def load_matches(matches_csv_path):
                 for k, v in feat_data.items():
                     setattr(mf, k, v)
                 m.features_before_match_played = mf
+
+            # Feature Vector (JSON -> np.array)
+            fv_json = row.get('feature_vector_before_match_played_json', '[]')
+            if fv_json and fv_json != '[]':
+                fv_list = json.loads(fv_json)
+                m.feature_vector_before_match_played = np.array(fv_list, dtype=float)
+            else:
+                m.feature_vector_before_match_played = None
 
             all_matches.append(m)
 
