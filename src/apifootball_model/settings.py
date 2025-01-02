@@ -2,7 +2,7 @@
 settings.py
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 KEY = "4a9e20eecbec58c517cb485f31552caf"
 HOST = "v3.football.api-sports.io"
@@ -15,9 +15,10 @@ HEADERS = {
 FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
-LOAD_MATCH_DATA_FROM_LOCAL_CSV = False
+LOAD_MATCH_DATA_FROM_LOCAL_CSV = True
 MEGA_STORE = False
 MEGA_LOAD = False
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2024, 12, 15)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024

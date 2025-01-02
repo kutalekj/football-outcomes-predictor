@@ -97,7 +97,9 @@ if not settings.MEGA_LOAD:
         ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
 
         # Get xG match stats (FS)
-        if match.round.is_regular:
+        if match.round.is_regular and\
+                match.datetime > settings.GET_XG_IF_MATCH_DATE_NEWER_THAN.replace(tzinfo=match.datetime.tzinfo) and\
+                (match.total_xg == -1 and match.total_pre_match_xg == -1):
             ut.get_fs_match_xg(match)
 
         # Feature calculation
