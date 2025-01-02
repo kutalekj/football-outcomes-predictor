@@ -26,23 +26,10 @@ if not settings.MEGA_LOAD:
     Comp.get_fs_leagues_list()
 
     for comp in [
-        {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Liga NOS"},
-        {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ekstraklasa"},
-        # POL
-        {'id': 207, 'name': "Super League",
-         'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
-         'fs_alias': "Super League"},  # SUI
-        {'id': 218, 'name': "Bundesliga",
-         'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
-         'fs_alias': "Bundesliga"},  # AUT
-        {'id': 323, 'name': "Indian Super League",
-         'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
-         'fs_alias': "Indian Super League"},  # IND
-        {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': [], 'fs_alias': "Taça de Portugal"},
-        {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
-        {'id': 108, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Polish Cup"},  # POL
-        {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': [], 'fs_alias': "Swiss Cup"},
-        {'id': 220, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Austrian Cup"}  # AUT
+        {'id': 188, 'name': "A-League",
+         'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final'],
+         'fs_alias': "A-League"},  # AUS
+        {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': [], 'fs_alias': "FFA Cup"}  # AUS
     ]:
 
     # for comp in settings.COMPS_v2:
@@ -150,7 +137,7 @@ else:
     in_out_mega.load_all_matches_data()
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store14_POR_POL_SUI_AUT_IND.csv")
+in_out.store_matches("tmp_csv_store14_AUS.csv")
 
 if settings.MEGA_STORE:
     in_out_mega.store_all_matches_data()

@@ -476,10 +476,14 @@ def get_fs_match_xg(curr_match):
                     x["datetime"].year == curr_match.datetime.year and
                     x["datetime"].month == curr_match.datetime.month and
                     x["datetime"].day == curr_match.datetime.day]
+
     if len(fs_match_ids) != 1:
-        raise ValueError(f"Found none, or multiple FS match IDs for a single match "
-                         f"({curr_match.home_team.id}: {curr_match.home_team.name} vs. "
-                         f"{curr_match.away_team.id}: {curr_match.away_team.name} - {curr_match.datetime})")
+        print(f"Found none, or multiple FS match IDs: [{fs_match_ids}] for a single match "
+              f"({curr_match.home_team.id}: {curr_match.home_team.name} vs. "
+              f"{curr_match.away_team.id}: {curr_match.away_team.name} - {curr_match.datetime})")
+        curr_match.home_team_xg, curr_match.away_team_xg, curr_match.total_xg = -1, -1, -1
+        curr_match.home_team_pre_match_xg, curr_match.away_team_pre_match_xg, curr_match.total_pre_match_xg = -1, -1, -1
+        return
 
     fs_match_id = fs_match_ids[0]
     match_details_request_string_fs = settings.FS_HOST + "/match?key=" + settings.FS_KEY \
@@ -488,56 +492,23 @@ def get_fs_match_xg(curr_match):
     data_match_details_fs = res.json()
     fs_match_details_dict_comp_season = data_match_details_fs['data']
 
-    # TODO: Check this! It is possible the exception occurred because of exceeding FS request limit...
-    # try:
     curr_match.home_team_xg = float(fs_match_details_dict_comp_season["team_a_xg"]) \
         if float(fs_match_details_dict_comp_season["team_a_xg"]) > 0.001 else -1
-    """except:
-        print(f"WARNING !!! The unexpected home team xG error occurred for match between "
-              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
-        curr_match.home_team_xg = -1"""
 
-    # try:
     curr_match.away_team_xg = float(fs_match_details_dict_comp_season["team_b_xg"]) \
         if float(fs_match_details_dict_comp_season["team_b_xg"]) > 0.001 else -1
-    """except:
-        print(f"WARNING !!! The unexpected away team xG error occurred for match between "
-              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
-        curr_match.away_team_xg = -1"""
 
-    # try:
     curr_match.total_xg = float(fs_match_details_dict_comp_season["total_xg"]) \
         if float(fs_match_details_dict_comp_season["total_xg"]) > 0.001 else -1
-    """except:
-        print(f"WARNING !!! The unexpected total xG error occurred for match between "
-              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
-        curr_match.total_xg = -1"""
 
-    # try:
     curr_match.home_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) \
         if float(fs_match_details_dict_comp_season["team_a_xg_prematch"]) > 0.001 else -1
-    """except:
-        print(f"WARNING !!! The unexpected home team pre-match xG error occurred for match between "
-              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
-        curr_match.home_team_pre_match_xg = -1"""
 
-    # try:
     curr_match.away_team_pre_match_xg = float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) \
         if float(fs_match_details_dict_comp_season["team_b_xg_prematch"]) > 0.001 else -1
-    """except:
-        print(f"WARNING !!! The unexpected away team pre-match xG error occurred for match between "
-              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
-        curr_match.away_team_pre_match_xg = -1"""
 
-    # try:
     curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
         if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 else -1
-    """except:
-        print(f"WARNING !!! The unexpected total pre-match xG error occurred for match between "
-              f"{curr_match.home_team.name} and {curr_match.away_team.name} played at {curr_match.datetime}")
-        curr_match.total_pre_match_xg = -1"""
-
-    # TODO: Since FS request limis is 1800/hour, it may be needed to add a time.sleep(...) value here
 
     # TODO: Remove the following
     global_instance.home_team_xg.append(curr_match.home_team_xg)
