@@ -510,14 +510,6 @@ def get_fs_match_xg(curr_match):
     curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
         if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 else -1
 
-    # TODO: Remove the following
-    global_instance.home_team_xg.append(curr_match.home_team_xg)
-    global_instance.away_team_xg.append(curr_match.away_team_xg)
-    global_instance.total_xg.append(curr_match.total_xg)
-    global_instance.home_team_pre_match_xg.append(curr_match.home_team_pre_match_xg)
-    global_instance.away_team_pre_match_xg.append(curr_match.away_team_pre_match_xg)
-    global_instance.total_pre_match_xg.append(curr_match.total_pre_match_xg)
-
     time.sleep(2.0)
 
 

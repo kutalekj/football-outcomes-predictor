@@ -25,14 +25,7 @@ if not settings.MEGA_LOAD:
     # 1. Init FS comps and their seasons and rounds
     Comp.get_fs_leagues_list()
 
-    for comp in [
-        {'id': 188, 'name': "A-League",
-         'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final'],
-         'fs_alias': "A-League"},  # AUS
-        {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': [], 'fs_alias': "FFA Cup"}  # AUS
-    ]:
-
-    # for comp in settings.COMPS_v2:
+    for comp in settings.COMPS_v2:
         new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
         print(f"Initializing comp [{new_comp.name}].")
 
@@ -71,7 +64,7 @@ if not settings.MEGA_LOAD:
 
     # 3. Get matches (first existing locally saved, then new from API)
     if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-        in_out.load_matches("tmp_csv_store14_BEL_TUR_SCO_SA_DEN_NED_FRA_GER.csv")
+        in_out.load_matches("tmp_csv_store14_full_merged.csv")
     all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
@@ -113,31 +106,11 @@ if not settings.MEGA_LOAD:
         match.features_before_match_played = match.calculate_match_features()
         match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
             match.features_before_match_played)
-
-    # TODO: Remove these
-    print(f"Mean home team xG: {np.mean(global_instance.home_team_xg)}")
-    print(f"Var home team xG: {np.var(global_instance.home_team_xg)}")
-    print(f"StdDev home team xG: {np.std(global_instance.home_team_xg)}")
-    print(f"Mean away team xG: {np.mean(global_instance.away_team_xg)}")
-    print(f"Var away team xG: {np.var(global_instance.away_team_xg)}")
-    print(f"StdDev away team xG: {np.std(global_instance.away_team_xg)}")
-    print(f"Mean total xG: {np.mean(global_instance.total_xg)}")
-    print(f"Var total xG: {np.var(global_instance.total_xg)}")
-    print(f"StdDev total xG: {np.std(global_instance.total_xg)}")
-    print(f"Mean home team pre-match xG: {np.mean(global_instance.home_team_pre_match_xg)}")
-    print(f"Var home team pre-match xG: {np.var(global_instance.home_team_pre_match_xg)}")
-    print(f"StdDev home team pre-match xG: {np.std(global_instance.home_team_pre_match_xg)}")
-    print(f"Mean away team pre-match xG: {np.mean(global_instance.away_team_pre_match_xg)}")
-    print(f"Var away team pre-match xG: {np.var(global_instance.away_team_pre_match_xg)}")
-    print(f"StdDev away team pre-match xG: {np.std(global_instance.away_team_pre_match_xg)}")
-    print(f"Mean total pre-match xG: {np.mean(global_instance.total_pre_match_xg)}")
-    print(f"Var total pre-match xG: {np.var(global_instance.total_pre_match_xg)}")
-    print(f"StdDev total pre-match xG: {np.std(global_instance.total_pre_match_xg)}")
 else:
     in_out_mega.load_all_matches_data()
 
 # 5. Store matches
-in_out.store_matches("tmp_csv_store14_AUS.csv")
+in_out.store_matches("tmp_csv_store14_full.csv")
 
 if settings.MEGA_STORE:
     in_out_mega.store_all_matches_data()
