@@ -292,7 +292,6 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
                 pass  # player position not relevant for this category - skip (e.g. "CB" player and "goalkeeping" cat.)
 
         if not negative_value_found:
-            print("After exploring multiple available CSV files, all skill values were finally successfully obtained.")
             break  # if no -1 values found, end getting skills
 
     # Handle possibly missing GK skills data - check if at least one value for each skill in the "goalkeeping" category
@@ -646,9 +645,9 @@ def calculate_team_strength_scaled(sf_players_stats, team_season_info):
         raise ValueError("Incomplete team strength vector found.")
 
     for idx, val in enumerate(team_strength_vector):
-        if idx % 4 == 0:  # print mean values
+        if idx % 4 == 0:  # print only mean values (skip min, max and stddev)
             print(f"{val:.3f}", end='\t')
-    print("")
+    print("\n")
 
     return team_strength_vector
 

@@ -101,8 +101,6 @@ if not settings.MEGA_LOAD:
             ut.get_fs_match_xg(match)
 
         # Feature calculation
-        # TODO: Debug print (comment for FS/SF matching acc check)
-        # print(f"\n\t\tProcessing match between [{match.home_team.name}] and [{match.away_team.name}] ({match.datetime}).")
         match.features_before_match_played = match.calculate_match_features()
         match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
             match.features_before_match_played)

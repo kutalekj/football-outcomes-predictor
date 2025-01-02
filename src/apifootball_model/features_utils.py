@@ -441,7 +441,7 @@ def calculate_team_strength(curr_match, team_id):
           f"played at {curr_match.datetime}:")
     for skill in PLAYER_SKILLS:
         print(f"{skill}: {len(sf_players_stats[skill])}", end='\t')
-    print("\n")
+    print("")
 
     # TODO: End comment here for FS/SF matching acc check
 
