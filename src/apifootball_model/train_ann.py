@@ -14,8 +14,8 @@ from globals import Global
 
 
 NUM_TRAINING_ROUNDS = 25
-EMBEDDING_OUT_SIZE_TEAM = 9
-EMBEDDING_OUT_SIZE_COMP = 2
+EMBEDDING_OUT_SIZE_TEAM = 6
+EMBEDDING_OUT_SIZE_COMP = 4
 
 PAR_NEURONS = {'neu_1': 32, 'neu_2': 64, 'neu_3': 128}
 PAR_TEAM_EMB = {'teamem_1': 6, 'teamem_2': 9, 'teamem_3': 12}
@@ -97,12 +97,12 @@ def train_main_model(regular_matches_in_rounds):
         merged = Concatenate()([numerical_input, home_team_embedding, away_team_embedding, comp_embedding])
 
         # Build the rest of the model
-        x = Dense(256, activation='relu')(merged)
-        x = Dropout(0.6)(x)
-        x = Dense(126, activation='relu')(x)
+        x = Dense(128, activation='relu')(merged)
         x = Dropout(0.5)(x)
         x = Dense(64, activation='relu')(x)
         x = Dropout(0.4)(x)
+        x = Dense(32, activation='relu')(x)
+        x = Dropout(0.3)(x)
         output = Dense(1, activation='sigmoid')(x)
 
         # Define the model
@@ -197,12 +197,13 @@ def train_main_model(regular_matches_in_rounds):
             weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
             accuracies.append(accuracy)
 
-            # Store this round's validation data for later comp-specific analysis
-            val_numerical_features_all.append(val_numerical_features)
-            val_home_team_input_mapped_all.append(val_home_team_input_data_mapped)
-            val_away_team_input_mapped_all.append(val_away_team_input_data_mapped)
-            val_comp_id_input_mapped_all.append(val_comp_id_input_data_mapped)
-            val_labels_all.append(val_labels)
+            if round_number > 120:
+                # Store this round's validation data for later comp-specific analysis
+                val_numerical_features_all.append(val_numerical_features)
+                val_home_team_input_mapped_all.append(val_home_team_input_data_mapped)
+                val_away_team_input_mapped_all.append(val_away_team_input_data_mapped)
+                val_comp_id_input_mapped_all.append(val_comp_id_input_data_mapped)
+                val_labels_all.append(val_labels)
 
         final_weighted_acc = float(np.sum(weighted_accuracy) / num_validation_matches)
         print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")

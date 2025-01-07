@@ -13,8 +13,8 @@ from globals import Global
 from utils import get_n_previous_matches
 
 
-EMBEDDING_OUT_SIZE_TEAM = 9
-EMBEDDING_OUT_SIZE_COMP = 2
+EMBEDDING_OUT_SIZE_TEAM = 6
+EMBEDDING_OUT_SIZE_COMP = 4
 SEQUENCE_LENGTH = 10
 
 
@@ -26,7 +26,7 @@ def train(regular_matches_in_rounds):
     all_matches.sort(key=lambda x: x.datetime)
 
     # Split data into training and validation sets
-    validation_fraction = 0.2
+    validation_fraction = 0.2  # TODO: Debug check if for this current approach there are really only the latest 20% of matches used as validation data - less validation matches in total
     split_index = int(len(all_matches) * (1 - validation_fraction))
     train_matches = all_matches[:split_index]
     val_matches = all_matches[split_index:]
@@ -84,6 +84,8 @@ def train(regular_matches_in_rounds):
 
     comp_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
     comp_encoder.fit(all_comp_ids)
+
+    # TODO: Check why there are so many teams and comps with ID=0?
 
     # Transform training data
     train_home_team_sequences_mapped = team_encoder.transform(
@@ -148,9 +150,9 @@ def train(regular_matches_in_rounds):
     )
 
     # Callbacks
-    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), "rounds")
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=100, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
 
     # Train the model
     model.fit(
@@ -186,6 +188,57 @@ def train(regular_matches_in_rounds):
     # TODO: ...and with highest/lowest embedding value - see if really all values close to 0
     # TODO: Try cumulative training, without sliding window (non RNN)
     # TODO: Find out which features contribute more and which less to the training
+
+    # ======================
+    # Compute per-comp stats across entire validation set
+    # ======================
+    # 1) We'll flatten out the sequences in the validation set to identify each "final match" sample
+    #    Actually, in this approach, each row in val_*_sequences corresponds to exactly 1 match label,
+    #    so we do not need multiple rounds accumulation as in sliding scenario. We can
+    #    just measure directly from val_comp_sequences_mapped.
+
+    # Flatten so we have shape (num_samples, SEQUENCE_LENGTH)
+    # Actually, in your code, val_home_comp_sequences_mapped is already shape=(num_val_matches, SEQUENCE_LENGTH)
+    # But each row corresponds to one match, repeated for SEQUENCE_LENGTH. We'll take the last index [i, -1],
+    # or just check if all SEQUENCE_LENGTH are same. We'll assume the last entry is correct for identifying comp.
+
+    # For demonstration, let's pick comp ID from the *last time step*:
+    val_comp_id_for_each_match = val_home_comp_sequences_mapped[:, -1]
+
+    # 2) Get predictions
+    preds = model.predict([
+        val_home_numerical_sequences,
+        val_away_numerical_sequences,
+        val_home_team_sequences_mapped,
+        val_away_team_sequences_mapped,
+        val_home_comp_sequences_mapped,
+        val_away_comp_sequences_mapped
+    ])
+    preds_bin = (preds >= 0.5).astype(int).flatten()
+
+    # 3) Tally correctness per comp
+    comp_correct = {}
+    comp_total = {}
+
+    for i in range(len(val_labels)):
+        c_mapped = val_comp_id_for_each_match[i]
+        if c_mapped not in comp_correct:
+            comp_correct[c_mapped] = 0
+            comp_total[c_mapped] = 0
+        # Check correctness
+        if preds_bin[i] == val_labels[i]:
+            comp_correct[c_mapped] += 1
+        comp_total[c_mapped] += 1
+
+    # 4) Print final ratio for each comp
+    print("\nPer-Comp Prediction Accuracy (All Validation Matches):")
+    for mapped_id, correct_count in comp_correct.items():
+        total_count = comp_total[mapped_id]
+        ratio = correct_count / total_count if total_count > 0 else 0.0
+        # Convert comp ID back to original with comp_encoder.inverse_transform
+        original_comp_id = comp_encoder.inverse_transform([[mapped_id - 1]])[0, 0]  # shift back if we added +1 earlier
+        print(f"Comp {original_comp_id}: {correct_count}/{total_count} = {ratio:.3%}")
+    print("============================================\n")
 
 
 def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,

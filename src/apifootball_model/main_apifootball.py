@@ -12,7 +12,7 @@ from feature import MatchFeatures
 from globals import Global
 import in_out
 import in_out_mega
-from train_ann import train
+from train_rnn import train
 
 global_instance = Global.get_instance()
 
