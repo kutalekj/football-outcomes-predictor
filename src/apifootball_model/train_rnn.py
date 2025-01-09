@@ -150,7 +150,7 @@ def train(regular_matches_in_rounds):
     )
 
     # Callbacks
-    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + '_rnn'
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
 

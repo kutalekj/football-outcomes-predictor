@@ -12,7 +12,8 @@ from feature import MatchFeatures
 from globals import Global
 import in_out
 import in_out_mega
-from train_rnn import train
+# from train_rnn import train
+from train_ann import train
 
 global_instance = Global.get_instance()
 
@@ -120,7 +121,8 @@ if settings.MEGA_STORE:
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
-regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
+# regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
+regular_matches_in_rounds = ut.distribute_matches_into_rounds_uniformly(regular_matches)
 for i, r in enumerate(regular_matches_in_rounds):
     print(f"{str(len(r))} matches found in round {str(i)}")
 # TODO: Maybe ensure that there are at least N matches in each round?

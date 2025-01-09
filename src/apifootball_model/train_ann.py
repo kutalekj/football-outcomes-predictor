@@ -14,8 +14,8 @@ from globals import Global
 
 
 NUM_TRAINING_ROUNDS = 25
-EMBEDDING_OUT_SIZE_TEAM = 6
-EMBEDDING_OUT_SIZE_COMP = 4
+EMBEDDING_OUT_SIZE_TEAM = 9
+EMBEDDING_OUT_SIZE_COMP = 2
 
 PAR_NEURONS = {'neu_1': 32, 'neu_2': 64, 'neu_3': 128}
 PAR_TEAM_EMB = {'teamem_1': 6, 'teamem_2': 9, 'teamem_3': 12}
@@ -70,7 +70,7 @@ def train_main_model(regular_matches_in_rounds):
 
         # Callbacks
         # log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(par_neurons_k) + '_' + str(par_team_emb_k) + '_' + str(par_comp_emb_k) + '_' + str(par_drop_k) + '_' + str(par_act_k) + '_' + str(par_lr_k) + '_' + str(par_iter_k))
-        log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(par_iter_k))
+        log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_ann_' + str(par_iter_k))
         tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
         early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
@@ -97,12 +97,12 @@ def train_main_model(regular_matches_in_rounds):
         merged = Concatenate()([numerical_input, home_team_embedding, away_team_embedding, comp_embedding])
 
         # Build the rest of the model
-        x = Dense(128, activation='relu')(merged)
+        x = Dense(256, activation='relu')(merged)
+        x = Dropout(0.6)(x)
+        x = Dense(128, activation='relu')(x)
         x = Dropout(0.5)(x)
         x = Dense(64, activation='relu')(x)
         x = Dropout(0.4)(x)
-        x = Dense(32, activation='relu')(x)
-        x = Dropout(0.3)(x)
         output = Dense(1, activation='sigmoid')(x)
 
         # Define the model

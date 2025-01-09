@@ -164,30 +164,52 @@ def get_all_regular_matches_in_season_table_up_to_date(curr_season_table, date):
     return list(set(matches_up_to_date))
 
 
-def distribute_matches_into_rounds(matches):
+def distribute_matches_into_rounds(sorted_matches):
     rounds = []
     current_round = []
     teams_in_current_round = set()
 
-    for match in matches:
+    for match in sorted_matches:
         home_team_id = match.home_team.id
         away_team_id = match.away_team.id
 
+        # Ensure that no team appears multiple times in a round
         if home_team_id in teams_in_current_round or away_team_id in teams_in_current_round:
 
-            # Finish current round and start new one
+            # If possible second appearance, finish current round and start new one
             rounds.append(current_round)
             current_round = []
             teams_in_current_round = set()
 
-        # Add match to current round
-        current_round.append(match)
+        current_round.append(match)  # add match to current round
         teams_in_current_round.add(home_team_id)
         teams_in_current_round.add(away_team_id)
 
     # Append the last round if not empty
     if current_round:
         rounds.append(current_round)
+
+    return rounds
+
+
+def distribute_matches_into_rounds_uniformly(sorted_matches):
+    rounds = []
+    current_round = []
+
+    # This implementation allows teams appearing in a single round multiple times
+    for match in sorted_matches:
+        if len(current_round) < settings.NUM_MATCHES_PER_ROUND_FOR_TRAINING:
+            current_round.append(match)
+        else:
+            rounds.append(current_round)
+            current_round = []
+
+    # Append the last round if not empty
+    if current_round:
+        if len(current_round) < int(settings.NUM_MATCHES_PER_ROUND_FOR_TRAINING / 2):
+            rounds[len(rounds) - 1] += current_round
+        else:
+            rounds.append(current_round)
 
     return rounds
 
