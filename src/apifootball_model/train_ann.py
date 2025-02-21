@@ -197,13 +197,13 @@ def train_main_model(regular_matches_in_rounds):
             weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
             accuracies.append(accuracy)
 
-            if round_number > 120:
-                # Store this round's validation data for later comp-specific analysis
-                val_numerical_features_all.append(val_numerical_features)
-                val_home_team_input_mapped_all.append(val_home_team_input_data_mapped)
-                val_away_team_input_mapped_all.append(val_away_team_input_data_mapped)
-                val_comp_id_input_mapped_all.append(val_comp_id_input_data_mapped)
-                val_labels_all.append(val_labels)
+            # if round_number > 120:  # "comps_val_acc" PARAM
+            # Store this round's validation data for later comp-specific analysis
+            val_numerical_features_all.append(val_numerical_features)
+            val_home_team_input_mapped_all.append(val_home_team_input_data_mapped)
+            val_away_team_input_mapped_all.append(val_away_team_input_data_mapped)
+            val_comp_id_input_mapped_all.append(val_comp_id_input_data_mapped)
+            val_labels_all.append(val_labels)
 
         final_weighted_acc = float(np.sum(weighted_accuracy) / num_validation_matches)
         print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")

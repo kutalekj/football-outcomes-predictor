@@ -13,8 +13,8 @@ from globals import Global
 from utils import get_n_previous_matches
 
 
-EMBEDDING_OUT_SIZE_TEAM = 6
-EMBEDDING_OUT_SIZE_COMP = 4
+EMBEDDING_OUT_SIZE_TEAM = 9
+EMBEDDING_OUT_SIZE_COMP = 2
 SEQUENCE_LENGTH = 10
 
 
@@ -85,7 +85,7 @@ def train(regular_matches_in_rounds):
     comp_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
     comp_encoder.fit(all_comp_ids)
 
-    # TODO: Check why there are so many teams and comps with ID=0?
+    # TODO: Check why there are so many teams and comps with ID=0? (dummies?)
 
     # Transform training data
     train_home_team_sequences_mapped = team_encoder.transform(

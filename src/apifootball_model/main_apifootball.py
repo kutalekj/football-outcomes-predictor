@@ -121,11 +121,15 @@ if settings.MEGA_STORE:
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
-# regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
-regular_matches_in_rounds = ut.distribute_matches_into_rounds_uniformly(regular_matches)
+regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
+# regular_matches_in_rounds = ut.distribute_matches_into_rounds_uniformly(regular_matches)
 for i, r in enumerate(regular_matches_in_rounds):
     print(f"{str(len(r))} matches found in round {str(i)}")
 # TODO: Maybe ensure that there are at least N matches in each round?
+
+# TODO: Run again without uniformly distributed rounds and check if the total number of matches per comp are as expected
+# TODO: ...because now there are always 1250 matches in training data, which is less then without uniform, right?
+# TODO: ...so since there are less training data, there are more validation data - more total number of val matches?
 
 # 7. Train
 train(regular_matches_in_rounds)
