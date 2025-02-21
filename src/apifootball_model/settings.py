@@ -17,13 +17,25 @@ FS_HOST = "https://api.football-data-api.com"
 
 LOAD_MATCH_DATA_FROM_LOCAL_CSV = False
 MEGA_STORE = False
-MEGA_LOAD = True
+MEGA_LOAD = False
 GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 1, 3)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
 
 MAX_MATCH_HISTORY_TO_CHECK_LOW = 15
+
+# {v3API_id, name, regular_round_keywords, fs_alias}
+COMPS_v2_TEST = [
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
+     'fs_alias': "Pro League"},  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"},  # BEL
+    {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
+    {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
+    {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
+     'fs_alias': "UEFA Europa Conference League"},
+]
 
 # {v3API_id, name, regular_round_keywords, fs_alias}
 COMPS_v2 = [

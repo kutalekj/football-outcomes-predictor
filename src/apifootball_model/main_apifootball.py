@@ -1,9 +1,5 @@
-import http.client
-import json
 import datetime
-import features_utils as feature_ut
 import utils as ut
-import numpy as np
 import settings
 from comp import Comp
 from season_comp_table import SeasonCompTable
@@ -19,14 +15,14 @@ global_instance = Global.get_instance()
 
 if not settings.MEGA_LOAD:
 
-    # 0. Load avg SOFIFA average goalkeeper skills values and average team strengths
+    # 0. Load average skills and team strengths (SF)
     in_out.load_avg_gk_skills()
     in_out.load_avg_team_strength_scaled()
 
-    # 1. Init FS comps and their seasons and rounds
+    # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()
 
-    for comp in settings.COMPS_v2:
+    for comp in settings.COMPS_v2_TEST:
         new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
         print(f"Initializing comp [{new_comp.name}].")
 

@@ -44,25 +44,19 @@ class Comp:
     def init_teams_in_comp(self):
         global_instance = Global.get_instance()
 
-        # Init teams + get start/end date of each comp season
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
 
+            # 1. Init AF season data
             request_string = "/leagues?id=" + str(self.id) + "&season=" + str(season)
-
             self.conn.request("GET", request_string, headers=settings.HEADERS)
-
             res = self.conn.getresponse()
             data = res.read()
-
             data_comp_season = json.loads(data)
-
-            # Comp season might not have started yet
             if len(data_comp_season['response']) == 0:
-                continue
+                continue  # comp season might not have started yet
 
             self.country = data_comp_season['response'][0]['country']['name']
 
-            # Start/End date
             start_date_str = data_comp_season['response'][0]['seasons'][0]['start'] if \
                 data_comp_season['response'][0]['seasons'][0]['year'] == season else None
             end_date_str = data_comp_season['response'][0]['seasons'][0]['end'] if \
@@ -74,7 +68,7 @@ class Comp:
             self.start_end_dates_per_season.append({'season': season, 'start': parse(start_date_str),
                                                     'end': parse(end_date_str)})
 
-            # Teams players statistics in comp season (only for comps with regular rounds!)
+            # 2. Init FS season data (only regular comps)
             if len(self.regular_round_keywords) > 0:
                 fs_season_id = self.get_fs_season_id(self.id, self.country, season)
                 comp_season_teams_request_string_fs = settings.FS_HOST + "/league-teams?key=" + settings.FS_KEY \
@@ -93,14 +87,11 @@ class Comp:
                 if len(fs_teams_comp_season) == 0:
                     raise ValueError(f"For an unknown reason no FS teams were found for comp {self.name} {str(season)}")
 
-            # Teams
+            # 3. Init AF season teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
-
             self.conn.request("GET", request_string, headers=settings.HEADERS)
-
             res = self.conn.getresponse()
             data = res.read()
-
             data_teams = json.loads(data)
 
             teams = []
@@ -108,27 +99,26 @@ class Comp:
                 team_id = int(team['team']['id'])
                 team_name = team['team']['name']
 
-                # Find team if exists
+                # Find team if exists - create if not exists
                 new_team = ut.get_team_if_exists(team_id)
-
-                # Team not existing yet
                 if new_team is None:
                     new_team = Team(team_id, team_name)
 
                 new_team.regularity_in_comp_season.append({'comp': self, 'season': season, 'is_regular': False})
 
-                teams.append(new_team)  # Add team to teams list of a season of the current Comp
-
-                global_instance.all_teams.append(new_team)  # Add team to the global teams list
+                teams.append(new_team)  # add team to teams list of a season of the current Comp
+                global_instance.all_teams.append(new_team)  # add team to the global teams list
 
                 time.sleep(0.05)
 
             self.teams_per_season.append({'season': season, 'teams': teams})  # AF teams
 
+            # 4. Init FS season teams (only regular teams)
+            # TODO code: Move this up? (before getting AF teams, after FS season init)
             if len(self.regular_round_keywords) > 0:
                 self.fs_teams_per_season.append({'season': season, 'fs_teams': fs_teams_comp_season})  # FS teams
 
-            # Get all FS league matches for each comp season
+            # 5. Get all FS league matches for each comp season
             fs_season_id = self.get_fs_season_id(self.id, self.country, season)
             comp_season_matches_request_string_fs = settings.FS_HOST + "/league-matches?key=" + settings.FS_KEY \
                 + "&season_id=" + str(fs_season_id)
@@ -155,42 +145,37 @@ class Comp:
     def init_all_rounds(self):
 
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
-            # Get data from API
+
+            # Get all round names in comp season
             request_string = "/fixtures/rounds?league=" + str(self.id) + "&season=" + str(season)
-
             self.conn.request("GET", request_string, headers=settings.HEADERS)
-
             res = self.conn.getresponse()
             data = res.read()
-
             rounds_per_season = json.loads(data)
 
-            # Create new Round instance
+            # Create new Round
             season_rounds_list = []
             for round_name in rounds_per_season['response']:
                 new_round = rounds.Round(self.id, self.name, season, round_name)
 
-                # Regularity (season comp table is only updated by regular round matches)
-                new_round.is_regular = new_round.is_round_regular(self)
+                new_round.is_regular = new_round.is_round_regular(self)  # season comp table only for regular matches
 
                 season_rounds_list.append(new_round)
-                self.all_rounds_sorted.append(new_round)  # TODO: Will these round listing variables be still needed?
+                self.all_rounds_sorted.append(new_round)  # TODO cleanup: remove this variable (from in_out_mega.py too)
 
             self.rounds_per_season.append({'season': season, 'rounds': season_rounds_list})
 
-            # Delay so that limit of requests per minute is not exceeded
             time.sleep(0.2)
 
     def init_country_start_end_dates_in_seasons(self):
         global_instance = Global.get_instance()
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
 
-            # For example, Coupe de France 2024 might not have started yet - unknown start/end dates
+            # Comp season might not have started yet - unknown start/end dates
             if season not in [s['season'] for s in self.start_end_dates_per_season]:
                 continue
 
-            # TODO: Minor adjustment possible: for current season the final end dates are usually not available yet,...
-            # TODO ...resulting in "January", for instance - copy end dates from prev season (if lesser value for curr.)
+            # TODO adj: for current season the final end dates are usually not available yet, resulting in "January" for instance - can copy end dates from prev season
             start_date = self.get_date_for_comp_season(season, "start")
             end_date = self.get_date_for_comp_season(season, "end")
 
