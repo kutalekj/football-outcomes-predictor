@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 import tensorflow.keras.backend as K
 import os
 import shutil
-from settings import NUM_NUMERICAL_FEATURES, NUM_CATEGORICAL_FEATURES
+from settings import NUM_NUMERICAL_FEATURES
 from globals import Global
 
 

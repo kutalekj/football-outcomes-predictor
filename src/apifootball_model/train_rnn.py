@@ -8,7 +8,7 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import tensorflow.keras.backend as K
 import os
-from settings import NUM_NUMERICAL_FEATURES, NUM_CATEGORICAL_FEATURES
+from settings import NUM_NUMERICAL_FEATURES
 from globals import Global
 from utils import get_n_previous_matches
 
