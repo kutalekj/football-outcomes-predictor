@@ -25,8 +25,8 @@ class SeasonCompTable:
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
     def init_teams_in_season_comp(self):
+        # TODO code: redundant request call - same one is called in Comp.init_team_in_comp() - can get teams from Global
         request_string = "/teams?league=" + str(self.comp_id) + "&season=" + str(self.season)
-
         self.conn.request("GET", request_string, headers=settings.HEADERS)
         res = self.conn.getresponse()
         data = res.read()
@@ -130,7 +130,7 @@ class SeasonCompTable:
                         f"[{self.comp_name}, {str(self.season)}]")
 
     @staticmethod
-    def exclude_irregular_teams_from_table_calculations():
+    def exclude_irregular_teams_from_table_calc():
         global_instance = Global.get_instance()
 
         for table in global_instance.all_tables:
@@ -149,7 +149,7 @@ class SeasonCompTable:
                                      season_elem['is_regular']])}
 
     @staticmethod
-    def init_fs_players_lists_in_regular_comp_season_teams():
+    def get_fs_player_rosters_per_regular_comp_season_team():
         global_instance = Global().get_instance()
         for comp in global_instance.all_comps:
             if len(comp.regular_round_keywords) == 0:
@@ -199,7 +199,7 @@ class SeasonCompTable:
                     selected_fs_players = [x for x in table.all_fs_players_involved if
                                            team.fs_id == x['fs_club_team_id']
                                            or ('fs_club_team_2_id' in x and team.fs_id == x['fs_club_team_2_id'])]
-                    # TODO: Maybe debug check this teams matching condition?
+                    # TODO check: Maybe debug check this teams matching condition
 
                     team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
                                                                 'fs_players': selected_fs_players})

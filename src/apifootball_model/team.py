@@ -74,6 +74,9 @@ class Team:
                             if self.fs_id is None:  # if not matched yet (might have been done is previous seasons)
                                 self.assign_fs_team_id_team_name_by_comp_season(season_elem['comp'], season)
 
+        # TODO check: Add debug print for number of matches (both all and regulars) for each comp season
+        # TODO code: Split in two functions (two different functionalities)? - currently like this because of reg. check
+
     def assign_fs_team_id_team_name_by_comp_season(self, comp, season):
         fs_teams_comp_season = [x for x in comp.fs_teams_per_season if x['season'] == season]
         if len(fs_teams_comp_season) != 1:
@@ -104,8 +107,8 @@ class Team:
             if comp.id == 307 and self.id == 2944:
                 self.fs_id, self.fs_clean_name = 5071, "Al Feiha"  # Al-Fayha
             print(f"\t\t\t\t\tAF team matched to FS team: [{self.name}] [{self.fs_clean_name}] (manually)")
-            # TODO: Check matching once again - this must be 100% accurate
+            # TODO check: Check this matching once again - this must be 100% accurate
 
         else:
             self.fs_id, self.fs_clean_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)
-        # TODO: Minor adj. might be forbidding to match teams already matched before
+        # TODO adj: Consider to forbid matching of teams already matched before

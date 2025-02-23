@@ -32,7 +32,7 @@ if not settings.MEGA_LOAD:
         global_instance.all_comps.append(new_comp)
     global_instance.all_teams = sorted(global_instance.all_teams, key=lambda team_: team_.id)
 
-    # 2. Init country start/end dates and tables for comp seasons
+    # 2. Init country start/end dates, comp season tables and default GK skills
     for comp in global_instance.all_comps:
         for season in [x for x in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1)]:
 
@@ -44,18 +44,15 @@ if not settings.MEGA_LOAD:
                 global_instance.start_end_dates_per_country_season[comp.country][season] = {
                     'start': datetime.datetime.max, 'end': datetime.datetime.min}
 
-            # Omit the cups - do not create tables for them
             if len(comp.regular_round_keywords) == 0:
-                continue
+                continue  # omit the cups - do not create tables for them
 
             new_table = SeasonCompTable(comp.id, comp.name, season)
             print(f"Initializing table for comp [{new_table.comp_name}].")
-
             new_table.init_teams_in_season_comp()
 
             global_instance.all_tables.append(new_table)
 
-    # Country start/end dates
     for comp in global_instance.all_comps:
         comp.init_country_start_end_dates_in_seasons()
 
@@ -65,21 +62,18 @@ if not settings.MEGA_LOAD:
     all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
-    # Sort matches by datetime played (asc.)
+    # 4. Correct (set) team regularity and match AF teams with FS teams
     for team in global_instance.all_teams:
-        team.matches = sorted(team.matches, key=lambda match_: match_.datetime)
+        team.matches = sorted(team.matches, key=lambda match_: match_.datetime)  # sort team matches by datetime (asc.)
+        team.correct_team_regularity_and_match_af_fs_teams()  # assume each team plays exactly in one reg. comp season!
 
-        # Check team regularity (assume each team plays exactly in one regular comp each season!)
-        # And then match regular AF teams with FS teams !!!
-        team.correct_team_regularity_and_match_af_fs_teams()
+    # 5a. Exclude irregular teams from table calculations
+    SeasonCompTable.exclude_irregular_teams_from_table_calc()
 
-    # TODO: Add debug print check for number of matches (both all and just regular ones) for each comp season
+    # 5b. Get FS players from all teams for each comp season (represented by table)
+    SeasonCompTable.get_fs_player_rosters_per_regular_comp_season_team()
 
-    # Exclude irregular teams from tables calc. + get FS players from all teams for each comp season (represented by table)
-    SeasonCompTable.exclude_irregular_teams_from_table_calculations()
-    SeasonCompTable.init_fs_players_lists_in_regular_comp_season_teams()
-
-    # Load individual player stats from sofifa CSV files
+    # 6. Load individual player stats from sofifa CSV files
     in_out.load_player_stats()
 
     # 4. Calculate features for each match (must be done chronologically asc.!)
