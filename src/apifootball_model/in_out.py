@@ -276,9 +276,9 @@ def load_player_stats():
                     raw_value = row_dict.get(attr_name, '').strip()
 
                     # Attribute value missing
-                    # TODO: Now, only the following four attributes and then the 34 skills attributes are utilized...
-                    # TODO: ...meaning that the others can be set as empty value if missing for no harm. But, ...
-                    # TODO: ...if will want to work with some of them in the future as well, then this needs changes.
+                    # Now, only the following four attributes and then the 34 skills attributes are utilized, meaning...
+                    # ...that the others can be set as empty value if missing for no harm. But, if aimed to work with...
+                    # ...some of these others in the future as well, then changes are needed here!!!
                     if raw_value == '':
                         if attr_name in ['player_id', 'name', 'full_name', 'dob']:  # These can't be missing!
                             raise ValueError(f"Attributes player_id, name, full_name and dob cannot be missing! "
@@ -382,7 +382,7 @@ def load_player_stats():
                 if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
                     global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
 
-            # TODO: Debug print
+            # DEBUG PRINT
             print(f"{num_players_skipped_this_csv} player rows were skipped for this CSV ({filename}) "
                   f"because of missing at least {str(settings.MAX_MISSING_SF_SKILL_VALUES_ALLOWED)} skill values")
 

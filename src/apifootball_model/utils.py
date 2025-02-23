@@ -234,6 +234,16 @@ def get_team_if_exists(team_id):
     return None
 
 
+def get_comp_by_id(comp_id):
+    global_instance = Global.get_instance()
+
+    for comp in global_instance.all_comps:
+        if comp.id == comp_id:
+            return comp
+
+    return None
+
+
 def normalize_name(name):
     name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('ASCII')  # to ASCII - remove accents
     name = name.lower()

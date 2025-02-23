@@ -25,36 +25,23 @@ class SeasonCompTable:
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
     def init_teams_in_season_comp(self):
-        # TODO code: redundant request call - same one is called in Comp.init_team_in_comp() - can get teams from Global
-        request_string = "/teams?league=" + str(self.comp_id) + "&season=" + str(self.season)
-        self.conn.request("GET", request_string, headers=settings.HEADERS)
-        res = self.conn.getresponse()
-        data = res.read()
-        data_teams = json.loads(data)
+        global_instance = Global.get_instance()
+
+        comp_season_teams = [team for team in global_instance.all_teams if
+                             {'comp': ut.get_comp_by_id(self.comp_id), 'season': self.season, 'is_regular': False}
+                             in team.regularity_in_comp_season]  # at the moment there are no teams set as regular yet
 
         teams = []
-        for team in data_teams['response']:
-            team_id = int(team['team']['id'])
-            team_name = team['team']['name']
+        for team in comp_season_teams:
 
-            new_team = ut.get_team_if_exists(team_id)
+            # Assign average/default SOFIFA goalkeeper skills
+            team.avg_gk_diving[self.season] = ut.get_avg_gk_skill_value("diving", team.id, self.season) * 100
+            team.avg_gk_handling[self.season] = ut.get_avg_gk_skill_value("handling", team.id, self.season) * 100
+            team.avg_gk_kicking[self.season] = ut.get_avg_gk_skill_value("kicking", team.id, self.season) * 100
+            team.avg_gk_positioning[self.season] = ut.get_avg_gk_skill_value("positioning", team.id, self.season) * 100
+            team.avg_gk_reflexes[self.season] = ut.get_avg_gk_skill_value("reflexes", team.id, self.season) * 100
 
-            # Team not found
-            if new_team is None:
-                raise Exception(f"Team {team_id}: {team_name} not found in existing ones. Should not happen here, "
-                                f"since teams were already initialized during the Comp initialization.")
-
-            # Assign average SOFIFA goalkeeper skills
-            new_team.avg_gk_diving[self.season] = ut.get_avg_gk_skill_value("diving", new_team.id, self.season) * 100
-            new_team.avg_gk_handling[self.season] = ut.get_avg_gk_skill_value("handling", new_team.id,
-                                                                              self.season) * 100
-            new_team.avg_gk_kicking[self.season] = ut.get_avg_gk_skill_value("kicking", new_team.id, self.season) * 100
-            new_team.avg_gk_positioning[self.season] = \
-                ut.get_avg_gk_skill_value("positioning", new_team.id, self.season) * 100
-            new_team.avg_gk_reflexes[self.season] = ut.get_avg_gk_skill_value("reflexes", new_team.id,
-                                                                              self.season) * 100
-
-            teams.append(new_team)
+            teams.append(team)
 
         self.teams = teams
         self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
