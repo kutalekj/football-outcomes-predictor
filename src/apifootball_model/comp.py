@@ -87,6 +87,10 @@ class Comp:
                 if len(fs_teams_comp_season) == 0:
                     raise ValueError(f"For an unknown reason no FS teams were found for comp {self.name} {str(season)}")
 
+                # Init FS season teams (only regular teams)
+                if len(self.regular_round_keywords) > 0:
+                    self.fs_teams_per_season.append({'season': season, 'fs_teams': fs_teams_comp_season})
+
             # 3. Init AF season teams
             request_string = "/teams?league=" + str(self.id) + "&season=" + str(season)
             self.conn.request("GET", request_string, headers=settings.HEADERS)
@@ -113,12 +117,7 @@ class Comp:
 
             self.teams_per_season.append({'season': season, 'teams': teams})  # AF teams
 
-            # 4. Init FS season teams (only regular teams)
-            # TODO code: Move this up? (before getting AF teams, after FS season init)
-            if len(self.regular_round_keywords) > 0:
-                self.fs_teams_per_season.append({'season': season, 'fs_teams': fs_teams_comp_season})  # FS teams
-
-            # 5. Get all FS league matches for each comp season
+            # 4. Get all FS league matches for each comp season
             fs_season_id = self.get_fs_season_id(self.id, self.country, season)
             comp_season_matches_request_string_fs = settings.FS_HOST + "/league-matches?key=" + settings.FS_KEY \
                 + "&season_id=" + str(fs_season_id)
