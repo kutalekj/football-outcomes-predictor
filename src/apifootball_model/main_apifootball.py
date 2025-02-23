@@ -13,7 +13,7 @@ from train_ann import train
 
 global_instance = Global.get_instance()
 
-if not settings.MEGA_LOAD:
+if not settings.ALL_LOAD:
 
     # 0. Load average skills and team strengths (SF)
     in_out.load_avg_gk_skills()
@@ -56,10 +56,12 @@ if not settings.MEGA_LOAD:
     for comp in global_instance.all_comps:
         comp.init_country_start_end_dates_in_seasons()
 
-    # 3. Get matches (first existing locally saved, then new from API)
-    if settings.LOAD_MATCH_DATA_FROM_LOCAL_CSV:
-        in_out.load_matches("tmp_csv_store14_full.csv")
+    # 3a. Load match data from local
+    if settings.MATCH_DATA_LOAD:
+        in_out.load_matches(settings.MATCH_DATA_LOAD_FILENAME)
     all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
+
+    # 3b. Get new match data from API
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
     # 4. Correct (set) team regularity and match AF teams with FS teams
@@ -76,7 +78,7 @@ if not settings.MEGA_LOAD:
     # 6. Load individual player stats from sofifa CSV files
     in_out.load_player_stats()
 
-    # 4. Calculate features for each match (must be done chronologically asc.!)
+    # 7. Calculate features for each match (must be done chronologically asc.!)
     global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
     for match in global_instance.all_matches:
 
@@ -100,13 +102,15 @@ if not settings.MEGA_LOAD:
 else:
     in_out_mega.load_all_matches_data()
 
-# 5. Store matches
-# in_out.store_matches("tmp_csv_store14_full.csv")
+# 8a. Store matches to local
+if settings.MATCH_DATA_STORE:
+    in_out.store_matches(settings.MATCH_DATA_STORE_FILENAME)
 
-if settings.MEGA_STORE:
+# 8b. Store all data to local
+if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
-# 6. Distribute regular matches into rounds for training
+# 9. Distribute regular matches into rounds for training
 # TODO: Fix the error that about 30 regular matches are missing team strength! (This exclusion is a temp. solution...)
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
@@ -121,7 +125,7 @@ for i, r in enumerate(regular_matches_in_rounds):
 # TODO: ...because now there are always 1250 matches in training data, which is less then without uniform, right?
 # TODO: ...so since there are less training data, there are more validation data - more total number of val matches?
 
-# 7. Train
+# 10. Train
 train(regular_matches_in_rounds)
 
 print("breakpoint")

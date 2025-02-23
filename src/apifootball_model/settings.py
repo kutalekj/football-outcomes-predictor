@@ -4,6 +4,7 @@ settings.py
 
 from datetime import datetime, timedelta
 
+# API
 KEY = "4a9e20eecbec58c517cb485f31552caf"
 HOST = "v3.football.api-sports.io"
 
@@ -15,9 +16,21 @@ HEADERS = {
 FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
-LOAD_MATCH_DATA_FROM_LOCAL_CSV = False
-MEGA_STORE = False
-MEGA_LOAD = False
+# Load/Store
+MATCH_DATA_LOAD = False
+MATCH_DATA_STORE = True
+
+MATCH_DATA_LOAD_FILENAME = "tmp_csv_store14_full.csv"
+MATCH_DATA_STORE_FILENAME = "tmp_csv_store14_full.csv"
+
+ALL_STORE = False
+ALL_LOAD = False
+
+ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_comps.csv"
+ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_teams.csv"
+ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
+ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"
+
 GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 1, 3)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
@@ -182,8 +195,3 @@ SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MINIMUM_MATCHED_LINEUP_PLAYERS = 8
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=150)  # 5 months
-
-MEGA_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_comps.csv"
-MEGA_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_teams.csv"
-MEGA_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
-MEGA_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"

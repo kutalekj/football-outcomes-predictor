@@ -486,18 +486,18 @@ def load_matches(matches_csv_path):
 
 
 def store_all_matches_data():
-    store_comps(settings.MEGA_LS_COMPS_CSV)
-    store_rounds(settings.MEGA_LS_ROUNDS_CSV)
-    store_teams(settings.MEGA_LS_TEAMS_CSV)
-    store_matches(settings.MEGA_LS_MATCHES_CSV)
+    store_comps(settings.ALL_LS_COMPS_CSV)
+    store_rounds(settings.ALL_LS_ROUNDS_CSV)
+    store_teams(settings.ALL_LS_TEAMS_CSV)
+    store_matches(settings.ALL_LS_MATCHES_CSV)
 
 
 def load_all_matches_data():
     # 1) load comps
-    load_comps(settings.MEGA_LS_COMPS_CSV)
+    load_comps(settings.ALL_LS_COMPS_CSV)
     # 2) load rounds (which references comps)
-    load_rounds(settings.MEGA_LS_ROUNDS_CSV)
+    load_rounds(settings.ALL_LS_ROUNDS_CSV)
     # 3) load teams
-    load_teams(settings.MEGA_LS_TEAMS_CSV)
+    load_teams(settings.ALL_LS_TEAMS_CSV)
     # 4) load matches (which references comps, rounds, and teams)
-    load_matches(settings.MEGA_LS_MATCHES_CSV)
+    load_matches(settings.ALL_LS_MATCHES_CSV)
