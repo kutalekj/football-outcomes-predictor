@@ -95,7 +95,7 @@ class Match:
                         [x for x in global_instance.all_matches if x.comp.id == comp.id and x.season == season],
                         key=lambda match_: match_.datetime)
                     latest_match_datetime = existing_matches_sorted[-1].datetime
-                    print(f"Latest existing match datetime for {comp.name} in {season} is {latest_match_datetime}")
+                    print(f"[3] Latest existing match datetime for {comp.name} in {season} is {latest_match_datetime}")
 
                     request_string = "/fixtures?season=" + str(season) + "&league=" + str(comp.id) + \
                                      "&from=" + latest_match_datetime.strftime("%Y-%m-%d") + \
@@ -112,8 +112,8 @@ class Match:
                 data = res.read()
                 data_fixtures = json.loads(data)
 
-                print(
-                    f"{len(data_fixtures['response'])} matches were found in comp {comp.name} in season {str(season)}")
+                print(f"[3] {len(data_fixtures['response'])} matches were found in comp {comp.name}"
+                      f" in season {str(season)}")
 
                 # Loop over matches - get match info
                 for fixture in data_fixtures['response']:
@@ -281,8 +281,9 @@ class Match:
                     data_lineups = json.loads(data)['response']
 
                     if len(data_lineups) == 0:
-                        print(f"\tLineups missing for both teams in match between {new_match.home_team.name} and "
-                              f"{new_match.away_team.name} played at {new_match.datetime}!")
+                        if new_match.round.is_regular:  # printing this out for irregular matches is waste of stdout
+                            print(f"\tLineups missing for both teams in a regular match between "
+                                  f"{new_match.home_team.name} and {new_match.away_team.name} ({new_match.datetime})")
                     else:
                         if "startXI" in data_lineups[0]:
                             new_match.home_team_lineup = \
@@ -565,8 +566,8 @@ class Match:
 
         # Team strength
         if self.round.is_regular:
-            # TODO: Debug print
-            print(f"Going to calculate team strength for match between {self.home_team.name} and {self.away_team.name} "
+            # DEBUG PRINT
+            print(f"[7c] Going to calculate team strength for match between {self.home_team.name} and {self.away_team.name} "
                   f"({self.datetime})")
             new_match_features.home_team_strength = feature_ut.calculate_team_strength(self, self.home_team.id)
             new_match_features.away_team_strength = feature_ut.calculate_team_strength(self, self.away_team.id)

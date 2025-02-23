@@ -43,6 +43,7 @@ class Comp:
 
     def init_teams_in_comp(self):
         global_instance = Global.get_instance()
+        print(f"[1]: Initializing comp [{self.name}].")
 
         for season in range(settings.FIRST_SEASON, settings.LAST_SEASON + 1):
 

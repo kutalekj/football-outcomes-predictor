@@ -26,6 +26,7 @@ class SeasonCompTable:
 
     def init_teams_in_season_comp(self):
         global_instance = Global.get_instance()
+        print(f"Initializing table for comp [{self.comp_name}].")
 
         comp_season_teams = [team for team in global_instance.all_teams if
                              {'comp': ut.get_comp_by_id(self.comp_id), 'season': self.season, 'is_regular': False}
@@ -159,7 +160,7 @@ class SeasonCompTable:
                 for page_num in range(1, num_pages + 1):  # iterate over all pages
                     request_url = comp_season_players_stats_request_string_fs + "&page=" + str(page_num)
                     res_json = requests.get(request_url).json()
-                    print(f"\t\tFS req. remaining: {res_json['metadata']['request_remaining']}...")
+                    print(f"[5] \t\tFS req. remaining: {res_json['metadata']['request_remaining']}...")
 
                     all_data_comp_season_players_stats_fs += [{
                         'fs_id': x['id'],

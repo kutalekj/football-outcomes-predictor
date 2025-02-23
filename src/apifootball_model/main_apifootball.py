@@ -24,8 +24,6 @@ if not settings.ALL_LOAD:
 
     for comp in settings.COMPS_v2_TEST:
         new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
-        print(f"Initializing comp [{new_comp.name}].")
-
         new_comp.init_teams_in_comp()
         new_comp.init_all_rounds()
 
@@ -48,7 +46,6 @@ if not settings.ALL_LOAD:
                 continue  # omit the cups - do not create tables for them
 
             new_table = SeasonCompTable(comp.id, comp.name, season)
-            print(f"Initializing table for comp [{new_table.comp_name}].")
             new_table.init_teams_in_season_comp()
 
             global_instance.all_tables.append(new_table)
@@ -110,6 +107,8 @@ if settings.MATCH_DATA_STORE:
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
+"""
+
 # 9. Distribute regular matches into rounds for training
 # TODO: Fix the error that about 30 regular matches are missing team strength! (This exclusion is a temp. solution...)
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
@@ -128,4 +127,5 @@ for i, r in enumerate(regular_matches_in_rounds):
 # 10. Train
 train(regular_matches_in_rounds)
 
+"""
 print("breakpoint")

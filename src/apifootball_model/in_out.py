@@ -383,7 +383,7 @@ def load_player_stats():
                     global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
 
             # DEBUG PRINT
-            print(f"{num_players_skipped_this_csv} player rows were skipped for this CSV ({filename}) "
+            print(f"[6] {num_players_skipped_this_csv} player rows were skipped for this CSV ({filename}) "
                   f"because of missing at least {str(settings.MAX_MISSING_SF_SKILL_VALUES_ALLOWED)} skill values")
 
         # Append to list_of_data

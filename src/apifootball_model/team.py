@@ -67,7 +67,7 @@ class Team:
                         if season_elem['season'] == season and \
                                 len(season_elem['comp'].regular_round_keywords) > 0 and \
                                 any(regular_team_matches_in_comp_season_booleans):
-                            print(f"_DEBUG_: Setting team {self.name} as regular in {season_elem['comp'].name} in {season}.")
+                            print(f"[4] Setting team {self.name} as regular in {season_elem['comp'].name} in {season}.")
                             season_elem['is_regular'] = True
 
                             # 2. Match the regular AF team with FS team from the same comp_season

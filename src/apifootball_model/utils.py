@@ -403,7 +403,7 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
         return  # case for both teams' FS lineups already loaded from CSV
 
-    print(f"\t\tGoing to match AF players from match lineup [{curr_match.home_team.name}] vs. "
+    print(f"[7]\t\t Going to match AF players from match lineup [{curr_match.home_team.name}] vs. "
           f"[{curr_match.away_team.name}] ({curr_match.datetime}) with teams' FS players in comp season roster...")
 
     # Home team
