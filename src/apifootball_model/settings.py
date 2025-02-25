@@ -17,11 +17,11 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = False
-MATCH_DATA_STORE = True
+MATCH_DATA_LOAD = True
+MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "tmp_csv_store14_full.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-02-03_BEL.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-02-23_BEL.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-02-23_ENG.csv"
 
 ALL_STORE = False
 ALL_LOAD = False
@@ -31,7 +31,7 @@ ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\s
 ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
 ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 1, 3)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 2, 22)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -139,7 +139,7 @@ TOTAL_XG_NORM_COEFFICIENT = 5.25
 TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
-CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase2\\full'
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase3\\full'
 AVR_GK_SKILLS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\' \
                 'avg_sofifa_gk_skills_per_team_comp_season.txt'
 AVG_TEAM_STRENGTHS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\' \
@@ -190,8 +190,6 @@ ALL_SOFIFA_HEADERS = [
         'sliding_tackle', 'gk_diving', 'gk_handling', 'gk_kicking', 'gk_positioning', 'gk_reflexes', 'play_styles'
     ]
 
-SIMILARITY_THRESHOLD_AF_FS = 35  # rapidfuzz ratio ranges from 0 to 100
 SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
-MINIMUM_MATCHED_LINEUP_PLAYERS = 8
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=150)  # 5 months

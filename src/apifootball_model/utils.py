@@ -400,8 +400,10 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         return
 
+    """
     if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
         return  # case for both teams' FS lineups already loaded from CSV
+    """
 
     print(f"[7]\t\t Going to match AF players from match lineup [{curr_match.home_team.name}] vs. "
           f"[{curr_match.away_team.name}] ({curr_match.datetime}) with teams' FS players in comp season roster...")
@@ -434,20 +436,11 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
             matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
                 af_player, home_team_fs_players_in_comp_season[0])
 
-            if similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
-                curr_match.home_fs_team_lineup.append(matched_fs_player)
-            else:
-                print(f"WARNING! - Found AF player [{af_player[1]}] match below threshold ({curr_match.home_team.name} "
-                      f"vs. {curr_match.away_team.name}, {curr_match.datetime})")
+            curr_match.home_fs_team_lineup.append(matched_fs_player)
 
-        if len(curr_match.home_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
-            raise ValueError(f"There were only {len(curr_match.home_fs_team_lineup)} matched home team FS player, "
-                             f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
-        if len(curr_match.home_fs_team_lineup) > 11:
-            raise ValueError(f"Home team FS lineup of length {len(curr_match.home_fs_team_lineup)}:"
-                             f" [{curr_match.home_fs_team_lineup}] should not contain more than "
-                             f"11 players (match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-                             f"played at {curr_match.datetime})")
+        if len(curr_match.home_fs_team_lineup) != 11:
+            raise ValueError(f"There were {len(curr_match.home_fs_team_lineup)} matched home team FS players, "
+                             f"but the expected numbers of matches is 11")
 
     # Away team
     away_team_fs_players_in_comp_season = [x['fs_players'] for x in
@@ -478,22 +471,11 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
             matched_fs_player, similarity = match_af_player_to_fs_player_alternative(
                 af_player, away_team_fs_players_in_comp_season[0])
 
-            if similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
-                curr_match.away_fs_team_lineup.append(matched_fs_player)
+            curr_match.away_fs_team_lineup.append(matched_fs_player)
 
-        if len(curr_match.away_fs_team_lineup) < settings.MINIMUM_MATCHED_LINEUP_PLAYERS:
-            raise ValueError(f"There were only {len(curr_match.away_fs_team_lineup)} matched away team FS player, "
-                             f"but the minimum required is {settings.MINIMUM_MATCHED_LINEUP_PLAYERS}")
-        if len(curr_match.away_fs_team_lineup) > 11:
-            raise ValueError(f"Away team FS lineup of length {len(curr_match.away_fs_team_lineup)}:"
-                             f" [{curr_match.away_fs_team_lineup}] should not contain more than "
-                             f"11 players (match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-                             f"played at {curr_match.datetime})")
-
-    # Summary print
-    print(f"Successfully matched {len(curr_match.home_fs_team_lineup)} home team players and "
-          f"{len(curr_match.away_fs_team_lineup)} away team players!")
-    # TODO: Minor adj.: note that there might be duplicates
+        if len(curr_match.away_fs_team_lineup) != 11:
+            raise ValueError(f"There were {len(curr_match.away_fs_team_lineup)} matched away team FS players, "
+                             f"but the expected numbers of matches is 11")
 
 
 def get_fs_match_xg(curr_match):
@@ -559,9 +541,7 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
             highest_similarity = similarity
             best_fs_match = fs_player
 
-    if highest_similarity > settings.SIMILARITY_THRESHOLD_AF_FS:
-        # print(f"AF player [{af_player[1]}] matched to FS player 'known as' name [{best_fs_match['fs_known_as']}] (similarity={str(highest_similarity)})", end='\t')
-        print(f"[{af_player[1]}][{best_fs_match['fs_known_as']}]", end='\t')
+    print(f"[{af_player[1]}][{best_fs_match['fs_known_as']}]", end='\t')
 
     return best_fs_match, highest_similarity
 
