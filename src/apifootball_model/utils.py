@@ -251,7 +251,7 @@ def normalize_name(name):
     return name
 
 
-def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, team_season_info):
+def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
     global_instance = Global.get_instance()
     team_id, team_name, season = team_season_info
 
@@ -268,14 +268,26 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
                                                           if abs(x[1].replace(tzinfo=match_datetime.tzinfo) - match_datetime) < settings.MAX_TIMEDELTA_SF_PLAYER_SKILL]  # filter
 
     if len(available_player_csvs_sorted_by_timedelta_to_match) == 0:
-        print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. Skip...")
+        print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. "
+              f"Imputing...")
+        # TODO implement: return average skill values list for corresponding team and player position category (utilize function "map_player_positions_to_categories")
+        """
+        for season in all_seasons:  # 4 seasons
+            for regular_team in all_regular_teams:  # ~400 teams
+                # goalkeeper: [...] 					# list of 34 values
+                # defender: [...] 						# list of 34 values
+                # midfielder: [...] 					# list of 34 values
+                # attacker: [...] 						# list of 34 values
+        """
+
         # TODO manual output check: count how many such players without CSV data are there
-        return output_team_skills_dict
+        return []
 
     # DEBUG PRINT
     print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
 
     skills_processed = set()  # keep track of already processed player skills
+    collected_player_skills = {skill: -1 for skill in settings.PLAYER_SKILLS}
 
     # Loop because the first list element (closest timedelta to match) may not contain all skill values...
     while len(available_player_csvs_sorted_by_timedelta_to_match) > 0:
@@ -297,7 +309,7 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
         sf_player_data = corresponding_player_data_dict[1][sf_player_id]  # get SOFIFA player data dict
 
         # Determine player's position categories
-        player_position_categories = map_player_positions_to_categories(sf_player_data['positions'])
+        # player_position_categories = map_player_positions_to_categories(sf_player_data['positions'])
 
         # Get SOFIFA player skill values
         for skill in settings.PLAYER_SKILLS:
@@ -310,49 +322,23 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
                 negative_value_found = True
                 continue
 
-            # Assign skill to skill category ("attacking", "power", "mentality", ...)
-            skill_category = settings.SKILL_TO_CATEGORY.get(skill, None)
-            if skill_category is None:
-                raise ValueError(f"Skill [{skill}] not found in any skill category - should never happen!")
-
-            # Check relevancy between player's position categories and the current skill's category
-            relevant_positions = settings.PLAYER_CATEGORY_RELEVANCE[skill_category]
-            if any(pos_cat in relevant_positions for pos_cat in player_position_categories):
-                output_team_skills_dict[skill].append(value)  # player position is relevant for this category - append
-                skills_processed.add(skill)  # keep track of already processed skills for the player
-            else:
-                pass  # player position not relevant for this category - skip (e.g. "CB" player and "goalkeeping" cat.)
+            collected_player_skills[skill].append(value)
+            skills_processed.add(skill)  # keep track of already processed skills for the player
 
         if not negative_value_found:
             break  # if no -1 values found, end getting skills
 
-    # Handle possibly missing GK skills data - check if at least one value for each skill in the "goalkeeping" category
-    gk_skills = CSV_CATEGORIES['goalkeeping']
-    have_gk_data = any(output_team_skills_dict[sk] for sk in gk_skills if len(output_team_skills_dict[sk]) > 0)
+    # Check for missing skill values - impute
+    for skill_name, value in collected_player_skills.items():
+        if value == -1:
+            # TODO implement: get average skill value for corresponding team and player position category (utilize function "map_player_positions_to_categories")
+            pass  # IMPUTE
 
-    if not have_gk_data:
-        for gk_skill in gk_skills:
-            print(f"Imputing value for missing GK skill [{gk_skill}]...")
-            # TODO manual output check: count how many goalkeepers without skills are there
-            team = get_team_if_exists(team_id)
+    if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
+        raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "
+                         f"{len(settings.PLAYER_SKILLS)} expected (match played at {match_datetime})")
 
-            # If no GK skill value, impute it
-            if gk_skill == "gk_diving":
-                imputed_value = team.avg_gk_diving[season]
-            elif gk_skill == "gk_handling":
-                imputed_value = team.avg_gk_handling[season]
-            elif gk_skill == "gk_kicking":
-                imputed_value = team.avg_gk_kicking[season]
-            elif gk_skill == "gk_positioning":
-                imputed_value = team.avg_gk_positioning[season]
-            elif gk_skill == "gk_reflexes":
-                imputed_value = team.avg_gk_reflexes[season]
-            else:
-                raise ValueError(f"Found non-existing GK skill name [{gk_skill}]")
-
-            output_team_skills_dict[gk_skill].append(imputed_value)
-
-    return output_team_skills_dict
+    return collected_player_skills
 
 
 def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):

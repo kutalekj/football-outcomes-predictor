@@ -410,7 +410,7 @@ def calculate_team_strength(curr_match, team_id):
         # TODO manual output check: count how many defaults are there in total
 
     # Init players skills dict
-    sf_players_stats = {skill: [] for skill in PLAYER_SKILLS}
+    team_sf_players_skills = []
 
     # Iterate over FS lineup players
     for fs_player in team_fs_lineup:
@@ -435,15 +435,14 @@ def calculate_team_strength(curr_match, team_id):
             continue  # no FS/SF match because of too low similarity score
 
         # Get SOFIFA player skills
-        sf_players_stats = ut.get_sf_player_data(curr_match.datetime, sf_player_id, sf_players_stats,
+        sf_player_skills = ut.get_sf_player_data(curr_match.datetime, sf_player_id,
                                                  (team_id, team_name, curr_match.season))
+        team_sf_players_skills.append(sf_player_skills)
 
-    # DEBUG PRINT
-    print(f"Lengths of each skill's list for match between {curr_match.home_team.name} and {curr_match.away_team.name} "
-          f"played at {curr_match.datetime}:")
-    for skill in PLAYER_SKILLS:
-        print(f"{skill}: {len(sf_players_stats[skill])}", end='\t')
-    print("")
+    if len(team_sf_players_skills) != 11:
+        raise ValueError(f"Player skills only found for {len(team_sf_players_skills)} players of team [{team_name}],"
+                         f"but 11 were expected ({curr_match.home_team.name} vs. {curr_match.away_team.name} played"
+                         f"at {curr_match.datetime})")
 
     # TODO implement: pass SF team's player skills to encoder NN, and return calculated team strength vector
     return []
