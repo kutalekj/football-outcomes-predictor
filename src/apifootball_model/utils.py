@@ -610,62 +610,6 @@ def map_player_positions_to_categories(sofifa_positions):
     return list(categories)
 
 
-def calculate_team_strength_scaled(sf_players_stats, team_season_info):
-    global_instance = Global.get_instance()
-
-    team_id, team_name, season = team_season_info
-
-    # If no integer skill values for any of the skills, return average/default vector instead
-    for skill in settings.PLAYER_SKILLS:
-        if len(sf_players_stats.get(skill, [])) == 0:
-
-            if (team_id, season) in global_instance.sf_avg_team_strength:
-                avg_team_strength = global_instance.sf_avg_team_strength[(team_id, season)]
-            else:
-                avg_team_strength = global_instance.sf_default_team_strength
-
-            print(f"No value found for skill [{skill}] - returning default team strength vector {avg_team_strength}")
-            return avg_team_strength
-
-    team_strength_vector = []
-
-    skill_min_val = settings.ALMOST_ZERO
-    skill_max_val = 99
-    skill_range = skill_max_val - skill_min_val
-
-    for category, skills in CSV_CATEGORIES.items():
-        category_values = []
-        for skill in skills:
-            category_values.extend(sf_players_stats.get(skill, []))
-
-        if len(category_values) == 0:
-            raise ValueError(f"Unexpected error occurred in team strength scaled calculation for {team_name} ({season})"
-                             f" - no category values found for category {category}")
-
-        mean_val = np.mean(category_values)
-        std_val = np.std(category_values) if len(category_values) > 1 else 0.0
-        min_val = min(category_values)
-        max_val = max(category_values)
-
-        # Normalize values to [0,1]
-        mean_val_scaled = (mean_val - skill_min_val) / skill_range
-        min_val_scaled = (min_val - skill_min_val) / skill_range
-        max_val_scaled = (max_val - skill_min_val) / skill_range
-        std_val_scaled = (std_val / skill_range) * 3  # stddev values are usually below 0.2, not in [0,1] (enlarge them)
-
-        team_strength_vector.extend([mean_val_scaled, std_val_scaled, min_val_scaled, max_val_scaled])
-
-    if len(team_strength_vector) != 4 * len(settings.CSV_CATEGORIES):
-        raise ValueError("Incomplete team strength vector found.")
-
-    for idx, val in enumerate(team_strength_vector):
-        if idx % 4 == 0:  # print only mean values (skip min, max and stddev)
-            print(f"{val:.3f}", end='\t')
-    print("\n")
-
-    return team_strength_vector
-
-
 def get_avg_gk_skill_value(skill_name, team_id, season):
     global_instance = Global.get_instance()
 

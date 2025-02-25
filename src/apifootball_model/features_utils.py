@@ -406,6 +406,7 @@ def calculate_team_strength(curr_match, team_id):
         print(f"No team FS lineup list found, but 11 expected (match "
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
         return global_instance.sf_default_team_strength  # return default
+        # TODO: Re-estimate first !!! (the currently stored values are aggregated statistics per category)
         # TODO manual output check: count how many defaults are there in total
 
     # Init players skills dict
@@ -444,7 +445,8 @@ def calculate_team_strength(curr_match, team_id):
         print(f"{skill}: {len(sf_players_stats[skill])}", end='\t')
     print("")
 
-    return ut.calculate_team_strength_scaled(sf_players_stats, (team_id, team_name, curr_match.season))
+    # TODO implement: pass SF team's player skills to encoder NN, and return calculated team strength vector
+    return []
 
 
 def normalize_season(season):
