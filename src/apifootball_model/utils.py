@@ -3,7 +3,6 @@ utils.py
 """
 
 import numpy as np
-from sklearn.decomposition import PCA
 import re
 import unicodedata
 import difflib
@@ -667,60 +666,6 @@ def calculate_team_strength_scaled(sf_players_stats, team_season_info):
     return team_strength_vector
 
 
-def calculate_team_strength_pca(sf_players_stats, n_components=5, default_vector=None):
-    # TODO: Was not tested yet...
-
-    if default_vector is None:  # TODO: After get all API-football data and compute team strength for them, estimate it
-        default_vector = [0.0] * n_components
-
-    # Convert dict of skills->list into a matrix: rows=players, cols=skills
-    # First find the max number of players across all skills
-    player_counts = [len(vals) for vals in sf_players_stats.values()]
-    max_players = max(player_counts) if player_counts else 0
-    if max_players < 8:  # If fewer than 8 players, data might be incomplete
-        return default_vector
-
-    # Build the matrix
-    # If any skill is shorter, we can fill missing with np.nan or skip those players
-    skill_matrix = []
-    for skill in settings.PLAYER_SKILLS:
-        vals = sf_players_stats.get(skill, [])
-        if len(vals) < max_players:
-            # Pad with NaN for missing values
-            vals = vals + [np.nan]*(max_players - len(vals))
-        skill_matrix.append(vals)
-
-    skill_matrix = np.array(skill_matrix).T  # shape: (max_players, 34)
-
-    # Drop rows with NaN (players missing some skill)
-    # Alternatively, you could do imputation here
-    mask = ~np.isnan(skill_matrix).any(axis=1)
-    skill_matrix = skill_matrix[mask]
-
-    # If after filtering, not enough players remain, return default
-    if skill_matrix.shape[0] < 8:
-        return default_vector
-
-    # Apply PCA
-    pca = PCA(n_components=n_components)
-    # If skill values range up to 99, consider scaling them to [0,1] before PCA
-    scaled_matrix = skill_matrix / 99.0
-    pca_features = pca.fit_transform(scaled_matrix)  # shape: (num_players_filtered, n_components)
-
-    # Aggregate the PCA components across the players (e.g., mean)
-    team_pca_mean = np.mean(pca_features, axis=0)
-
-    # Normalize PCA results to [0,1]
-    # PCA scores can be negative. One simple approach: shift and scale based on min/max in your dataset.
-    # For simplicity, assume team_pca_mean are roughly in [-1,1] after scaling. Adjust as needed.
-    # Let's do a min-max scaling based on a guessed range [-2, 2]
-    pca_min, pca_max = -2, 2
-    pca_range = pca_max - pca_min
-    team_strength_pca_scaled = ((team_pca_mean - pca_min) / pca_range).tolist()
-
-    return team_strength_pca_scaled
-
-
 def get_avg_gk_skill_value(skill_name, team_id, season):
     global_instance = Global.get_instance()
 
@@ -856,41 +801,6 @@ def combine_players_stats_in_team_strength(team_players_individual_stats, player
                 else:
                     pos_category_weighted_mean = -1
                 team_strength[f"{pos}_{category}_weighted_mean"] = pos_category_weighted_mean
-
-        return team_strength
-
-    # PCA: dimensionality reduction
-    elif mode == "pca":
-        # Create a matrix of player stats
-        player_vectors = []
-        for player_stats in team_players_individual_stats:
-            player_vector = []
-            for category in CSV_CATEGORIES.keys():
-                values = player_stats.get(category, [])
-                # Replace missing values (-1) with np.nan
-                valid_values = [v if v != -1 else np.nan for v in values]
-                player_vector.extend(valid_values)
-            player_vectors.append(player_vector)
-
-        # Convert to numpy array
-        player_matrix = np.array(player_vectors, dtype=np.float64)
-
-        # Impute missing values with column means
-        col_means = np.nanmean(player_matrix, axis=0)
-        inds = np.where(np.isnan(player_matrix))
-        player_matrix[inds] = np.take(col_means, inds[1])
-
-        # Apply PCA
-        n_components = min(10, player_matrix.shape[1])  # Adjust number of components as needed
-        pca = PCA(n_components=n_components)
-        pca.fit(player_matrix)
-        team_pca_features = pca.transform(player_matrix)
-
-        # Aggregate PCA features across players (e.g., take mean)
-        team_strength_vector = np.mean(team_pca_features, axis=0)
-
-        # Create a dictionary to return
-        team_strength = {f"pca_component_{i + 1}": team_strength_vector[i] for i in range(len(team_strength_vector))}
 
         return team_strength
 
