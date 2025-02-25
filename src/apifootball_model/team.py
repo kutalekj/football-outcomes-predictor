@@ -107,7 +107,7 @@ class Team:
             if comp.id == 307 and self.id == 2944:
                 self.fs_id, self.fs_clean_name = 5071, "Al Feiha"  # Al-Fayha
             print(f"\t\t\t\t\tAF team matched to FS team: [{self.name}] [{self.fs_clean_name}] (manually)")
-            # TODO check: Check this matching once again - this must be 100% accurate
+            # TODO manual output check: AF/FS teams matching must be 100% accurate
 
         else:
             self.fs_id, self.fs_clean_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)

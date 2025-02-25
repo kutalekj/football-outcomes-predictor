@@ -270,9 +270,10 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
 
     if len(available_player_csvs_sorted_by_timedelta_to_match) == 0:
         print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. Skip...")
+        # TODO manual output check: count how many such players without CSV data are there
         return output_team_skills_dict
 
-    # TODO: Debug print
+    # DEBUG PRINT
     print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
 
     skills_processed = set()  # keep track of already processed player skills
@@ -333,6 +334,7 @@ def get_sf_player_data(match_datetime, sf_player_id, output_team_skills_dict, te
     if not have_gk_data:
         for gk_skill in gk_skills:
             print(f"Imputing value for missing GK skill [{gk_skill}]...")
+            # TODO manual output check: count how many goalkeepers without skills are there
             team = get_team_if_exists(team_id)
 
             # If no GK skill value, impute it
@@ -542,11 +544,12 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
             best_fs_match = fs_player
 
     print(f"[{af_player[1]}][{best_fs_match['fs_known_as']}]", end='\t')
+    # TODO manual output check: AF/FS players matching accuracy
 
     return best_fs_match, highest_similarity
 
 
-def match_fs_player_to_sf_players_alternative(fs_player, sf_players_with_same_dob):
+def match_fs_player_to_sf_players(fs_player, sf_players_with_same_dob):
     normalized_fs_known_as = normalize_name(fs_player['fs_known_as'])
     normalized_fs_full_name = normalize_name(fs_player['fs_full_name'])
 
@@ -736,17 +739,6 @@ def get_avg_gk_skill_value(skill_name, team_id, season):
         return global_instance.sf_default_gk_skills[skill_name]
 
     raise ValueError(f"Default value for skill '{skill_name}' not found.")
-
-
-def get_avg_team_strength_vector_scaled(team_id, season):
-    global_instance = Global.get_instance()
-
-    # Return the team strength vector if it exists
-    if (team_id, season) in global_instance.sf_avg_team_strength:
-        return global_instance.sf_avg_team_strength[(team_id, season)]
-
-    # Return the default vector if team_id and season are not found
-    return global_instance.sf_default_team_strength
 
 
 def combine_players_stats_in_team_strength(team_players_individual_stats, player_ratings, player_positions, mode):

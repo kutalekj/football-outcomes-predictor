@@ -193,11 +193,11 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
                 elif stat_name == "Team xG":
                     new_value += match.home_team_xg
                 elif stat_name == "Total xG":
-                    new_value += match.total_xg  # TODO: Adj. this stat doesn't depend on home/away - move it elsewhere?
+                    new_value += match.total_xg  # TODO code: This stat doesn't depend on home/away - move it elsewhere?
                 elif stat_name == "Team pre-m xG":
                     new_value += match.home_team_pre_match_xg
                 elif stat_name == "Total pre-m xG":
-                    new_value += match.total_pre_match_xg  # TODO: Adj. this stat doesn't depend on home/away either...
+                    new_value += match.total_pre_match_xg  # TODO code: This stat doesn't depend on home/away either...
 
             elif team_id == match.away_team.id:
 
@@ -216,11 +216,11 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
                 elif stat_name == "Team xG":
                     new_value += match.away_team_xg
                 elif stat_name == "Total xG":
-                    new_value += match.total_xg  # TODO: Adj. this stat doesn't depend on home/away - move it elsewhere?
+                    new_value += match.total_xg  # TODO code: This stat doesn't depend on home/away - move it elsewhere?
                 elif stat_name == "Team pre-m xG":
                     new_value += match.away_team_pre_match_xg
                 elif stat_name == "Total pre-m xG":
-                    new_value += match.total_pre_match_xg  # TODO: Adj. this stat doesn't depend on home/away either...
+                    new_value += match.total_pre_match_xg  # TODO code: This stat doesn't depend on home/away either...
 
             else:
                 raise Exception(
@@ -228,7 +228,7 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
 
             # This is the correction of case an irregular match misses a stats value (-1)
             if new_value != -1:
-                # TODO: Check this functionality via debug
+                # TODO check: Debug this functionality
                 total_value += new_value
             else:
                 total_none_values += 1
@@ -405,7 +405,8 @@ def calculate_team_strength(curr_match, team_id):
     if len(team_fs_lineup) == 0:
         print(f"No team FS lineup list found, but 11 expected (match "
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
-        return []  # TODO: Estimate by default team strength
+        return global_instance.sf_default_team_strength  # return default
+        # TODO manual output check: count how many defaults are there in total
 
     # Init players skills dict
     sf_players_stats = {skill: [] for skill in PLAYER_SKILLS}
@@ -415,20 +416,20 @@ def calculate_team_strength(curr_match, team_id):
         fs_player['fs_birthday'] = fs_player['fs_birthday'].replace(hour=0)  # set hours=0 to match SF datetime formats
 
         if fs_player['fs_birthday'] in global_instance.sofifa_players_by_dob:
-            # Get sofifa player matching the FS player's date of birth
+            # Get SOFIFA player that is matching the FS player's date of birth
             sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player['fs_birthday']]
             if len(sf_players_with_same_dob) == 0:
                 raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
                                  f"of FS player {fs_player['fs_known_as']}")
         else:
             print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
+            # TODO manual output check: count how many DOB misses are there in total
             continue
 
         # Match FS player to SOFIFA player
-        sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players_alternative(
-            fs_player, sf_players_with_same_dob)
+        sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(fs_player,
+                                                                                             sf_players_with_same_dob)
 
-        # TODO: Start comment here for FS/SF matching acc check
         if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
             continue  # no FS/SF match because of too low similarity score
 
@@ -436,14 +437,12 @@ def calculate_team_strength(curr_match, team_id):
         sf_players_stats = ut.get_sf_player_data(curr_match.datetime, sf_player_id, sf_players_stats,
                                                  (team_id, team_name, curr_match.season))
 
-    # TODO: Debug check
+    # DEBUG PRINT
     print(f"Lengths of each skill's list for match between {curr_match.home_team.name} and {curr_match.away_team.name} "
           f"played at {curr_match.datetime}:")
     for skill in PLAYER_SKILLS:
         print(f"{skill}: {len(sf_players_stats[skill])}", end='\t')
     print("")
-
-    # TODO: End comment here for FS/SF matching acc check
 
     return ut.calculate_team_strength_scaled(sf_players_stats, (team_id, team_name, curr_match.season))
 
