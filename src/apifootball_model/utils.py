@@ -7,6 +7,7 @@ import re
 import unicodedata
 import difflib
 from rapidfuzz import fuzz
+from collections import Counter
 import settings
 import time
 import requests
@@ -251,7 +252,7 @@ def normalize_name(name):
     return name
 
 
-def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
+def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_position):
     global_instance = Global.get_instance()
     team_id, team_name, season = team_season_info
 
@@ -270,18 +271,8 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
     if len(available_player_csvs_sorted_by_timedelta_to_match) == 0:
         print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. "
               f"Imputing...")
-        # TODO implement: return average skill values list for corresponding team and player position category (utilize function "map_player_positions_to_categories")
-        """
-        for season in all_seasons:  # 4 seasons
-            for regular_team in all_regular_teams:  # ~400 teams
-                # goalkeeper: [...] 					# list of 34 values
-                # defender: [...] 						# list of 34 values
-                # midfielder: [...] 					# list of 34 values
-                # attacker: [...] 						# list of 34 values
-        """
-
         # TODO manual output check: count how many such players without CSV data are there
-        return []
+        return get_imitated_player_skills(season, team_id, fs_position)
 
     # DEBUG PRINT
     print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
@@ -330,25 +321,25 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
         if not negative_value_found:
             break  # if no -1 values found, end getting skills
 
-    all_player_positions = list(set(all_player_positions))
+    all_player_positions_unique = list(set(all_player_positions))  # TODO remove: after average team strengths collected
 
     # Check for missing skill values - impute
     for skill_name, value in collected_player_skills.items():
         if value == -1:
-            # TODO implement: get average skill value for corresponding team and player position category (utilize function "map_player_positions_to_categories")
-            pass  # IMPUTE
+            player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
+            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(team_id, season, player_pos)]
         else:
-            # TODO: Get player position categories and store to TMP globals
-            if "goalkeeper" in all_player_positions:
+            # TODO remove: after average team strengths collected for all comps (the else branch and the prints below)
+            if "goalkeeper" in all_player_positions_unique:
                 global_instance.tmp_average_player_skills[
                     (season, team_id, team_name, "goalkeeper")][skill_name].append(value)
-            if "defender" in all_player_positions:
+            if "defender" in all_player_positions_unique:
                 global_instance.tmp_average_player_skills[
                     (season, team_id, team_name, "defender")][skill_name].append(value)
-            if "midfielder" in all_player_positions:
+            if "midfielder" in all_player_positions_unique:
                 global_instance.tmp_average_player_skills[
                     (season, team_id, team_name, "midfielder")][skill_name].append(value)
-            if "attacker" in all_player_positions:
+            if "attacker" in all_player_positions_unique:
                 global_instance.tmp_average_player_skills[
                     (season, team_id, team_name, "attacker")][skill_name].append(value)
 
@@ -634,6 +625,29 @@ def get_imitated_team_strength(season, team_id):
         players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "attacker")])  # 4x attacker
 
     return players_skills
+
+
+def get_imitated_player_skills(season, team_id, fs_position):
+    global_instance = Global.get_instance()
+
+    if fs_position == "Goalkeeper":
+        return global_instance.sf_avg_team_strength[(team_id, season, "goalkeeper")]
+    elif fs_position == "Defender":
+        return global_instance.sf_avg_team_strength[(team_id, season, "defender")]
+    elif fs_position == "Midfielder":
+        return global_instance.sf_avg_team_strength[(team_id, season, "midfielder")]
+    elif fs_position == "Forward":
+        return global_instance.sf_avg_team_strength[(team_id, season, "attacker")]
+    else:
+        raise ValueError(f"Player FS position [{fs_position}] not a valid position for player skills imitation")
+
+
+def get_most_frequent_string(list_of_strings):
+    if not list_of_strings:
+        raise ValueError(f"Cannot determine most frequent string from empty list of strings")
+
+    counter = Counter(list_of_strings)
+    return counter.most_common(1)[0][0]
 
 
 def is_match_within_days(curr_datetime, match_datetime, n):

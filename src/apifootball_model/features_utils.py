@@ -437,7 +437,7 @@ def calculate_team_strength(curr_match, team_id):
 
             # Get SOFIFA player skills
             sf_player_skills = ut.get_sf_player_data(curr_match.datetime, sf_player_id,
-                                                     (team_id, team_name, curr_match.season))
+                                                     (team_id, team_name, curr_match.season), fs_player['fs_position'])
             team_sf_players_skills.append(sf_player_skills)
 
         if len(team_sf_players_skills) != 11:
@@ -446,6 +446,7 @@ def calculate_team_strength(curr_match, team_id):
                              f"played at {curr_match.datetime})")
 
     # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
+    # TODO implement: does the order of players (their positions) in the team strength list matter for the NN training?
     return []
 
 

@@ -19,6 +19,7 @@ if not settings.ALL_LOAD:
 
     # 0. Load average skills and team strengths (SF)
     in_out.load_sf_avg_team_strength()
+    # TODO implement: Finish the team strength re-estimation: currently only testing on BEL/ENG/FRA data
 
     # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()
@@ -108,6 +109,7 @@ if settings.MATCH_DATA_STORE:
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
+# TODO remove: after collecting team strengths for all comps
 for table in global_instance.all_tables:
     print(f"Table: {table.comp_name}, {table.season}")
     for team in table.teams:
