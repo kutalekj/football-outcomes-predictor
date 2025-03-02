@@ -18,7 +18,7 @@ global_instance = Global.get_instance()
 if not settings.ALL_LOAD:
 
     # 0. Load average skills and team strengths (SF)
-    # TODO: Re-implement !!! (the currently stored values are aggregated statistics per category)
+    in_out.load_sf_avg_team_strength()
     in_out.load_avg_gk_skills()
     in_out.load_avg_team_strength_scaled()
 

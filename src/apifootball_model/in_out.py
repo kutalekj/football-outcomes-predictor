@@ -424,6 +424,30 @@ def load_avg_gk_skills():
                         global_instance.sf_avg_gk_skills[current_skill][(team_id, season)] = avg_value
 
 
+def load_sf_avg_team_strength():
+    global_instance = Global.get_instance()
+    global_instance.sf_avg_team_strength = {}
+
+    with open(settings.AVG_TEAM_STRENGTHS, "r", newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        header = next(reader)  # read header row
+
+        for row in reader:
+            season = int(row[0])
+            team_id = int(row[1])
+            position_category = row[3]
+            skill_values = list(map(float, row[4:]))  # convert skill values to floats
+
+            if len(skill_values) != len(settings.PLAYER_SKILLS):
+                raise ValueError(f"Unexpected length of SOFIFA player skill values list for "
+                                 f"season [{season}], team ID [{team_id}], {position_category}: "
+                                 f"{len(skill_values)} loaded, but {len(settings.PLAYER_SKILLS)} we expected")
+
+            global_instance.sf_avg_team_strength[(team_id, season, position_category)] = skill_values
+
+    print(f"[0] Successfully loaded team strength data from {settings.AVG_TEAM_STRENGTHS}")
+
+
 def load_avg_team_strength_scaled():
     global_instance = Global.get_instance()
 
