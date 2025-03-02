@@ -315,7 +315,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
                 negative_value_found = True
                 continue
 
-            collected_player_skills[skill] = value
+            collected_player_skills[skill] = float(value)
             skills_processed.add(skill)  # keep track of already processed skills for the player
 
         if not negative_value_found:

@@ -414,6 +414,11 @@ def calculate_team_strength(curr_match, team_id):
 
     # Iterate over FS lineup players
     else:
+        # 1. Sort FS lineup players by positions (ensure consistency for learning the team strength embeddings)
+        fs_position_order = {"Goalkeeper": 0, "Defender": 1, "Midfielder": 2, "Forward": 3}
+        team_fs_lineup = sorted(team_fs_lineup, key=lambda player: fs_position_order.get(player.get("fs_position"), 4))
+
+        # 2. Iterate over them
         for fs_player in team_fs_lineup:
             fs_player['fs_birthday'] = fs_player['fs_birthday'].replace(hour=0)  # match SOFIFA datetime formats
 
