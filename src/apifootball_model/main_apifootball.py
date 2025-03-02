@@ -18,7 +18,7 @@ global_instance = Global.get_instance()
 if not settings.ALL_LOAD:
 
     # 0. Load average skills and team strengths (SF)
-    in_out.load_sf_avg_team_strength()
+    # in_out.load_sf_avg_team_strength()
     # TODO implement: Finish the team strength re-estimation: currently only testing on BEL/ENG/FRA data
 
     # 1. Init comps (seasons, teams, AF rounds, FS matches)

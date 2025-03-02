@@ -272,7 +272,9 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
         print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. "
               f"Imputing...")
         # TODO manual output check: count how many such players without CSV data are there
-        return get_imitated_player_skills(season, team_id, fs_position)
+        # TODO high prio: uncomment after getting average skills for all comps
+        return {}
+        # return get_imitated_player_skills(season, team_id, fs_position)
 
     # DEBUG PRINT
     print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
@@ -326,8 +328,10 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
     # Check for missing skill values - impute
     for skill_name, value in collected_player_skills.items():
         if value == -1:
-            player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
-            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(team_id, season, player_pos)]
+            # TODO high prio: uncomment after collection average skills
+            # player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
+            # collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(team_id, season, player_pos)]
+            pass
         else:
             # TODO remove: after average team strengths collected for all comps (the else branch and the prints below)
             if "goalkeeper" in all_player_positions_unique:
