@@ -401,6 +401,9 @@ def calculate_team_strength(curr_match, team_id):
     # Init players skills dict
     team_sf_players_skills = []
 
+    # Track player positions
+    lineup_fs_positions = []
+
     # No lineup found
     if team_fs_lineup is None or len(team_fs_lineup) > 11:
         raise ValueError(f"FS team lineup [{team_fs_lineup}] should never be \"None\" or more than 11 (match "
@@ -434,8 +437,8 @@ def calculate_team_strength(curr_match, team_id):
                 continue
 
             # Match FS player to SOFIFA player
-            sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(fs_player,
-                                                                                                 sf_players_with_same_dob)
+            sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(
+                fs_player, sf_players_with_same_dob)
 
             if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
                 continue  # no FS/SOFIFA match because of too low similarity score
@@ -445,14 +448,14 @@ def calculate_team_strength(curr_match, team_id):
                                                      (team_id, team_name, curr_match.season), fs_player['fs_position'])
             team_sf_players_skills.append(sf_player_skills)
 
+            lineup_fs_positions.append(fs_player['fs_position'])  # store FS position
+
         if len(team_sf_players_skills) != 11:
-            """
-            raise ValueError(f"Player skills only found for {len(team_sf_players_skills)} players of team [{team_name}]"
-                             f", but 11 were expected ({curr_match.home_team.name} vs. {curr_match.away_team.name} "
-                             f"played at {curr_match.datetime})")
-            """
-            pass
-            # TODO implement: handle of this potential issue - AF/FS matching must be 11, but this FS/SF might not!
+            print(f"There are {11 - len(team_sf_players_skills)} player skills missing for [{team_name}]! Imitating..."
+                  f"({curr_match.home_team.name} vs. {curr_match.away_team.name} played at {curr_match.datetime})")
+
+            team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills,
+                                                                   lineup_fs_positions)
 
     # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
     # TODO implement: does the order of players (their positions) in the team strength list matter for the NN training?

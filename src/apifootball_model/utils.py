@@ -405,6 +405,7 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         return
 
+    # TODO high prio: uncomment after obtaining new data for all comps?
     """
     if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
         return  # case for both teams' FS lineups already loaded from CSV
@@ -644,6 +645,47 @@ def get_imitated_player_skills(season, team_id, fs_position):
         return global_instance.sf_avg_team_strength[(team_id, season, "attacker")]
     else:
         raise ValueError(f"Player FS position [{fs_position}] not a valid position for player skills imitation")
+
+
+def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_fs_positions):
+    expected_position_occurrences = {"Goalkeeper": 1, "Defender": 4, "Midfielder": 4, "Forward": 2}
+    actual_position_occurrences = count_player_position_occurrences(lineup_fs_positions)
+
+    for position in expected_position_occurrences.keys():
+        if expected_position_occurrences[position] < actual_position_occurrences[position]:
+            raise ValueError(f"Found more players at position [{position}] ({actual_position_occurrences[position]}) "
+                             f"than expected ({expected_position_occurrences[position]})")
+
+        while expected_position_occurrences[position] > actual_position_occurrences[position]:
+            print(f"Adding imitated player skill (for position [{position}]), because not enough FS/SOFIFA matches")
+
+            imitated_player_skills = get_imitated_player_skills(season, team_id, position)  # get imitated skills
+
+            # Dependency of the insertion index on position - try to maintain the positions order for consistency
+            if position == "Goalkeeper":
+                team_sf_players_skills.insert(0, imitated_player_skills)  # goalkeeper first
+            elif position == "Defender":
+                team_sf_players_skills.insert(1, imitated_player_skills)  # then defenders
+            elif position == "Midfielder":
+                team_sf_players_skills.insert(6, imitated_player_skills)  # midfielders somewhere in the middle
+            elif position == "Forward":
+                team_sf_players_skills.insert(10, imitated_player_skills)  # forwards last
+            else:
+                raise ValueError(f"Unsupported FS player position [{position}] found when adding imitated player skill")
+
+            actual_position_occurrences[position] += 1
+
+    return team_sf_players_skills
+
+
+def count_player_position_occurrences(player_positions):
+    occurrences = {"Goalkeeper": 0, "Defender": 0, "Midfielder": 0, "Forward": 0}
+    counter = Counter(player_positions)
+
+    for position in occurrences.keys():
+        occurrences[position] = counter.get(position, 0)
+
+    return occurrences
 
 
 def get_most_frequent_string(list_of_strings):
