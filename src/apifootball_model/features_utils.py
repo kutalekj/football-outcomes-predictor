@@ -398,6 +398,9 @@ def calculate_team_strength(curr_match, team_id):
                          f"({curr_match.home_team.id}) or the away team {curr_match.away_team.name} "
                          f"({curr_match.away_team.id})")
 
+    # Init players skills dict
+    team_sf_players_skills = []
+
     # No lineup found
     if team_fs_lineup is None or len(team_fs_lineup) > 11:
         raise ValueError(f"FS team lineup [{team_fs_lineup}] should never be \"None\" or more than 11 (match "
@@ -405,49 +408,44 @@ def calculate_team_strength(curr_match, team_id):
     if len(team_fs_lineup) == 0:
         print(f"No team FS lineup list found, but 11 expected (match "
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
-        return global_instance.sf_default_team_strength  # return default
-        # TODO: Re-estimate first !!! (the currently stored values are aggregated statistics per category)
-        # TODO manual output check: count how many defaults are there in total
+        # TODO manual output check: count how many such missing ones are there in total - hopefully very few!!!
 
-    # Init players skills dict
-    team_sf_players_skills = []
+        team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
 
     # Iterate over FS lineup players
-    for fs_player in team_fs_lineup:
-        fs_player['fs_birthday'] = fs_player['fs_birthday'].replace(hour=0)  # set hours=0 to match SF datetime formats
+    else:
+        for fs_player in team_fs_lineup:
+            fs_player['fs_birthday'] = fs_player['fs_birthday'].replace(hour=0)  # match SOFIFA datetime formats
 
-        if fs_player['fs_birthday'] in global_instance.sofifa_players_by_dob:
-            # Get SOFIFA player that is matching the FS player's date of birth
-            sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player['fs_birthday']]
-            if len(sf_players_with_same_dob) == 0:
-                raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
-                                 f"of FS player {fs_player['fs_known_as']}")
-        else:
-            print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
-            # TODO manual output check: count how many DOB misses are there in total
-            continue
+            if fs_player['fs_birthday'] in global_instance.sofifa_players_by_dob:
+                # Get SOFIFA player that is matching the FS player's date of birth
+                sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player['fs_birthday']]
+                if len(sf_players_with_same_dob) == 0:
+                    raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
+                                     f"of FS player {fs_player['fs_known_as']}")
+            else:
+                print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
+                # TODO manual output check: count how many DOB misses are there in total
+                continue
 
-        # Match FS player to SOFIFA player
-        sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(fs_player,
-                                                                                             sf_players_with_same_dob)
+            # Match FS player to SOFIFA player
+            sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(fs_player,
+                                                                                                 sf_players_with_same_dob)
 
-        if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
-            continue  # no FS/SF match because of too low similarity score
+            if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
+                continue  # no FS/SOFIFA match because of too low similarity score
 
-        # Get SOFIFA player skills
-        sf_player_skills = ut.get_sf_player_data(curr_match.datetime, sf_player_id,
-                                                 (team_id, team_name, curr_match.season))
-        team_sf_players_skills.append(sf_player_skills)
+            # Get SOFIFA player skills
+            sf_player_skills = ut.get_sf_player_data(curr_match.datetime, sf_player_id,
+                                                     (team_id, team_name, curr_match.season))
+            team_sf_players_skills.append(sf_player_skills)
 
-    if len(team_sf_players_skills) != 11:
-        """
-        raise ValueError(f"Player skills only found for {len(team_sf_players_skills)} players of team [{team_name}],"
-                         f"but 11 were expected ({curr_match.home_team.name} vs. {curr_match.away_team.name} played"
-                         f"at {curr_match.datetime})")
-        """
-        # TODO high prio: uncomment
+        if len(team_sf_players_skills) != 11:
+            raise ValueError(f"Player skills only found for {len(team_sf_players_skills)} players of team [{team_name}]"
+                             f", but 11 were expected ({curr_match.home_team.name} vs. {curr_match.away_team.name} "
+                             f"played at {curr_match.datetime})")
 
-    # TODO implement: pass SF team's player skills to trained encoder NN, and return calculated team strength vector
+    # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
     return []
 
 

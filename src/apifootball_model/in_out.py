@@ -393,37 +393,6 @@ def load_player_stats():
     global_instance.sofifa_players_by_dob = dict(sorted(global_instance.sofifa_players_by_dob.items()))
 
 
-def load_avg_gk_skills():
-    global_instance = Global.get_instance()
-
-    global_instance.sf_avg_gk_skills = defaultdict(lambda: defaultdict(dict))  # skill -> (team_id, season) -> value
-    global_instance.sf_default_gk_skills = {}  # default averages for each skill
-
-    current_skill = None
-
-    with open(settings.AVR_GK_SKILLS, 'r', encoding='utf-8') as file:
-        for line in file:
-            line = line.strip()
-
-            # Detect skill section
-            if line.startswith("Mean GK"):
-                current_skill = line.split(" ")[2].lower()  # get skill name
-
-            elif current_skill and line:
-
-                # Parse team data: "(team_id, 'team_name', season): value"
-                match = re.match(r"\((\d+|\-1), '([^']*)', (\d{4})\): ([\d.]+)", line)
-                if match:
-                    team_id, team_name, season, avg_value = match.groups()
-                    team_id, season = int(team_id), int(season)
-                    avg_value = float(avg_value)
-
-                    if team_id == -1:  # default value for the season
-                        global_instance.sf_default_gk_skills[current_skill] = avg_value
-                    else:
-                        global_instance.sf_avg_gk_skills[current_skill][(team_id, season)] = avg_value
-
-
 def load_sf_avg_team_strength():
     global_instance = Global.get_instance()
     global_instance.sf_avg_team_strength = {}
@@ -446,44 +415,3 @@ def load_sf_avg_team_strength():
             global_instance.sf_avg_team_strength[(team_id, season, position_category)] = skill_values
 
     print(f"[0] Successfully loaded team strength data from {settings.AVG_TEAM_STRENGTHS}")
-
-
-def load_avg_team_strength_scaled():
-    global_instance = Global.get_instance()
-
-    global_instance.sf_avg_team_strength = {}
-    global_instance.sf_default_team_strength = []
-
-    with open(settings.AVG_TEAM_STRENGTHS, "r", encoding="utf-8") as file:
-        for line in file:
-            line = line.strip()
-            if not line:
-                continue
-
-            # Parse the skill data
-            match = re.match(r"\((\d+|-\d+), '([^']*)', (-?\d+)\):\s+(.*)", line)
-            if not match:
-                raise ValueError("Invalid line (non-matching) found in the average/default team strength data")
-
-            team_id, team_name, season, skill_values = match.groups()
-            team_id, season = int(team_id), int(season)
-
-            if "nan" in skill_values:
-                raise ValueError(f"NaN values found in average/default team strength data "
-                                 f"(for team {team_name} and season {season})")
-
-            # Parse skill values into a list of floats
-            skill_values_list = [
-                float(val) for val in skill_values.split()
-            ]
-
-            if len(skill_values_list) != 4 * len(settings.CSV_CATEGORIES):
-                raise ValueError(f"An average team strength scaled vector of unexpected length found when loading: "
-                                 f"{skill_values_list}")
-
-            if team_id == -1 and season == -1:  # Default skill vector
-                global_instance.sf_default_team_strength = skill_values_list
-            else:
-                if (team_id, season) not in global_instance.sf_avg_team_strength:
-                    global_instance.sf_avg_team_strength[(team_id, season)] = []
-                global_instance.sf_avg_team_strength[(team_id, season)] = skill_values_list

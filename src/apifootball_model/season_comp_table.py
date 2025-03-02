@@ -28,23 +28,10 @@ class SeasonCompTable:
         global_instance = Global.get_instance()
         print(f"Initializing table for comp [{self.comp_name}].")
 
-        comp_season_teams = [team for team in global_instance.all_teams if
-                             {'comp': ut.get_comp_by_id(self.comp_id), 'season': self.season, 'is_regular': False}
-                             in team.regularity_in_comp_season]  # at the moment there are no teams set as regular yet
+        self.teams = [team for team in global_instance.all_teams if
+                      {'comp': ut.get_comp_by_id(self.comp_id), 'season': self.season, 'is_regular': False}
+                      in team.regularity_in_comp_season]  # at the moment there are no teams set as regular yet
 
-        teams = []
-        for team in comp_season_teams:
-
-            # Assign average/default SOFIFA goalkeeper skills
-            team.avg_gk_diving[self.season] = ut.get_avg_gk_skill_value("diving", team.id, self.season) * 100
-            team.avg_gk_handling[self.season] = ut.get_avg_gk_skill_value("handling", team.id, self.season) * 100
-            team.avg_gk_kicking[self.season] = ut.get_avg_gk_skill_value("kicking", team.id, self.season) * 100
-            team.avg_gk_positioning[self.season] = ut.get_avg_gk_skill_value("positioning", team.id, self.season) * 100
-            team.avg_gk_reflexes[self.season] = ut.get_avg_gk_skill_value("reflexes", team.id, self.season) * 100
-
-            teams.append(team)
-
-        self.teams = teams
         self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
                                                   'avg_points_per_game': 0} for team in self.teams}
 

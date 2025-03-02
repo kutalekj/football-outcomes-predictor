@@ -20,11 +20,7 @@ class Global:
             cls._instance.fs_leagues_list = []  # all FS seasons of all comps
             cls._instance.fs_leagues_matches = {}  # all FS matches in each comp season
 
-            cls._instance.sf_avg_gk_skills = None  # average SOFIFA goalkeeper skills for each team's season
-            cls._instance.sf_default_gk_skills = None  # default SOFIFA goalkeeper skills
-
             cls._instance.sf_avg_team_strength = None  # average SF team strength for each reg. team's season's pos.cat.
-            cls._instance.sf_default_team_strength = None  # default SOFIFA team strength
 
             # Main list with sofifa players' data
             # Each elem is tuple (datetime of CSV with data, big dict); big dict indexed by player IDs, values = dicts

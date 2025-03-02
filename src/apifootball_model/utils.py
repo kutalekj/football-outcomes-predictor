@@ -619,24 +619,21 @@ def map_player_positions_to_categories(sofifa_positions):
     return list(categories)
 
 
-def get_avg_gk_skill_value(skill_name, team_id, season):
+def get_imitated_team_strength(season, team_id):
     global_instance = Global.get_instance()
+    players_skills = [global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]]  # 1x goalkeeper
+    # TODO adj: currently assuming a default 4-4-2 formation - can add more complex logic
 
-    skill_name = skill_name.lower()
+    for i in range(4):
+        players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "defender")])  # 4x defender
 
-    if skill_name not in global_instance.sf_avg_gk_skills:
-        raise ValueError(f"Skill '{skill_name}' not found.")
+    for i in range(4):
+        players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "midfielder")])  # 4x midfielder
 
-    # Get value for the team and season
-    key = (team_id, season)
-    if key in global_instance.sf_avg_gk_skills[skill_name]:
-        return global_instance.sf_avg_gk_skills[skill_name][key]
+    for i in range(2):
+        players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "attacker")])  # 4x attacker
 
-    # Return default value if the team is not found
-    if skill_name in global_instance.sf_default_gk_skills:
-        return global_instance.sf_default_gk_skills[skill_name]
-
-    raise ValueError(f"Default value for skill '{skill_name}' not found.")
+    return players_skills
 
 
 def is_match_within_days(curr_datetime, match_datetime, n):

@@ -19,8 +19,6 @@ if not settings.ALL_LOAD:
 
     # 0. Load average skills and team strengths (SF)
     in_out.load_sf_avg_team_strength()
-    in_out.load_avg_gk_skills()
-    in_out.load_avg_team_strength_scaled()
 
     # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()

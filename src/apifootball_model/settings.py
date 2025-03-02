@@ -149,8 +149,6 @@ TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
 CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase3\\full'
-AVR_GK_SKILLS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\' \
-                'avg_sofifa_gk_skills_per_team_comp_season.txt'
 AVG_TEAM_STRENGTHS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\' \
                 'avg_team_strengths_BEL_ENG_FRA.csv'
 
