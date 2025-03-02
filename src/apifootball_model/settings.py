@@ -20,8 +20,8 @@ FS_HOST = "https://api.football-data-api.com"
 MATCH_DATA_LOAD = True
 MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-02-23_BEL.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-02-23_ENG.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-03-01_BEL_ENG_FRA.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-03-01_BEL_ENG_FRA.csv"
 
 ALL_STORE = False
 ALL_LOAD = False
@@ -31,7 +31,7 @@ ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\s
 ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
 ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 2, 22)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2021, 2, 28)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -44,6 +44,15 @@ COMPS_v2_TEST = [
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
      'fs_alias': "Pro League"},  # BEL
     {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"},  # BEL
+    {'id': 39, 'name': "Premier League", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Premier League"},
+    {'id': 40, 'name': "Championship", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Championship"},
+    {'id': 41, 'name': "League One", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League One"},
+    {'id': 42, 'name': "League Two", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "EFL League Two"},
+    {'id': 61, 'name': "Ligue 1", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 1"},
+    {'id': 62, 'name': "Ligue 2", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ligue 2"},
+    {'id': 45, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "FA Cup"},
+    {'id': 46, 'name': "EFL Trophy", 'regular_round_keywords': [], 'fs_alias': "EFL Trophy"},
+    {'id': 66, 'name': "Coupe de France", 'regular_round_keywords': [], 'fs_alias': "Coupe de France"},
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],

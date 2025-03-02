@@ -440,11 +440,14 @@ def calculate_team_strength(curr_match, team_id):
         team_sf_players_skills.append(sf_player_skills)
 
     if len(team_sf_players_skills) != 11:
+        """
         raise ValueError(f"Player skills only found for {len(team_sf_players_skills)} players of team [{team_name}],"
                          f"but 11 were expected ({curr_match.home_team.name} vs. {curr_match.away_team.name} played"
                          f"at {curr_match.datetime})")
+        """
+        # TODO high prio: uncomment
 
-    # TODO implement: pass SF team's player skills to encoder NN, and return calculated team strength vector
+    # TODO implement: pass SF team's player skills to trained encoder NN, and return calculated team strength vector
     return []
 
 

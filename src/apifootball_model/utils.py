@@ -290,6 +290,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
     collected_player_skills = {skill: -1 for skill in settings.PLAYER_SKILLS}
 
     # Loop because the first list element (closest timedelta to match) may not contain all skill values...
+    all_player_positions = []
     while len(available_player_csvs_sorted_by_timedelta_to_match) > 0:
         best_available_player_csv = available_player_csvs_sorted_by_timedelta_to_match.pop(0)  # date closest to match
 
@@ -309,7 +310,8 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
         sf_player_data = corresponding_player_data_dict[1][sf_player_id]  # get SOFIFA player data dict
 
         # Determine player's position categories
-        # player_position_categories = map_player_positions_to_categories(sf_player_data['positions'])
+        player_position_categories = map_player_positions_to_categories(sf_player_data['positions'])
+        all_player_positions += player_position_categories
 
         # Get SOFIFA player skill values
         for skill in settings.PLAYER_SKILLS:
@@ -322,17 +324,38 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info):
                 negative_value_found = True
                 continue
 
-            collected_player_skills[skill].append(value)
+            collected_player_skills[skill] = value
             skills_processed.add(skill)  # keep track of already processed skills for the player
 
         if not negative_value_found:
             break  # if no -1 values found, end getting skills
+
+    all_player_positions = list(set(all_player_positions))
 
     # Check for missing skill values - impute
     for skill_name, value in collected_player_skills.items():
         if value == -1:
             # TODO implement: get average skill value for corresponding team and player position category (utilize function "map_player_positions_to_categories")
             pass  # IMPUTE
+        else:
+            # TODO: Get player position categories and store to TMP globals
+            if "goalkeeper" in all_player_positions:
+                global_instance.tmp_average_player_skills[
+                    (season, team_id, team_name, "goalkeeper")][skill_name].append(value)
+            if "defender" in all_player_positions:
+                global_instance.tmp_average_player_skills[
+                    (season, team_id, team_name, "defender")][skill_name].append(value)
+            if "midfielder" in all_player_positions:
+                global_instance.tmp_average_player_skills[
+                    (season, team_id, team_name, "midfielder")][skill_name].append(value)
+            if "attacker" in all_player_positions:
+                global_instance.tmp_average_player_skills[
+                    (season, team_id, team_name, "attacker")][skill_name].append(value)
+
+    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "goalkeeper")])
+    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "defender")])
+    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "midfielder")])
+    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "attacker")])
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "

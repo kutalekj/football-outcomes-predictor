@@ -1,4 +1,6 @@
 import datetime
+import statistics
+import csv
 import utils as ut
 import settings
 from comp import Comp
@@ -107,6 +109,36 @@ if settings.MATCH_DATA_STORE:
 # 8b. Store all data to local
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
+
+for table in global_instance.all_tables:
+    print(f"Table: {table.comp_name}, {table.season}")
+    for team in table.teams:
+        print(f"Team: {team.name}")
+        for position in ["goalkeeper", "defender", "midfielder", "attacker"]:
+
+            skills_dict = global_instance.tmp_average_player_skills.get((table.season, team.id, team.name, position), {})
+            # skills_dict = global_instance.tmp_average_player_skills[(table.season, team.id, team.name, position)]
+            print(f"Before:\t\t{skills_dict}")
+
+            for skill, values in skills_dict.items():
+                skills_dict[skill] = statistics.mean(values) if values else 0.0
+            global_instance.tmp_average_player_skills[(table.season, team.id, team.name, position)] = skills_dict
+            print(f"After:\t\t{global_instance.tmp_average_player_skills[(table.season, team.id, team.name, position)]}")
+
+output_file = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths.csv"
+with open(output_file, mode='w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+
+    # Write header
+    header = ["season", "team_id", "team_name", "player_position_category"] + settings.PLAYER_SKILLS
+    writer.writerow(header)
+
+    # Write data rows
+    for (season, team_id, team_name, position), skills_dict in global_instance.tmp_average_player_skills.items():
+        row = [season, team_id, team_name, position] + [skills_dict[skill] for skill in settings.PLAYER_SKILLS]
+        writer.writerow(row)
+
+print(f"Successfully written skills data to {output_file}")
 
 """
 
