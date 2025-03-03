@@ -21,7 +21,7 @@ MATCH_DATA_LOAD = False
 MATCH_DATA_STORE = True
 
 MATCH_DATA_LOAD_FILENAME = "m_25-03-01_BEL_ENG_FRA.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-03-02_GER_ITA_SPA.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-03-03_NED_POR_POL_DEN_TUR.csv"
 
 ALL_STORE = False
 ALL_LOAD = False
@@ -40,16 +40,19 @@ MAX_MATCH_HISTORY_TO_CHECK_LOW = 15
 
 # {v3API_id, name, regular_round_keywords, fs_alias}
 COMPS_v2_TEST = [
-    {'id': 78, 'name': "Bundesliga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Bundesliga"},
-    {'id': 79, 'name': "2. Bundesliga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "2. Bundesliga"},
-    {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie A"},
-    {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie B"},
-    {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "La Liga"},
-    {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season'],
-     'fs_alias': "Segunda División"},
-    {'id': 81, 'name': "DFB Pokal", 'regular_round_keywords': [], 'fs_alias': "DFB Pokal"},
-    {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': [], 'fs_alias': "Coppa Italia"},
-    {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': [], 'fs_alias': "Copa del Rey"},
+    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Eredivisie"},
+    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Liga NOS"},
+    {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ekstraklasa"},  # POL
+    {'id': 119, 'name': "Superliga",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
+     'fs_alias': "Superliga"},  # DEN
+    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
+    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': [], 'fs_alias': "KNVB Cup"},  # NED
+    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': [], 'fs_alias': "Taça de Portugal"},
+    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
+    {'id': 108, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Polish Cup"},  # POL
+    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
+    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': [], 'fs_alias': "Danish Cup"},  # DEN
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],

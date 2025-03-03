@@ -529,7 +529,7 @@ def get_fs_match_xg(curr_match):
     curr_match.total_pre_match_xg = float(fs_match_details_dict_comp_season["total_xg_prematch"]) \
         if float(fs_match_details_dict_comp_season["total_xg_prematch"]) > 0.001 else -1
 
-    time.sleep(2.0)
+    time.sleep(1.7)
 
 
 def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_season):

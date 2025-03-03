@@ -413,7 +413,9 @@ def calculate_team_strength(curr_match, team_id):
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
         # TODO manual output check: count how many such missing ones are there in total - hopefully very few!!!
 
-        team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
+        # TODO high prio: uncomment after collecting average skills for all comps
+        # team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
+        return team_sf_players_skills
 
     # Iterate over FS lineup players
     else:
@@ -454,8 +456,8 @@ def calculate_team_strength(curr_match, team_id):
             print(f"There are {11 - len(team_sf_players_skills)} player skills missing for [{team_name}]! Imitating..."
                   f"({curr_match.home_team.name} vs. {curr_match.away_team.name} played at {curr_match.datetime})")
 
-            team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills,
-                                                                   lineup_fs_positions)
+            # TODO high prio: uncomment after collecting average skills for all comps
+            # team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills, lineup_fs_positions)
 
     # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
     # TODO implement: does the order of players (their positions) in the team strength list matter for the NN training?
