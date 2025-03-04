@@ -12,7 +12,7 @@ import settings
 import time
 import requests
 from globals import Global
-from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW, CSV_CATEGORIES
+from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
 from datetime import timedelta, datetime
 
 

@@ -148,45 +148,6 @@ PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', '
                  'positioning', 'vision', 'penalties', 'composure', 'defensive_awareness', 'standing_tackle',
                  'sliding_tackle', 'gk_diving', 'gk_handling', 'gk_kicking', 'gk_positioning', 'gk_reflexes']
 
-CSV_CATEGORIES = {
-    "attacking": ["crossing", "finishing", "heading_accuracy", "short_passing", "volleys"],
-    "skill": ["dribbling", "curve", "fk_accuracy", "long_passing", "ball_control"],
-    "movement": ["acceleration", "sprint_speed", "agility", "reactions", "balance"],
-    "power": ["shot_power", "jumping", "stamina", "strength", "long_shots"],
-    "mentality": ["aggression", "interceptions", "positioning", "vision", "penalties", "composure"],
-    "defending": ["defensive_awareness", "standing_tackle", "sliding_tackle"],
-    "goalkeeping": ["gk_diving", "gk_handling", "gk_kicking", "gk_positioning", "gk_reflexes"]
-}
-
-PLAYER_CATEGORY_RELEVANCE = {
-    "goalkeeping": ["goalkeeper"],
-    "defending": ["defender", "midfielder"],
-    "attacking": ["attacker", "midfielder"],
-    "movement": ["defender", "midfielder", "attacker"],
-    "power": ["defender", "midfielder", "attacker"],
-    "mentality": ["defender", "midfielder", "attacker"],
-    "skill": ["midfielder", "attacker"]
-}
-
-SKILL_TO_CATEGORY = {}  # dict of CSV_CATEGORIES (hash map)
-for cat_name, cat_skills in CSV_CATEGORIES.items():
-    for sk in cat_skills:
-        SKILL_TO_CATEGORY[sk] = cat_name
-
-ALL_SOFIFA_HEADERS = [
-        'player_id', 'version', 'name', 'full_name', 'description', 'image', 'height_cm', 'weight_kg', 'dob',
-        'positions', 'overall_rating', 'potential', 'value', 'wage', 'preferred_foot', 'weak_foot', 'skill_moves',
-        'international_reputation', 'work_rate', 'body_type', 'real_face', 'release_clause', 'specialities',
-        'club_id', 'club_name', 'club_league_id', 'club_league_name', 'club_logo', 'club_rating', 'club_position',
-        'club_kit_number', 'club_joined', 'club_contract_valid_until', 'country_id', 'country_name',
-        'country_league_id', 'country_league_name', 'country_flag', 'country_rating', 'country_position',
-        'country_kit_number', 'crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling',
-        'curve', 'fk_accuracy', 'long_passing', 'ball_control', 'acceleration', 'sprint_speed', 'agility',
-        'reactions', 'balance', 'shot_power', 'jumping', 'stamina', 'strength', 'long_shots', 'aggression',
-        'interceptions', 'positioning', 'vision', 'penalties', 'composure', 'defensive_awareness', 'standing_tackle',
-        'sliding_tackle', 'gk_diving', 'gk_handling', 'gk_kicking', 'gk_positioning', 'gk_reflexes', 'play_styles'
-    ]
-
 SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=150)  # 5 months
