@@ -617,8 +617,11 @@ def map_player_positions_to_categories(sofifa_positions):
 
 def get_imitated_team_strength(season, team_id):
     global_instance = Global.get_instance()
-    players_skills = [global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]]  # 1x goalkeeper
-    # TODO adj: currently assuming a default 4-4-2 formation - can add more complex logic
+
+    # 1x goalkeeper (handle possible missing values)
+    gk_skills = global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]
+    players_skills = [global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")]] \
+        if all(x == 0 for x in gk_skills) else [gk_skills]
 
     for i in range(4):
         players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "defender")])  # 4x defender
@@ -629,6 +632,7 @@ def get_imitated_team_strength(season, team_id):
     for i in range(2):
         players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "attacker")])  # 4x attacker
 
+    # TODO adj: currently assuming a default 4-4-2 formation - can add more complex logic
     return players_skills
 
 
@@ -636,7 +640,9 @@ def get_imitated_player_skills(season, team_id, fs_position):
     global_instance = Global.get_instance()
 
     if fs_position == "Goalkeeper":
-        return global_instance.sf_avg_team_strength[(team_id, season, "goalkeeper")]
+        gk_skills = global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]
+        return global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")] \
+            if all(x == 0 for x in gk_skills) else gk_skills  # handle possible missing values
     elif fs_position == "Defender":
         return global_instance.sf_avg_team_strength[(team_id, season, "defender")]
     elif fs_position == "Midfielder":
