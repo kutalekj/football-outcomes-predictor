@@ -412,6 +412,6 @@ def load_sf_avg_team_strength():
                                  f"season [{season}], team ID [{team_id}], {position_category}: "
                                  f"{len(skill_values)} loaded, but {len(settings.PLAYER_SKILLS)} we expected")
 
-            global_instance.sf_avg_team_strength[(team_id, season, position_category)] = skill_values
+            global_instance.sf_avg_team_strength[(season, team_id, position_category)] = skill_values
 
     print(f"[0] Successfully loaded team strength data from {settings.AVG_TEAM_STRENGTHS}")

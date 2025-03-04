@@ -326,7 +326,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
     for skill_name, value in collected_player_skills.items():
         if value == -1:
             player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
-            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(team_id, season, player_pos)]
+            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(season, team_id, player_pos)]
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "
@@ -617,11 +617,11 @@ def get_imitated_player_skills(season, team_id, fs_position):
         return global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")] \
             if all(x == 0 for x in gk_skills) else gk_skills  # handle possible missing values
     elif fs_position == "Defender":
-        return global_instance.sf_avg_team_strength[(team_id, season, "defender")]
+        return global_instance.sf_avg_team_strength[(season, team_id, "defender")]
     elif fs_position == "Midfielder":
-        return global_instance.sf_avg_team_strength[(team_id, season, "midfielder")]
+        return global_instance.sf_avg_team_strength[(season, team_id, "midfielder")]
     elif fs_position == "Forward":
-        return global_instance.sf_avg_team_strength[(team_id, season, "attacker")]
+        return global_instance.sf_avg_team_strength[(season, team_id, "attacker")]
     else:
         raise ValueError(f"Player FS position [{fs_position}] not a valid position for player skills imitation")
 
