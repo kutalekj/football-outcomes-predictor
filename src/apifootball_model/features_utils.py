@@ -9,7 +9,7 @@ from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_
     GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\
     MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH, PLAYER_SKILLS, \
     TEAM_XG_NORM_COEFFICIENT, TOTAL_XG_NORM_COEFFICIENT, TEAM_PRE_MATCH_XG_NORM_COEFFICIENT, \
-    TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT  # TODO: Minor adj. this
+    TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT  # TODO code: refactor this
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -413,8 +413,7 @@ def calculate_team_strength(curr_match, team_id):
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
         # TODO manual output check: count how many such missing ones are there in total - hopefully very few!!!
 
-        # TODO high prio: uncomment after collecting average skills for all comps
-        # team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
+        team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
         return team_sf_players_skills
 
     # Iterate over FS lineup players
@@ -456,11 +455,10 @@ def calculate_team_strength(curr_match, team_id):
             print(f"There are {11 - len(team_sf_players_skills)} player skills missing for [{team_name}]! Imitating..."
                   f"({curr_match.home_team.name} vs. {curr_match.away_team.name} played at {curr_match.datetime})")
 
-            # TODO high prio: uncomment after collecting average skills for all comps
-            # team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills, lineup_fs_positions)
+            team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills,
+                                                                   lineup_fs_positions)
 
     # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
-    # TODO implement: does the order of players (their positions) in the team strength list matter for the NN training?
     return []
 
 

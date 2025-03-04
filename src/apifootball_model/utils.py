@@ -272,9 +272,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
         print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. "
               f"Imputing...")
         # TODO manual output check: count how many such players without CSV data are there
-        # TODO high prio: uncomment after getting average skills for all comps
-        return {}
-        # return get_imitated_player_skills(season, team_id, fs_position)
+        return get_imitated_player_skills(season, team_id, fs_position)
 
     # DEBUG PRINT
     print(f"{len(available_player_csvs_sorted_by_timedelta_to_match)} available CSV files found...")
@@ -323,34 +321,11 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
         if not negative_value_found:
             break  # if no -1 values found, end getting skills
 
-    all_player_positions_unique = list(set(all_player_positions))  # TODO remove: after average team strengths collected
-
     # Check for missing skill values - impute
     for skill_name, value in collected_player_skills.items():
         if value == -1:
-            # TODO high prio: uncomment after collection average skills
-            # player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
-            # collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(team_id, season, player_pos)]
-            pass
-        else:
-            # TODO remove: after average team strengths collected for all comps (the else branch and the prints below)
-            if "goalkeeper" in all_player_positions_unique:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "goalkeeper")][skill_name].append(value)
-            if "defender" in all_player_positions_unique:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "defender")][skill_name].append(value)
-            if "midfielder" in all_player_positions_unique:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "midfielder")][skill_name].append(value)
-            if "attacker" in all_player_positions_unique:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "attacker")][skill_name].append(value)
-
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "goalkeeper")])
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "defender")])
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "midfielder")])
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "attacker")])
+            player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
+            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(team_id, season, player_pos)]
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "
@@ -405,11 +380,8 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         return
 
-    # TODO high prio: uncomment after obtaining new data for all comps?
-    """
     if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
         return  # case for both teams' FS lineups already loaded from CSV
-    """
 
     print(f"[7]\t\t Going to match AF players from match lineup [{curr_match.home_team.name}] vs. "
           f"[{curr_match.away_team.name}] ({curr_match.datetime}) with teams' FS players in comp season roster...")
