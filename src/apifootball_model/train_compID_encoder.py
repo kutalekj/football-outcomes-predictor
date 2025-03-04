@@ -4,8 +4,8 @@ from tensorflow.keras.layers import Input, Embedding, Flatten, Dense, Concatenat
 from tensorflow.keras.models import Model
 
 comp_input = Input(shape=(1,), name='competition_id')
-
-comp_embedding = Embedding(input_dim=settings.NUM_REGULAR_COMPS, output_dim=5, name='competition_embedding')(comp_input)
+comp_embedding = Embedding(input_dim=settings.NUM_REGULAR_COMPS, output_dim=settings.COMP_ID_EMBEDDING_SIZE,
+                           name='competition_embedding')(comp_input)
 comp_embed_flat = Flatten()(comp_embedding)
 
 comp_embed_norm = Activation('sigmoid')(comp_embed_flat)  # normalize values to (0,1)
