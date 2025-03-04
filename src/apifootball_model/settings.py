@@ -17,11 +17,11 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = False
-MATCH_DATA_STORE = True
+MATCH_DATA_LOAD = True
+MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-03-01_BEL_ENG_FRA.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-03-03_NED_POR_POL_DEN_TUR.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-03-04_full.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-03-04_BEL.csv"
 
 ALL_STORE = False
 ALL_LOAD = False
@@ -31,7 +31,7 @@ ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\s
 ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
 ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2021, 1, 1)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 28, 2)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -40,19 +40,10 @@ MAX_MATCH_HISTORY_TO_CHECK_LOW = 15
 
 # {v3API_id, name, regular_round_keywords, fs_alias}
 COMPS_v2_TEST = [
-    {'id': 88, 'name': "Eredivisie", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Eredivisie"},
-    {'id': 94, 'name': "Primeira Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Liga NOS"},
-    {'id': 106, 'name': "Ekstraklasa", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Ekstraklasa"},  # POL
-    {'id': 119, 'name': "Superliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round'],
-     'fs_alias': "Superliga"},  # DEN
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
-    {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': [], 'fs_alias': "KNVB Cup"},  # NED
-    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': [], 'fs_alias': "Taça de Portugal"},
-    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
-    {'id': 108, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Polish Cup"},  # POL
-    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
-    {'id': 121, 'name': "DBU Pokalen", 'regular_round_keywords': [], 'fs_alias': "Danish Cup"},  # DEN
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
+     'fs_alias': "Pro League"},  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"},  # BEL
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
