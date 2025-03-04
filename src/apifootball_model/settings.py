@@ -17,14 +17,14 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = True
+MATCH_DATA_LOAD = False
 MATCH_DATA_STORE = False
 
 MATCH_DATA_LOAD_FILENAME = "m_25-03-04_full.csv"
 MATCH_DATA_STORE_FILENAME = "m_25-03-04_BEL.csv"
 
 ALL_STORE = False
-ALL_LOAD = False
+ALL_LOAD = True
 
 ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-03-04.csv"
 ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-03-04.csv"

@@ -12,7 +12,8 @@ from globals import Global
 import in_out
 import in_out_mega
 # from train_rnn import train
-from train_ann import train
+# from train_ann import train
+from train_compID_encoder import train
 
 global_instance = Global.get_instance()
 
@@ -110,12 +111,22 @@ if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
 
-"""
 # 9. Distribute regular matches into rounds for training
 # TODO: Fix the error that about 30 regular matches are missing team strength (the following is a temp. solution)!
-regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
+# regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
+regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
+# 10a. Train comp ID embeddings
+all_team_ids = [x.comp.id for x in regular_matches]
+
+unique_comp_ids = np.unique(all_team_ids)
+comp_id_map = {comp_id: idx for idx, comp_id in enumerate(unique_comp_ids)}  # map to [0, 24)
+mapped_team_ids = np.array([comp_id_map[comp_id] for comp_id in all_team_ids])
+
+train(mapped_team_ids, batch_size=32, num_epochs=20)
+
+"""
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
 # regular_matches_in_rounds = ut.distribute_matches_into_rounds_uniformly(regular_matches)
 for i, r in enumerate(regular_matches_in_rounds):
