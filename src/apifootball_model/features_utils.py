@@ -412,6 +412,7 @@ def calculate_team_strength(curr_match, team_id):
         print(f"No team FS lineup list found, but 11 expected (match "
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
         # TODO manual output check: count how many such missing ones are there in total - hopefully very few!!!
+        global_instance.debug_logger_missing_fs_lineups.append(f"No team FS lineup list found, but 11 expected (match {curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
 
         team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
         return team_sf_players_skills
@@ -435,6 +436,7 @@ def calculate_team_strength(curr_match, team_id):
             else:
                 print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
                 # TODO manual output check: count how many DOB misses are there in total
+                global_instance.debug_logger_missing_fs_dobs.append(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
                 continue
 
             # Match FS player to SOFIFA player

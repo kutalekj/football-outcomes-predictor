@@ -34,7 +34,9 @@ class Global:
             # Indexed by dates of birth; each elem is list of triples (player_id, name, full_name)
             cls._instance.sofifa_players_by_dob = {}
 
-            cls._instance.tmp_average_player_skills = {}
+            cls._instance.debug_logger_missing_fs_lineups = []
+            cls._instance.debug_logger_missing_fs_dobs = []
+            cls._instance.debug_logger_missing_csv_files_for_sf_player = []
 
         return cls._instance
 

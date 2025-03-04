@@ -24,7 +24,7 @@ if not settings.ALL_LOAD:
     # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()
 
-    for comp in settings.COMPS_v2_TEST:
+    for comp in settings.COMPS_v2:
         new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
         new_comp.init_teams_in_comp()
         new_comp.init_all_rounds()
@@ -100,6 +100,10 @@ if not settings.ALL_LOAD:
             match.features_before_match_played)
 else:
     in_out_mega.load_all_matches_data()
+
+print(f"[D] There were {len(global_instance.debug_logger_missing_fs_lineups)} teams found with missing FS lineups: {global_instance.debug_logger_missing_fs_lineups}")
+print(f"[D] There were {len(global_instance.debug_logger_missing_fs_dobs)} players found with missing FS dobs: {global_instance.debug_logger_missing_fs_dobs}")
+print(f"[D] There were {len(global_instance.debug_logger_missing_csv_files_for_sf_player)} players found with missing CSV files (SF): {global_instance.debug_logger_missing_csv_files_for_sf_player}")
 
 # 8a. Store matches to local
 if settings.MATCH_DATA_STORE:

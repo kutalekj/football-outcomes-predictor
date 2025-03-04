@@ -272,6 +272,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
         print(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. "
               f"Imputing...")
         # TODO manual output check: count how many such players without CSV data are there
+        global_instance.debug_logger_missing_csv_files_for_sf_player.append(f"There are no available player CSV files within the timedelta range for player {sf_player_id}. Imputing...")
         return get_imitated_player_skills(season, team_id, fs_position)
 
     # DEBUG PRINT

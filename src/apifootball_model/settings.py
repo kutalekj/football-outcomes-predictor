@@ -23,13 +23,13 @@ MATCH_DATA_STORE = False
 MATCH_DATA_LOAD_FILENAME = "m_25-03-04_full.csv"
 MATCH_DATA_STORE_FILENAME = "m_25-03-04_BEL.csv"
 
-ALL_STORE = False
+ALL_STORE = True
 ALL_LOAD = False
 
-ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_comps.csv"
-ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_teams.csv"
-ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_rounds.csv"
-ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\mega_matches.csv"
+ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-03-04.csv"
+ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-03-04.csv"
+ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-03-04.csv"
+ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-03-04.csv"
 
 GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 2, 28)  # YYYY-MM-DD
 
@@ -140,8 +140,7 @@ TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
 CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase3\\full'
-AVG_TEAM_STRENGTHS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\' \
-                'avg_team_strengths_BEL_ENG_FRA.csv'
+AVG_TEAM_STRENGTHS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths.csv'
 
 PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling', 'curve',
                  'fk_accuracy', 'long_passing', 'ball_control', 'acceleration', 'sprint_speed', 'agility', 'reactions',
