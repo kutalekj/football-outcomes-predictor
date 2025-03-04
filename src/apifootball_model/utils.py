@@ -627,15 +627,11 @@ def get_imitated_player_skills(season, team_id, fs_position):
 
 
 def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_fs_positions):
-    expected_position_occurrences = {"Goalkeeper": 1, "Defender": 4, "Midfielder": 4, "Forward": 2}
-    actual_position_occurrences = count_player_position_occurrences(lineup_fs_positions)
+    lineup_length = len(lineup_fs_positions)
 
-    for position in expected_position_occurrences.keys():
-        if expected_position_occurrences[position] < actual_position_occurrences[position]:
-            raise ValueError(f"Found more players at position [{position}] ({actual_position_occurrences[position]}) "
-                             f"than expected ({expected_position_occurrences[position]})")
-
-        while expected_position_occurrences[position] > actual_position_occurrences[position]:
+    possible_fs_positions = ["Goalkeeper", "Defender", "Midfielder", "Forward"]
+    for position in possible_fs_positions:
+        while lineup_length < 11:
             print(f"Adding imitated player skill (for position [{position}]), because not enough FS/SOFIFA matches")
 
             imitated_player_skills = get_imitated_player_skills(season, team_id, position)  # get imitated skills
@@ -652,19 +648,13 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
             else:
                 raise ValueError(f"Unsupported FS player position [{position}] found when adding imitated player skill")
 
-            actual_position_occurrences[position] += 1
+            lineup_length += 1
+
+    if lineup_length != 11:
+        raise ValueError(f"Internal error occurred when adding imitated player skills: resulting lineup length equals "
+                         f"to {lineup_length}, but 11 expected")
 
     return team_sf_players_skills
-
-
-def count_player_position_occurrences(player_positions):
-    occurrences = {"Goalkeeper": 0, "Defender": 0, "Midfielder": 0, "Forward": 0}
-    counter = Counter(player_positions)
-
-    for position in occurrences.keys():
-        occurrences[position] = counter.get(position, 0)
-
-    return occurrences
 
 
 def get_most_frequent_string(list_of_strings):
