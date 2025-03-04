@@ -101,10 +101,6 @@ if not settings.ALL_LOAD:
 else:
     in_out_mega.load_all_matches_data()
 
-print(f"[D] There were {len(global_instance.debug_logger_missing_fs_lineups)} teams found with missing FS lineups: {global_instance.debug_logger_missing_fs_lineups}")
-print(f"[D] There were {len(global_instance.debug_logger_missing_fs_dobs)} players found with missing FS dobs: {global_instance.debug_logger_missing_fs_dobs}")
-print(f"[D] There were {len(global_instance.debug_logger_missing_csv_files_for_sf_player)} players found with missing CSV files (SF): {global_instance.debug_logger_missing_csv_files_for_sf_player}")
-
 # 8a. Store matches to local
 if settings.MATCH_DATA_STORE:
     in_out.store_matches(settings.MATCH_DATA_STORE_FILENAME)
@@ -113,10 +109,10 @@ if settings.MATCH_DATA_STORE:
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
-"""
 
+"""
 # 9. Distribute regular matches into rounds for training
-# TODO: Fix the error that about 30 regular matches are missing team strength! (This exclusion is a temp. solution...)
+# TODO: Fix the error that about 30 regular matches are missing team strength (the following is a temp. solution)!
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 

@@ -23,7 +23,7 @@ MATCH_DATA_STORE = False
 MATCH_DATA_LOAD_FILENAME = "m_25-03-04_full.csv"
 MATCH_DATA_STORE_FILENAME = "m_25-03-04_BEL.csv"
 
-ALL_STORE = True
+ALL_STORE = False
 ALL_LOAD = False
 
 ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-03-04.csv"
