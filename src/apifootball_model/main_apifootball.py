@@ -13,7 +13,8 @@ import in_out
 import in_out_mega
 # from train_rnn import train
 # from train_ann import train
-from train_compID_encoder import train
+# from train_compID_encoder import train
+from train_teamID_encoder import train
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 plt.switch_backend('TkAgg')
@@ -120,45 +121,45 @@ if settings.ALL_STORE:
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
-# 10a. Train comp ID embeddings
-comp_id_to_name = {}
+# 10b. Train team ID embeddings
+team_id_to_name = {}
 for m in regular_matches:
-    comp_name = "Bundesliga AUT" if m.comp.country == "Austria" and m.comp.name == "Bundesliga" else m.comp.name
-    comp_id_to_name[m.comp.id] = comp_name
-unique_comp_ids = sorted(comp_id_to_name.keys())  # sorting ensures consistent indexing
-print(unique_comp_ids)
+    home_team_name = f"{m.comp.name}_{m.home_team.name}"
+    team_id_to_name[m.home_team.id] = home_team_name
+    away_team_name = f"{m.comp.name}_{m.away_team.name}"
+    team_id_to_name[m.away_team.id] = away_team_name
+unique_regular_team_ids = sorted(team_id_to_name.keys())  # sorting ensures consistent indexing
+print(unique_regular_team_ids)
 
-all_comp_ids = [x.comp.id for x in regular_matches]
-comp_id_map = {comp_id: idx for idx, comp_id in enumerate(unique_comp_ids)}  # map to [0, 24)
+all_team_ids = [x.home_team.id for x in regular_matches] + [x.away_team.id for x in regular_matches]
+team_id_map = {team_id: idx for idx, team_id in enumerate(unique_regular_team_ids)}  # map to [0, ?)
 
 legend_labels = []
-print("Comp IDs mapping:")
-for idx, comp_id in enumerate(unique_comp_ids):
-    legend_label = f"[{comp_id}: {comp_id_to_name[comp_id]}] -> [{idx}]"
+print("Team IDs mapping:")
+for idx, team_id in enumerate(unique_regular_team_ids):
+    legend_label = f"[{team_id}: {team_id_to_name[team_id]}] -> [{idx}]"
     legend_labels.append(legend_label)
     print(legend_label)
 
-mapped_team_ids = np.array([comp_id_map[comp_id] for comp_id in all_comp_ids])
+mapped_team_ids = np.array([team_id_map[team_id] for team_id in all_team_ids])
 
 learned_embeddings = train(mapped_team_ids, batch_size=32, num_epochs=10)
-
-aligned_comp_ids = [comp_id for comp_id, idx in sorted(comp_id_map.items(), key=lambda item: item[1])]  # ensure alignment of learned embeddings with original comp IDs
 
 # Visualize the results
 pca = PCA(n_components=2, random_state=42)
 embeddings_2d = pca.fit_transform(learned_embeddings)
-plt.figure(figsize=(11, 8))
+plt.figure(figsize=(13, 9))
 plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.8)
-plt.title("PCA projection of learned comp embeddings")
+plt.title("PCA projection of learned team embeddings")
 plt.xlabel("Principal component 1")
 plt.ylabel("Principal component 2")
 
 # Annotations + legend
 for i, txt in enumerate(range(len(learned_embeddings))):
-    plt.annotate(txt, (embeddings_2d[i, 0], embeddings_2d[i, 1]), fontsize=9)
-for label in legend_labels:
+    plt.annotate(txt, (embeddings_2d[i, 0], embeddings_2d[i, 1]), fontsize=6)
+for label in legend_labels[:50]:  # avoid too many labels in plot
     plt.scatter([], [], label=label)
-plt.legend(title="Competitions mapping", fontsize=8, loc="upper left", bbox_to_anchor=(1, 1))  # move to avoid overlap
+plt.legend(title="Teams mapping", fontsize=4, loc="upper left", bbox_to_anchor=(1, 1))  # move to avoid overlap
 
 plt.tight_layout()
 plt.show()
