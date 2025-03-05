@@ -14,6 +14,9 @@ import in_out_mega
 # from train_rnn import train
 # from train_ann import train
 from train_compID_encoder import train
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+plt.switch_backend('TkAgg')
 
 global_instance = Global.get_instance()
 
@@ -118,13 +121,47 @@ regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
 # 10a. Train comp ID embeddings
-all_team_ids = [x.comp.id for x in regular_matches]
+comp_id_to_name = {}
+for m in regular_matches:
+    comp_name = "Bundesliga AUT" if m.comp.country == "Austria" and m.comp.name == "Bundesliga" else m.comp.name
+    comp_id_to_name[m.comp.id] = comp_name
+unique_comp_ids = sorted(comp_id_to_name.keys())  # sorting ensures consistent indexing
+print(unique_comp_ids)
 
-unique_comp_ids = np.unique(all_team_ids)
+all_comp_ids = [x.comp.id for x in regular_matches]
 comp_id_map = {comp_id: idx for idx, comp_id in enumerate(unique_comp_ids)}  # map to [0, 24)
-mapped_team_ids = np.array([comp_id_map[comp_id] for comp_id in all_team_ids])
 
-train(mapped_team_ids, batch_size=32, num_epochs=20)
+legend_labels = []
+print("Comp IDs mapping:")
+for idx, comp_id in enumerate(unique_comp_ids):
+    legend_label = f"[{comp_id}: {comp_id_to_name[comp_id]}] -> [{idx}]"
+    legend_labels.append(legend_label)
+    print(legend_label)
+
+mapped_team_ids = np.array([comp_id_map[comp_id] for comp_id in all_comp_ids])
+
+learned_embeddings = train(mapped_team_ids, batch_size=32, num_epochs=10)
+
+aligned_comp_ids = [comp_id for comp_id, idx in sorted(comp_id_map.items(), key=lambda item: item[1])]  # ensure alignment of learned embeddings with original comp IDs
+
+# Visualize the results
+pca = PCA(n_components=2, random_state=42)
+embeddings_2d = pca.fit_transform(learned_embeddings)
+plt.figure(figsize=(11, 8))
+plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.8)
+plt.title("PCA projection of learned comp embeddings")
+plt.xlabel("Principal component 1")
+plt.ylabel("Principal component 2")
+
+# Annotations + legend
+for i, txt in enumerate(range(len(learned_embeddings))):
+    plt.annotate(txt, (embeddings_2d[i, 0], embeddings_2d[i, 1]), fontsize=9)
+for label in legend_labels:
+    plt.scatter([], [], label=label)
+plt.legend(title="Competitions mapping", fontsize=8, loc="upper left", bbox_to_anchor=(1, 1))  # move to avoid overlap
+
+plt.tight_layout()
+plt.show()
 
 """
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
