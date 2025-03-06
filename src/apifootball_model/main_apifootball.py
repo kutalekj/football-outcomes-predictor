@@ -2,6 +2,7 @@ import datetime
 import statistics
 import numpy as np
 import csv
+import random
 import utils as ut
 import settings
 from comp import Comp
@@ -14,7 +15,8 @@ import in_out_mega
 # from train_rnn import train
 # from train_ann import train
 # from train_compID_encoder import train
-from train_teamID_encoder import train
+# from train_teamID_encoder import train
+from train_cat_encoder_siamese import train
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 plt.switch_backend('TkAgg')
@@ -121,48 +123,68 @@ if settings.ALL_STORE:
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
-# 10b. Train team ID embeddings
-team_id_to_name = {}
-for m in regular_matches:
-    home_team_name = f"{m.comp.name}_{m.home_team.name}"
-    team_id_to_name[m.home_team.id] = home_team_name
-    away_team_name = f"{m.comp.name}_{m.away_team.name}"
-    team_id_to_name[m.away_team.id] = away_team_name
-unique_regular_team_ids = sorted(team_id_to_name.keys())  # sorting ensures consistent indexing
-print(unique_regular_team_ids)
-
+# 10c. Train embeddings
 all_team_ids = [x.home_team.id for x in regular_matches] + [x.away_team.id for x in regular_matches]
-team_id_map = {team_id: idx for idx, team_id in enumerate(unique_regular_team_ids)}  # map to [0, ?)
+all_comp_ids = [x.comp.id for x in regular_matches]
+team_id_map = {team_id: idx for idx, team_id in enumerate(np.unique(all_team_ids))}  # map to [0, 518)
+comp_id_map = {comp_id: idx for idx, comp_id in enumerate(np.unique(all_comp_ids))}  # map to [0, 24)
 
-legend_labels = []
-print("Team IDs mapping:")
-for idx, team_id in enumerate(unique_regular_team_ids):
-    legend_label = f"[{team_id}: {team_id_to_name[team_id]}] -> [{idx}]"
-    legend_labels.append(legend_label)
-    print(legend_label)
+all_input_data = [(team_id_map[x.home_team.id], team_id_map[x.away_team.id], comp_id_map[x.comp.id],
+                   x.home_team_goals + x.away_team_goals) for x in regular_matches]
+all_input_data = [(y0, y1, y2, 1) if y3 < 2.5 else (y0, y1, y2, 0) for (y0, y1, y2, y3) in all_input_data]
 
-mapped_team_ids = np.array([team_id_map[team_id] for team_id in all_team_ids])
+indices_label1 = [i for i, (_, _, _, label) in enumerate(all_input_data) if label == 1]  # group indices by label
+indices_label0 = [i for i, (_, _, _, label) in enumerate(all_input_data) if label == 0]
+k = 10  # number of pairs to sample per match per category (similar/dissimilar)
 
-learned_embeddings = train(mapped_team_ids, batch_size=32, num_epochs=10)
+home_ids_a, away_ids_a, comp_ids_a = [], [], []
+home_ids_b, away_ids_b, comp_ids_b = [], [], []
+similarity_labels = []
 
-# Visualize the results
-pca = PCA(n_components=2, random_state=42)
-embeddings_2d = pca.fit_transform(learned_embeddings)
-plt.figure(figsize=(13, 9))
-plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], alpha=0.8)
-plt.title("PCA projection of learned team embeddings")
-plt.xlabel("Principal component 1")
-plt.ylabel("Principal component 2")
+n = len(all_input_data)
+for i in range(n):
+    a0, a1, a2, a_label = all_input_data[i]
+    if a_label == 1:  # identify similar and dissimilar pools for current match
+        similar_pool = [idx for idx in indices_label1 if idx != i]
+        dissimilar_pool = indices_label0
+    else:
+        similar_pool = [idx for idx in indices_label0 if idx != i]
+        dissimilar_pool = indices_label1
 
-# Annotations + legend
-for i, txt in enumerate(range(len(learned_embeddings))):
-    plt.annotate(txt, (embeddings_2d[i, 0], embeddings_2d[i, 1]), fontsize=6)
-for label in legend_labels[:50]:  # avoid too many labels in plot
-    plt.scatter([], [], label=label)
-plt.legend(title="Teams mapping", fontsize=4, loc="upper left", bbox_to_anchor=(1, 1))  # move to avoid overlap
+    # Sample up to "k" matches from each pool
+    similar_sample = random.sample(similar_pool, min(k, len(similar_pool))) if similar_pool else []
+    dissimilar_sample = random.sample(dissimilar_pool, min(k, len(dissimilar_pool))) if dissimilar_pool else []
 
-plt.tight_layout()
-plt.show()
+    for j in similar_sample:  # Add pairs for similar matches (1)
+        b0, b1, b2, _ = all_input_data[j]
+        home_ids_a.append(a0)
+        away_ids_a.append(a1)
+        comp_ids_a.append(a2)
+        home_ids_b.append(b0)
+        away_ids_b.append(b1)
+        comp_ids_b.append(b2)
+        similarity_labels.append(1)
+
+    for j in dissimilar_sample:  # Add pairs for dissimilar matches (1)
+        b0, b1, b2, _ = all_input_data[j]
+        home_ids_a.append(a0)
+        away_ids_a.append(a1)
+        comp_ids_a.append(a2)
+        home_ids_b.append(b0)
+        away_ids_b.append(b1)
+        comp_ids_b.append(b2)
+        similarity_labels.append(0)
+
+home_ids_a = np.array(home_ids_a)
+away_ids_a = np.array(away_ids_a)
+comp_ids_a = np.array(comp_ids_a)
+home_ids_b = np.array(home_ids_b)
+away_ids_b = np.array(away_ids_b)
+comp_ids_b = np.array(comp_ids_b)
+similarity_labels = np.array(similarity_labels)
+
+train((home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b), similarity_labels,
+      batch_size=32, num_epochs=10)
 
 """
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
