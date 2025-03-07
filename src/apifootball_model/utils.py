@@ -607,6 +607,8 @@ def get_imitated_team_strength(season, team_id):
         players_skills.append(global_instance.sf_avg_team_strength[(season, team_id, "attacker")])  # 4x attacker
 
     # TODO adj: currently assuming a default 4-4-2 formation - can add more complex logic
+    if len(players_skills) != 11:
+        raise ValueError(f"The imitated team strength was estimated for {len(players_skills)}, but 11 were expected")
     return players_skills
 
 
@@ -631,8 +633,16 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
     lineup_length = len(lineup_fs_positions)
 
     possible_fs_positions = ["Goalkeeper", "Defender", "Midfielder", "Forward"]
-    for position in possible_fs_positions:
-        while lineup_length < 11:
+    expected_position_occurrences = {"Defender": 4, "Midfielder": 4, "Forward": 2}
+
+    # Sort the possible positions to increase the chance the imputed positions will actually be the ones missing
+    sorted_possible_fs_positions = sort_positions_by_missing_count(possible_fs_positions, expected_position_occurrences,
+                                                                   lineup_fs_positions)
+    if "Goalkeeper" in lineup_fs_positions:
+        sorted_possible_fs_positions.remove("Goalkeeper")  # avoid imputing another goalkeeper skills if already present
+
+    while lineup_length < 11:
+        for position in sorted_possible_fs_positions:
             print(f"Adding imitated player skill (for position [{position}]), because not enough FS/SOFIFA matches")
 
             imitated_player_skills = get_imitated_player_skills(season, team_id, position)  # get imitated skills
@@ -651,11 +661,30 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
 
             lineup_length += 1
 
+        if lineup_length == 11:
+            break
+
     if lineup_length != 11:
         raise ValueError(f"Internal error occurred when adding imitated player skills: resulting lineup length equals "
                          f"to {lineup_length}, but 11 expected")
 
     return team_sf_players_skills
+
+
+def sort_positions_by_missing_count(possible_fs_positions, expected_position_occurrences, lineup_fs_positions):
+    # Count occurrences in the lineup
+    actual_counts = Counter(lineup_fs_positions)
+
+    # Compute the difference (expected - actual)
+    position_diff = {
+        pos: expected_position_occurrences[pos] - actual_counts.get(pos, 0)
+        for pos in possible_fs_positions
+    }
+
+    # Sort by missing count (desc.)
+    sorted_positions = sorted(possible_fs_positions, key=lambda pos: position_diff[pos], reverse=True)
+
+    return sorted_positions
 
 
 def get_most_frequent_string(list_of_strings):
