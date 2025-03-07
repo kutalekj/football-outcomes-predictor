@@ -567,8 +567,8 @@ class Match:
         # Team strength
         if self.round.is_regular:
             # DEBUG PRINT
-            print(f"[7c] Going to calculate team strength for match between {self.home_team.name} and {self.away_team.name} "
-                  f"({self.datetime})")
+            print(f"[7c] Going to calculate team strength for match between "
+                  f"{self.home_team.name} and {self.away_team.name} ({self.datetime})")
             new_match_features.home_team_strength = feature_ut.calculate_team_strength(self, self.home_team.id)
             new_match_features.away_team_strength = feature_ut.calculate_team_strength(self, self.away_team.id)
             # TODO implement: team strength calculation

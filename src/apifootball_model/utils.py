@@ -331,7 +331,9 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
         raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "
                          f"{len(settings.PLAYER_SKILLS)} expected (match played at {match_datetime})")
 
-    return collected_player_skills
+    # Convert collected player skills dictionary to a list of 34 float values
+    values_list = list(collected_player_skills.values())
+    return values_list
 
 
 def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
