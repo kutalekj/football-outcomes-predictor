@@ -660,9 +660,8 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
                 raise ValueError(f"Unsupported FS player position [{position}] found when adding imitated player skill")
 
             lineup_length += 1
-
-        if lineup_length == 11:
-            break
+            if lineup_length == 11:
+                break
 
     if lineup_length != 11:
         raise ValueError(f"Internal error occurred when adding imitated player skills: resulting lineup length equals "
@@ -677,7 +676,7 @@ def sort_positions_by_missing_count(possible_fs_positions, expected_position_occ
 
     # Compute the difference (expected - actual)
     position_diff = {
-        pos: expected_position_occurrences[pos] - actual_counts.get(pos, 0)
+        pos: expected_position_occurrences.get(pos, 0) - actual_counts.get(pos, 0)
         for pos in possible_fs_positions
     }
 
