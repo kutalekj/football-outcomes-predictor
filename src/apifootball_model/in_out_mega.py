@@ -61,7 +61,10 @@ def store_comps(comps_csv_path):
             for item in comp.rounds_per_season:
                 # item is e.g. {'season': int, 'rounds': list of Round}
                 # Convert each Round object to ID references, or store round fields
-                rounds_id_list = [r.name for r in item['rounds']]  # or define a unique round_id
+                try:
+                    rounds_id_list = [r.name for r in item['rounds']]  # or define a unique round_id
+                except:
+                    rounds_id_list = [r for r in item['rounds']]
                 rps_json.append({
                     'season': item['season'],
                     'rounds': rounds_id_list
