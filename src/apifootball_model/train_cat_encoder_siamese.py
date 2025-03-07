@@ -149,3 +149,212 @@ def train(categorical_features, similarity_labels, batch_size, num_epochs):
     plt.ylabel("Frequency")
     plt.title("Distribution of Distances in Embedding Space")
     plt.show()
+
+
+def generate_pairs_random(all_input_data, k=10):
+    """
+    Generates pairs of matches with 'similar' (1) and 'dissimilar' (0) labels using random sampling.
+
+    all_input_data: List of tuples (home_id, away_id, comp_id, label) where label=1 if <2.5 goals, else 0.
+    k: Number of matches to sample per match for similar and dissimilar pools.
+    """
+    indices_label1 = [i for i, (_, _, _, label) in enumerate(all_input_data) if label == 1]
+    indices_label0 = [i for i, (_, _, _, label) in enumerate(all_input_data) if label == 0]
+
+    home_ids_a, away_ids_a, comp_ids_a = [], [], []
+    home_ids_b, away_ids_b, comp_ids_b = [], [], []
+    similarity_labels = []
+
+    n = len(all_input_data)
+    for i in range(n):
+        a0, a1, a2, a_label = all_input_data[i]
+        if a_label == 1:
+            similar_pool = [idx for idx in indices_label1 if idx != i]
+            dissimilar_pool = indices_label0
+        else:
+            similar_pool = [idx for idx in indices_label0 if idx != i]
+            dissimilar_pool = indices_label1
+
+        # Sample up to k matches from each pool
+        similar_sample = random.sample(similar_pool, min(k, len(similar_pool))) if similar_pool else []
+        dissimilar_sample = random.sample(dissimilar_pool, min(k, len(dissimilar_pool))) if dissimilar_pool else []
+
+        # Similar pairs
+        for j in similar_sample:
+            b0, b1, b2, _ = all_input_data[j]
+            home_ids_a.append(a0)
+            away_ids_a.append(a1)
+            comp_ids_a.append(a2)
+            home_ids_b.append(b0)
+            away_ids_b.append(b1)
+            comp_ids_b.append(b2)
+            similarity_labels.append(1)
+
+        # Dissimilar pairs
+        for j in dissimilar_sample:
+            b0, b1, b2, _ = all_input_data[j]
+            home_ids_a.append(a0)
+            away_ids_a.append(a1)
+            comp_ids_a.append(a2)
+            home_ids_b.append(b0)
+            away_ids_b.append(b1)
+            comp_ids_b.append(b2)
+            similarity_labels.append(0)
+
+    return (np.array(home_ids_a), np.array(away_ids_a), np.array(comp_ids_a),
+            np.array(home_ids_b), np.array(away_ids_b), np.array(comp_ids_b),
+            np.array(similarity_labels))
+
+
+def generate_pairs_hard_negatives(embedding_model, original_pairs, margin=0.8, fraction_hard_neg=0.5):
+    """
+    Generates a new set of pairs that includes a higher proportion of hard negatives.
+
+    siamese_model: The trained Siamese model.
+    embedding_model: The submodel that maps a single match to an embedding.
+    all_input_data: The original list of matches (home_id, away_id, comp_id, label).
+    original_pairs: A tuple of (home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b, similarity_labels).
+    margin: The contrastive margin used in training.
+    fraction_hard_neg: Proportion of negative pairs in the new dataset that should be "hard".
+    """
+    (home_ids_a, away_ids_a, comp_ids_a,
+     home_ids_b, away_ids_b, comp_ids_b,
+     sim_labels) = original_pairs
+
+    # 1. Compute embeddings for each side
+    embeddings_a = embedding_model.predict([home_ids_a, away_ids_a, comp_ids_a])
+    embeddings_b = embedding_model.predict([home_ids_b, away_ids_b, comp_ids_b])
+
+    # 2. Compute distances
+    distances = np.sqrt(np.sum((embeddings_a - embeddings_b) ** 2, axis=1))
+
+    # 3. Identify negative pairs (label=0) that are below the margin => "hard negatives"
+    neg_mask = (sim_labels == 0)
+    hard_neg_mask = neg_mask & (distances < margin)
+
+    easy_neg_mask = neg_mask & (distances >= margin)
+    pos_mask = (sim_labels == 1)
+
+    # 4. Extract arrays for each category
+    hard_neg_indices = np.where(hard_neg_mask)[0]
+    easy_neg_indices = np.where(easy_neg_mask)[0]
+    pos_indices = np.where(pos_mask)[0]
+
+    # 5. Decide how many easy negatives vs. hard negatives to keep
+    # For example, keep all positives, keep half easy negs, half hard negs:
+    num_neg = len(hard_neg_indices) + len(easy_neg_indices)
+    # fraction_hard_neg = fraction of negative pairs that are "hard"
+    desired_hard_count = int(num_neg * fraction_hard_neg)
+    desired_easy_count = num_neg - desired_hard_count
+
+    # If we have fewer hard negs than desired, we keep them all
+    if len(hard_neg_indices) < desired_hard_count:
+        chosen_hard_neg = hard_neg_indices
+    else:
+        chosen_hard_neg = np.random.choice(hard_neg_indices, size=desired_hard_count, replace=False)
+
+    if len(easy_neg_indices) < desired_easy_count:
+        chosen_easy_neg = easy_neg_indices
+    else:
+        chosen_easy_neg = np.random.choice(easy_neg_indices, size=desired_easy_count, replace=False)
+
+    # Keep all positives
+    chosen_pos = pos_indices
+
+    # Combine all chosen indices
+    final_indices = np.concatenate([chosen_pos, chosen_hard_neg, chosen_easy_neg])
+    np.random.shuffle(final_indices)
+
+    # 6. Build final arrays
+    return (home_ids_a[final_indices], away_ids_a[final_indices], comp_ids_a[final_indices],
+            home_ids_b[final_indices], away_ids_b[final_indices], comp_ids_b[final_indices],
+            sim_labels[final_indices])
+
+
+def train_with_hard_negatives(all_input_data, batch_size=32, num_epochs=10, k=10, margin=0.6, fraction_hard_neg=0.5):
+    """
+    Demonstration of a simple two-phase training:
+      1) Train on random pairs
+      2) Mine hard negatives, re-sample the training set, re-train
+    """
+    # --- 1. Generate initial random pairs ---
+    initial_pairs = generate_pairs_random(all_input_data, k=k)
+    (home_ids_a, away_ids_a, comp_ids_a,
+     home_ids_b, away_ids_b, comp_ids_b,
+     sim_labels) = initial_pairs
+
+    # Train/test split
+    (train_home_ids_a, val_home_ids_a,
+     train_away_ids_a, val_away_ids_a,
+     train_comp_ids_a, val_comp_ids_a,
+     train_home_ids_b, val_home_ids_b,
+     train_away_ids_b, val_away_ids_b,
+     train_comp_ids_b, val_comp_ids_b,
+     train_similarity_labels, val_similarity_labels) = train_test_split(
+        home_ids_a, away_ids_a, comp_ids_a,
+        home_ids_b, away_ids_b, comp_ids_b,
+        sim_labels, test_size=0.2, random_state=42
+    )
+
+    # --- 2. Build and train the Siamese model on random pairs ---
+    siamese_model = build_siamese_model()
+    siamese_model.compile(optimizer='adam', loss=contrastive_loss)
+
+    log_dir = os.path.join("logs", "siameseID_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
+    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
+    lr_scheduler = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=2, verbose=1)
+
+    siamese_model.fit([train_home_ids_a, train_away_ids_a, train_comp_ids_a,
+                       train_home_ids_b, train_away_ids_b, train_comp_ids_b],
+                      train_similarity_labels,
+                      batch_size=batch_size, epochs=num_epochs, validation_split=0.2,
+                      callbacks=[tensorboard_callback, lr_scheduler])
+
+    # Evaluate on validation
+    # You can also do your evaluate_embeddings(...) step here.
+
+    # --- 3. Mine hard negatives and re-sample the training set ---
+    embedding_model = siamese_model.get_layer('match_embedding_model')  # The shared embedding submodel
+    # Build new pairs that incorporate more hard negatives
+    new_train_pairs = generate_pairs_hard_negatives(
+        embedding_model=embedding_model,
+        original_pairs=(train_home_ids_a, train_away_ids_a, train_comp_ids_a,
+                        train_home_ids_b, train_away_ids_b, train_comp_ids_b,
+                        train_similarity_labels),
+        margin=margin,
+        fraction_hard_neg=fraction_hard_neg
+    )
+
+    (train_home_ids_a_hn, train_away_ids_a_hn, train_comp_ids_a_hn,
+     train_home_ids_b_hn, train_away_ids_b_hn, train_comp_ids_b_hn,
+     train_similarity_labels_hn) = new_train_pairs
+
+    # Optionally, you can keep the same validation set:
+
+    # --- 4. Retrain (or continue training) with the new dataset containing more hard negatives ---
+    siamese_model.fit([train_home_ids_a_hn, train_away_ids_a_hn, train_comp_ids_a_hn,
+                       train_home_ids_b_hn, train_away_ids_b_hn, train_comp_ids_b_hn],
+                      train_similarity_labels_hn,
+                      batch_size=batch_size, epochs=num_epochs, validation_data=(
+            [val_home_ids_a, val_away_ids_a, val_comp_ids_a,
+             val_home_ids_b, val_away_ids_b, val_comp_ids_b],
+            val_similarity_labels
+        ),
+                      callbacks=[tensorboard_callback, lr_scheduler])
+
+    # Evaluate the embeddings
+    similar_dists, dissimilar_dists = evaluate_embeddings(
+        create_match_embedding_model(),
+        val_home_ids_a, val_away_ids_a, val_comp_ids_a, val_home_ids_b, val_away_ids_b, val_comp_ids_b,
+        val_similarity_labels
+    )
+    plt.hist(similar_dists, bins=30, alpha=0.5, label='Similar')
+    plt.hist(dissimilar_dists, bins=30, alpha=0.5, label='Dissimilar')
+    plt.legend()
+    plt.xlabel("Euclidean Distance")
+    plt.ylabel("Frequency")
+    plt.title("Distribution of Distances in Embedding Space")
+    plt.show()
+
+    # Final evaluation with evaluate_embeddings or your downstream tasks
+    return siamese_model

@@ -16,7 +16,7 @@ import in_out_mega
 # from train_ann import train
 # from train_compID_encoder import train
 # from train_teamID_encoder import train
-from train_cat_encoder_siamese import train
+from train_cat_encoder_siamese import train_with_hard_negatives
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 plt.switch_backend('TkAgg')
@@ -133,58 +133,7 @@ all_input_data = [(team_id_map[x.home_team.id], team_id_map[x.away_team.id], com
                    x.home_team_goals + x.away_team_goals) for x in regular_matches]
 all_input_data = [(y0, y1, y2, 1) if y3 < 2.5 else (y0, y1, y2, 0) for (y0, y1, y2, y3) in all_input_data]
 
-indices_label1 = [i for i, (_, _, _, label) in enumerate(all_input_data) if label == 1]  # group indices by label
-indices_label0 = [i for i, (_, _, _, label) in enumerate(all_input_data) if label == 0]
-k = 10  # number of pairs to sample per match per category (similar/dissimilar)
-
-home_ids_a, away_ids_a, comp_ids_a = [], [], []
-home_ids_b, away_ids_b, comp_ids_b = [], [], []
-similarity_labels = []
-
-n = len(all_input_data)
-for i in range(n):
-    a0, a1, a2, a_label = all_input_data[i]
-    if a_label == 1:  # identify similar and dissimilar pools for current match
-        similar_pool = [idx for idx in indices_label1 if idx != i]
-        dissimilar_pool = indices_label0
-    else:
-        similar_pool = [idx for idx in indices_label0 if idx != i]
-        dissimilar_pool = indices_label1
-
-    # Sample up to "k" matches from each pool
-    similar_sample = random.sample(similar_pool, min(k, len(similar_pool))) if similar_pool else []
-    dissimilar_sample = random.sample(dissimilar_pool, min(k, len(dissimilar_pool))) if dissimilar_pool else []
-
-    for j in similar_sample:  # Add pairs for similar matches (1)
-        b0, b1, b2, _ = all_input_data[j]
-        home_ids_a.append(a0)
-        away_ids_a.append(a1)
-        comp_ids_a.append(a2)
-        home_ids_b.append(b0)
-        away_ids_b.append(b1)
-        comp_ids_b.append(b2)
-        similarity_labels.append(1)
-
-    for j in dissimilar_sample:  # Add pairs for dissimilar matches (1)
-        b0, b1, b2, _ = all_input_data[j]
-        home_ids_a.append(a0)
-        away_ids_a.append(a1)
-        comp_ids_a.append(a2)
-        home_ids_b.append(b0)
-        away_ids_b.append(b1)
-        comp_ids_b.append(b2)
-        similarity_labels.append(0)
-
-home_ids_a = np.array(home_ids_a)
-away_ids_a = np.array(away_ids_a)
-comp_ids_a = np.array(comp_ids_a)
-home_ids_b = np.array(home_ids_b)
-away_ids_b = np.array(away_ids_b)
-comp_ids_b = np.array(comp_ids_b)
-similarity_labels = np.array(similarity_labels)
-
-train((home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b), similarity_labels,
-      batch_size=32, num_epochs=10)
+train_with_hard_negatives(all_input_data)
 
 """
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
