@@ -120,7 +120,7 @@ class MatchFeatures:
         features = np.array(features)
 
         # Append team strength vectors
-        features = np.append(features, features_dict["home_team_strength"])
-        features = np.append(features, features_dict["away_team_strength"])
+        # features = np.append(features, features_dict["home_team_strength"])
+        # features = np.append(features, features_dict["away_team_strength"])
 
         return features

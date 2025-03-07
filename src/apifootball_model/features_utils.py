@@ -460,7 +460,7 @@ def calculate_team_strength(curr_match, team_id):
                                                                    lineup_fs_positions)
 
     # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
-    return []
+    return team_sf_players_skills
 
 
 def normalize_season(season):
