@@ -16,10 +16,7 @@ import in_out_mega
 # from train_ann import train
 # from train_compID_encoder import train
 # from train_teamID_encoder import train
-from train_cat_encoder_siamese import train_with_hard_negatives
-import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
-plt.switch_backend('TkAgg')
+from train_team_strength import train
 
 global_instance = Global.get_instance()
 
@@ -116,24 +113,24 @@ if settings.MATCH_DATA_STORE:
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
-
 # 9. Distribute regular matches into rounds for training
 # TODO: Fix the error that about 30 regular matches are missing team strength (the following is a temp. solution)!
 # regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
-# 10c. Train embeddings
-all_team_ids = [x.home_team.id for x in regular_matches] + [x.away_team.id for x in regular_matches]
-all_comp_ids = [x.comp.id for x in regular_matches]
-team_id_map = {team_id: idx for idx, team_id in enumerate(np.unique(all_team_ids))}  # map to [0, 518)
-comp_id_map = {comp_id: idx for idx, comp_id in enumerate(np.unique(all_comp_ids))}  # map to [0, 24)
+# 10d. Train team strength embeddings
+all_team_player_skills = [np.array([np.array([z / 100.0 for z in y]) for y in
+                                    x.features_before_match_played.home_team_strength]) for x in regular_matches] + \
+                         [np.array([np.array([z / 100.0 for z in y]) for y in
+                                    x.features_before_match_played.away_team_strength]) for x in regular_matches]
 
-all_input_data = [(team_id_map[x.home_team.id], team_id_map[x.away_team.id], comp_id_map[x.comp.id],
-                   x.home_team_goals + x.away_team_goals) for x in regular_matches]
-all_input_data = [(y0, y1, y2, 1) if y3 < 2.5 else (y0, y1, y2, 0) for (y0, y1, y2, y3) in all_input_data]
+autoencoder, team_strength_encoder = train(np.array(all_team_player_skills))
 
-train_with_hard_negatives(all_input_data)
+# Predict sample embeddings
+sample_skills = np.array(all_team_player_skills[:5])  # get first 5 samples
+embeddings = team_strength_encoder.predict(sample_skills)
+print("Team Strength Embeddings:", embeddings)
 
 """
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
