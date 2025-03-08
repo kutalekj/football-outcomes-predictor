@@ -322,10 +322,11 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
             break  # if no -1 values found, end getting skills
 
     # Check for missing skill values - impute
-    for skill_name, value in collected_player_skills.items():
+    for index, (skill_name, value) in enumerate(collected_player_skills.items()):
         if value == -1:
             player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
-            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(season, team_id, player_pos)]
+            collected_player_skills[skill_name] = \
+                global_instance.sf_avg_team_strength[(season, team_id, player_pos)][index]  # impute a single value
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "
@@ -333,6 +334,9 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
 
     # Convert collected player skills dictionary to a list of 34 float values
     values_list = list(collected_player_skills.values())
+
+    if not is_valid_n_float_list(values_list):
+        raise ValueError(f"Unexpected shape of player skills variable: {values_list}")
     return values_list
 
 
@@ -609,6 +613,8 @@ def get_imitated_team_strength(season, team_id):
     # TODO adj: currently assuming a default 4-4-2 formation - can add more complex logic
     if len(players_skills) != 11:
         raise ValueError(f"The imitated team strength was estimated for {len(players_skills)}, but 11 were expected")
+    if not is_valid_mxn_float_list(players_skills):
+        raise ValueError(f"Unexpected shape of team player skills variable: {players_skills}")
     return players_skills
 
 
@@ -617,16 +623,20 @@ def get_imitated_player_skills(season, team_id, fs_position):
 
     if fs_position == "Goalkeeper":
         gk_skills = global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]
-        return global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")] \
+        imitated_player_skills = global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")] \
             if all(x == 0 for x in gk_skills) else gk_skills  # handle possible missing values
     elif fs_position == "Defender":
-        return global_instance.sf_avg_team_strength[(season, team_id, "defender")]
+        imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "defender")]
     elif fs_position == "Midfielder":
-        return global_instance.sf_avg_team_strength[(season, team_id, "midfielder")]
+        imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "midfielder")]
     elif fs_position == "Forward":
-        return global_instance.sf_avg_team_strength[(season, team_id, "attacker")]
+        imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "attacker")]
     else:
         raise ValueError(f"Player FS position [{fs_position}] not a valid position for player skills imitation")
+
+    if not is_valid_n_float_list(imitated_player_skills):
+        raise ValueError(f"Unexpected shape of player skills variable: {imitated_player_skills}")
+    return imitated_player_skills
 
 
 def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_fs_positions):
@@ -667,6 +677,8 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
         raise ValueError(f"Internal error occurred when adding imitated player skills: resulting lineup length equals "
                          f"to {lineup_length}, but 11 expected")
 
+    if not is_valid_mxn_float_list(team_sf_players_skills):
+        raise ValueError(f"Unexpected shape of team player skills variable: {team_sf_players_skills}")
     return team_sf_players_skills
 
 
@@ -698,6 +710,26 @@ def is_match_within_days(curr_datetime, match_datetime, n):
     time_difference = curr_datetime - match_datetime
 
     return time_difference <= timedelta(days=n)
+
+
+def is_valid_mxn_float_list(variable, m=11, n=34):
+    if not isinstance(variable, list):  # check if list
+        return False
+
+    if len(variable) != m:  # check if "m" elements
+        return False
+
+    return all(
+        isinstance(inner_list, list) and len(inner_list) == n and all(isinstance(x, float) for x in inner_list)
+        for inner_list in variable
+    )  # check if each "m" element is a list and only contains "n" floats (no nested lists, for instance)
+
+
+def is_valid_n_float_list(variable, n=34):
+    if not isinstance(variable, list) or len(variable) != n:  # check if list of exactly "n" elements
+        return False
+
+    return all(isinstance(x, float) for x in variable) # check if each element is a single float value
 
 
 # TODO: Minor adjustment possible: revise the normalization constants - from higher pool of competitions
