@@ -1,4 +1,5 @@
 import os
+import random
 import numpy as np
 from datetime import datetime
 import tensorflow as tf
@@ -8,6 +9,8 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 import settings
+import matplotlib.pyplot as plt
+plt.switch_backend('TkAgg')
 
 
 def build_team_strength_autoencoder(conv_filters, neurons, dropout, kernel_size, final_embedding_size,
@@ -38,6 +41,13 @@ def build_team_strength_autoencoder(conv_filters, neurons, dropout, kernel_size,
 
 
 def train(team_player_skills, batch_size=32, num_epochs=30):
+    # Check columns variability
+    mean_per_column = np.mean(team_player_skills, axis=(0, 1))
+    std_per_column = np.std(team_player_skills, axis=(0, 1))
+
+    for col_idx in range(team_player_skills.shape[2]):  # expected to iterate 34 times
+        print(f"Skill Column {col_idx}: mean={mean_per_column[col_idx]:.3f}, std={std_per_column[col_idx]:.3f}")
+
     log_dir = os.path.join("logs", "team_strength_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     early_stopping = EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True)
@@ -58,9 +68,41 @@ def train(team_player_skills, batch_size=32, num_epochs=30):
                     batch_size=batch_size,
                     callbacks=[tensorboard_callback, early_stopping, lr_scheduler])
 
+    # Visual inspection of learned embeddings
+    cols, rows = 2, 4  # cols x rows grid
+    plot_counter = 0
+    for _ in range(cols * rows):
+        random_number = int(random.uniform(0, val_data.shape[0]))
+
+        sample = val_data[random_number]
+        reconstructed_sample = autoencoder.predict(np.expand_dims(sample, axis=0))[0]
+
+        plt.subplot(rows, cols, plot_counter % (rows * cols) + 1)
+        plt.title(f"Original Skills (Sample {random_number})", fontsize=10)
+        plt.imshow(sample, cmap='viridis', vmin=0, vmax=1)
+        plt.colorbar()
+
+        plt.subplot(rows, cols, plot_counter % (rows * cols) + 2)
+        plt.title(f"Reconstructed Skills (Sample {random_number})", fontsize=10)
+        plt.imshow(reconstructed_sample, cmap='viridis', vmin=0, vmax=1)
+        plt.colorbar()
+
+        plot_counter += 2
+
+        if plot_counter % (rows * cols) == 0:
+            plt.tight_layout()
+            plt.show()  # display plots every (rows * cols) iterations
+
     # Save encoder
+    """
     model_path = settings.TRAINED_MODELS_DIR + "\\team_strength_embedding_model.keras"
     encoder.save(model_path)
     print(f"Model saved to {model_path}")
+    """
 
     return autoencoder, encoder  # encoder can be used to extract team strength embeddings after training
+
+
+def normalize_matrix(matrix, col_min, col_max):
+    # matrix shape is ndarray of shape (rows, cols)
+    return (matrix - col_min) / (col_max - col_min + 1e-8)
