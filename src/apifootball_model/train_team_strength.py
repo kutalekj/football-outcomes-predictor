@@ -41,6 +41,10 @@ def build_team_strength_autoencoder(conv_filters, neurons, dropout, kernel_size,
 
 
 def train(team_player_skills, batch_size=32, num_epochs=30):
+    print(team_player_skills[100])
+    team_player_skills = separate_normalize_gk_and_outfield_skills(team_player_skills)
+    print(f"\n\n{team_player_skills[100]}")
+
     # Check columns variability
     mean_per_column = np.mean(team_player_skills, axis=(0, 1))
     std_per_column = np.std(team_player_skills, axis=(0, 1))
@@ -103,6 +107,37 @@ def train(team_player_skills, batch_size=32, num_epochs=30):
     return autoencoder, encoder  # encoder can be used to extract team strength embeddings after training
 
 
-def normalize_matrix(matrix, col_min, col_max):
-    # matrix shape is ndarray of shape (rows, cols)
-    return (matrix - col_min) / (col_max - col_min + 1e-8)
+def separate_normalize_gk_and_outfield_skills(data):
+    gk_data = data[:, 0, :]  # shape: (num_samples, 34)
+    outfield_data = data[:, 1:, :]  # shape: (num_samples, 10, 34)
+
+    # 4. and 96. percentiles (will be used instead of min and max to avoid outlier influence)
+    gk_p4, gk_p96 = np.percentile(gk_data, [4, 96], axis=0)
+    outfield_p4, outfield_p96 = np.percentile(outfield_data, [4, 96], axis=(0, 1))
+
+    gk_iqr = gk_p96 - gk_p4
+    outfield_iqr = outfield_p96 - outfield_p4
+
+    # Robust min-max scaling (clipping extreme values to avoid outlier influence)
+    gk_data_norm = (np.clip(gk_data, gk_p4, gk_p96) - gk_p4) / (gk_iqr + 1e-6)
+    outfield_data_norm = (np.clip(outfield_data, outfield_p4, outfield_p96) - outfield_p4) / (outfield_iqr + 1e-6)
+
+    # Combine back normalized values
+    normalized_data = np.zeros_like(data)
+    normalized_data[:, 0, :] = gk_data_norm
+    normalized_data[:, 1:, :] = outfield_data_norm
+
+    """
+    gk_min = np.min(gk_data, axis=0)  # shape: (34,)
+    gk_max = np.max(gk_data, axis=0)  # shape: (34,)
+    gk_norm = (gk_data - gk_min) / (gk_max - gk_min + 1e-8)  # per-column min and max for goalkeeper values
+
+    outfield_min = np.min(outfield_data, axis=(0, 1))  # shape: (34,)
+    outfield_max = np.max(outfield_data, axis=(0, 1))  # shape: (34,)
+    outfield_norm = (outfield_data - outfield_min) / (outfield_max - outfield_min + 1e-8)  # same for outfield values
+
+    # Reconstruct normalized data - concatenate normalized goalkeeper row with normalized outfield rows
+    normalized_data = np.concatenate([gk_norm[:, np.newaxis, :], outfield_norm], axis=1)
+    """
+
+    return normalized_data
