@@ -682,6 +682,40 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
     return team_sf_players_skills
 
 
+def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills):
+    for idx, player in enumerate(team_skills):
+        # Compute normalized skill means
+        outfield_mean = sum(player[i] for i in range(29)) / 29  # avg of indices [0,28]
+        goalkeeper_mean = sum(player[i] for i in range(29, 33)) / 5  # avg of indices [29,33]
+
+        # Check and correct based on  relative mean strengths
+        if idx == 0 and goalkeeper_mean < outfield_mean:  # replace probable outfield player with a goalkeeper
+            imitated_gk_skills = get_imitated_player_skills(season, team_id, "Goalkeeper")
+            print(f"Balancing player skills - replacing outfield player with goalkeeper: {team_skills[idx]}\n->\n{imitated_gk_skills}")
+            team_skills[idx] = imitated_gk_skills
+
+        elif idx > 0 and goalkeeper_mean > outfield_mean:  # replace probable goalkeeper with an outfield player
+            if idx in [1, 2, 3, 4]:
+                imitated_gk_skills = get_imitated_player_skills(season, team_id, "Defender")
+                print(f"Balancing player skills - replacing goalkeeper with defender: {team_skills[idx]}\n->\n{imitated_gk_skills}")
+                # TODO code: Results always in replacing goalkeeper with a defender, never with midfielders or forwards
+                team_skills[idx] = imitated_gk_skills
+            elif idx in [5, 6, 7, 8]:
+                imitated_gk_skills = get_imitated_player_skills(season, team_id, "Midfielder")
+                print(
+                    f"Balancing player skills - replacing goalkeeper with midfielder: {team_skills[idx]}\n->\n{imitated_gk_skills}")
+                team_skills[idx] = imitated_gk_skills
+            elif idx in [9, 10]:
+                imitated_gk_skills = get_imitated_player_skills(season, team_id, "Forward")
+                print(
+                    f"Balancing player skills - replacing goalkeeper with forward: {team_skills[idx]}\n->\n{imitated_gk_skills}")
+                team_skills[idx] = imitated_gk_skills
+            else:
+                raise ValueError(f"Found player skills list containing more than 11 players (>={idx + 1}, concretely)")
+
+    return team_skills
+
+
 def sort_positions_by_missing_count(possible_fs_positions, expected_position_occurrences, lineup_fs_positions):
     # Count occurrences in the lineup
     actual_counts = Counter(lineup_fs_positions)

@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 plt.switch_backend('TkAgg')
 
 
-def build_team_strength_autoencoder(conv_filters, neurons, dropout, kernel_size, final_embedding_size,
+def build_team_strength_autoencoder(conv_filters, dense_neurons, dropout, kernel_size, final_embedding_size,
                                     input_shape=(11, 34)):
     team_skills_input = Input(shape=input_shape, name='team_skills')
 
@@ -25,7 +25,7 @@ def build_team_strength_autoencoder(conv_filters, neurons, dropout, kernel_size,
     team_strength = Dense(final_embedding_size, activation='sigmoid', name='team_strength')(x)
 
     # Decoder (reconstruct the original 11x34 matrix from the 8-dimensional vector)
-    y = Dense(neurons, activation='relu')(team_strength)
+    y = Dense(dense_neurons, activation='relu')(team_strength)
     y = BatchNormalization()(y)
     y = Dense(input_shape[0] * input_shape[1], activation='linear')(y)
     reconstructed = Reshape(input_shape)(y)
@@ -41,9 +41,8 @@ def build_team_strength_autoencoder(conv_filters, neurons, dropout, kernel_size,
 
 
 def train(team_player_skills, batch_size=32, num_epochs=30):
-    print(team_player_skills[100])
+    # Avoid domination of outfield player skills (29/34) over goalkeeper skills (5/34)
     team_player_skills = separate_normalize_gk_and_outfield_skills(team_player_skills)
-    print(f"\n\n{team_player_skills[100]}")
 
     # Check columns variability
     mean_per_column = np.mean(team_player_skills, axis=(0, 1))
@@ -52,6 +51,7 @@ def train(team_player_skills, batch_size=32, num_epochs=30):
     for col_idx in range(team_player_skills.shape[2]):  # expected to iterate 34 times
         print(f"Skill Column {col_idx}: mean={mean_per_column[col_idx]:.3f}, std={std_per_column[col_idx]:.3f}")
 
+    # Callbacks
     log_dir = os.path.join("logs", "team_strength_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     early_stopping = EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True)
@@ -62,8 +62,8 @@ def train(team_player_skills, batch_size=32, num_epochs=30):
                                             shuffle=True)
 
     # Build models
-    autoencoder, encoder = build_team_strength_autoencoder(conv_filters=128, kernel_size=5, neurons=128,
-                                                           dropout=0.2, final_embedding_size=16)
+    autoencoder, encoder = build_team_strength_autoencoder(conv_filters=128, dense_neurons=128, dropout=0.2,
+                                                           kernel_size=5, final_embedding_size=16)
 
     # Train autoencoder
     autoencoder.fit(train_data, train_data,
@@ -98,11 +98,9 @@ def train(team_player_skills, batch_size=32, num_epochs=30):
             plt.show()  # display plots every (rows * cols) iterations
 
     # Save encoder
-    """
-    model_path = settings.TRAINED_MODELS_DIR + "\\team_strength_embedding_model.keras"
+    model_path = settings.TRAINED_MODELS_DIR + "\\team_strength_embedding_model_gk_outfield_balanced.keras"
     encoder.save(model_path)
     print(f"Model saved to {model_path}")
-    """
 
     return autoencoder, encoder  # encoder can be used to extract team strength embeddings after training
 
@@ -111,33 +109,20 @@ def separate_normalize_gk_and_outfield_skills(data):
     gk_data = data[:, 0, :]  # shape: (num_samples, 34)
     outfield_data = data[:, 1:, :]  # shape: (num_samples, 10, 34)
 
-    # 4. and 96. percentiles (will be used instead of min and max to avoid outlier influence)
-    gk_p4, gk_p96 = np.percentile(gk_data, [4, 96], axis=0)
-    outfield_p4, outfield_p96 = np.percentile(outfield_data, [4, 96], axis=(0, 1))
+    # 1. and 99. percentiles (used instead of min and max to avoid outlier influence - now should be already mitigated!)
+    gk_p1, gk_p99 = np.percentile(gk_data, [1, 99], axis=0)
+    outfield_p1, outfield_p99 = np.percentile(outfield_data, [1, 99], axis=(0, 1))
 
-    gk_iqr = gk_p96 - gk_p4
-    outfield_iqr = outfield_p96 - outfield_p4
+    gk_iqr = gk_p99 - gk_p1
+    outfield_iqr = outfield_p99 - outfield_p1
 
-    # Robust min-max scaling (clipping extreme values to avoid outlier influence)
-    gk_data_norm = (np.clip(gk_data, gk_p4, gk_p96) - gk_p4) / (gk_iqr + 1e-6)
-    outfield_data_norm = (np.clip(outfield_data, outfield_p4, outfield_p96) - outfield_p4) / (outfield_iqr + 1e-6)
+    # Robust min-max scaling (clipping extreme values to avoid outlier influence - implemented balancing mitigates it!)
+    gk_data_norm = (np.clip(gk_data, gk_p1, gk_p99) - gk_p1) / (gk_iqr + 1e-6)
+    outfield_data_norm = (np.clip(outfield_data, outfield_p1, outfield_p99) - outfield_p1) / (outfield_iqr + 1e-6)
 
     # Combine back normalized values
     normalized_data = np.zeros_like(data)
     normalized_data[:, 0, :] = gk_data_norm
     normalized_data[:, 1:, :] = outfield_data_norm
-
-    """
-    gk_min = np.min(gk_data, axis=0)  # shape: (34,)
-    gk_max = np.max(gk_data, axis=0)  # shape: (34,)
-    gk_norm = (gk_data - gk_min) / (gk_max - gk_min + 1e-8)  # per-column min and max for goalkeeper values
-
-    outfield_min = np.min(outfield_data, axis=(0, 1))  # shape: (34,)
-    outfield_max = np.max(outfield_data, axis=(0, 1))  # shape: (34,)
-    outfield_norm = (outfield_data - outfield_min) / (outfield_max - outfield_min + 1e-8)  # same for outfield values
-
-    # Reconstruct normalized data - concatenate normalized goalkeeper row with normalized outfield rows
-    normalized_data = np.concatenate([gk_norm[:, np.newaxis, :], outfield_norm], axis=1)
-    """
 
     return normalized_data

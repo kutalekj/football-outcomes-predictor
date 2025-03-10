@@ -459,6 +459,11 @@ def calculate_team_strength(curr_match, team_id):
             team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills,
                                                                    lineup_fs_positions)
 
+    # Check whether there are 1 goalkeeper skills and 10 outfield players skills, and possibly correct
+    team_sf_players_skills = ut.balance_goalkeeper_and_outfield_player_skills(curr_match.season, team_id,
+                                                                              team_sf_players_skills)
+    # TODO manual output check: count how many balancing occurrences are there in total
+
     # TODO implement: pass team_sf_player_skills to trained encoder NN, and return calculated team strength vector
     return team_sf_players_skills
 
