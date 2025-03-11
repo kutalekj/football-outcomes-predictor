@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Match Board</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .processed {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<h1>Upcoming Matches Board</h1>
+<button onclick="refreshBoard()">Refresh</button>
+<br/><br/>
+<table id="matchesTable">
+    <thead>
+    <tr>
+        <th>Match ID</th>
+        <th>Competition</th>
+        <th>Season</th>
+        <th>Teams</th>
+        <th>Date/Time</th>
+        <th>Prediction</th>
+        <th>Odds</th>
+        <th>Recommended Bets</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Matches will be dynamically inserted here -->
+    </tbody>
+</table>
+
+<script>
+    async function refreshBoard() {
+        const response = await fetch('/refresh');
+        const matches = await response.json();
+
+        console.log("🔄 [DEBUG] Refreshed matches:", matches);
+
+        const tableBody = document.querySelector('#matchesTable tbody');
+        tableBody.innerHTML = '';
+
+        // Sort matches by datetime ascending
+        matches.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+        matches.forEach(match => {
+            const row = document.createElement('tr');
+            row.id = match.match_id;
+            if (match.processed) {
+                row.classList.add('processed');
+            }
+            row.innerHTML = `
+          <td>${match.match_id}</td>
+          <td>${match.comp_name}</td>
+          <td>${match.season}</td>
+          <td>${match.home_team} vs ${match.away_team}</td>
+          <td>${new Date(match.datetime).toLocaleString()}</td>
+          <td>${match.prediction}</td>
+          <td>
+            <input type="number" step="0.01" id="odds_yes_${match.match_id}" placeholder="Under 2.5 - Yes" />
+            <input type="number" step="0.01" id="odds_no_${match.match_id}" placeholder="Under 2.5 - No" />
+          </td>
+          <td id="bet_fraction_${match.match_id}">-</td>
+          <td>
+            <button onclick="triggerBet('${match.match_id}')">Trigger</button>
+            <button onclick="markMatch('${match.match_id}')">Mark</button>
+          </td>
+        `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    async function triggerBet(match_id) {
+        const oddsYesInput = document.getElementById('odds_yes_' + match_id);
+        const oddsNoInput = document.getElementById('odds_no_' + match_id);
+
+        const oddsYes = parseFloat(oddsYesInput.value);
+        const oddsNo = parseFloat(oddsNoInput.value);
+
+        if (isNaN(oddsYes) || isNaN(oddsNo)) {
+            alert("Please enter valid odds for both Yes and No.");
+            return;
+        }
+
+        const response = await fetch(`/trigger/${match_id.toString()}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({odds_yes: oddsYes, odds_no: oddsNo})
+        });
+
+        if (!response.ok) {
+            alert("Error processing bet recommendation.");
+            return;
+        }
+
+        const result = await response.json();
+
+        // Update the Recommended Bet column
+        const betFractionCell = document.getElementById(`bet_fraction_${match_id}`);
+        betFractionCell.innerHTML = `Yes: ${result.recommended_bet_fraction_yes.toFixed(2)}<br>No: ${result.recommended_bet_fraction_no.toFixed(2)}`;
+    }
+
+
+    async function markMatch(match_id) {
+        console.log(`🔘 [DEBUG] Marking match ${match_id}`);
+
+        const response = await fetch(`/mark/${match_id.toString()}`, {method: 'POST'});
+
+        if (!response.ok) {
+            alert("Error marking match.");
+            return;
+        }
+
+        const result = await response.json();
+        console.log(`✅ [DEBUG] Match ${match_id} marked as ${result.processed ? "processed" : "unprocessed"}`);
+
+        const row = document.getElementById(match_id);
+
+        if (result.processed) {
+            row.classList.add('processed');  // "grey out" the match
+        } else {
+            row.classList.remove('processed');
+        }
+    }
+
+    // Initial load
+    refreshBoard();
+</script>
+</body>
+</html>
