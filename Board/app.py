@@ -25,6 +25,9 @@ def refresh_board():
 
     print(f"🔄 [DEBUG] Refreshing board... Current Board Size: {len(board)}")
 
+    # Rebuild board with unmarked matches
+    board.clear()
+
     # Add new matches and update existing ones
     for match in matches:
         match_id = str(match['match_id'])
@@ -33,14 +36,6 @@ def refresh_board():
         if match_dt > now and match_id not in processed_matches:  # only add/keep matches upcoming and not processed yet
             board[match_id] = match
             print(f"✅ [DEBUG] Match {match_id} added to board.")
-
-    # Remove outdated or processed matches from board
-    to_remove = [match_id for match_id, match in board.items()
-                 if datetime.fromisoformat(match['datetime']) <= now or match_id in processed_matches]
-
-    for match_id in to_remove:
-        print(f"🗑 [DEBUG] Removing match {match_id} from board (Processed: {board[match_id].get('processed')})")
-        board.pop(match_id, None)
 
     print(f"📋 [DEBUG] Board after refresh: {list(board.keys())}")
 
@@ -94,20 +89,45 @@ def trigger(match_id):
 def mark(match_id):
     match_id = str(match_id)
 
-    if match_id not in board:
-        print(f"❌ [DEBUG] Match {match_id} not found in board")
+    # If match in processed_matches, unmark it and restore it to board
+    if match_id in processed_matches:
+        processed_matches.discard(match_id)
+        print(f"🔄 [DEBUG] Match {match_id} marked as NOT processed.")
+
+        matches = load_board_queue()  # restore the match from board queue file
+        for match in matches:
+            if str(match['match_id']) == match_id:
+                board[match_id] = match  # re-add to board
+                print(f"✅ [DEBUG] Match {match_id} restored to board.")
+                break  # stop once the match is found
+
+    # If match is in board, mark as processed
+    elif match_id in board:
+        processed_matches.add(match_id)
+        print(f"✅ [DEBUG] Match {match_id} marked as processed.")
+
+    else:
+        print(f"❌ [DEBUG] Match {match_id} not found in board or processed set")
         return jsonify({"error": f"Match {match_id} not found"}), 404
 
-    board[match_id]['processed'] = not board[match_id].get('processed', False)
+    return jsonify({"match_id": match_id, "processed": match_id in processed_matches})
 
-    if board[match_id]['processed']:
-        processed_matches.add(match_id)
-    else:
-        processed_matches.discard(match_id)
 
-    print(f"✅ [DEBUG] Match {match_id} marked as {'processed' if board[match_id]['processed'] else 'unprocessed'}")
+@app.route('/processed_matches', methods=['GET'])
+def get_processed_upcoming_matches():
+    now = datetime.now(timezone.utc)
 
-    return jsonify({"match_id": match_id, "processed": board[match_id]['processed']})
+    processed_upcoming_list = []
+    matches = load_board_queue()
+
+    for match in matches:
+        match_id = str(match['match_id'])
+        match_dt = datetime.fromisoformat(match['datetime'])
+
+        if match_id in processed_matches and match_dt > now:
+            processed_upcoming_list.append(match)
+
+    return jsonify(processed_upcoming_list)
 
 
 @app.route('/')

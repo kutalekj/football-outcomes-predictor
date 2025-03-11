@@ -43,6 +43,24 @@
     </tbody>
 </table>
 
+<h2>Processed Matches (Upcoming)</h2>
+<table id="processedTable">
+    <thead>
+    <tr>
+        <th>Match ID</th>
+        <th>Competition</th>
+        <th>Season</th>
+        <th>Teams</th>
+        <th>Date/Time</th>
+        <th>Prediction</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Processed matches will be dynamically inserted here -->
+    </tbody>
+</table>
+
 <script>
     async function refreshBoard() {
         const response = await fetch('/refresh');
@@ -81,7 +99,41 @@
         `;
             tableBody.appendChild(row);
         });
+
+        await refreshProcessedMatches();  // fetch processed matches + update processedTable
     }
+
+    async function refreshProcessedMatches() {
+        const response = await fetch('/processed_matches');
+        const matches = await response.json();
+
+        console.log("📋 [DEBUG] Processed matches:", matches);
+
+        const tableBody = document.querySelector('#processedTable tbody');
+        tableBody.innerHTML = '';
+
+        matches.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+        matches.forEach(match => {
+            const row = document.createElement('tr');
+            row.id = `processed_${match.match_id}`;
+            row.classList.add('processed');
+
+            row.innerHTML = `
+          <td>${match.match_id}</td>
+          <td>${match.comp_name}</td>
+          <td>${match.season}</td>
+          <td>${match.home_team} vs ${match.away_team}</td>
+          <td>${new Date(match.datetime).toLocaleString()}</td>
+          <td>${match.prediction}</td>
+          <td>
+            <button onclick="markMatch('${match.match_id}')">Unmark</button>
+          </td>
+        `;
+            tableBody.appendChild(row);
+        });
+    }
+
 
     async function triggerBet(match_id) {
         const oddsYesInput = document.getElementById('odds_yes_' + match_id);
@@ -127,17 +179,10 @@
         const result = await response.json();
         console.log(`✅ [DEBUG] Match ${match_id} marked as ${result.processed ? "processed" : "unprocessed"}`);
 
-        const row = document.getElementById(match_id);
-
-        if (result.processed) {
-            row.classList.add('processed');  // "grey out" the match
-        } else {
-            row.classList.remove('processed');
-        }
+        await refreshBoard();  // refresh both tables
     }
 
-    // Initial load
-    refreshBoard();
+    refreshBoard();  // initial load
 </script>
 </body>
 </html>
