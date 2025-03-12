@@ -62,6 +62,9 @@
 </table>
 
 <script>
+    let selectedIndex = 0;  // currently selected match row
+    let matchRows = [];  // references to all match rows
+
     async function refreshBoard() {
         const response = await fetch('/refresh');
         const matches = await response.json();
@@ -70,21 +73,22 @@
 
         const tableBody = document.querySelector('#matchesTable tbody');
         tableBody.innerHTML = '';
+        matchRows = [];  // clear and refill match rows list
 
         // Sort matches by datetime ascending
         matches.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
         matches.forEach(match => {
             const row = document.createElement('tr');
-            row.id = match.match_id;
-            if (match.processed) {
-                row.classList.add('processed');
-            }
+            row.id = `match_${match.match_id}`;
+            row.dataset.matchId = match.match_id;
+            row.classList.add("match-row");
+
             row.innerHTML = `
           <td>${match.match_id}</td>
           <td>${match.comp_name}</td>
           <td>${match.season}</td>
-          <td>${match.home_team} vs ${match.away_team}</td>
+          <td>${match.home_team} -- ${match.away_team}</td>
           <td>${new Date(match.datetime).toLocaleString()}</td>
           <td>${match.prediction}</td>
           <td>
@@ -93,13 +97,15 @@
           </td>
           <td id="bet_fraction_${match.match_id}">-</td>
           <td>
-            <button onclick="triggerBet('${match.match_id}')">Trigger</button>
+            <button onclick="triggerBet('${match.match_id}')" id="trigger_${match.match_id}">Trigger</button>
             <button onclick="markMatch('${match.match_id}')">Mark</button>
           </td>
         `;
             tableBody.appendChild(row);
+            matchRows.push(row);
         });
 
+        highlightSelectedRow();  // first row selecte by default
         await refreshProcessedMatches();  // fetch processed matches + update processedTable
     }
 
@@ -181,6 +187,68 @@
 
         await refreshBoard();  // refresh both tables
     }
+
+    function highlightSelectedRow() {
+        matchRows.forEach((row, index) => {
+            row.style.backgroundColor = index === selectedIndex ? "#b3ffb3" : "";
+        });
+    }
+
+    function selectNextRow() {
+        selectedIndex = (selectedIndex + 1) % matchRows.length;
+        highlightSelectedRow();  // "Tab"
+    }
+
+    function selectPreviousRow() {
+        selectedIndex = (selectedIndex - 1 + matchRows.length) % matchRows.length;
+        highlightSelectedRow();  // "Shift + Tab"
+    }
+
+    function focusOddsYes() {
+        const matchId = matchRows[selectedIndex].dataset.matchId;
+        const input = document.getElementById(`odds_yes_${matchId}`);
+        if (input) {
+            input.focus();
+            input.select();
+        }  // focus the "Under 2.5 - Yes" odds box in selected row
+    }
+
+    function focusOddsNo() {
+        const matchId = matchRows[selectedIndex].dataset.matchId;
+        const input = document.getElementById(`odds_no_${matchId}`);
+        if (input) {
+            input.focus();
+            input.select();
+        }  // focus the "Under 2.5 - No" odds box in selected row
+    }
+
+    function triggerSelectedBet() {
+        event.preventDefault(); // prevent default key behavior
+        const matchId = matchRows[selectedIndex].dataset.matchId;
+        const button = document.getElementById(`trigger_${matchId}`);
+        if (button) {
+            console.log(`🚀 [DEBUG] Triggering bet for match ${matchId}`);
+            button.click();
+        }  // Trigger btn
+    }
+
+    // Key presses handling
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Tab") {
+            event.preventDefault();  // prevent default key behavior
+            if (event.shiftKey) {
+                selectPreviousRow();  // "Shift + Tab" moves up
+            } else {
+                selectNextRow();  // "Tab" moves down
+            }
+        } else if (event.key === "q" || event.key === "Q") {
+            focusOddsYes();  // "Q" focuses on "Under 2.5 - Yes"
+        } else if (event.key === "w" || event.key === "W") {
+            focusOddsNo();  // "W" focuses on "Under 2.5 - No"
+        } else if (event.key === "Enter") {
+            triggerSelectedBet();  // "Enter" triggers the bet
+        }
+    });
 
     refreshBoard();  // initial load
 </script>
