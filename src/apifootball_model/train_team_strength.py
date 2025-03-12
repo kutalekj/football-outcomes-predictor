@@ -32,7 +32,7 @@ def build_team_strength_autoencoder(conv_filters, dense_neurons, dropout, kernel
 
     autoencoder = Model(inputs=team_skills_input, outputs=reconstructed, name='team_strength_autoencoder')
     autoencoder.compile(optimizer='adam', loss='mse')
-    autoencoder.summary()
+    # autoencoder.summary()
 
     # Build a separate encoder model for later usage
     encoder = Model(inputs=team_skills_input, outputs=team_strength, name='team_strength_encoder')
@@ -40,37 +40,26 @@ def build_team_strength_autoencoder(conv_filters, dense_neurons, dropout, kernel
     return autoencoder, encoder
 
 
-def train(team_player_skills, batch_size=32, num_epochs=30):
+def train(team_player_skills, batch_size=32, num_epochs=100):
     # Avoid domination of outfield player skills (29/34) over goalkeeper skills (5/34)
     team_player_skills = separate_normalize_gk_and_outfield_skills(team_player_skills)
-
-    # Check columns variability
-    mean_per_column = np.mean(team_player_skills, axis=(0, 1))
-    std_per_column = np.std(team_player_skills, axis=(0, 1))
-
-    for col_idx in range(team_player_skills.shape[2]):  # expected to iterate 34 times
-        print(f"Skill Column {col_idx}: mean={mean_per_column[col_idx]:.3f}, std={std_per_column[col_idx]:.3f}")
 
     # Callbacks
     log_dir = os.path.join("logs", "team_strength_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True)
-    lr_scheduler = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=5, verbose=1)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=int(num_epochs / 2), restore_best_weights=True)
+    lr_scheduler = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=8, verbose=1)
 
     # Data
-    train_data, val_data = train_test_split(team_player_skills, test_size=0.2, random_state=42,
-                                            shuffle=True)
+    train_data, val_data = train_test_split(team_player_skills, test_size=0.2, random_state=42, shuffle=True)
 
     # Build models
-    autoencoder, encoder = build_team_strength_autoencoder(conv_filters=128, dense_neurons=128, dropout=0.2,
-                                                           kernel_size=5, final_embedding_size=16)
+    autoencoder, encoder = build_team_strength_autoencoder(conv_filters=256, dense_neurons=256, dropout=0.2,
+                                                           kernel_size=7, final_embedding_size=24)
 
     # Train autoencoder
-    autoencoder.fit(train_data, train_data,
-                    validation_data=(val_data, val_data),
-                    epochs=num_epochs,
-                    batch_size=batch_size,
-                    callbacks=[tensorboard_callback, early_stopping, lr_scheduler])
+    autoencoder.fit(train_data, train_data, validation_data=(val_data, val_data), epochs=num_epochs,
+                    batch_size=batch_size, callbacks=[tensorboard_callback, early_stopping, lr_scheduler])
 
     # Visual inspection of learned embeddings
     cols, rows = 2, 4  # cols x rows grid
