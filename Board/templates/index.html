@@ -24,6 +24,8 @@
 <h1>Upcoming Matches Board</h1>
 <button onclick="refreshBoard()">Refresh</button>
 <br/><br/>
+<label for="baseBet">Base Bet Amount:</label>
+<input type="number" id="baseBet" value="100" min="1" step="10" />
 <table id="matchesTable">
     <thead>
     <tr>
@@ -144,19 +146,21 @@
     async function triggerBet(match_id) {
         const oddsYesInput = document.getElementById('odds_yes_' + match_id);
         const oddsNoInput = document.getElementById('odds_no_' + match_id);
+        const baseBetInput = document.getElementById('baseBet');
 
         const oddsYes = parseFloat(oddsYesInput.value);
         const oddsNo = parseFloat(oddsNoInput.value);
+        const baseBet = parseFloat(baseBetInput.value);
 
-        if (isNaN(oddsYes) || isNaN(oddsNo)) {
-            alert("Please enter valid odds for both Yes and No.");
+        if (isNaN(oddsYes) || isNaN(oddsNo) || isNaN(baseBet) || baseBet <= 0) {
+            alert("Please enter valid odds and base bet amount.");
             return;
         }
 
         const response = await fetch(`/trigger/${match_id.toString()}`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({odds_yes: oddsYes, odds_no: oddsNo})
+            body: JSON.stringify({odds_yes: oddsYes, odds_no: oddsNo, base_bet: baseBet})
         });
 
         if (!response.ok) {

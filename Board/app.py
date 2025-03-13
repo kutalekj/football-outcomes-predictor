@@ -46,13 +46,16 @@ def refresh():
     return jsonify(list(board.values()))
 
 
-def kelly_criterion(prob, odds):
-    b = odds - 1
-    q = 1 - prob
+def kelly_criterion(prob, odds, base_bet):
+    b = odds - 1  # net odds multiplier
+    q = 1 - prob  # probability of loss
+
     if b <= 0:
-        return 0
+        return 0  # no valid bet
+
     fraction = (b * prob - q) / b  # Kelly fraction
-    return max(0, fraction)
+    bet_amount = max(0, fraction) * base_bet  # fraction -> actual bet size
+    return bet_amount
 
 
 @app.route('/trigger/<match_id>', methods=['POST'])
@@ -62,9 +65,10 @@ def trigger(match_id):
     data = request.json
     odds_yes = data.get("odds_yes", None)
     odds_no = data.get("odds_no", None)
+    base_bet = data.get("base_bet", 100)  # default bet = 100
 
-    if odds_yes is None or odds_no is None:
-        return jsonify({"error": "Both odds values must be provided"}), 400
+    if odds_yes is None or odds_no is None or base_bet <= 0:
+        return jsonify({"error": "Both odds values and base bet must be provided"}), 400
 
     match = board.get(match_id)
     if not match:
@@ -75,8 +79,8 @@ def trigger(match_id):
         return jsonify({"error": "Prediction not available"}), 500
 
     # Compute Kelly Criterion fractions for both Yes and No bets
-    recommended_fraction_yes = kelly_criterion(prob, odds_yes)
-    recommended_fraction_no = kelly_criterion(1 - prob, odds_no)
+    recommended_fraction_yes = kelly_criterion(prob, odds_yes, base_bet)
+    recommended_fraction_no = kelly_criterion(1 - prob, odds_no, base_bet)
 
     return jsonify({
         "match_id": match_id,
