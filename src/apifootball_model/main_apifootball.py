@@ -13,10 +13,10 @@ from globals import Global
 import in_out
 import in_out_mega
 # from train_rnn import train
-# from train_ann import train
+from train_ann import train
 # from train_compID_encoder import train
 # from train_teamID_encoder import train
-from train_team_strength import train
+# from train_team_strength import train
 
 global_instance = Global.get_instance()
 
@@ -113,24 +113,16 @@ if settings.MATCH_DATA_STORE:
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
-# 9. Distribute regular matches into rounds for training
-# TODO: Fix the error that about 30 regular matches are missing team strength (the following is a temp. solution)!
-# regular_matches = [x for x in global_instance.all_matches if x.round.is_regular and x.feature_vector_before_match_played.shape[0] == 126]
+# 9a. Distribute regular matches into rounds for training
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 
-# 10d. Train team strength embeddings
-all_team_player_skills = [np.array([np.array([z / 100.0 for z in y]) for y in
-                                    x.features_before_match_played.home_team_strength]) for x in regular_matches] + \
-                         [np.array([np.array([z / 100.0 for z in y]) for y in
-                                    x.features_before_match_played.away_team_strength]) for x in regular_matches]
+# 9b. Create mapping of categorical feature values to indices
+team_id_map, comp_id_map = ut.get_categorical_features_maps(regular_matches)
 
-autoencoder, team_strength_encoder = train(np.array(all_team_player_skills))
-
-# Predict sample embeddings
-sample_skills = np.array(all_team_player_skills[:5])  # get first 5 samples
-embeddings = team_strength_encoder.predict(sample_skills)
-print("Team Strength Embeddings:", embeddings)
+# 10. Train
+regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
+train(regular_matches_in_rounds, team_id_map, comp_id_map)
 
 """
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)

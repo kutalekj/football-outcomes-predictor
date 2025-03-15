@@ -770,3 +770,50 @@ def is_valid_n_float_list(variable, n=34):
 def min_max_scaling_with_clipping(value, max_value):
     scaled_value = value / max_value
     return np.clip(scaled_value, settings.ALMOST_ZERO, settings.ALMOST_ONE)
+
+
+def separate_normalize_gk_and_outfield_skills(data):
+    # TODO implement: to use this properly during main model training too, first get and store constant values of the...
+    #  ...percentiles so that skills are normalized SIMILARLY during embedding model training and main model training!
+    gk_data = data[:, 0, :]  # shape: (num_samples, 34)
+    outfield_data = data[:, 1:, :]  # shape: (num_samples, 10, 34)
+
+    # 1. and 99. percentiles (used instead of min and max to avoid outlier influence - now should be already mitigated!)
+    gk_p1, gk_p99 = np.percentile(gk_data, [1, 99], axis=0)
+    outfield_p1, outfield_p99 = np.percentile(outfield_data, [1, 99], axis=(0, 1))
+
+    gk_iqr = gk_p99 - gk_p1
+    outfield_iqr = outfield_p99 - outfield_p1
+
+    # Robust min-max scaling (clipping extreme values to avoid outlier influence - implemented balancing mitigates it!)
+    gk_data_norm = (np.clip(gk_data, gk_p1, gk_p99) - gk_p1) / (gk_iqr + 1e-6)
+    outfield_data_norm = (np.clip(outfield_data, outfield_p1, outfield_p99) - outfield_p1) / (outfield_iqr + 1e-6)
+
+    # Combine back normalized values
+    normalized_data = np.zeros_like(data)
+    normalized_data[:, 0, :] = gk_data_norm
+    normalized_data[:, 1:, :] = outfield_data_norm
+
+    return normalized_data
+
+
+def get_categorical_features_maps(regular_matches_sorted):
+    # Home team ID + Away team ID
+    team_id_to_name = {}
+    for m in regular_matches_sorted:
+        home_team_name = f"{m.comp.name}_{m.home_team.name}"
+        team_id_to_name[m.home_team.id] = home_team_name
+        away_team_name = f"{m.comp.name}_{m.away_team.name}"
+        team_id_to_name[m.away_team.id] = away_team_name
+    unique_regular_team_ids = sorted(team_id_to_name.keys())  # sorting ensures consistent indexing
+    team_id_map = {team_id: idx for idx, team_id in enumerate(unique_regular_team_ids)}  # map to [0, 518)
+
+    # Comp ID
+    comp_id_to_name = {}
+    for m in regular_matches_sorted:
+        comp_name = "Bundesliga AUT" if m.comp.country == "Austria" and m.comp.name == "Bundesliga" else m.comp.name
+        comp_id_to_name[m.comp.id] = comp_name
+    unique_comp_ids = sorted(comp_id_to_name.keys())  # sorting ensures consistent indexing
+    comp_id_map = {comp_id: idx for idx, comp_id in enumerate(unique_comp_ids)}  # map to [0, 24)
+
+    return team_id_map, comp_id_map

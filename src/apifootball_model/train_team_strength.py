@@ -9,6 +9,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 import settings
+import utils as ut
 import matplotlib.pyplot as plt
 plt.switch_backend('TkAgg')
 
@@ -42,7 +43,7 @@ def build_team_strength_autoencoder(conv_filters, dense_neurons, dropout, kernel
 
 def train(team_player_skills, batch_size=32, num_epochs=100):
     # Avoid domination of outfield player skills (29/34) over goalkeeper skills (5/34)
-    team_player_skills = separate_normalize_gk_and_outfield_skills(team_player_skills)
+    team_player_skills = ut.separate_normalize_gk_and_outfield_skills(team_player_skills)
 
     # Callbacks
     log_dir = os.path.join("logs", "team_strength_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
@@ -92,26 +93,3 @@ def train(team_player_skills, batch_size=32, num_epochs=100):
     print(f"Model saved to {model_path}")
 
     return autoencoder, encoder  # encoder can be used to extract team strength embeddings after training
-
-
-def separate_normalize_gk_and_outfield_skills(data):
-    gk_data = data[:, 0, :]  # shape: (num_samples, 34)
-    outfield_data = data[:, 1:, :]  # shape: (num_samples, 10, 34)
-
-    # 1. and 99. percentiles (used instead of min and max to avoid outlier influence - now should be already mitigated!)
-    gk_p1, gk_p99 = np.percentile(gk_data, [1, 99], axis=0)
-    outfield_p1, outfield_p99 = np.percentile(outfield_data, [1, 99], axis=(0, 1))
-
-    gk_iqr = gk_p99 - gk_p1
-    outfield_iqr = outfield_p99 - outfield_p1
-
-    # Robust min-max scaling (clipping extreme values to avoid outlier influence - implemented balancing mitigates it!)
-    gk_data_norm = (np.clip(gk_data, gk_p1, gk_p99) - gk_p1) / (gk_iqr + 1e-6)
-    outfield_data_norm = (np.clip(outfield_data, outfield_p1, outfield_p99) - outfield_p1) / (outfield_iqr + 1e-6)
-
-    # Combine back normalized values
-    normalized_data = np.zeros_like(data)
-    normalized_data[:, 0, :] = gk_data_norm
-    normalized_data[:, 1:, :] = outfield_data_norm
-
-    return normalized_data

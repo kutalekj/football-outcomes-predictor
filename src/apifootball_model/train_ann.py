@@ -1,21 +1,16 @@
 from datetime import datetime
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation
+from tensorflow.keras.models import Sequential, Model, load_model
+from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, \
+    Lambda, Activation
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
-from sklearn.preprocessing import LabelEncoder
-import tensorflow.keras.backend as K
 import os
-import shutil
-from settings import NUM_NUMERICAL_FEATURES
-from globals import Global
-
+import settings
+import utils as ut
 
 NUM_TRAINING_ROUNDS = 25
-EMBEDDING_OUT_SIZE_TEAM = 9
-EMBEDDING_OUT_SIZE_COMP = 2
 
 PAR_NEURONS = {'neu_1': 32, 'neu_2': 64, 'neu_3': 128}
 PAR_TEAM_EMB = {'teamem_1': 6, 'teamem_2': 9, 'teamem_3': 12}
@@ -25,244 +20,122 @@ PAR_DROPOUT = {'drp_1': 0.15, 'drp_2': 0.3, 'drp_3': 0.45}
 PAR_ACTIV = {'act_1': 'relu', 'act_2': 'leaky_relu'}
 PAR_ITER = {'it_1': 1, 'it_2': 2, 'it_3': 3, 'it_4': 4}
 
-team_encoder = LabelEncoder()
-comp_encoder = LabelEncoder()
+
+def build_mlp(dense1_neurons=256, dense2_neurons=128, dense3_neurons=64, dropout1=0.6, dropout2=0.5, dropout3=0.4,
+              lr=0.00007):
+    # Inputs
+    numerical_input = Input(shape=(settings.NUM_NUMERICAL_FEATURES,), dtype='float32', name='numerical_input')
+    home_team_input = Input(shape=(settings.TEAM_ID_EMBEDDING_SIZE,), dtype='float32', name='home_team_input')
+    away_team_input = Input(shape=(settings.TEAM_ID_EMBEDDING_SIZE,), dtype='float32', name='away_team_input')
+    comp_input = Input(shape=(settings.COMP_ID_EMBEDDING_SIZE,), dtype='float32', name='comp_input')
+    home_team_strength_input = Input(shape=(settings.TEAM_STRENGTH_EMBEDDING_SIZE,), dtype='float32',
+                                     name='home_team_strength_input')
+    away_team_strength_input = Input(shape=(settings.TEAM_STRENGTH_EMBEDDING_SIZE,), dtype='float32',
+                                     name='away_team_strength_input')
+
+    numerical_input = Flatten()(numerical_input)
+    home_team_input = Flatten()(home_team_input)
+    away_team_input = Flatten()(away_team_input)
+    comp_input = Flatten()(comp_input)
+    home_team_strength_input = Flatten()(home_team_strength_input)
+    away_team_strength_input = Flatten()(away_team_strength_input)
+
+    # Concatenate
+    merged = Concatenate()([numerical_input, home_team_input, away_team_input, comp_input,
+                            home_team_strength_input, away_team_strength_input])
+
+    # Model
+    x = Dense(dense1_neurons, activation='relu')(merged)
+    x = Dropout(dropout1)(x)
+    x = Dense(dense2_neurons, activation='relu')(x)
+    x = Dropout(dropout2)(x)
+    x = Dense(dense3_neurons, activation='relu')(x)
+    x = Dropout(dropout3)(x)
+    output = Dense(1, activation='sigmoid')(x)
+
+    model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input,
+                          home_team_strength_input, away_team_strength_input], outputs=output)
+
+    model_optimizer = Adam(learning_rate=lr)
+    model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    model.summary()
+
+    return model
 
 
-def train(regular_matches_in_rounds):
+def train(regular_matches_in_rounds, team_id_map, comp_id_map):
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))  # TODO: Acceleration
-    global_instance = Global.get_instance()
 
-    # Extract all unique team and comp IDs globally
-    all_home_team_ids, all_away_team_ids, all_comp_ids = extract_all_unique_ids(regular_matches_in_rounds)
-    all_team_ids = np.concatenate([all_home_team_ids, all_away_team_ids])
+    # Load pre-trained embedding models
+    comp_id_embedding_model = load_model(settings.COMP_ID_EMBEDDING_MODEL_PATH)
+    team_id_embedding_model = load_model(settings.TEAM_ID_EMBEDDING_MODEL_PATH)
+    team_strength_embedding_model = load_model(settings.TEAM_STRENGTH_EMBEDDING_MODEL_PATH)
 
-    # Map categorical IDs to zero-indexed values using LabelEncoder
-    team_encoder.fit(all_team_ids)
-    comp_encoder.fit(all_comp_ids)
+    comp_id_embedding_model = get_embedding_extractor(comp_id_embedding_model, 'competition_embedding')
+    team_id_embedding_model = get_embedding_extractor(team_id_embedding_model, 'team_embedding')
 
-    # Set the number of unique team IDs and comp IDs in the global instance
-    global_instance.num_unique_regular_teams_for_training = len(team_encoder.classes_)
-    global_instance.num_unique_regular_comps_for_training = len(comp_encoder.classes_)
-    print(f"\t\t\t{global_instance.num_unique_regular_teams_for_training} "
-          f"different regular teams are going to participate in the training process")
-    print(f"\t\t\t{global_instance.num_unique_regular_comps_for_training} "
-          f"different regular comps are going to participate in the training process")
+    # Callbacks
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_ann_')
+    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
-    # Step 3: Train the final model
-    train_main_model(regular_matches_in_rounds)
+    # Build main model
+    model = build_mlp()
 
+    # Train
+    weighted_accuracy = []
+    accuracies = []
+    total_val_matches = 0
+    total_rounds = len(regular_matches_in_rounds)
 
-def train_main_model(regular_matches_in_rounds):
-    for par_iter_k, par_iter_v in PAR_ITER.items():
+    for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
+        # Extract features and labels (get training and validation data)
+        train_numerical_features, train_labels = get_data_for_window(regular_matches_in_rounds, round_number,
+                                                                     NUM_TRAINING_ROUNDS)
+        train_home_ids, train_away_ids, train_comp_ids, train_home_strengths, train_away_strengths = \
+            extract_embeddings(regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS,
+                               team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
+                               team_id_map, comp_id_map)
 
-        weighted_accuracy = []
-        accuracies = []
-        num_validation_matches = 0
-        total_rounds = len(regular_matches_in_rounds)
+        val_numerical_features, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
+        val_home_ids, val_away_ids, val_comp_ids, val_home_strengths, val_away_strengths = \
+            extract_embeddings(regular_matches_in_rounds, round_number + 1, 1,
+                               team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
+                               team_id_map, comp_id_map)
 
-        # Lists to accumulate all-round validation data for computing comp-specific statistic
-        val_numerical_features_all = []
-        val_home_team_input_mapped_all = []
-        val_away_team_input_mapped_all = []
-        val_comp_id_input_mapped_all = []
-        val_labels_all = []
+        print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape)} train and"
+              f" {str(val_numerical_features.shape)} val. data")
+        total_val_matches += val_numerical_features.shape[0]
 
-        # Callbacks
-        # log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_' + str(par_neurons_k) + '_' + str(par_team_emb_k) + '_' + str(par_comp_emb_k) + '_' + str(par_drop_k) + '_' + str(par_act_k) + '_' + str(par_lr_k) + '_' + str(par_iter_k))
-        log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_ann_' + str(par_iter_k))
-        tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-        early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-
-        # Define the inputs
-        numerical_input = Input(shape=(NUM_NUMERICAL_FEATURES,), name='numerical_input')
-        home_team_input = Input(shape=(1,), dtype='int32', name='home_team_input')
-        away_team_input = Input(shape=(1,), dtype='int32', name='away_team_input')
-        comp_input = Input(shape=(1,), dtype='int32', name='comp_input')
-
-        # Embedding layers for team IDs
-        team_embedding_layer = Embedding(input_dim=Global.get_instance().num_unique_regular_teams_for_training,
-                                         output_dim=EMBEDDING_OUT_SIZE_TEAM, name='team_embedding')
-
-        home_team_embedding = Flatten()(team_embedding_layer(home_team_input))
-        away_team_embedding = Flatten()(team_embedding_layer(away_team_input))
-
-        # Embedding layer for comp IDs
-        comp_embedding_layer = Embedding(input_dim=Global.get_instance().num_unique_regular_comps_for_training,
-                                         output_dim=EMBEDDING_OUT_SIZE_COMP, name='comp_embedding')
-
-        comp_embedding = Flatten()(comp_embedding_layer(comp_input))
-
-        # Concatenate all features
-        merged = Concatenate()([numerical_input, home_team_embedding, away_team_embedding, comp_embedding])
-
-        # Build the rest of the model
-        x = Dense(256, activation='relu')(merged)
-        x = Dropout(0.6)(x)
-        x = Dense(128, activation='relu')(x)
-        x = Dropout(0.5)(x)
-        x = Dense(64, activation='relu')(x)
-        x = Dropout(0.4)(x)
-        output = Dense(1, activation='sigmoid')(x)
-
-        # Define the model
-        model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input], outputs=output)
-
-        model_optimizer = Adam(learning_rate=0.00007)
-        model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
-        model.summary()
-
-        for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
-            # Extract features and labels (training data)
-            train_numerical_features, train_labels = get_data_for_window(regular_matches_in_rounds, round_number,
-                                                                         NUM_TRAINING_ROUNDS)
-            train_home_team_input_data, train_away_team_input_data, train_comp_id_input_data, _ = extract_embedding_inputs(
-                regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS)
-
-            # Map categorical IDs to zero-indexed values using LabelEncoder
-            train_home_team_input_data_mapped = team_encoder.transform(train_home_team_input_data)
-            train_away_team_input_data_mapped = team_encoder.transform(train_away_team_input_data)
-            train_comp_id_input_data_mapped = comp_encoder.transform(train_comp_id_input_data)
-
-            # Similarly for the validation data...
-            val_numerical_features, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
-            val_home_team_input_data, val_away_team_input_data, val_comp_id_input_data, _ = extract_embedding_inputs(
-                regular_matches_in_rounds, round_number + 1, 1)
-
-            val_home_team_input_data_mapped = team_encoder.transform(val_home_team_input_data)
-            val_away_team_input_data_mapped = team_encoder.transform(val_away_team_input_data)
-            val_comp_id_input_data_mapped = comp_encoder.transform(val_comp_id_input_data)
-
-            print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape)} train and"
-                  f" {str(val_numerical_features.shape)} val. data")
-            num_validation_matches += val_numerical_features.shape[0]
-
-            # Train the main model
-            model.fit(
-                [train_numerical_features, train_home_team_input_data_mapped, train_away_team_input_data_mapped,
-                 train_comp_id_input_data_mapped],
-                train_labels,
-                epochs=10,
-                batch_size=32,
-                validation_data=(
-                    [val_numerical_features, val_home_team_input_data_mapped, val_away_team_input_data_mapped,
-                     val_comp_id_input_data_mapped],
-                    val_labels
-                ),
-                callbacks=[early_stopping, tensorboard_callback]
-            )
-
-            loss, accuracy = model.evaluate(
-                [val_numerical_features, val_home_team_input_data_mapped, val_away_team_input_data_mapped,
-                 val_comp_id_input_data_mapped],
+        # Train
+        model.fit(
+            [train_numerical_features, train_home_ids, train_away_ids, train_comp_ids,
+             train_home_strengths, train_away_strengths],
+            train_labels,
+            epochs=10,
+            batch_size=32,
+            validation_data=(
+                [val_numerical_features, val_home_ids, val_away_ids, val_comp_ids,
+                 val_home_strengths, val_away_strengths],
                 val_labels
-            )
+            ),
+            callbacks=[early_stopping, tensorboard_callback]
+        )
 
-            print(f"\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
+        # Evaluate
+        loss, accuracy = model.evaluate([val_numerical_features, val_home_ids, val_away_ids, val_comp_ids,
+                                         val_home_strengths, val_away_strengths], val_labels)
 
-            # Access embedding weights
-            team_embedding_weights = model.get_layer('team_embedding').get_weights()[0]
-            comp_embedding_weights = model.get_layer('comp_embedding').get_weights()[0]
+        print(f"\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
 
-            # DEBUG PRINTS
-            sample_team_ids = team_encoder.classes_[:5]
-            for team_id in sample_team_ids:
-                idx = team_encoder.transform([team_id])[0]
-                embedding_vector = team_embedding_weights[idx]
-                print(f"Team ID: {team_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
+        weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
+        accuracies.append(accuracy)
 
-            sample_team_ids = team_encoder.classes_[300:305]
-            for team_id in sample_team_ids:
-                idx = team_encoder.transform([team_id])[0]
-                embedding_vector = team_embedding_weights[idx]
-                print(f"Team ID: {team_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
-
-            sample_comp_ids = comp_encoder.classes_[:3]
-            for comp_id in sample_comp_ids:
-                idx = comp_encoder.transform([comp_id])[0]
-                embedding_vector = comp_embedding_weights[idx]
-                print(f"Comp ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
-
-            sample_comp_ids = comp_encoder.classes_[10:13]
-            for comp_id in sample_comp_ids:
-                idx = comp_encoder.transform([comp_id])[0]
-                embedding_vector = comp_embedding_weights[idx]
-                print(f"Comp ID: {comp_id}, Embedding Index: {idx}, Embedding Vector: {embedding_vector}")
-            # TODO: Add output log saving with debug outputs, weighted acc (from last N epochs only) and...
-            # TODO: The model still learns to map embedding values close to zero... Maybe weights init close to 0?
-            # TODO: ...and with highest/lowest embedding value - see if really all values close to 0
-            # TODO: Try cumulative training, without sliding window (non RNN)
-            # TODO: Find out which features contribute more and which less to the training
-
-            weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
-            accuracies.append(accuracy)
-
-            # if round_number > 120:  # "comps_val_acc" PARAM
-            # Store this round's validation data for later comp-specific analysis
-            val_numerical_features_all.append(val_numerical_features)
-            val_home_team_input_mapped_all.append(val_home_team_input_data_mapped)
-            val_away_team_input_mapped_all.append(val_away_team_input_data_mapped)
-            val_comp_id_input_mapped_all.append(val_comp_id_input_data_mapped)
-            val_labels_all.append(val_labels)
-
-        final_weighted_acc = float(np.sum(weighted_accuracy) / num_validation_matches)
-        print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")
-
-        last_100_rounds_acc = float(np.sum(accuracies[-100:]) / 100)
-        print(f"\tAverage accuracy in last 100 rounds = "f"{last_100_rounds_acc:.3%}")
-
-        # === ADDITION: Compute per-comp ratio across *all* validation sets ===
-        # 1) Concatenate all stored validation sets
-        if len(val_numerical_features_all) > 0:
-            all_val_numerical_features = np.concatenate(val_numerical_features_all, axis=0)
-            all_val_home_team = np.concatenate(val_home_team_input_mapped_all, axis=0)
-            all_val_away_team = np.concatenate(val_away_team_input_mapped_all, axis=0)
-            all_val_comp = np.concatenate(val_comp_id_input_mapped_all, axis=0)
-            all_val_labels = np.concatenate(val_labels_all, axis=0)
-
-            # 2) Predict on entire concatenated set
-            preds = model.predict([all_val_numerical_features,
-                                   all_val_home_team,
-                                   all_val_away_team,
-                                   all_val_comp])
-            preds_bin = (preds >= 0.5).astype(int).flatten()
-
-            # 3) Group by comp (mapped) and compute accuracy
-            comp_correct = {}
-            comp_total = {}
-
-            for i in range(len(all_val_labels)):
-                mapped_id = all_val_comp[i]
-                if mapped_id not in comp_correct:
-                    comp_correct[mapped_id] = 0
-                    comp_total[mapped_id] = 0
-                if preds_bin[i] == all_val_labels[i]:
-                    comp_correct[mapped_id] += 1
-                comp_total[mapped_id] += 1
-
-            # 4) Print final ratio for each comp across *all* rounds
-            print("\nPer-Comp Prediction Accuracy (All Validation Rounds):")
-            for mapped_id, correct_count in comp_correct.items():
-                total_count = comp_total[mapped_id]
-                ratio = correct_count / total_count if total_count > 0 else 0.0
-                original_comp_id = comp_encoder.inverse_transform([mapped_id])[0]
-                print(f"Comp {original_comp_id}: {correct_count}/{total_count} = {ratio:.3%}")
-            print("============================================\n")
-        # === END ADDITION ===
-
-
-def extract_all_unique_ids(regular_matches_in_rounds):
-    all_home_team_ids = []
-    all_away_team_ids = []
-    all_comp_ids = []
-
-    for matches in regular_matches_in_rounds:
-        for match in matches:
-            all_home_team_ids.append(match.home_team.id)
-            all_away_team_ids.append(match.away_team.id)
-            all_comp_ids.append(match.comp.id)
-
-    return np.array(all_home_team_ids), np.array(all_away_team_ids), np.array(all_comp_ids)
+    # Overall evaluation
+    final_weighted_acc = float(np.sum(weighted_accuracy) / total_val_matches)
+    print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")
+    last_100_rounds_acc = float(np.sum(accuracies[-100:]) / 100)
+    print(f"\tAverage accuracy in last 100 rounds = "f"{last_100_rounds_acc:.3%}")
 
 
 def get_data_for_window(regular_matches_in_rounds, round_number, window_size):
@@ -288,28 +161,65 @@ def get_data_for_window(regular_matches_in_rounds, round_number, window_size):
     return data, labels
 
 
-def extract_embedding_inputs(regular_matches_in_rounds, round_number, window_size):
+def extract_embeddings(regular_matches_in_rounds, round_number, window_size,
+                       team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
+                       team_id_map, comp_id_map):
     start_round = round_number - window_size - 1
     end_round = round_number - 1
 
-    home_team_input = []
-    away_team_input = []
-    comp_id_input = []
-    labels = []
+    home_id_inputs = []
+    away_id_inputs = []
+    comp_id_inputs = []
+    home_strength_inputs = []
+    away_strength_inputs = []
 
     for r in range(start_round, end_round):
         matches = regular_matches_in_rounds[r]
 
         for match in matches:
-            total_goals = match.home_team_goals + match.away_team_goals
-            label = 1 if total_goals < 2.5 else 0
+            # Map raw categorical features to indices
+            home_id_inputs.append(team_id_map[match.home_team.id])
+            away_id_inputs.append(team_id_map[match.away_team.id])
+            comp_id_inputs.append(comp_id_map[match.comp.id])
 
-            home_team_input.append(match.home_team.id)  # home team ID (integer)
-            away_team_input.append(match.away_team.id)  # away team ID (integer)
-            comp_id_input.append(match.comp.id)  # comp ID (integer)
-            labels.append(label)
+            # Scale team strength features skills to [0,1]
+            home_strength = np.array(
+                [[z / 100.0 for z in y] for y in match.features_before_match_played.home_team_strength])
+            away_strength = np.array(
+                [[z / 100.0 for z in y] for y in match.features_before_match_played.away_team_strength])
 
-    return np.array(home_team_input), np.array(away_team_input), np.array(comp_id_input), np.array(labels)
+            # Normalize team strength features (expected shape is (11, 34) - add batch dimension, then remove it)
+            home_strength_norm = np.squeeze(
+                ut.separate_normalize_gk_and_outfield_skills(np.expand_dims(home_strength, axis=0)), axis=0)
+            away_strength_norm = np.squeeze(
+                ut.separate_normalize_gk_and_outfield_skills(np.expand_dims(away_strength, axis=0)), axis=0)
+
+            home_strength_inputs.append(home_strength_norm)
+            away_strength_inputs.append(away_strength_norm)
+
+    # For categorical features add extra dimension so each input is shape (1,)
+    home_id_array = np.expand_dims(np.array(home_id_inputs), axis=-1)  # shape: (num_samples, 1)
+    away_id_array = np.expand_dims(np.array(away_id_inputs), axis=-1)
+    comp_id_array = np.expand_dims(np.array(comp_id_inputs), axis=-1)
+
+    # For team strength assuming each normalized sample is (11, 34)
+    home_strength_array = np.array(home_strength_inputs)  # shape: (num_samples, 11, 34)
+    away_strength_array = np.array(away_strength_inputs)
+
+    # Batch predict embeddings
+    home_id_embeddings = np.squeeze(team_id_embedding_model.predict(home_id_array), axis=1)  # shape (num_samples, 8)
+    away_id_embeddings = np.squeeze(team_id_embedding_model.predict(away_id_array), axis=1)
+    comp_id_embeddings = np.squeeze(comp_id_embedding_model.predict(comp_id_array), axis=1)
+    home_strength_embeddings = team_strength_embedding_model.predict(home_strength_array)
+    away_strength_embeddings = team_strength_embedding_model.predict(away_strength_array)
+
+    # Normalize predicted embeddings to [0,1]
+    home_id_embeddings = normalize_embeddings(home_id_embeddings)
+    away_id_embeddings = normalize_embeddings(away_id_embeddings)
+    comp_id_embeddings = normalize_embeddings(comp_id_embeddings)
+
+    return (home_id_embeddings, away_id_embeddings, comp_id_embeddings,
+            home_strength_embeddings, away_strength_embeddings)
 
 
 def get_data_for_round(regular_matches_in_rounds, round_number):
@@ -331,5 +241,13 @@ def get_data_for_round(regular_matches_in_rounds, round_number):
     return data, labels
 
 
-def scale_to_0_1(x):
-    return (x - K.min(x)) / (K.max(x) - K.min(x))
+def get_embedding_extractor(full_model, embedding_layer_name):
+    # Construct new model taking same input as full_model and returning activations of specified embedding layer
+    return Model(inputs=full_model.input,
+                 outputs=full_model.get_layer(embedding_layer_name).output)
+
+
+def normalize_embeddings(embeddings):
+    min_val = np.min(embeddings)
+    max_val = np.max(embeddings)
+    return (embeddings - min_val) / (max_val - min_val)

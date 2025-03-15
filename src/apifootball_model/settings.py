@@ -126,12 +126,16 @@ INIT_ELO = 1500
 
 WINNER_TEAM_ID_CODE_FOR_DRAW = -1
 
-NUM_NUMERICAL_FEATURES = 126
+NUM_NUMERICAL_FEATURES = 70
 NUM_MATCHES_PER_ROUND_FOR_TRAINING = 50
 
 COMP_ID_EMBEDDING_SIZE = 5
 TEAM_ID_EMBEDDING_SIZE = 8
-TEAM_STRENGTH_EMBEDDING_SIZE = 8
+TEAM_STRENGTH_EMBEDDING_SIZE = 24
+
+COMP_ID_EMBEDDING_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\comp_id_embedding_model.keras'
+TEAM_ID_EMBEDDING_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\team_id_embedding_model.keras'
+TEAM_STRENGTH_EMBEDDING_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\team_strength_embedding_model_gk_outfield_balanced.keras'
 
 ALMOST_ZERO = 0.001
 ALMOST_ONE = 0.999
