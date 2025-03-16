@@ -81,6 +81,6 @@ def process_csv_files(folder_path):
         print(f"Removed {duplicates_counter} duplicate rows")
 
 # Specify the folder containing your CSV files
-folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase3\\full'  # Replace with your folder path
+folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase4\\full'  # Replace with your folder path
 
 process_csv_files(folder_path)
