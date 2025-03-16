@@ -7,6 +7,7 @@ from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, C
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.optimizers import Adam
 import os
+import shutil
 import settings
 import utils as ut
 
@@ -103,6 +104,10 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
                                team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
                                team_id_map, comp_id_map)
 
+        # Save validation data for feature importance analysis
+        save_validation_data(round_number, val_numerical_features, val_home_ids, val_away_ids,
+                             val_comp_ids, val_home_strengths, val_away_strengths, val_labels)
+
         print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape)} train and"
               f" {str(val_numerical_features.shape)} val. data")
         total_val_matches += val_numerical_features.shape[0]
@@ -131,7 +136,7 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
         weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
         accuracies.append(accuracy)
 
-    # Save encoder
+    # Save model
     model_path = settings.TRAINED_MODELS_DIR + "\\main_model_ann.keras"
     model.save(model_path)
     print(f"Model saved to {model_path}")
@@ -141,6 +146,11 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
     print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")
     last_100_rounds_acc = float(np.sum(accuracies[-100:]) / 100)
     print(f"\tAverage accuracy in last 100 rounds = "f"{last_100_rounds_acc:.3%}")
+
+    # Delete logs if accuracy too low
+    if last_100_rounds_acc < 0.56:
+        print(f"\tAccuracy ({last_100_rounds_acc:.3f}) in last 100 rounds is too low. Deleting log directory: {log_dir}")
+        shutil.rmtree(log_dir, ignore_errors=True)
 
 
 def get_data_for_window(regular_matches_in_rounds, round_number, window_size):
@@ -256,3 +266,34 @@ def normalize_embeddings(embeddings):
     min_val = np.min(embeddings)
     max_val = np.max(embeddings)
     return (embeddings - min_val) / (max_val - min_val)
+
+
+def save_validation_data(round_number, val_numerical_features, val_home_ids, val_away_ids,
+                         val_comp_ids, val_home_strengths, val_away_strengths, val_labels,
+                         output_dir="validation_data"):
+    """
+    Saves the validation data for a given round to an NPZ file.
+
+    Parameters:
+      round_number (int): The current round or iteration number.
+      val_numerical_features (np.ndarray): Numerical features array, shape (n_samples, d_num).
+      val_home_ids (np.ndarray): Home team ID embeddings, shape (n_samples, d_team).
+      val_away_ids (np.ndarray): Away team ID embeddings, shape (n_samples, d_team).
+      val_comp_ids (np.ndarray): Competition ID embeddings, shape (n_samples, d_comp).
+      val_home_strengths (np.ndarray): Home team strength embeddings, shape (n_samples, d_strength).
+      val_away_strengths (np.ndarray): Away team strength embeddings, shape (n_samples, d_strength).
+      val_labels (np.ndarray): True labels, shape (n_samples,).
+      output_dir (str): Directory to save the NPZ files.
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    file_path = os.path.join(output_dir, f"validation_data_round_{round_number}.npz")
+    np.savez(file_path,
+             X_num=val_numerical_features,
+             X_home=val_home_ids,
+             X_away=val_away_ids,
+             X_comp=val_comp_ids,
+             X_home_strength=val_home_strengths,
+             X_away_strength=val_away_strengths,
+             y_val=val_labels)
+    print(f"Saved validation data for round {round_number} to {file_path}")
