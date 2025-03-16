@@ -25,21 +25,6 @@ if not settings.ALL_LOAD:
     # 0. Load average skills and team strengths (SF)
     in_out.load_sf_avg_team_strength()
 
-    gk_skills = []
-    for k, v in global_instance.sf_avg_team_strength.items():
-        team_id, season, pos_cat = k
-        if pos_cat == "goalkeeper":
-            gk_skills.append(v)
-    gk_skills = np.mean(gk_skills, axis=0).tolist()
-
-    output_file = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths_new_copy.csv"
-
-    with open(output_file, mode='a', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-
-        row = [-1, -1, "", "goalkeeper"] + gk_skills
-        writer.writerow(row)
-
     # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()
 
@@ -128,37 +113,6 @@ if settings.MATCH_DATA_STORE:
 if settings.ALL_STORE:
     in_out_mega.store_all_matches_data()
 
-for table in global_instance.all_tables:
-    print(f"Table: {table.comp_name}, {table.season}")
-    for team in table.teams:
-        print(f"Team: {team.name}")
-        for position in ["goalkeeper", "defender", "midfielder", "attacker"]:
-
-            skills_dict = global_instance.tmp_average_player_skills.get((table.season, team.id, team.name, position), {})
-            # skills_dict = global_instance.tmp_average_player_skills[(table.season, team.id, team.name, position)]
-            print(f"Before:\t\t{skills_dict}")
-
-            for skill, values in skills_dict.items():
-                skills_dict[skill] = statistics.mean(values) if values else 0.0
-            global_instance.tmp_average_player_skills[(table.season, team.id, team.name, position)] = skills_dict
-            print(f"After:\t\t{global_instance.tmp_average_player_skills[(table.season, team.id, team.name, position)]}")
-
-output_file = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths_new.csv"
-with open(output_file, mode='w', newline='', encoding='utf-8') as csvfile:
-    writer = csv.writer(csvfile)
-
-    # Write header
-    header = ["season", "team_id", "team_name", "player_position_category"] + settings.PLAYER_SKILLS
-    writer.writerow(header)
-
-    # Write data rows
-    for (season, team_id, team_name, position), skills_dict in global_instance.tmp_average_player_skills.items():
-        row = [season, team_id, team_name, position] + [skills_dict[skill] for skill in settings.PLAYER_SKILLS]
-        writer.writerow(row)
-
-print(f"Successfully written skills data to {output_file}")
-
-"""
 # 9a. Distribute regular matches into rounds for training
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
@@ -170,7 +124,7 @@ team_id_map, comp_id_map = ut.get_categorical_features_maps(regular_matches)
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
 train(regular_matches_in_rounds, team_id_map, comp_id_map)
 
-
+"""
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
 # regular_matches_in_rounds = ut.distribute_matches_into_rounds_uniformly(regular_matches)
 for i, r in enumerate(regular_matches_in_rounds):

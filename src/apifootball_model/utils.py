@@ -321,40 +321,13 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
         if not negative_value_found:
             break  # if no -1 values found, end getting skills
 
-    all_player_positions = list(set(all_player_positions))
-
-    """
     # Check for missing skill values - impute
     for index, (skill_name, value) in enumerate(collected_player_skills.items()):
         if value == -1:
             player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
             collected_player_skills[skill_name] = \
                 global_instance.sf_avg_team_strength[(season, team_id, player_pos)][index]  # impute a single value
-    """
-    for skill_name, value in collected_player_skills.items():
-        if value == -1:
-            pass  # IMPUTE
-        else:
-            # TODO: Get player position categories and store to TMP globals
-            if "goalkeeper" in all_player_positions:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "goalkeeper")][skill_name].append(value)
-            if "defender" in all_player_positions:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "defender")][skill_name].append(value)
-            if "midfielder" in all_player_positions:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "midfielder")][skill_name].append(value)
-            if "attacker" in all_player_positions:
-                global_instance.tmp_average_player_skills[
-                    (season, team_id, team_name, "attacker")][skill_name].append(value)
 
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "goalkeeper")])
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "defender")])
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "midfielder")])
-    print(global_instance.tmp_average_player_skills[(season, team_id, team_name, "attacker")])
-
-    """
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(f"Found {len(collected_player_skills)} skill values for SF player (id={sf_player_id}), but "
                          f"{len(settings.PLAYER_SKILLS)} expected (match played at {match_datetime})")
@@ -365,8 +338,6 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
     if not is_valid_n_float_list(values_list):
         raise ValueError(f"Unexpected shape of player skills variable: {values_list}")
     return values_list
-    """
-    return []
 
 
 def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
