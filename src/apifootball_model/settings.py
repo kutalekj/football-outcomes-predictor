@@ -17,14 +17,14 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = False
+MATCH_DATA_LOAD = True
 MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-03-08_full.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-03-09_full.csv"
 MATCH_DATA_STORE_FILENAME = "m_25-03-09_full.csv"
 
 ALL_STORE = False
-ALL_LOAD = True
+ALL_LOAD = False
 
 ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-03-09.csv"
 ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-03-09.csv"
@@ -33,7 +33,7 @@ ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 3, 7)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 3, 8)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -52,7 +52,7 @@ COMPS_v2_TEST = [
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
-     'fs_alias': "UEFA Europa Conference League"},
+     'fs_alias': "UEFA Europa Conference League"}
 ]
 
 # {v3API_id, name, regular_round_keywords, fs_alias}
@@ -152,7 +152,7 @@ TOTAL_XG_NORM_COEFFICIENT = 5.25
 TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
-CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase3\\full'
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase4\\full'
 AVG_TEAM_STRENGTHS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths.csv'
 
 PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling', 'curve',
@@ -163,4 +163,4 @@ PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', '
 
 SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
-MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=150)  # 5 months
+MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=270)  # 9 months
