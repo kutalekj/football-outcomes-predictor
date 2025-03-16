@@ -17,23 +17,23 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = True
+MATCH_DATA_LOAD = False
 MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-03-09_full.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-03-09_full.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-03-16_full.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-03-16_full.csv"
 
 ALL_STORE = False
-ALL_LOAD = False
+ALL_LOAD = True
 
-ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-03-09.csv"
-ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-03-09.csv"
-ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-03-09.csv"
-ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-03-09.csv"
+ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-03-16.csv"
+ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-03-16.csv"
+ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-03-16.csv"
+ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-03-16.csv"
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 3, 8)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 3, 15)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
@@ -160,6 +160,13 @@ PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', '
                  'balance', 'shot_power', 'jumping', 'stamina', 'strength', 'long_shots', 'aggression', 'interceptions',
                  'positioning', 'vision', 'penalties', 'composure', 'defensive_awareness', 'standing_tackle',
                  'sliding_tackle', 'gk_diving', 'gk_handling', 'gk_kicking', 'gk_positioning', 'gk_reflexes']
+
+TEAM_STRENGTH_NORM_PERCENTILES = {
+    "gk_p1": [0.08, 0.05, 0.09, 0.15, 0.05, 0.05, 0.09, 0.08, 0.13, 0.10, 0.17, 0.17, 0.21, 0.41, 0.21, 0.38, 0.32, 0.16, 0.35, 0.05, 0.14, 0.06, 0.04, 0.14, 0.10, 0.22, 0.05, 0.09, 0.08, 0.55, 0.52, 0.51, 0.51, 0.55],
+    "gk_p99": [0.29, 0.20, 0.26, 0.60, 0.20, 0.30, 0.33, 0.29, 0.62, 0.42, 0.63, 0.61, 0.68, 0.85, 0.67, 0.65, 0.80, 0.45, 0.80, 0.20, 0.45, 0.30, 0.20, 0.69, 0.46, 0.69, 0.29, 0.23, 0.24, 0.86, 0.84, 0.87, 0.86, 0.89],
+    "outfield_p1": [0.25, 0.20, 0.32, 0.45, 0.20, 0.31, 0.23, 0.22, 0.33, 0.42, 0.34, 0.34, 0.33, 0.47, 0.33, 0.30, 0.36, 0.43, 0.34, 0.20, 0.30, 0.14, 0.22, 0.28, 0.28, 0.43, 0.16, 0.15, 0.14, 0.05, 0.05, 0.05, 0.05, 0.05],
+    "outfield_p99": [0.83, 0.83, 0.84, 0.85, 0.80, 0.86, 0.84, 0.81, 0.83, 0.86, 0.91, 0.91, 0.91, 0.85, 0.91, 0.85, 0.91, 0.91, 0.91, 0.82, 0.87, 0.83, 0.84, 0.84, 0.82, 0.85, 0.83, 0.84, 0.82, 0.16, 0.16, 0.16, 0.16, 0.16]
+}
 
 SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5

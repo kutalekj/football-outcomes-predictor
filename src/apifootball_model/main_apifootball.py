@@ -13,10 +13,10 @@ from globals import Global
 import in_out
 import in_out_mega
 # from train_rnn import train
-from train_ann import train
+# from train_ann import train
 # from train_compID_encoder import train
 # from train_teamID_encoder import train
-# from train_team_strength import train
+from train_team_strength import train
 
 global_instance = Global.get_instance()
 
@@ -121,8 +121,15 @@ regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
 team_id_map, comp_id_map = ut.get_categorical_features_maps(regular_matches)
 
 # 10. Train
-regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
-train(regular_matches_in_rounds, team_id_map, comp_id_map)
+all_team_player_skills = [np.array([np.array([z / 100.0 for z in y]) for y in
+                                    x.features_before_match_played.home_team_strength]) for x in regular_matches] + \
+                         [np.array([np.array([z / 100.0 for z in y]) for y in
+                                    x.features_before_match_played.away_team_strength]) for x in regular_matches]
+
+autoencoder, team_strength_encoder = train(np.array(all_team_player_skills))
+
+# regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)
+# train(regular_matches_in_rounds, team_id_map, comp_id_map)
 
 """
 regular_matches_in_rounds = ut.distribute_matches_into_rounds(regular_matches)

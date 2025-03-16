@@ -773,14 +773,14 @@ def min_max_scaling_with_clipping(value, max_value):
 
 
 def separate_normalize_gk_and_outfield_skills(data):
-    # TODO implement: to use this properly during main model training too, first get and store constant values of the...
-    #  ...percentiles so that skills are normalized SIMILARLY during embedding model training and main model training!
     gk_data = data[:, 0, :]  # shape: (num_samples, 34)
     outfield_data = data[:, 1:, :]  # shape: (num_samples, 10, 34)
 
     # 1. and 99. percentiles (used instead of min and max to avoid outlier influence - now should be already mitigated!)
-    gk_p1, gk_p99 = np.percentile(gk_data, [1, 99], axis=0)
-    outfield_p1, outfield_p99 = np.percentile(outfield_data, [1, 99], axis=(0, 1))
+    gk_p1 = np.array(settings.TEAM_STRENGTH_NORM_PERCENTILES["gk_p1"])
+    gk_p99 = np.array(settings.TEAM_STRENGTH_NORM_PERCENTILES["gk_p99"])
+    outfield_p1 = np.array(settings.TEAM_STRENGTH_NORM_PERCENTILES["outfield_p1"])
+    outfield_p99 = np.array(settings.TEAM_STRENGTH_NORM_PERCENTILES["outfield_p99"])
 
     gk_iqr = gk_p99 - gk_p1
     outfield_iqr = outfield_p99 - outfield_p1
