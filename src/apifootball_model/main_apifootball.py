@@ -25,6 +25,21 @@ if not settings.ALL_LOAD:
     # 0. Load average skills and team strengths (SF)
     in_out.load_sf_avg_team_strength()
 
+    gk_skills = []
+    for k, v in global_instance.sf_avg_team_strength.items():
+        team_id, season, pos_cat = k
+        if pos_cat == "goalkeeper":
+            gk_skills.append(v)
+    gk_skills = np.mean(gk_skills, axis=0).tolist()
+
+    output_file = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths_new_copy.csv"
+
+    with open(output_file, mode='a', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+
+        row = [-1, -1, "", "goalkeeper"] + gk_skills
+        writer.writerow(row)
+
     # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()
 
