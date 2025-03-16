@@ -131,6 +131,11 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
         weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
         accuracies.append(accuracy)
 
+    # Save encoder
+    model_path = settings.TRAINED_MODELS_DIR + "\\main_model_ann.keras"
+    model.save(model_path)
+    print(f"Model saved to {model_path}")
+
     # Overall evaluation
     final_weighted_acc = float(np.sum(weighted_accuracy) / total_val_matches)
     print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")
