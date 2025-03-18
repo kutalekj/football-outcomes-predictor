@@ -55,11 +55,12 @@ def build_mlp(dense1_neurons=256, dense2_neurons=128, dense3_neurons=64, dropout
     model = Model(inputs=[numerical_input, home_team_input, away_team_input, comp_input,
                           home_team_strength_input, away_team_strength_input], outputs=output)
 
-    model_optimizer = Adam(learning_rate=lr)
+    lr_schedule = CustomLRSchedule(lr)  # allow for custom dynamic LR update
+    model_optimizer = tf.keras.optimizers.Adam(learning_rate=lr_schedule)
     model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
     model.summary()
 
-    return model
+    return model, lr_schedule
 
 
 def train(regular_matches_in_rounds, team_id_map, comp_id_map):
@@ -73,91 +74,89 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
     comp_id_embedding_model = get_embedding_extractor(comp_id_embedding_model, 'competition_embedding')
     team_id_embedding_model = get_embedding_extractor(team_id_embedding_model, 'team_embedding')
 
-    for par_n_k, par_n_v in PAR_NEURONS.items():
-        for par_d_k, par_d_v in PAR_DROPOUT.items():
-            for par_lr_k, par_lr_v in PAR_LR.items():
-                for par_i_k, par_i_v in PAR_ITER.items():
+    # Callbacks
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_ann_')
+    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
-                    # Callbacks
-                    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S") + '_ann_' +
-                                           f"{par_n_k}_{par_d_k}_{par_lr_k}_{par_i_k}")
-                    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-                    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+    # Build main model
+    init_lr = 0.00008
+    lr_decay = 0.995
+    model, lr_schedule = build_mlp(dense1_neurons=256, dense2_neurons=128, dense3_neurons=64,
+                                   dropout1=0.4, dropout2=0.3, dropout3=0.2, lr=init_lr)
 
-                    # Build main model
-                    model = build_mlp(dense1_neurons=par_n_v * 4, dense2_neurons=par_n_v * 2, dense3_neurons=par_n_v,
-                                      dropout1=par_d_v + 0.2, dropout2=par_d_v + 0.1, dropout3=par_d_v, lr=par_lr_v)
+    # Train
+    weighted_accuracy = []
+    accuracies = []
+    total_val_matches = 0
+    total_rounds = len(regular_matches_in_rounds)
 
-                    # Train
-                    weighted_accuracy = []
-                    accuracies = []
-                    total_val_matches = 0
-                    total_rounds = len(regular_matches_in_rounds)
+    for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
+        # Extract features and labels (get training and validation data)
+        train_numerical_features, train_labels = get_data_for_window(regular_matches_in_rounds, round_number,
+                                                                     NUM_TRAINING_ROUNDS)
+        train_home_ids, train_away_ids, train_comp_ids, train_home_strengths, train_away_strengths = \
+            extract_embeddings(regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS,
+                               team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
+                               team_id_map, comp_id_map)
 
-                    for round_number in range(NUM_TRAINING_ROUNDS + 1, total_rounds):
-                        # Extract features and labels (get training and validation data)
-                        train_numerical_features, train_labels = get_data_for_window(regular_matches_in_rounds, round_number,
-                                                                                     NUM_TRAINING_ROUNDS)
-                        train_home_ids, train_away_ids, train_comp_ids, train_home_strengths, train_away_strengths = \
-                            extract_embeddings(regular_matches_in_rounds, round_number, NUM_TRAINING_ROUNDS,
-                                               team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
-                                               team_id_map, comp_id_map)
+        val_numerical_features, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
+        val_home_ids, val_away_ids, val_comp_ids, val_home_strengths, val_away_strengths = \
+            extract_embeddings(regular_matches_in_rounds, round_number + 1, 1,
+                               team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
+                               team_id_map, comp_id_map)
 
-                        val_numerical_features, val_labels = get_data_for_round(regular_matches_in_rounds, round_number)
-                        val_home_ids, val_away_ids, val_comp_ids, val_home_strengths, val_away_strengths = \
-                            extract_embeddings(regular_matches_in_rounds, round_number + 1, 1,
-                                               team_id_embedding_model, comp_id_embedding_model, team_strength_embedding_model,
-                                               team_id_map, comp_id_map)
+        # Save validation data for feature importance analysis
+        save_validation_data(round_number, val_numerical_features, val_home_ids, val_away_ids,
+                             val_comp_ids, val_home_strengths, val_away_strengths, val_labels)
 
-                        # Save validation data for feature importance analysis
-                        """
-                        save_validation_data(round_number, val_numerical_features, val_home_ids, val_away_ids,
-                                             val_comp_ids, val_home_strengths, val_away_strengths, val_labels)
-                        """
+        # Update learning rate
+        new_lr = init_lr * (lr_decay ** (round_number - NUM_TRAINING_ROUNDS))
+        lr_schedule.lr_var.assign(new_lr)
 
-                        print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape)} train and"
-                              f" {str(val_numerical_features.shape)} val. data")
-                        total_val_matches += val_numerical_features.shape[0]
+        print(f"\t\t\t\t\t\t\tRound {str(round_number)}: {str(train_numerical_features.shape[0])} train and"
+              f" {str(val_numerical_features.shape[0])} validation matches (lr={str(new_lr)})")
+        total_val_matches += val_numerical_features.shape[0]
 
-                        # Train
-                        model.fit(
-                            [train_numerical_features, train_home_ids, train_away_ids, train_comp_ids,
-                             train_home_strengths, train_away_strengths],
-                            train_labels,
-                            epochs=10,
-                            batch_size=32,
-                            validation_data=(
-                                [val_numerical_features, val_home_ids, val_away_ids, val_comp_ids,
-                                 val_home_strengths, val_away_strengths],
-                                val_labels
-                            ),
-                            callbacks=[early_stopping, tensorboard_callback]
-                        )
+        # Train
+        model.fit(
+            [train_numerical_features, train_home_ids, train_away_ids, train_comp_ids,
+             train_home_strengths, train_away_strengths],
+            train_labels,
+            epochs=10,
+            batch_size=32,
+            validation_data=(
+                [val_numerical_features, val_home_ids, val_away_ids, val_comp_ids,
+                 val_home_strengths, val_away_strengths],
+                val_labels
+            ),
+            callbacks=[early_stopping, tensorboard_callback]
+        )
 
-                        # Evaluate
-                        loss, accuracy = model.evaluate([val_numerical_features, val_home_ids, val_away_ids, val_comp_ids,
-                                                         val_home_strengths, val_away_strengths], val_labels)
+        # Evaluate
+        loss, accuracy = model.evaluate([val_numerical_features, val_home_ids, val_away_ids, val_comp_ids,
+                                         val_home_strengths, val_away_strengths], val_labels)
 
-                        print(f"\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
+        print(f"\tRound {str(round_number)} - Loss: {str(loss)}, Accuracy: {str(accuracy)}")
 
-                        weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
-                        accuracies.append(accuracy)
+        weighted_accuracy.append(accuracy * val_numerical_features.shape[0])
+        accuracies.append(accuracy)
 
-                    # Save model
-                    model_path = settings.TRAINED_MODELS_DIR + "\\main_model_ann.keras"
-                    model.save(model_path)
-                    print(f"Model saved to {model_path}")
+    # Save model
+    model_path = settings.TRAINED_MODELS_DIR + "\\main_model_ann.keras"
+    model.save(model_path)
+    print(f"Model saved to {model_path}")
 
-                    # Overall evaluation
-                    final_weighted_acc = float(np.sum(weighted_accuracy) / total_val_matches)
-                    print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")
-                    last_100_rounds_acc = float(np.sum(accuracies[-100:]) / 100)
-                    print(f"\tAverage accuracy in last 100 rounds = "f"{last_100_rounds_acc:.3%}")
+    # Overall evaluation
+    final_weighted_acc = float(np.sum(weighted_accuracy) / total_val_matches)
+    print(f"\tWeighted validation accuracy = "f"{final_weighted_acc}")
+    last_100_rounds_acc = float(np.sum(accuracies[-100:]) / 100)
+    print(f"\tAverage accuracy in last 100 rounds = "f"{last_100_rounds_acc:.3%}")
 
-                    # Delete logs if accuracy too low
-                    if last_100_rounds_acc < 0.555:
-                        print(f"\tAccuracy ({last_100_rounds_acc:.3f}) in last 100 rounds is too low. Deleting log directory: {log_dir}")
-                        shutil.rmtree(log_dir, ignore_errors=True)
+    # Delete logs if accuracy too low
+    if last_100_rounds_acc < 0.555:
+        print(f"\tAccuracy ({last_100_rounds_acc:.3f}) in last 100 rounds is too low. Deleting log directory: {log_dir}")
+        shutil.rmtree(log_dir, ignore_errors=True)
 
 
 def get_data_for_window(regular_matches_in_rounds, round_number, window_size):
@@ -304,3 +303,15 @@ def save_validation_data(round_number, val_numerical_features, val_home_ids, val
              X_away_strength=val_away_strengths,
              y_val=val_labels)
     print(f"Saved validation data for round {round_number} to {file_path}")
+
+
+class CustomLRSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
+    def __init__(self, initial_lr):
+        super().__init__()
+        self.lr_var = tf.Variable(initial_lr, trainable=False)  # store the LR as a tf.Variable so it can be updated
+
+    def __call__(self, step):
+        return self.lr_var  # ignore 'step' and simply return the current LR
+
+    def get_config(self):
+        return {"initial_lr": float(self.lr_var.numpy())}
