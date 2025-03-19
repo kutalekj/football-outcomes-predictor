@@ -1,0 +1,41 @@
+[
+  {
+    "match_id": 1216704,
+    "country": "England",
+    "comp_name": "League One",
+    "season": 2024,
+    "home_team": "Rotherham",
+    "away_team": "Wycombe",
+    "datetime": "2025-03-18T20:45:00+01:00",
+    "lineups": {
+      "home": [
+        "Dillon Phillips",
+        "Joe Rafferty",
+        "Hakeem Odofin",
+        "Zak Jules",
+        "Reece James",
+        "Pelly Ruddock Mpanzu",
+        "Cameron Humphreys",
+        "Joe Powell",
+        "Shaun McWilliams",
+        "Mallik Wilks",
+        "Sam Nombe"
+      ],
+      "away": [
+        "Will Norris",
+        "Joe Low",
+        "Sonny Bradley",
+        "Caleb Taylor",
+        "Jack Grimmer",
+        "Cameron Humphreys",
+        "Xavier Simons",
+        "Josh Scowen",
+        "Luke Leahy",
+        "Adam Reach",
+        "Richard Kone"
+      ]
+    },
+    "prediction": 0.5799729824066162,
+    "processed": false
+  }
+]

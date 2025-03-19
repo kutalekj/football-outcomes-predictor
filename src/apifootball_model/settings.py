@@ -136,6 +136,7 @@ TEAM_STRENGTH_EMBEDDING_SIZE = 24
 COMP_ID_EMBEDDING_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\comp_id_embedding_model.keras'
 TEAM_ID_EMBEDDING_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\team_id_embedding_model.keras'
 TEAM_STRENGTH_EMBEDDING_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\team_strength_embedding_model_gk_outfield_balanced.keras'
+MAIN_MODEL_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\main_model_ann.keras'
 
 ALMOST_ZERO = 0.001
 ALMOST_ONE = 0.999
@@ -171,3 +172,5 @@ TEAM_STRENGTH_NORM_PERCENTILES = {
 SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=270)  # 9 months
+
+BOARD_QUEUE_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\Board\\board_queue_rel.json'
