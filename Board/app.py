@@ -7,8 +7,19 @@ app = Flask(__name__)
 
 board = {}  # in-memory board dictionary, keyed by match_id
 BOARD_QUEUE_FILE = 'board_queue.json'
+COLORS_FILE = 'colors.json'
 
 processed_matches = set()
+
+
+def load_colors():
+    if os.path.exists(COLORS_FILE):
+        with open(COLORS_FILE, 'r') as f:
+            return {(entry["country"], entry["comp_name"]): entry["color"] for entry in json.load(f)}
+    return {}
+
+
+colors = load_colors()
 
 
 def load_board_queue():
@@ -32,6 +43,8 @@ def refresh_board():
     for match in matches:
         match_id = str(match['match_id'])
         match_dt = datetime.fromisoformat(match['datetime'])
+
+        match["color"] = colors.get((match["country"], match["comp_name"]), "white")
 
         if match_dt > now and match_id not in processed_matches:  # only add/keep matches upcoming and not processed yet
             board[match_id] = match

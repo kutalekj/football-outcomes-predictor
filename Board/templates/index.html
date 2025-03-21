@@ -30,6 +30,7 @@
     <thead>
     <tr>
         <th>Match ID</th>
+        <th>Country</th>
         <th>Competition</th>
         <th>Season</th>
         <th>Teams</th>
@@ -50,6 +51,7 @@
     <thead>
     <tr>
         <th>Match ID</th>
+        <th>Country</th>
         <th>Competition</th>
         <th>Season</th>
         <th>Teams</th>
@@ -88,7 +90,9 @@
 
             row.innerHTML = `
           <td>${match.match_id}</td>
+          <td>${match.country}</td>
           <td>${match.comp_name}</td>
+          <td style="background-color: ${match.color}">${match.comp_name}</td>
           <td>${match.season}</td>
           <td>${match.home_team} -- ${match.away_team}</td>
           <td>${new Date(match.datetime).toLocaleString()}</td>
@@ -107,7 +111,7 @@
             matchRows.push(row);
         });
 
-        highlightSelectedRow();  // first row selecte by default
+        highlightSelectedRow();  // first row selected by default
         await refreshProcessedMatches();  // fetch processed matches + update processedTable
     }
 
@@ -129,7 +133,9 @@
 
             row.innerHTML = `
           <td>${match.match_id}</td>
+          <td>${match.country}</td>
           <td>${match.comp_name}</td>
+          <td style="background-color: ${match.color}">${match.comp_name}</td>
           <td>${match.season}</td>
           <td>${match.home_team} vs ${match.away_team}</td>
           <td>${new Date(match.datetime).toLocaleString()}</td>
