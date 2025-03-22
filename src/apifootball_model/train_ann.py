@@ -13,11 +13,12 @@ import utils as ut
 
 NUM_TRAINING_ROUNDS = 25
 
-PAR_NEURONS = {'neu_1': 32, 'neu_2': 64, 'neu_3': 128}
-PAR_LR = {'lr_1': 0.00002, 'lr_2': 0.00007, 'lr_3': 0.0002, 'lr_4': 0.0007}
-PAR_DROPOUT = {'drp_1': 0.15, 'drp_2': 0.3, 'drp_3': 0.45}
+PAR_NEURONS = {'neu_1': 32, 'neu_2': 64}
+PAR_DROPOUT = {'drp_1m': 0.1, 'drp_1p': 0.2}
+PAR_LR = {'lr_2': 0.00007, 'lr_3m': 0.0001, 'lr_3': 0.0002}
+PAR_LR_DECAY = {'dec_1': 0.995}
 PAR_ACTIV = {'act_1': 'relu'}
-PAR_ITER = {'it_1': 1, 'it_2': 2, 'it_3': 3}
+PAR_ITER = {'it_1': 1, 'it_2': 2}
 
 
 def build_mlp(dense1_neurons=256, dense2_neurons=128, dense3_neurons=64, dropout1=0.6, dropout2=0.5, dropout3=0.4,
@@ -82,8 +83,8 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
     # Build main model
     init_lr = 0.00008
     lr_decay = 0.995
-    model, lr_schedule = build_mlp(dense1_neurons=256, dense2_neurons=128, dense3_neurons=64,
-                                   dropout1=0.4, dropout2=0.3, dropout3=0.2, lr=init_lr)
+    model, lr_schedule = build_mlp(dense1_neurons=128, dense2_neurons=64, dense3_neurons=32,
+                                   dropout1=0.5, dropout2=0.4, dropout3=0.3, lr=init_lr)
 
     # Train
     weighted_accuracy = []
