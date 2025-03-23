@@ -96,8 +96,9 @@ team_id_embedding_model = get_embedding_extractor(team_id_embedding_model, 'team
 
 while True:
     matches_to_predict = []
+    matches_to_predict_no_af_lineups = []
 
-    # Collect upcoming matches data for prediction
+    # Collect upcoming regular matches data for prediction
     for comp in global_instance.all_comps:
         if len(comp.regular_round_keywords) > 0:
             yesterday = datetime.now() - timedelta(days=1)
@@ -120,13 +121,11 @@ while True:
 
                 new_match.status = fixture['fixture']['status']['short']
 
-                """
                 if new_match.status not in ["NS"]:
                     print(
                         f"Found match between {fixture['teams']['home']['name']} and {fixture['teams']['away']['name']}"
                         f" played at {fixture['fixture']['date']} with the status of [{new_match.status}]. Skipping...")
                     continue
-                """  # TODO: Uncomment after testing done
 
                 new_match.datetime = parse(fixture['fixture']['date'])
                 new_match.hour = int(new_match.datetime.hour)
@@ -216,13 +215,44 @@ while True:
                         print(f"\tLineups missing for an away team in match between {new_match.home_team.name} and "
                               f"{new_match.away_team.name} played at {new_match.datetime}")
 
-                    if len(new_match.home_team_lineup) > 0 and len(new_match.away_team_lineup) > 0:
-                        matches_to_predict.append(new_match)
+                if new_match.home_team_lineup is not None and new_match.away_team_lineup is not None and \
+                        len(new_match.home_team_lineup) > 0 and len(new_match.away_team_lineup) > 0:
+                    matches_to_predict.append(new_match)
+
+                # If no AF lineups, but match to be played within 30 minutes, take prev match lineups for both team
+                elif 0 < (new_match.datetime - datetime.now().replace(tzinfo=new_match.datetime.tzinfo)).total_seconds() <= 18000:
+                    home_team_prev_match = ut.get_previous_match(new_match, new_match.home_team.id, same_comp=True,
+                                                                 same_season=False, regular=True)
+                    home_team_prev_af_lineup = home_team_prev_match.home_team_lineup if \
+                        home_team_prev_match.home_team.id == new_match.home_team.id else \
+                        home_team_prev_match.away_team_lineup
+
+                    away_team_prev_match = ut.get_previous_match(new_match, new_match.away_team.id, same_comp=True,
+                                                                 same_season=False, regular=True)
+                    away_team_prev_af_lineup = away_team_prev_match.away_team_lineup if \
+                        away_team_prev_match.away_team.id == new_match.away_team.id else \
+                        away_team_prev_match.home_team_lineup
+
+                    new_match.home_team_lineup = home_team_prev_af_lineup
+                    new_match.away_team_lineup = away_team_prev_af_lineup
+
+                    if len(new_match.home_team_lineup) != 11:  # check the fix
+                        raise ValueError(f"AF match home team lineup: [{new_match.home_team_lineup}] "
+                                         f"should contain 11 players")
+                    if len(new_match.away_team_lineup) != 11:  # check the fix
+                        raise ValueError(f"AF match away team lineup: [{new_match.away_team_lineup}] "
+                                         f"should contain 11 players")
+
+                    print(f"\t\t\tAF lineups taken from previous matches for teams {new_match.home_team.name} and "
+                          f"{new_match.away_team.name} (match played at {new_match.datetime})")
+                    matches_to_predict.append(new_match)
 
     # ----------- PREDICTION -----------
     board_queue_entries = []
     for match in matches_to_predict:
-        ut.get_fs_match_lineups(match)  # FS lineups
+        if match.home_fs_team_lineup is not None and match.away_fs_team_lineup is not None and \
+                len(match.home_fs_team_lineup) == 0 and len(match.away_fs_team_lineup) == 0:
+            ut.get_fs_match_lineups(match)  # FS lineups
 
         match.features_before_match_played = match.calculate_match_features()  # features
         match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(

@@ -361,27 +361,6 @@ def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
     return best_fs_match['id'], best_fs_match['cleanName']
 
 
-def match_af_team_to_fs_team_alternative(af_team_name, fs_teams_in_comp_season):
-    normalized_af_name = normalize_name(af_team_name)  # normalize AF team name
-
-    best_fs_match = None
-    highest_similarity = 0.0
-
-    for fs_team in fs_teams_in_comp_season['fs_teams']:
-        normalized_fs_clean_name = normalize_name(fs_team.name)  # normalize FS team name
-
-        similarity = fuzz.ratio(normalized_af_name, normalized_fs_clean_name)  # similarity
-
-        if similarity > highest_similarity:
-            highest_similarity = similarity
-            best_fs_match = fs_team
-
-    print(
-        f"AF team [{af_team_name}] matched to FS team [{best_fs_match['name']}] (similarity={str(highest_similarity)})")
-
-    return best_fs_match['id'], best_fs_match['name']
-
-
 def get_fs_match_lineups(curr_match):  # for both home and away teams!
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         return
