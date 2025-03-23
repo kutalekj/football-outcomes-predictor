@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 app = Flask(__name__)
 
 board = {}  # in-memory board dictionary, keyed by match_id
-BOARD_QUEUE_FILE = 'board_queue.json'
+BOARD_QUEUE_FILE = 'board_queue_rel.json'
 COLORS_FILE = 'colors.json'
 
 processed_matches = set()
