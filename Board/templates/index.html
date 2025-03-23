@@ -177,13 +177,41 @@
         // Update the Recommended Bet column
         const betFractionCell = document.getElementById(`bet_fraction_${match_id}`);
         betFractionCell.innerHTML = `Yes: ${result.recommended_bet_fraction_yes.toFixed(2)}<br>No: ${result.recommended_bet_fraction_no.toFixed(2)}`;
+
+        // Store both recommended bet values and odds in the row's dataset for later use
+        const row = document.getElementById(`match_${match_id}`);
+        row.dataset.recommendedBetYes = result.recommended_bet_fraction_yes;
+        row.dataset.recommendedBetNo = result.recommended_bet_fraction_no;
+        row.dataset.oddsYes = oddsYes;
+        row.dataset.oddsNo = oddsNo;
+        row.dataset.baseBet = baseBet;
     }
 
 
     async function markMatch(match_id) {
         console.log(`🔘 [DEBUG] Marking match ${match_id}`);
+        const row = document.getElementById(`match_${match_id}`);
 
-        const response = await fetch(`/mark/${match_id.toString()}`, {method: 'POST'});
+        // Read stored values from the row's dataset
+        const recommendedBetYes = row ? row.dataset.recommendedBetYes : null;
+        const recommendedBetNo = row ? row.dataset.recommendedBetNo : null;
+        const oddsYes = row ? row.dataset.oddsYes : null;
+        const oddsNo = row ? row.dataset.oddsNo : null;
+        const baseBet = row ? row.dataset.baseBet : 100;
+
+        const payload = {
+            odds_yes: oddsYes ? parseFloat(oddsYes) : null,
+            odds_no: oddsNo ? parseFloat(oddsNo) : null,
+            recommended_bet_yes: recommendedBetYes ? parseFloat(recommendedBetYes) : null,
+            recommended_bet_no: recommendedBetNo ? parseFloat(recommendedBetNo) : null,
+            base_bet: parseFloat(baseBet)
+        };
+
+         const response = await fetch(`/mark/${match_id.toString()}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
 
         if (!response.ok) {
             alert("Error marking match.");

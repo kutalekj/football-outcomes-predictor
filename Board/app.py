@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 import json
 import os
+import csv
 from datetime import datetime, timezone
 
 app = Flask(__name__)
@@ -8,6 +9,7 @@ app = Flask(__name__)
 board = {}  # in-memory board dictionary, keyed by match_id
 BOARD_QUEUE_FILE = 'board_queue_rel.json'
 COLORS_FILE = 'colors.json'
+RECORDS_FILE = 'records.csv'
 
 processed_matches = set()
 
@@ -105,6 +107,72 @@ def trigger(match_id):
 @app.route('/mark/<match_id>', methods=['POST'])
 def mark(match_id):
     match_id = str(match_id)
+    data = request.json or {}
+
+    # Extract odds and recommended bet from the payload (from the front end)
+    odds_yes = data.get("odds_yes")
+    odds_no = data.get("odds_no")
+    recommended_bet_yes = data.get("recommended_bet_yes")
+    recommended_bet_no = data.get("recommended_bet_no")
+    base_bet = data.get("base_bet", 100)
+
+    # Get the match details from board or board queue
+    match = board.get(match_id)
+    if not match:
+        # If not in board, try to find it in the board queue
+        for m in load_board_queue():
+            if str(m['match_id']) == match_id:
+                match = m
+                break
+    if not match:
+        return jsonify({"error": f"Match {match_id} not found"}), 404
+
+    # Compute the time remaining (in seconds) to the match start
+    now = datetime.now(timezone.utc)
+    match_dt = datetime.fromisoformat(match['datetime']).astimezone(timezone.utc)
+    time_remaining = (match_dt - now).total_seconds()
+    if time_remaining < 0:
+        time_remaining = 0
+
+    # Append to CSV records if the match_id is not already present.
+    if not os.path.exists(RECORDS_FILE):
+        # Write header if file does not exist
+        with open(RECORDS_FILE, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "match_id", "country", "comp_name", "season", "home_team", "away_team",
+                "prediction", "odds_yes", "odds_no", "base_bet", "recommended_bet_yes", "recommended_bet_no",
+                "time_remaining_sec"
+            ])
+
+    # Check if the match is already recorded.
+    recorded = False
+    with open(RECORDS_FILE, "r", newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            if row["match_id"] == match_id:
+                recorded = True
+                break
+
+    if not recorded:
+        with open(RECORDS_FILE, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                match_id,
+                match.get("country", ""),
+                match.get("comp_name", ""),
+                match.get("season", ""),
+                match.get("home_team", ""),
+                match.get("away_team", ""),
+                match.get("prediction", ""),
+                odds_yes,
+                odds_no,
+                base_bet,
+                recommended_bet_yes,
+                recommended_bet_no,
+                round(time_remaining)
+            ])
+        print(f"📑 [DEBUG] Appended record for match {match_id} to {RECORDS_FILE}")
 
     # If match in processed_matches, unmark it and restore it to board
     if match_id in processed_matches:
