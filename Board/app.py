@@ -134,6 +134,8 @@ def mark(match_id):
     if time_remaining < 0:
         time_remaining = 0
 
+    match_start_datetime_utc = match_dt.strftime("%Y-%m-%d %H:00 UTC")
+
     # Append to CSV records if the match_id is not already present.
     if not os.path.exists(RECORDS_FILE):
         # Write header if file does not exist
@@ -142,7 +144,7 @@ def mark(match_id):
             writer.writerow([
                 "match_id", "country", "comp_name", "season", "home_team", "away_team",
                 "prediction", "odds_yes", "odds_no", "base_bet", "recommended_bet_yes", "recommended_bet_no",
-                "time_remaining_sec"
+                "time_remaining_sec", "match_start_datetime_utc"
             ])
 
     # Check if the match is already recorded.
@@ -170,7 +172,8 @@ def mark(match_id):
                 base_bet,
                 recommended_bet_yes,
                 recommended_bet_no,
-                round(time_remaining)
+                round(time_remaining),
+                match_start_datetime_utc
             ])
         print(f"📑 [DEBUG] Appended record for match {match_id} to {RECORDS_FILE}")
 
@@ -179,7 +182,7 @@ def mark(match_id):
         processed_matches.discard(match_id)
         print(f"🔄 [DEBUG] Match {match_id} marked as NOT processed.")
 
-        matches = load_board_queue()  # restore the match from board queue file
+        matches = load_board_queue()  # restore the matches from board queue file
         for match in matches:
             if str(match['match_id']) == match_id:
                 board[match_id] = match  # re-add to board
