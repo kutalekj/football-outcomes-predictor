@@ -16,7 +16,7 @@ processed_matches = set()
 
 def load_colors():
     if os.path.exists(COLORS_FILE):
-        with open(COLORS_FILE, 'r') as f:
+        with open(COLORS_FILE, 'r', encoding="utf-8") as f:
             return {(entry["country"], entry["comp_name"]): entry["color"] for entry in json.load(f)}
     return {}
 
@@ -27,7 +27,7 @@ colors = load_colors()
 def load_board_queue():
     if not os.path.exists(BOARD_QUEUE_FILE):
         return []
-    with open(BOARD_QUEUE_FILE, 'r') as f:
+    with open(BOARD_QUEUE_FILE, 'r', encoding="utf-8") as f:
         return json.load(f)  # return list of matches from board queue file
 
 
@@ -139,7 +139,7 @@ def mark(match_id):
     # Append to CSV records if the match_id is not already present.
     if not os.path.exists(RECORDS_FILE):
         # Write header if file does not exist
-        with open(RECORDS_FILE, "w", newline="") as f:
+        with open(RECORDS_FILE, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow([
                 "match_id", "country", "comp_name", "season", "home_team", "away_team",
@@ -149,7 +149,7 @@ def mark(match_id):
 
     # Check if the match is already recorded.
     recorded = False
-    with open(RECORDS_FILE, "r", newline="") as f:
+    with open(RECORDS_FILE, "r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             if row["match_id"] == match_id:
@@ -157,7 +157,7 @@ def mark(match_id):
                 break
 
     if not recorded:
-        with open(RECORDS_FILE, "a", newline="") as f:
+        with open(RECORDS_FILE, "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow([
                 match_id,

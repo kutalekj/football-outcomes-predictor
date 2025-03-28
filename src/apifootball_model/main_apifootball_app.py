@@ -18,7 +18,7 @@ from season_comp_table import SeasonCompTable
 from train_ann import get_embedding_extractor, normalize_embeddings
 import tzlocal
 
-WAIT_SECS = 300
+WAIT_SECS = 420
 
 global_instance = Global.get_instance()
 
@@ -220,7 +220,8 @@ while True:
                     matches_to_predict.append(new_match)
 
                 # If no AF lineups, but match to be played within 30 minutes, take prev match lineups for both team
-                elif 0 < (new_match.datetime - datetime.now().replace(tzinfo=new_match.datetime.tzinfo)).total_seconds() <= 18000:
+                # TODO: I think the time zones are still not handled correctly here...
+                elif 0 < (new_match.datetime - datetime.now().replace(tzinfo=new_match.datetime.tzinfo)).total_seconds() <= 1800:
                     home_team_prev_match = ut.get_previous_match(new_match, new_match.home_team.id, same_comp=True,
                                                                  same_season=False, regular=True)
                     home_team_prev_af_lineup = home_team_prev_match.home_team_lineup if \
@@ -243,8 +244,8 @@ while True:
                         raise ValueError(f"AF match away team lineup: [{new_match.away_team_lineup}] "
                                          f"should contain 11 players")
 
-                    print(f"\t\t\tAF lineups taken from previous matches for teams {new_match.home_team.name} and "
-                          f"{new_match.away_team.name} (match played at {new_match.datetime})")
+                    print(f"\t\t\t\t\tAF lineups taken from previous matches for teams [{new_match.home_team.name}] and"
+                          f" [{new_match.away_team.name}] (match played at {new_match.datetime})")
                     matches_to_predict.append(new_match)
 
     # ----------- PREDICTION -----------
@@ -252,6 +253,7 @@ while True:
     for match in matches_to_predict:
         if match.home_fs_team_lineup is not None and match.away_fs_team_lineup is not None and \
                 len(match.home_fs_team_lineup) == 0 and len(match.away_fs_team_lineup) == 0:
+            print("")
             ut.get_fs_match_lineups(match)  # FS lineups
 
         match.features_before_match_played = match.calculate_match_features()  # features
@@ -325,7 +327,7 @@ while True:
         board_queue_entries.append(board_entry)
 
     # Update "the board_queue.json" file with the new prediction entries
-    with open(settings.BOARD_QUEUE_PATH, "w") as f:
+    with open(settings.BOARD_QUEUE_PATH, "w", encoding="utf-8") as f:
         json.dump(board_queue_entries, f, indent=2)
 
     print(f"Saved {len(board_queue_entries)} entries to the board queue")
