@@ -18,6 +18,28 @@ from season_comp_table import SeasonCompTable
 from train_ann import get_embedding_extractor, normalize_embeddings
 import tzlocal
 
+
+"""
+conn = http.client.HTTPSConnection(settings.HOST)
+conn.request("GET", "/timezone", headers=settings.HEADERS)
+res = conn.getresponse()
+data = res.read()
+data_tz = json.loads(data)
+
+yesterday = datetime.now() - timedelta(days=1)
+tomorrow = datetime.now() + timedelta(days=1)
+
+# API call
+request_string = "/fixtures?season=" + str(settings.LAST_SEASON) + "&league=" + str(119) + \
+                 "&from=" + yesterday.strftime("%Y-%m-%d") + "&to=" + tomorrow.strftime("%Y-%m-%d") + "&timezone=Europe/Amsterdam"
+
+conn = http.client.HTTPSConnection(settings.HOST)
+conn.request("GET", request_string, headers=settings.HEADERS)
+res = conn.getresponse()
+data = res.read()
+data_fixtures = json.loads(data)
+"""
+
 WAIT_SECS = 420
 
 global_instance = Global.get_instance()
@@ -97,6 +119,7 @@ team_id_embedding_model = get_embedding_extractor(team_id_embedding_model, 'team
 while True:
     matches_to_predict = []
     matches_to_predict_no_af_lineups = []
+    lineup_estimation_logs = []
 
     # Collect upcoming regular matches data for prediction
     for comp in global_instance.all_comps:
@@ -106,7 +129,8 @@ while True:
 
             # API call
             request_string = "/fixtures?season=" + str(settings.LAST_SEASON) + "&league=" + str(comp.id) + \
-                             "&from=" + yesterday.strftime("%Y-%m-%d") + "&to=" + tomorrow.strftime("%Y-%m-%d")
+                             "&from=" + yesterday.strftime("%Y-%m-%d") + "&to=" + tomorrow.strftime("%Y-%m-%d") + \
+                             "&timezone=Europe/Amsterdam"
 
             conn = http.client.HTTPSConnection(settings.HOST)
             conn.request("GET", request_string, headers=settings.HEADERS)
@@ -244,92 +268,101 @@ while True:
                         raise ValueError(f"AF match away team lineup: [{new_match.away_team_lineup}] "
                                          f"should contain 11 players")
 
-                    print(f"\t\t\t\t\tAF lineups taken from previous matches for teams [{new_match.home_team.name}] and"
-                          f" [{new_match.away_team.name}] (match played at {new_match.datetime})")
+                    log_str = f"\t\t\t\t\tAF lineups taken from previous matches for teams " \
+                              f"[{new_match.home_team.name}] and [{new_match.away_team.name}] " \
+                              f"(match played at {new_match.datetime})"
+                    print(log_str)
+                    lineup_estimation_logs.append(log_str)
+
                     matches_to_predict.append(new_match)
 
     # ----------- PREDICTION -----------
     board_queue_entries = []
     for match in matches_to_predict:
-        if match.home_fs_team_lineup is not None and match.away_fs_team_lineup is not None and \
-                len(match.home_fs_team_lineup) == 0 and len(match.away_fs_team_lineup) == 0:
-            print("")
-            ut.get_fs_match_lineups(match)  # FS lineups
+        try:
+            if match.home_fs_team_lineup is not None and match.away_fs_team_lineup is not None and \
+                    len(match.home_fs_team_lineup) == 0 and len(match.away_fs_team_lineup) == 0:
+                print("")
+                ut.get_fs_match_lineups(match)  # FS lineups
 
-        match.features_before_match_played = match.calculate_match_features()  # features
-        match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
-            match.features_before_match_played)
+            match.features_before_match_played = match.calculate_match_features()  # features
+            match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
+                match.features_before_match_played)
 
-        numerical_input = np.array([match.feature_vector_before_match_played])
+            numerical_input = np.array([match.feature_vector_before_match_played])
 
-        # Map raw categorical features to indices
-        home_id_input = [team_id_map[match.home_team.id]]
-        away_id_input = [team_id_map[match.away_team.id]]
-        comp_id_input = [comp_id_map[match.comp.id]]
+            # Map raw categorical features to indices
+            home_id_input = [team_id_map[match.home_team.id]]
+            away_id_input = [team_id_map[match.away_team.id]]
+            comp_id_input = [comp_id_map[match.comp.id]]
 
-        # Scale team strength features skills to [0,1]
-        home_strength = np.array(
-            [[z / 100.0 for z in y] for y in match.features_before_match_played.home_team_strength])
-        away_strength = np.array(
-            [[z / 100.0 for z in y] for y in match.features_before_match_played.away_team_strength])
+            # Scale team strength features skills to [0,1]
+            home_strength = np.array(
+                [[z / 100.0 for z in y] for y in match.features_before_match_played.home_team_strength])
+            away_strength = np.array(
+                [[z / 100.0 for z in y] for y in match.features_before_match_played.away_team_strength])
 
-        # Normalize team strength features (expected shape is (11, 34) - add batch dimension, then remove it)
-        home_strength_norm = np.squeeze(
-            ut.separate_normalize_gk_and_outfield_skills(np.expand_dims(home_strength, axis=0)), axis=0)
-        away_strength_norm = np.squeeze(
-            ut.separate_normalize_gk_and_outfield_skills(np.expand_dims(away_strength, axis=0)), axis=0)
+            # Normalize team strength features (expected shape is (11, 34) - add batch dimension, then remove it)
+            home_strength_norm = np.squeeze(
+                ut.separate_normalize_gk_and_outfield_skills(np.expand_dims(home_strength, axis=0)), axis=0)  # TODO: Error once occurred here - home_strength not having enough dimensions
+            away_strength_norm = np.squeeze(
+                ut.separate_normalize_gk_and_outfield_skills(np.expand_dims(away_strength, axis=0)), axis=0)
 
-        home_strength_input = [home_strength_norm]
-        away_strength_input = [away_strength_norm]
+            home_strength_input = [home_strength_norm]
+            away_strength_input = [away_strength_norm]
 
-        # For categorical features add extra dimension so each input is shape (1,)
-        home_id_array = np.expand_dims(np.array(home_id_input), axis=-1)  # shape: (num_samples = 1, 1)
-        away_id_array = np.expand_dims(np.array(away_id_input), axis=-1)
-        comp_id_array = np.expand_dims(np.array(comp_id_input), axis=-1)
+            # For categorical features add extra dimension so each input is shape (1,)
+            home_id_array = np.expand_dims(np.array(home_id_input), axis=-1)  # shape: (num_samples = 1, 1)
+            away_id_array = np.expand_dims(np.array(away_id_input), axis=-1)
+            comp_id_array = np.expand_dims(np.array(comp_id_input), axis=-1)
 
-        # For team strength assuming each normalized sample is (11, 34)
-        home_strength_array = np.array(home_strength_input)  # shape: (num_samples = 1, 11, 34)
-        away_strength_array = np.array(away_strength_input)
+            # For team strength assuming each normalized sample is (11, 34)
+            home_strength_array = np.array(home_strength_input)  # shape: (num_samples = 1, 11, 34)
+            away_strength_array = np.array(away_strength_input)
 
-        # Batch predict embeddings
-        home_id_embedding = np.squeeze(team_id_embedding_model.predict(home_id_array), axis=1)  # (num_samples = 1, 8)
-        away_id_embedding = np.squeeze(team_id_embedding_model.predict(away_id_array), axis=1)
-        comp_id_embedding = np.squeeze(comp_id_embedding_model.predict(comp_id_array), axis=1)
-        home_strength_embedding = team_strength_embedding_model.predict(home_strength_array)
-        away_strength_embedding = team_strength_embedding_model.predict(away_strength_array)
+            # Batch predict embeddings
+            home_id_embedding = np.squeeze(team_id_embedding_model.predict(home_id_array), axis=1)  # (num_samples = 1, 8)
+            away_id_embedding = np.squeeze(team_id_embedding_model.predict(away_id_array), axis=1)
+            comp_id_embedding = np.squeeze(comp_id_embedding_model.predict(comp_id_array), axis=1)
+            home_strength_embedding = team_strength_embedding_model.predict(home_strength_array)
+            away_strength_embedding = team_strength_embedding_model.predict(away_strength_array)
 
-        # Normalize predicted embeddings to [0,1]
-        home_id_embedding = normalize_embeddings(home_id_embedding)
-        away_id_embedding = normalize_embeddings(away_id_embedding)
-        comp_id_embedding = normalize_embeddings(comp_id_embedding)
+            # Normalize predicted embeddings to [0,1]
+            home_id_embedding = normalize_embeddings(home_id_embedding)
+            away_id_embedding = normalize_embeddings(away_id_embedding)
+            comp_id_embedding = normalize_embeddings(comp_id_embedding)
 
-        # Generate model prediction
-        pred = model.predict([numerical_input, home_id_embedding, away_id_embedding, comp_id_embedding,
-                              home_strength_embedding, away_strength_embedding])
-        pred_prob = float(pred[0][0])
+            # Generate model prediction
+            pred = model.predict([numerical_input, home_id_embedding, away_id_embedding, comp_id_embedding,
+                                  home_strength_embedding, away_strength_embedding])
+            pred_prob = float(pred[0][0])
 
-        # Prepare the board queue entry
-        board_entry = {
-            "match_id": match.id,
-            "country": match.country,
-            "comp_name": match.comp.name,
-            "season": match.season,
-            "home_team": match.home_team.name,
-            "away_team": match.away_team.name,
-            "datetime": (match.datetime.astimezone(tzlocal.get_localzone())).isoformat(),
-            "lineups": {
-                "home": [player[1] for player in match.home_team_lineup],
-                "away": [player[1] for player in match.away_team_lineup]
-            },
-            "prediction": pred_prob,
-            "processed": False
-        }
-        board_queue_entries.append(board_entry)
+            # Prepare the board queue entry
+            board_entry = {
+                "match_id": match.id,
+                "country": match.country,
+                "comp_name": match.comp.name,
+                "season": match.season,
+                "home_team": match.home_team.name,
+                "away_team": match.away_team.name,
+                "datetime": (match.datetime.astimezone(tzlocal.get_localzone())).isoformat(),
+                "lineups": {
+                    "home": [player[1] for player in match.home_team_lineup],
+                    "away": [player[1] for player in match.away_team_lineup]
+                },
+                "prediction": pred_prob,
+                "processed": False
+            }
+            board_queue_entries.append(board_entry)
+        except:
+            pass
 
     # Update "the board_queue.json" file with the new prediction entries
     with open(settings.BOARD_QUEUE_PATH, "w", encoding="utf-8") as f:
         json.dump(board_queue_entries, f, indent=2)
 
+    for log_s in lineup_estimation_logs:
+        print(str(log_s))
     print(f"Saved {len(board_queue_entries)} entries to the board queue")
 
     time.sleep(WAIT_SECS)  # active waiting
