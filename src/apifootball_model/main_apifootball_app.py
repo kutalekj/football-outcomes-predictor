@@ -17,32 +17,18 @@ from comp import Comp
 from season_comp_table import SeasonCompTable
 from train_ann import get_embedding_extractor, normalize_embeddings
 import tzlocal
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-
-"""
-conn = http.client.HTTPSConnection(settings.HOST)
-conn.request("GET", "/timezone", headers=settings.HEADERS)
-res = conn.getresponse()
-data = res.read()
-data_tz = json.loads(data)
-
-yesterday = datetime.now() - timedelta(days=1)
-tomorrow = datetime.now() + timedelta(days=1)
-
-# API call
-request_string = "/fixtures?season=" + str(settings.LAST_SEASON) + "&league=" + str(119) + \
-                 "&from=" + yesterday.strftime("%Y-%m-%d") + "&to=" + tomorrow.strftime("%Y-%m-%d") + "&timezone=Europe/Amsterdam"
-
-conn = http.client.HTTPSConnection(settings.HOST)
-conn.request("GET", request_string, headers=settings.HEADERS)
-res = conn.getresponse()
-data = res.read()
-data_fixtures = json.loads(data)
-"""
 
 WAIT_SECS = 420
 
 global_instance = Global.get_instance()
+
+# Init Firebase Admin
+cred = credentials.Certificate(settings.FIREBASE_CREDENTIALS_PATH)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # 0. Load average skills and team strengths (SF)
 in_out.load_sf_avg_team_strength()
@@ -339,10 +325,10 @@ while True:
 
             # Prepare the board queue entry
             board_entry = {
-                "match_id": match.id,
+                "match_id": str(match.id),
                 "country": match.country,
                 "comp_name": match.comp.name,
-                "season": match.season,
+                "season": str(match.season),
                 "home_team": match.home_team.name,
                 "away_team": match.away_team.name,
                 "datetime": (match.datetime.astimezone(tzlocal.get_localzone())).isoformat(),
@@ -358,8 +344,24 @@ while True:
             pass
 
     # Update "the board_queue.json" file with the new prediction entries
-    with open(settings.BOARD_QUEUE_PATH, "w", encoding="utf-8") as f:
-        json.dump(board_queue_entries, f, indent=2)
+    # with open(settings.BOARD_QUEUE_PATH, "w", encoding="utf-8") as f:
+    #     json.dump(board_queue_entries, f, indent=2)
+
+    # Update the boardQueue collection in Firestore.
+    board_collection = db.collection("boardQueue")
+
+    # For simplicity, clear the collection first (for iterative updates)
+    # NOTE: In production you might use more selective updating.
+    docs = board_collection.stream()
+    for doc in docs:
+        doc.reference.delete()
+
+    # Now add each board entry
+    for entry in board_queue_entries:
+        # Use match_id as document id
+        board_collection.document(str(entry["match_id"])).set(entry)
+
+    print(f"Updated Firestore with {len(board_queue_entries)} board entries.")
 
     for log_s in lineup_estimation_logs:
         print(str(log_s))
