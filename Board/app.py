@@ -4,13 +4,22 @@ import os
 import csv
 from datetime import datetime, timezone
 
+import firebase_admin
+from firebase_admin import credentials, firestore
+
 app = Flask(__name__)
 
-board = {}  # in-memory board dictionary, keyed by match_id
-BOARD_QUEUE_FILE = 'board_queue_rel.json'
-COLORS_FILE = 'colors.json'
-RECORDS_FILE = 'records.csv'
+cred = credentials.Certificate("boardmobile-61491-firebase-adminsdk-fbsvc-5839d80385.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
+# BOARD_QUEUE_FILE = 'board_queue_rel.json'
+BOARD_COLLECTION = "boardQueue"
+COLORS_FILE = 'colors.json'
+# RECORDS_FILE = 'records.csv'
+RECORDS_COLLECTION = 'records'
+
+board = {}  # in-memory board dictionary, keyed by match_id
 processed_matches = set()
 
 
@@ -24,35 +33,41 @@ def load_colors():
 colors = load_colors()
 
 
+"""
 def load_board_queue():
     if not os.path.exists(BOARD_QUEUE_FILE):
         return []
     with open(BOARD_QUEUE_FILE, 'r', encoding="utf-8") as f:
         return json.load(f)  # return list of matches from board queue file
+"""
 
 
 def refresh_board():
     global board
-    matches = load_board_queue()
+    # matches = load_board_queue()
+    docs = db.collection(BOARD_COLLECTION).stream()  # queue Firestore for boardQueue documents
     now = datetime.now(timezone.utc)
 
     print(f"🔄 [DEBUG] Refreshing board... Current Board Size: {len(board)}")
 
     # Rebuild board with unmarked matches
     board.clear()
+    count = 0
 
     # Add new matches and update existing ones
-    for match in matches:
-        match_id = str(match['match_id'])
-        match_dt = datetime.fromisoformat(match['datetime'])
+    for doc in docs:
+        match = doc.to_dict()
+        match_id = str(match.get('match_id'))
+        match_dt = datetime.fromisoformat(match.get('datetime'))
 
-        match["color"] = colors.get((match["country"], match["comp_name"]), "white")
+        match["color"] = colors.get((match.get("country"), match.get("comp_name")), "white")
 
         if match_dt > now and match_id not in processed_matches:  # only add/keep matches upcoming and not processed yet
             board[match_id] = match
+            count += 1
             print(f"✅ [DEBUG] Match {match_id} added to board.")
 
-    print(f"📋 [DEBUG] Board after refresh: {list(board.keys())}")
+    print(f"📋 [DEBUG] Board after refresh: {list(board.keys())} (Total: {count})")
 
 
 @app.route('/refresh', methods=['GET'])
@@ -104,7 +119,7 @@ def trigger(match_id):
     })
 
 
-@app.route('/mark/<match_id>', methods=['POST'])
+@app.route('/mark/<match_id>', methods=['POST'])  # TODO: Don't refresh Board on Mark to not override the entered odds?
 def mark(match_id):
     match_id = str(match_id)
     data = request.json or {}
@@ -119,23 +134,55 @@ def mark(match_id):
     # Get the match details from board or board queue
     match = board.get(match_id)
     if not match:
+
+        # Try to fetch from Firestore if not in in-memory board.
+        doc = db.collection(BOARD_COLLECTION).document(match_id).get()
+        if doc.exists:
+            match = doc.to_dict()
+        else:
+            return jsonify({"error": f"Match {match_id} not found"}), 404
+        """
         # If not in board, try to find it in the board queue
         for m in load_board_queue():
             if str(m['match_id']) == match_id:
                 match = m
                 break
+        
     if not match:
         return jsonify({"error": f"Match {match_id} not found"}), 404
+        """
 
     # Compute the time remaining (in seconds) to the match start
     now = datetime.now(timezone.utc)
-    match_dt = datetime.fromisoformat(match['datetime']).astimezone(timezone.utc)
+    match_dt = datetime.fromisoformat(match.get('datetime')).astimezone(timezone.utc)
     time_remaining = (match_dt - now).total_seconds()
     if time_remaining < 0:
         time_remaining = 0
 
     match_start_datetime_utc = match_dt.strftime("%Y-%m-%d %H:00 UTC")
 
+    # Log this marked match in Firestore records collection
+    record_ref = db.collection(RECORDS_COLLECTION).document(match_id)
+    if not record_ref.get().exists:
+        record_ref.set({
+            "match_id": match_id,
+            "country": match.get("country", ""),
+            "comp_name": match.get("comp_name", ""),
+            "season": match.get("season", ""),
+            "home_team": match.get("home_team", ""),
+            "away_team": match.get("away_team", ""),
+            "prediction": match.get("prediction", ""),
+            "odds_yes": odds_yes,
+            "odds_no": odds_no,
+            "base_bet": base_bet,
+            "recommended_bet_yes": recommended_bet_yes,
+            "recommended_bet_no": recommended_bet_no,
+            "time_remaining_sec": round(time_remaining),
+            "match_start_datetime_utc": match_start_datetime_utc
+        })
+        print(f"📑 [DEBUG] Appended record for match {match_id} to Firestore records collection")
+
+    """
     # Append to CSV records if the match_id is not already present.
     if not os.path.exists(RECORDS_FILE):
         # Write header if file does not exist
@@ -176,22 +223,27 @@ def mark(match_id):
                 match_start_datetime_utc
             ])
         print(f"📑 [DEBUG] Appended record for match {match_id} to {RECORDS_FILE}")
+    """
 
     # If match in processed_matches, unmark it and restore it to board
     if match_id in processed_matches:
         processed_matches.discard(match_id)
+        db.collection(BOARD_COLLECTION).document(match_id).update({"processed": False})  # optional?
         print(f"🔄 [DEBUG] Match {match_id} marked as NOT processed.")
 
+        """
         matches = load_board_queue()  # restore the matches from board queue file
         for match in matches:
             if str(match['match_id']) == match_id:
                 board[match_id] = match  # re-add to board
                 print(f"✅ [DEBUG] Match {match_id} restored to board.")
                 break  # stop once the match is found
+        """
 
     # If match is in board, mark as processed
     elif match_id in board:
         processed_matches.add(match_id)
+        db.collection(BOARD_COLLECTION).document(match_id).update({"processed": True})
         print(f"✅ [DEBUG] Match {match_id} marked as processed.")
 
     else:
@@ -206,13 +258,19 @@ def get_processed_upcoming_matches():
     now = datetime.now(timezone.utc)
 
     processed_upcoming_list = []
-    matches = load_board_queue()
 
-    for match in matches:
-        match_id = str(match['match_id'])
-        match_dt = datetime.fromisoformat(match['datetime'])
+    # Query Firestore boardQueue for documents marked as processed.
+    docs = db.collection(BOARD_COLLECTION).where("processed", "==", True).stream()
 
-        if match_id in processed_matches and match_dt > now:
+    # matches = load_board_queue()
+
+    for doc in docs:
+        match = doc.to_dict()
+        # match_id = str(match['match_id'])
+        match_dt = datetime.fromisoformat(match.get('datetime'))
+
+        # if match_id in processed_matches and match_dt > now:
+        if match_dt > now:
             processed_upcoming_list.append(match)
 
     return jsonify(processed_upcoming_list)
@@ -224,4 +282,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
