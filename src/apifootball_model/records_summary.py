@@ -39,35 +39,42 @@ def plot_winning_graph(records_file):
         else:
             plt.fill_between(x_range, y2, y1, color="orangered", alpha=0.3)
 
+    # Alternate background shading by day
+    df["date_only"] = df["match_start_datetime_utc"].dt.date
+    unique_dates = df["date_only"].unique()  # group by date for day separation
+
+    shade = True
+    for date in unique_dates:
+        day_indices = df.index[df["date_only"] == date].tolist()
+        if not day_indices:
+            continue
+        start_idx = day_indices[0]
+        end_idx = day_indices[-1]
+        if shade:
+            plt.axvspan(start_idx - 0.5, end_idx + 0.5, facecolor="darkgray", alpha=0.2, zorder=0)
+        shade = not shade
+
     # Add vertical lines and segment progress labels
     for update in model_updates:
         idx = df["match_start_datetime_utc"].searchsorted(update)
         if 0 <= idx < len(df):
-            plt.axvline(x=idx, color="gray", linestyle="--", linewidth=1)
+            plt.axvline(x=idx, color="gray", linestyle="--", linewidth=1.7)
             diff = df["cumulative_won"].iloc[idx] - df["cumulative_bet"].iloc[idx]
             color = "green" if diff >= 0 else "red"
-            plt.text(
-                idx + 0.5,
-                df[["cumulative_bet", "cumulative_won"]].max().max() * 0.95,
-                f"{diff:+.2f}",
-                color=color,
-                rotation=90,
-                verticalalignment="top",
-                fontsize=9
-            )
+            plt.text(idx + 0.5, df[["cumulative_bet", "cumulative_won"]].max().max() * 0.95, f"{diff:+.2f}",
+                     color=color, rotation=90, verticalalignment="top", fontsize=10)
 
     # Add final state label
     final_idx = len(df) - 1
     final_diff = df["cumulative_won"].iloc[final_idx] - df["cumulative_bet"].iloc[final_idx]
     final_color = "green" if final_diff >= 0 else "red"
-    plt.text(
-        final_idx,
-        max(df["cumulative_bet"].iloc[final_idx], df["cumulative_won"].iloc[final_idx]) + 70,
-        f"{final_diff:+.2f}",
-        ha="center",
-        fontsize=14,
-        color=final_color
-    )
+    plt.text(final_idx, max(df["cumulative_bet"].iloc[final_idx], df["cumulative_won"].iloc[final_idx]) + 70,
+             f"{final_diff:+.2f}", ha="center", fontsize=14, color=final_color)
+
+    # Total number of bets label
+    total_bets = len(df)
+    plt.text(0.99, 0.01, f"Total bets: {total_bets}",
+             transform=plt.gca().transAxes, ha="right", va="bottom", fontsize=10, color="black")
 
     # Formatting axes and labels
     tick_step = max(1, len(x) // 10)
