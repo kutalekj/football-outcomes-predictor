@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+import pandas as pd
 from argparse import ArgumentParser
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -10,35 +11,71 @@ plt.switch_backend('TkAgg')
 
 
 def plot_winning_graph(records_file):
-    model_updates = ["2025-03-27 00:00 UTC", "2025-03-30 00:00 UTC", "2025-04-04 00:00 UTC"]
 
-    # Load records
-    values = []
-    with open(records_file, "r", newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            values.append((datetime.strptime(row["match_start_datetime_utc"], "%Y-%m-%d %H:%M UTC"),
-                           float(row["bet_placed"]), float(row["won"])))
-    values.sort(key=lambda x: x[0])  # sort by datetime
+    # Load the data
+    df = pd.read_csv(records_file, encoding="utf-8")
+    df["match_start_datetime_utc"] = pd.to_datetime(df["match_start_datetime_utc"], format="%Y-%m-%d %H:%M UTC")
+    df = df.sort_values(by="match_start_datetime_utc").reset_index(drop=True)  # sort by datetime (asc.)
+
+    df["cumulative_bet"] = df["bet_placed"].astype(float).cumsum()
+    df["cumulative_won"] = df["won"].astype(float).cumsum()
+
+    model_updates = [datetime(2025, 3, 27), datetime(2025, 3, 30), datetime(2025, 4, 4)]
+
+    x = list(range(len(df)))
+    x_labels = df["match_start_datetime_utc"].dt.strftime("%Y-%m-%d")  # x-axis as indices (to get linear spacing)
 
     # Plot
-    x = [x[0] for x in values]
-    y_bet = np.cumsum([x[1] for x in values])
-    y_won = np.cumsum([x[2] for x in values])
+    plt.figure(figsize=(10, 6))
+    plt.plot(x, df["cumulative_bet"], label="Bet", color="red")
+    plt.plot(x, df["cumulative_won"], label="Won", color="green")
 
-    plt.gca().xaxis.set_major_formatter(m_dates.DateFormatter("%Y-%m-%d"))
-    plt.plot(x, y_bet, label="Bet")
-    plt.plot(x, y_won, label="Won")
-    plt.gcf().autofmt_xdate()
-    for update in model_updates:
-        plt.axvline(datetime.strptime(update, "%Y-%m-%d %H:%M UTC"), color='gray', linestyle='--', linewidth=1,
-                    label='model update' if update == model_updates[0] else None)
+    for i in range(len(x)):  # color fill areas between curves
+        if df["cumulative_won"].iloc[i] > df["cumulative_bet"].iloc[i]:
+            plt.fill_between([x[i - 1], x[i]] if i > 0 else [x[i], x[i]],
+                             df["cumulative_bet"].iloc[i - 1:i + 1] if i > 0 else [df["cumulative_bet"].iloc[i]],
+                             df["cumulative_won"].iloc[i - 1:i + 1] if i > 0 else [df["cumulative_won"].iloc[i]],
+                             color="lawngreen", alpha=0.3)
+        else:
+            plt.fill_between([x[i - 1], x[i]] if i > 0 else [x[i], x[i]],
+                             df["cumulative_won"].iloc[i - 1:i + 1] if i > 0 else [df["cumulative_won"].iloc[i]],
+                             df["cumulative_bet"].iloc[i - 1:i + 1] if i > 0 else [df["cumulative_bet"].iloc[i]],
+                             color="orangered", alpha=0.3)
 
-    plt.title("Cumulative sums of bet and won values")
-    plt.xlabel("Date of match played")
-    plt.ylabel("Value")
+    for update in model_updates:  # add model update v-lines and segment annotations
+        closest_index = df["match_start_datetime_utc"].searchsorted(update)
+        if 0 <= closest_index < len(df):
+            plt.axvline(x=closest_index, color="gray", linestyle="--", linewidth=1)
+            diff = df["cumulative_won"].iloc[closest_index] - df["cumulative_bet"].iloc[closest_index]
+            text_color = 'green' if diff >= 0 else 'red'
+            plt.text(closest_index + 0.5,
+                     df[["cumulative_bet", "cumulative_won"]].max().max() * 0.95,
+                     f"{diff:+.2f}",
+                     rotation=90,
+                     verticalalignment="top",
+                     fontsize=9,
+                     color=text_color)
+
+    final_idx = len(df["cumulative_bet"]) - 1  # final annotation
+    final_diff = df["cumulative_won"][final_idx] - df["cumulative_bet"][final_idx]
+    final_color = 'green' if final_diff >= 0 else 'red'
+
+    plt.text(
+        final_idx,
+        max(df["cumulative_bet"][final_idx], df["cumulative_won"][final_idx]) + 70,
+        f"{final_diff:+.2f}",
+        ha="center",
+        fontsize=14,
+        color=final_color
+    )
+
+    plt.xticks(ticks=x[::max(1, len(x) // 10)], labels=x_labels[::max(1, len(x) // 10)], rotation=45, ha="right")
+    plt.xlabel("Date of match played", fontsize=14)
+    plt.ylabel("Value", fontsize=14)
+    plt.title("Cumulative sums of bet and won values", fontsize=20)
     plt.legend()
     plt.tight_layout()
+    plt.grid(True)
     plt.show()
 
 
