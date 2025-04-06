@@ -33,7 +33,6 @@ def fetch_records(input_csv_path, output_csv_path):
     records_ref = db.collection("records")
     docs = records_ref.stream()
 
-    cnt = 0
     for doc in docs:
         data = doc.to_dict()
 
@@ -46,18 +45,12 @@ def fetch_records(input_csv_path, output_csv_path):
         if data["bet_placed"] <= 0:
             raise ValueError("Error when getting bet placed")
 
-        # Won
-        data["won"] = input(
-            f"Enter the won amount on match between {data['home_team']} and {data['away_team']} played at "
-            f"{data['match_start_datetime_utc']}: ")
-
         existing_records.append(data)
         existing_match_ids.append(data["match_id"])
-        cnt += 1
-    print(f"📑 [DEBUG] {str(cnt)} new records successfully obtained from Firestore Database")
 
     # Sort by datetime (asc.)
     sorted_records = []
+    cnt = 0
     for rec in existing_records:
         try:
             dt = datetime.strptime(rec["match_start_datetime_utc"], "%Y-%m-%d %H:%M UTC")  # parse datetime string
@@ -66,8 +59,16 @@ def fetch_records(input_csv_path, output_csv_path):
             continue
         rec["parsed_datetime"] = dt
         sorted_records.append(rec)
+        cnt += 1
     sorted_records.sort(key=lambda x: x["parsed_datetime"])
-    print(f"📑 [DEBUG] Records sorted by datetime (asc.)")
+    print(f"📑 [DEBUG] {str(cnt)} new records successfully obtained from Firestore Database and sorted by datetime")
+
+    # Won
+    for rec in sorted_records:
+        if "won" not in rec.keys():
+            rec["won"] = input(
+                f"Enter the won amount on match between {rec['home_team']} and {rec['away_team']} played at "
+                f"{rec['match_start_datetime_utc']}: ")
 
     # Write to output CSV file
     cnt = 0
