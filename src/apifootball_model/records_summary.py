@@ -25,7 +25,7 @@ def plot_winning_graph(records_file):
     model_updates = [datetime(2025, 3, 27), datetime(2025, 3, 30), datetime(2025, 4, 4)]
 
     # Plot
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(13, 8))
     plt.plot(x, df["cumulative_bet"], label="Bet", color="red")
     plt.plot(x, df["cumulative_won"], label="Won", color="green")
 
@@ -67,13 +67,16 @@ def plot_winning_graph(records_file):
     # Add final state label
     final_idx = len(df) - 1
     final_diff = df["cumulative_won"].iloc[final_idx] - df["cumulative_bet"].iloc[final_idx]
+    final_perc_gain = final_diff / df["cumulative_bet"].iloc[final_idx]
     final_color = "green" if final_diff >= 0 else "red"
-    plt.text(final_idx, max(df["cumulative_bet"].iloc[final_idx], df["cumulative_won"].iloc[final_idx]) + 70,
-             f"{final_diff:+.2f}", ha="center", fontsize=14, color=final_color)
+    plt.text(final_idx, max(df["cumulative_bet"].iloc[final_idx], df["cumulative_won"].iloc[final_idx]) + 100,
+             f"{final_diff:+.2f} ({final_perc_gain:+.2%})", ha="center", fontsize=14, color=final_color)
 
     # Total number of bets label
     total_bets = len(df)
-    plt.text(0.99, 0.01, f"Total bets: {total_bets}",
+    plt.text(0.99, 0.05, f"Total bets: {total_bets}",
+             transform=plt.gca().transAxes, ha="right", va="bottom", fontsize=12, color="black")
+    plt.text(0.99, 0.01, f"Total spent: {df['cumulative_bet'].iloc[final_idx]:.2f}",
              transform=plt.gca().transAxes, ha="right", va="bottom", fontsize=10, color="black")
 
     # Formatting axes and labels

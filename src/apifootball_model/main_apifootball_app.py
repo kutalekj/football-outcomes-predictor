@@ -338,7 +338,7 @@ while True:
                 },
                 "prediction": pred_prob,
                 "processed": False
-            }
+            }  # TODO: Log AF lineups availability
             board_queue_entries.append(board_entry)
         except:
             pass
