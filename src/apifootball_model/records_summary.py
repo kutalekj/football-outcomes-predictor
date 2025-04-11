@@ -22,7 +22,8 @@ def plot_winning_graph(records_file):
     x = list(range(len(df)))  # index as x-axis
     x_labels = df["match_start_datetime_utc"].dt.strftime("%Y-%m-%d")
 
-    model_updates = [datetime(2025, 3, 27), datetime(2025, 3, 30), datetime(2025, 4, 4)]
+    model_updates = [datetime(2025, 3, 27), datetime(2025, 3, 30), datetime(2025, 4, 4), datetime(2025, 4, 7),
+                     datetime(2025, 4, 11)]
 
     # Plot
     plt.figure(figsize=(13, 8))
@@ -69,7 +70,7 @@ def plot_winning_graph(records_file):
     final_diff = df["cumulative_won"].iloc[final_idx] - df["cumulative_bet"].iloc[final_idx]
     final_perc_gain = final_diff / df["cumulative_bet"].iloc[final_idx]
     final_color = "green" if final_diff >= 0 else "red"
-    plt.text(final_idx, max(df["cumulative_bet"].iloc[final_idx], df["cumulative_won"].iloc[final_idx]) + 100,
+    plt.text(final_idx, max(df["cumulative_bet"].iloc[final_idx], df["cumulative_won"].iloc[final_idx]) + 120,
              f"{final_diff:+.2f} ({final_perc_gain:+.2%})", ha="center", fontsize=14, color=final_color)
 
     # Total number of bets label
