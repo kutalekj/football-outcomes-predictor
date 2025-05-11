@@ -23,7 +23,8 @@ def plot_winning_graph(records_file):
     x_labels = df["match_start_datetime_utc"].dt.strftime("%Y-%m-%d")
 
     model_updates = [datetime(2025, 3, 27), datetime(2025, 3, 30), datetime(2025, 4, 4), datetime(2025, 4, 7),
-                     datetime(2025, 4, 11), datetime(2025, 4, 18), datetime(2025, 4, 21), datetime(2025, 4, 26)]
+                     datetime(2025, 4, 11), datetime(2025, 4, 18), datetime(2025, 4, 21), datetime(2025, 4, 26),
+                     datetime(2025, 4, 29), datetime(2025, 5, 5), datetime(2025, 5, 11)]
 
     # Plot
     plt.figure(figsize=(13, 8))
