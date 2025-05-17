@@ -20,20 +20,20 @@ FS_HOST = "https://api.football-data-api.com"
 MATCH_DATA_LOAD = False
 MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-05-10_full.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-05-10_full.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-05-16_full.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-05-16_full.csv"
 
 ALL_STORE = False
 ALL_LOAD = True
 
-ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-05-10.csv"
-ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-05-10.csv"
-ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-05-10.csv"
-ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-05-10.csv"
+ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-05-16.csv"
+ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-05-16.csv"
+ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-05-16.csv"
+ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-05-16.csv"
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 5, 10)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 5, 16)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2024
