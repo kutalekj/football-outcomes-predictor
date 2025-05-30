@@ -29,7 +29,7 @@ def plot_winning_graph(records_file):
 
     # Plot
     plt.figure(figsize=(13, 8))
-    plt.plot(x, df["cumulative_bet"], label="Bet", color="red")
+    plt.plot(x, df["cumulative_bet"], label="Bet (based on odds and model prediction)", color="red")
     plt.plot(x, df["cumulative_won"], label="Won", color="green")
 
     # Color area between curves
@@ -61,7 +61,8 @@ def plot_winning_graph(records_file):
     for update in model_updates:
         idx = df["match_start_datetime_utc"].searchsorted(update)
         if 0 <= idx < len(df):
-            plt.axvline(x=idx, color="gray", linestyle="--", linewidth=1.7)
+            label = "Model update" if idx == 0 else None
+            plt.axvline(x=idx, label=label, color="gray", linestyle="--", linewidth=1.7)
             diff = df["cumulative_won"].iloc[idx] - df["cumulative_bet"].iloc[idx]
             color = "green" if diff >= 0 else "red"
             plt.text(idx + 0.5, df[["cumulative_bet", "cumulative_won"]].max().max() * 0.95, f"{diff:+.2f}",
@@ -86,8 +87,8 @@ def plot_winning_graph(records_file):
     tick_step = max(1, len(x) // 10)
     plt.xticks(ticks=x[::tick_step], labels=x_labels[::tick_step], rotation=45, ha="right")
     plt.xlabel("Date of match played", fontsize=14)
-    plt.ylabel("Value", fontsize=14)
-    plt.title("Cumulative sums of bet and won values", fontsize=20)
+    plt.ylabel("Value [Kč]", fontsize=14)
+    plt.title("Cumulative sums of bet and won values (tested on Tipsport a.s.)", fontsize=18)
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
