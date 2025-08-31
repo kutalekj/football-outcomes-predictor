@@ -780,7 +780,7 @@ def get_categorical_features_maps(regular_matches_sorted):
     # Home team ID + Away team ID
     team_id_to_name = {}
     for m in regular_matches_sorted:
-        home_team_name = f"{m.comp.name}_{m.home_team.name}"
+        home_team_name = f"{m.comp.name}_{m.home_team.name}"  # team-id -> "comp_team-name"
         team_id_to_name[m.home_team.id] = home_team_name
         away_team_name = f"{m.comp.name}_{m.away_team.name}"
         team_id_to_name[m.away_team.id] = away_team_name
