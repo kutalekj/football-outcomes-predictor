@@ -18,13 +18,13 @@ FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
 MATCH_DATA_LOAD = False
-MATCH_DATA_STORE = False
+MATCH_DATA_STORE = True
 
 MATCH_DATA_LOAD_FILENAME = "m_25-05-21_full.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-05-21_full.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-09-02_BEL.csv"
 
 ALL_STORE = False
-ALL_LOAD = True
+ALL_LOAD = False
 
 ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-05-21.csv"
 ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-05-21.csv"
@@ -36,7 +36,7 @@ TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\
 GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 5, 20)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
-LAST_SEASON = 2024
+LAST_SEASON = 2025
 
 NUM_REGULAR_COMPS = 24
 NUM_REGULAR_TEAMS = 518
@@ -153,7 +153,7 @@ TOTAL_XG_NORM_COEFFICIENT = 5.25
 TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
-CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase4\\full'
+CSV_PLAYERS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full'
 AVG_TEAM_STRENGTHS = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\avg_team_strengths.csv'
 
 PLAYER_SKILLS = ['crossing', 'finishing', 'heading_accuracy', 'short_passing', 'volleys', 'dribbling', 'curve',

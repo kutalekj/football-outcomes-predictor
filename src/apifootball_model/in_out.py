@@ -282,7 +282,7 @@ def load_player_stats():
                     if raw_value == '':
                         if attr_name in ['player_id', 'name', 'full_name', 'dob']:  # These can't be missing!
                             raise ValueError(f"Attributes player_id, name, full_name and dob cannot be missing! "
-                                             f"(file {filename}, row {row_num})")
+                                             f"(file {filename}, row {row_num}, attribute {attr_name})")
                         elif attr_type == int:
                             player_data[attr_name] = 0
                         elif attr_type == str:
@@ -301,7 +301,10 @@ def load_player_stats():
                             elif attr_type == str:
                                 player_data[attr_name] = raw_value
                             elif attr_type == 'date':
-                                player_data[attr_name] = datetime.datetime.strptime(raw_value, '%Y-%m-%d')
+                                try:
+                                    player_data[attr_name] = datetime.datetime.strptime(raw_value, '%Y-%m-%d')
+                                except:
+                                    player_data[attr_name] = datetime.datetime.strptime(raw_value, '%m/%d/%Y')
                             elif attr_type == 'list':
                                 player_data[attr_name] = [pos.strip() for pos in raw_value.split(',')]
                             else:
@@ -374,13 +377,26 @@ def load_player_stats():
                 players_dict[player_id] = player_data
 
                 # Update players_by_dob dict
-                dob = player_data['dob']
-                if dob not in global_instance.sofifa_players_by_dob:
-                    global_instance.sofifa_players_by_dob[dob] = []
+                try:  # TODO: This is HOTFIX!
+                    dob = player_data['dob']
+                    if dob not in global_instance.sofifa_players_by_dob:
+                        global_instance.sofifa_players_by_dob[dob] = []
 
-                # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
-                if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
-                    global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
+                    # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
+                    if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
+                        global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
+
+                except Exception as e:
+                    if DEBUG_ROLLBACK:
+                        print(f"[ROLLBACK] Exception in players_by_dob path: {e!r}")
+
+                    rollback_player_index(
+                        player_id=player_id,
+                        index=index,
+                        file_date=file_date,
+                        sofifa_player_index_dict=global_instance.sofifa_player_index_dict,
+                        player_id_to_names=player_id_to_names,
+                    )
 
             # DEBUG PRINT
             print(f"[6] {num_players_skipped_this_csv} player rows were skipped for this CSV ({filename}) "
@@ -415,3 +431,65 @@ def load_sf_avg_team_strength():
             global_instance.sf_avg_team_strength[(season, team_id, position_category)] = skill_values
 
     print(f"[0] Successfully loaded team strength data from {settings.AVG_TEAM_STRENGTHS}")
+
+
+DEBUG_ROLLBACK = True  # flip to False to silence prints
+
+
+def rollback_player_index(
+    player_id,
+    index,
+    file_date,
+    sofifa_player_index_dict,
+    player_id_to_names,
+):
+    """
+    Undo the effects of lines 361–365:
+      - possible init of sofifa_player_index_dict[player_id] = []
+      - possible init of player_id_to_names[player_id] = set()
+      - append of (index, file_date) to sofifa_player_index_dict[player_id]
+    """
+
+    # 1) Roll back sofifa_player_index_dict change
+    if player_id in sofifa_player_index_dict:
+        lst = sofifa_player_index_dict[player_id]
+        # case A: newly initialized and only contains our single append
+        if lst == [(index, file_date)]:
+            if DEBUG_ROLLBACK:
+                print(
+                    "[ROLLBACK] Deleting key from sofifa_player_index_dict:",
+                    f"player_id={player_id}, removed_list={lst!r}"
+                )
+            del sofifa_player_index_dict[player_id]
+        else:
+            # case B: list existed before; try to remove the appended tuple if present at the tail
+            if lst and lst[-1] == (index, file_date):
+                if DEBUG_ROLLBACK:
+                    print(
+                        "[ROLLBACK] Popping last tuple from sofifa_player_index_dict:",
+                        f"player_id={player_id}, popped={(index, file_date)!r},",
+                        f"new_len={len(lst) - 1}"
+                    )
+                lst.pop()
+            else:
+                # Optional: search-and-remove if the tuple wasn’t last (rare, but safe)
+                try:
+                    pos = len(lst) - 1 - lst[::-1].index((index, file_date))
+                except ValueError:
+                    pos = None
+                if pos is not None:
+                    if DEBUG_ROLLBACK:
+                        print(
+                            "[ROLLBACK] Removing tuple at position from sofifa_player_index_dict:",
+                            f"player_id={player_id}, pos={pos}, value={(index, file_date)!r}"
+                        )
+                    lst.pop(pos)
+
+    # 2) Roll back player_id_to_names change (only delete if it was just initialized as empty)
+    if player_id in player_id_to_names and not player_id_to_names[player_id]:
+        if DEBUG_ROLLBACK:
+            print(
+                "[ROLLBACK] Deleting empty set from player_id_to_names:",
+                f"player_id={player_id}"
+            )
+        del player_id_to_names[player_id]

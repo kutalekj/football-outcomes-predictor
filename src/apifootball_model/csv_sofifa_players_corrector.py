@@ -15,10 +15,21 @@ def process_csv_files(folder_path):
         player_id_occurrences = {}  # key: player_id, value: list of (index, row)
         rows = []
         duplicates_counter = 0
+        empty_rows_counter = 0
+        missing_id_counter = 0
+
+        def is_empty_row(row):
+            # Treat as empty if row is empty OR all cells are blank/whitespace
+            return (not row) or (all((c is None) or (str(c).strip() == "") for c in row))
         
         with open(file_path, mode='r', encoding='utf-8', newline='') as infile:
             reader = csv.reader(infile)
-            header = next(reader)
+            try:
+                header = next(reader)
+            except StopIteration:
+                print(f"{csv_file} is empty. Skipping.")
+                continue
+
             rows.append(header)
             
             if 'player_id' not in header:
@@ -30,11 +41,26 @@ def process_csv_files(folder_path):
             
             # Read each row and store occurrences
             for index, row in enumerate(reader, start=1):
-                player_id = row[player_id_index]
+                # Skip completely empty rows
+                if is_empty_row(row):
+                    empty_rows_counter += 1
+                    continue
 
-                # DNS error assertion
-                if row[2] == "DNS resolution error | sofifa.com | Cloudflare":
-                    print(f"DNS error found for player {player_id} in file {csv_file}. Skipping this player.")
+                # Some rows might be short; pad them so indexing doesn't crash
+                if len(row) < len(header):
+                    row = row + [""] * (len(header) - len(row))
+
+                # DNS error assertion (only if row has at least 3 columns)
+                if len(row) > 2 and row[2] == "DNS resolution error | sofifa.com | Cloudflare":
+                    # We don't count these as "empty"; they're filtered for data quality
+                    print(f"DNS error found for player (unknown id yet) in file {csv_file}. Skipping this player.")
+                    continue
+
+                player_id = row[player_id_index].strip()
+
+                # Skip rows with missing player_id
+                if player_id == "":
+                    missing_id_counter += 1
                     continue
 
                 if player_id in player_id_occurrences:
@@ -71,7 +97,7 @@ def process_csv_files(folder_path):
         try:
             os.remove(file_path)
             shutil.move(temp_file_path, file_path)
-            print(f"Finished processing {csv_file}. Duplicate rows removed based on 'player_id'.\n")
+            print(f"Finished processing {csv_file}. Duplicate rows removed based on 'player_id'.")
         except Exception as e:
             print(f"Error replacing the original file for {csv_file}: {e}")
             # Cleanup: Remove the temporary file if it exists
@@ -79,8 +105,10 @@ def process_csv_files(folder_path):
                 os.remove(temp_file_path)
 
         print(f"Removed {duplicates_counter} duplicate rows")
+        print(f"Skipped {empty_rows_counter} completely empty rows")
+        print(f"Skipped {missing_id_counter} rows missing 'player_id'\n")
 
 # Specify the folder containing your CSV files
-folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase4\\full'  # Replace with your folder path
+folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full'  # Replace with your folder path
 
 process_csv_files(folder_path)
