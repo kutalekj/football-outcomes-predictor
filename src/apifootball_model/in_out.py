@@ -151,10 +151,16 @@ def load_matches(file_name):
                 home_lineup_json = row.get('home_team_lineup', '[]')
                 away_lineup_json = row.get('away_team_lineup', '[]')
 
+                """
                 match.home_team_lineup = [(int(player[0]), player[1], player[2]) for player
-                                          in json.loads(home_lineup_json)] if home_lineup_json != "null" else []
+                                          in json.loads(home_lineup_json)]\
+                    if home_lineup_json != "null" and len(home_lineup_json) > 0 else []
                 match.away_team_lineup = [(int(player[0]), player[1], player[2]) for player
-                                          in json.loads(away_lineup_json)] if away_lineup_json != "null" else []
+                                          in json.loads(away_lineup_json)]\
+                    if away_lineup_json != "null" and len(away_lineup_json) > 0 else []
+                """
+                match.home_team_lineup = parse_lineup(home_lineup_json)
+                match.away_team_lineup = parse_lineup(away_lineup_json)
 
                 # FS lineups
                 home_fs_lineup_json = row.get('home_fs_team_lineup', '[]')
@@ -201,6 +207,19 @@ def load_matches(file_name):
         print(f"Error: The file '{file_name}' was not found. Please check the file name and try again.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+
+
+def parse_lineup(s: str):
+    if not s or s == "null":
+        return []
+    rows = json.loads(s)
+
+    # Every row must have a valid integer ID (pos can be None)
+    for r in rows:
+        if not (isinstance(r[0], int) or (isinstance(r[0], str) and r[0].isdigit())):
+            return []  # one bad ID -> discard entire lineup
+
+    return [(int(r[0]), r[1], r[2]) for r in rows]
 
 
 def load_player_stats():
@@ -377,26 +396,13 @@ def load_player_stats():
                 players_dict[player_id] = player_data
 
                 # Update players_by_dob dict
-                try:  # TODO: This is HOTFIX!
-                    dob = player_data['dob']
-                    if dob not in global_instance.sofifa_players_by_dob:
-                        global_instance.sofifa_players_by_dob[dob] = []
+                dob = player_data['dob']
+                if dob not in global_instance.sofifa_players_by_dob:
+                    global_instance.sofifa_players_by_dob[dob] = []
 
-                    # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
-                    if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
-                        global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
-
-                except Exception as e:
-                    if DEBUG_ROLLBACK:
-                        print(f"[ROLLBACK] Exception in players_by_dob path: {e!r}")
-
-                    rollback_player_index(
-                        player_id=player_id,
-                        index=index,
-                        file_date=file_date,
-                        sofifa_player_index_dict=global_instance.sofifa_player_index_dict,
-                        player_id_to_names=player_id_to_names,
-                    )
+                # Check if player_id is already in the list for this dob (assertion of possible name inconsistencies)
+                if player_id not in {player[0] for player in global_instance.sofifa_players_by_dob[dob]}:
+                    global_instance.sofifa_players_by_dob[dob].append((player_id, name, full_name))
 
             # DEBUG PRINT
             print(f"[6] {num_players_skipped_this_csv} player rows were skipped for this CSV ({filename}) "
@@ -431,65 +437,3 @@ def load_sf_avg_team_strength():
             global_instance.sf_avg_team_strength[(season, team_id, position_category)] = skill_values
 
     print(f"[0] Successfully loaded team strength data from {settings.AVG_TEAM_STRENGTHS}")
-
-
-DEBUG_ROLLBACK = True  # flip to False to silence prints
-
-
-def rollback_player_index(
-    player_id,
-    index,
-    file_date,
-    sofifa_player_index_dict,
-    player_id_to_names,
-):
-    """
-    Undo the effects of lines 361–365:
-      - possible init of sofifa_player_index_dict[player_id] = []
-      - possible init of player_id_to_names[player_id] = set()
-      - append of (index, file_date) to sofifa_player_index_dict[player_id]
-    """
-
-    # 1) Roll back sofifa_player_index_dict change
-    if player_id in sofifa_player_index_dict:
-        lst = sofifa_player_index_dict[player_id]
-        # case A: newly initialized and only contains our single append
-        if lst == [(index, file_date)]:
-            if DEBUG_ROLLBACK:
-                print(
-                    "[ROLLBACK] Deleting key from sofifa_player_index_dict:",
-                    f"player_id={player_id}, removed_list={lst!r}"
-                )
-            del sofifa_player_index_dict[player_id]
-        else:
-            # case B: list existed before; try to remove the appended tuple if present at the tail
-            if lst and lst[-1] == (index, file_date):
-                if DEBUG_ROLLBACK:
-                    print(
-                        "[ROLLBACK] Popping last tuple from sofifa_player_index_dict:",
-                        f"player_id={player_id}, popped={(index, file_date)!r},",
-                        f"new_len={len(lst) - 1}"
-                    )
-                lst.pop()
-            else:
-                # Optional: search-and-remove if the tuple wasn’t last (rare, but safe)
-                try:
-                    pos = len(lst) - 1 - lst[::-1].index((index, file_date))
-                except ValueError:
-                    pos = None
-                if pos is not None:
-                    if DEBUG_ROLLBACK:
-                        print(
-                            "[ROLLBACK] Removing tuple at position from sofifa_player_index_dict:",
-                            f"player_id={player_id}, pos={pos}, value={(index, file_date)!r}"
-                        )
-                    lst.pop(pos)
-
-    # 2) Roll back player_id_to_names change (only delete if it was just initialized as empty)
-    if player_id in player_id_to_names and not player_id_to_names[player_id]:
-        if DEBUG_ROLLBACK:
-            print(
-                "[ROLLBACK] Deleting empty set from player_id_to_names:",
-                f"player_id={player_id}"
-            )
-        del player_id_to_names[player_id]

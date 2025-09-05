@@ -241,6 +241,8 @@ class Comp:
 
         season_id = [x['id'] for x in wanted_comp['season']
                      if str(x['year']) == (str(season) + str(season + 1)) or str(x['year']) == (str(season))]
-        if len(season_id) != 1:
+        if len(season_id) == 0 and season == settings.LAST_SEASON:
+            return None  # case for beginning of season (Aug/Sep/Oct), when start/end dates are not set properly yet
+        elif len(season_id) != 1:
             raise ValueError("Found none, or multiple FS season IDs for a single competition")
         return season_id[0]

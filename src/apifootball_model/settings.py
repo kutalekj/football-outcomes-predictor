@@ -17,11 +17,11 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = False
-MATCH_DATA_STORE = True
+MATCH_DATA_LOAD = True
+MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-05-21_full.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-09-02_BEL.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-09-03_full.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-09-03_full.csv"
 
 ALL_STORE = False
 ALL_LOAD = False
@@ -33,7 +33,7 @@ ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 5, 20)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 9, 3)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025

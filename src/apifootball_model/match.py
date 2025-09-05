@@ -285,7 +285,7 @@ class Match:
                             print(f"\tLineups missing for both teams in a regular match between "
                                   f"{new_match.home_team.name} and {new_match.away_team.name} ({new_match.datetime})")
                     else:
-                        if "startXI" in data_lineups[0]:
+                        if "startXI" in data_lineups[0] and all(isinstance(x["player"]["id"], int) for x in data_lineups[0]["startXI"]):
                             new_match.home_team_lineup = \
                                 [(x['player']['id'], x['player']['name'], x['player']['pos'])
                                     for x in data_lineups[0]['startXI']]
@@ -299,7 +299,7 @@ class Match:
                             new_match.home_team_lineup = []
                             print(f"\tLineups missing for a home team in match between {new_match.home_team.name} and "
                                   f"{new_match.away_team.name} played at {new_match.datetime}")
-                        if "startXI" in data_lineups[1]:
+                        if len(data_lineups) > 1 and "startXI" in data_lineups[1] and all(isinstance(x["player"]["id"], int) for x in data_lineups[1]["startXI"]):
                             new_match.away_team_lineup = \
                                 [(x['player']['id'], x['player']['name'], x['player']['pos'])
                                     for x in data_lineups[1]['startXI']]
@@ -569,8 +569,10 @@ class Match:
             # DEBUG PRINT
             print(f"[7c] Going to calculate team strength for match between "
                   f"{self.home_team.name} and {self.away_team.name} ({self.datetime})")
-            new_match_features.home_team_strength = feature_ut.calculate_team_strength(self, self.home_team.id)
-            new_match_features.away_team_strength = feature_ut.calculate_team_strength(self, self.away_team.id)
+            # new_match_features.home_team_strength = feature_ut.calculate_team_strength(self, self.home_team.id)
+            # new_match_features.away_team_strength = feature_ut.calculate_team_strength(self, self.away_team.id)
+            new_match_features.home_team_strength = []  # TODO: This is HOTFIX - remove after getting and saving all match data and subsequently updating the averaging CSV from them...
+            new_match_features.away_team_strength = []
             # TODO implement: team strength calculation
         else:
             new_match_features.home_team_strength = []

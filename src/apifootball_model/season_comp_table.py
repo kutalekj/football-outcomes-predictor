@@ -135,6 +135,8 @@ class SeasonCompTable:
                 table = ut.get_table_by_comp_season(comp.id, season)
 
                 fs_season_id = comp.get_fs_season_id(comp.id, comp.country, season)  # get FS season_id (comp season ID)
+                if fs_season_id is None:
+                    continue
 
                 comp_season_players_stats_request_string_fs = settings.FS_HOST + "/league-players?key=" + \
                                                               settings.FS_KEY + "&season_id=" + str(
