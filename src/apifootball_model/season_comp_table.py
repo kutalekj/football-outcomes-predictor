@@ -180,3 +180,12 @@ class SeasonCompTable:
 
                     team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
                                                                 'fs_players': selected_fs_players})
+
+                    global_instance.tmp_average_player_skills[(season, team.id, team.name, "goalkeeper")] = \
+                        {skill: [] for skill in settings.PLAYER_SKILLS}
+                    global_instance.tmp_average_player_skills[(season, team.id, team.name, "defender")] = \
+                        {skill: [] for skill in settings.PLAYER_SKILLS}
+                    global_instance.tmp_average_player_skills[(season, team.id, team.name, "midfielder")] = \
+                        {skill: [] for skill in settings.PLAYER_SKILLS}
+                    global_instance.tmp_average_player_skills[(season, team.id, team.name, "attacker")] = \
+                        {skill: [] for skill in settings.PLAYER_SKILLS}

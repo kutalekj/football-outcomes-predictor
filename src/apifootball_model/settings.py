@@ -20,7 +20,7 @@ FS_HOST = "https://api.football-data-api.com"
 MATCH_DATA_LOAD = True
 MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-09-03_full.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-09-03_BEL.csv"
 MATCH_DATA_STORE_FILENAME = "m_25-09-03_full.csv"
 
 ALL_STORE = False
