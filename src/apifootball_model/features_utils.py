@@ -413,9 +413,8 @@ def calculate_team_strength(curr_match, team_id):
               f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
         # TODO manual output check: count how many such missing ones are there in total - hopefully very few!!!
 
-        # team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
-        # return team_sf_players_skills  # TODO: Uncomment after updating the average SF skills CSV
-        return []
+        team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
+        return team_sf_players_skills
 
     # Iterate over FS lineup players
     else:
@@ -453,7 +452,6 @@ def calculate_team_strength(curr_match, team_id):
 
             lineup_fs_positions.append(fs_player['fs_position'])  # store FS position
 
-        """
         if len(team_sf_players_skills) != 11:
             print(f"There are {11 - len(team_sf_players_skills)} player skills missing for [{team_name}]! Imitating..."
                   f"({curr_match.home_team.name} vs. {curr_match.away_team.name} played at {curr_match.datetime})")
@@ -464,7 +462,6 @@ def calculate_team_strength(curr_match, team_id):
     # Check whether there are 1 goalkeeper skills and 10 outfield players skills, and possibly correct
     team_sf_players_skills = ut.balance_goalkeeper_and_outfield_player_skills(curr_match.season, team_id,
                                                                               team_sf_players_skills)
-    """  # TODO: Uncomment after updating the average SF skills CSV
 
     # TODO manual output check: count how many balancing occurrences are there in total
     return team_sf_players_skills
