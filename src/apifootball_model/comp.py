@@ -8,6 +8,7 @@ import settings
 import requests
 import rounds
 import time
+import re
 from datetime import datetime, timezone
 import numpy as np
 from team import Team
@@ -39,6 +40,21 @@ class Comp:
                 for round_ in season_rounds['rounds']:
                     if round_.name == round_name:
                         return round_
+
+        # Fixed for matching and returning e.g. "1st Round" from "1st Round - 1" (SUI and POR cup issues)
+        round_regex = re.compile(r'^(?P<main>.+?\bRound)\s*[–—-]\s*(?P<num>\d+)$', re.IGNORECASE)
+        m = round_regex.search(round_name)
+
+        if m:
+            round_name_trimmed = m.group("main")
+            for season_rounds in self.rounds_per_season:  # search again on corrected round name
+                if season_rounds['season'] == season:
+                    for round_ in season_rounds['rounds']:
+                        if round_.name == round_name_trimmed:
+                            print(f"\t\t\tRETURNED" + m.group("main") + f" FOR COMP [{self.name}], SEASON [{season}] "
+                                                                        f"AND ROUND NAME [{round_name}]!")
+                            return round_
+
         return None
 
     def init_teams_in_comp(self):
