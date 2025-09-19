@@ -34,3 +34,7 @@ build/
 
 # Old archived venvs
 archive/**/venv/
+archive/legacy_src/
+# R temp histories (you had src/.Rhistory)
+*.Rhistory
+*/.Rhistory
