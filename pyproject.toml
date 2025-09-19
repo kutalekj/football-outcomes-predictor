@@ -34,9 +34,9 @@ firebase = ["firebase-admin>=6.5.0"]
 scrape = ["selenium>=4.12"]
 
 [project.scripts]
-fop.main = "football_outcomes.cli.main:main"
-fop.app  = "football_outcomes.cli.app:main"
-fop.train-ann = "football_outcomes.training.train_ann:main"
+fop-main = "football_outcomes.cli.main:main"
+fop-app  = "football_outcomes.cli.app:main"
+fop-train-ann = "football_outcomes.training.train_ann:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
