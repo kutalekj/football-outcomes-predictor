@@ -1,20 +1,20 @@
-"""
+﻿"""
 comp.py
 """
 
 import http.client
 import json
-import settings
+from football_outcomes.config import settings
 import requests
-import rounds
+from football_outcomes.data import rounds
 import time
 import re
 from datetime import datetime, timezone
 import numpy as np
-from team import Team
+from football_outcomes.data.team import Team
 from dateutil.parser import parse
-from globals import Global
-import utils as ut
+from football_outcomes.config.globals import Global
+from football_outcomes.utils import common as utils as ut
 
 
 class Comp:
@@ -42,7 +42,7 @@ class Comp:
                         return round_
 
         # Fixed for matching and returning e.g. "1st Round" from "1st Round - 1" (SUI and POR cup issues)
-        round_regex = re.compile(r'^(?P<main>.+?\bRound)\s*[–—-]\s*(?P<num>\d+)$', re.IGNORECASE)
+        round_regex = re.compile(r'^(?P<main>.+?\bRound)\s*[â€“â€”-]\s*(?P<num>\d+)$', re.IGNORECASE)
         m = round_regex.search(round_name)
 
         if m:
@@ -262,3 +262,4 @@ class Comp:
         elif len(season_id) != 1:
             raise ValueError("Found none, or multiple FS season IDs for a single competition")
         return season_id[0]
+

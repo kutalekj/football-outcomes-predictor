@@ -1,9 +1,9 @@
-import http.client
+﻿import http.client
 import json
-import settings
-from match import Match
-from feature import MatchFeatures
-from globals import Global
+from football_outcomes.config import settings
+from football_outcomes.data.match import Match
+from football_outcomes.features.feature import MatchFeatures
+from football_outcomes.config.globals import Global
 import in_out_mega
 from datetime import datetime, timedelta
 from dateutil.parser import parse
@@ -11,10 +11,10 @@ import numpy as np
 import time
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-import utils as ut
+from football_outcomes.utils import common as utils as ut
 import in_out
-from comp import Comp
-from season_comp_table import SeasonCompTable
+from football_outcomes.data.comp import Comp
+from football_outcomes.data.season_comp_table import SeasonCompTable
 from train_ann import get_embedding_extractor, normalize_embeddings
 import tzlocal
 import firebase_admin
@@ -368,3 +368,4 @@ while True:
     print(f"Saved {len(board_queue_entries)} entries to the board queue")
 
     time.sleep(WAIT_SECS)  # active waiting
+

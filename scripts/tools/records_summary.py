@@ -1,4 +1,4 @@
-import csv
+﻿import csv
 from datetime import datetime
 import pandas as pd
 from argparse import ArgumentParser
@@ -87,7 +87,7 @@ def plot_winning_graph(records_file):
     tick_step = max(1, len(x) // 10)
     plt.xticks(ticks=x[::tick_step], labels=x_labels[::tick_step], rotation=45, ha="right")
     plt.xlabel("Date of match played", fontsize=14)
-    plt.ylabel("Value [Kč]", fontsize=14)
+    plt.ylabel("Value [KÄ]", fontsize=14)
     plt.title("Cumulative sums of bet and won values (tested on Tipsport a.s.)", fontsize=18)
     plt.grid(True)
     plt.legend()
@@ -100,3 +100,4 @@ if __name__ == "__main__":
     parser.add_argument("input_path", type=Path, help="Path to the input CSV file with records")
     args = parser.parse_args()
     plot_winning_graph(args.input_path)
+

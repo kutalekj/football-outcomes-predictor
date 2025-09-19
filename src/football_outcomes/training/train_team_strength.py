@@ -1,4 +1,4 @@
-import os
+﻿import os
 import random
 import numpy as np
 from datetime import datetime
@@ -8,8 +8,8 @@ from tensorflow.keras.layers import Input, Conv1D, GlobalAveragePooling1D, Dense
 from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
-import settings
-import utils as ut
+from football_outcomes.config import settings
+from football_outcomes.utils import common as utils as ut
 import matplotlib.pyplot as plt
 plt.switch_backend('TkAgg')
 
@@ -93,3 +93,4 @@ def train(team_player_skills, batch_size=32, num_epochs=100):
     print(f"Model saved to {model_path}")
 
     return autoencoder, encoder  # encoder can be used to extract team strength embeddings after training
+

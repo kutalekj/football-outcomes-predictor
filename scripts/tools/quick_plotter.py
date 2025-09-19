@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+﻿import matplotlib.pyplot as plt
 plt.switch_backend('TkAgg')
 
 # Example data from your training log
@@ -23,3 +23,4 @@ axs.set_ylabel("Loss")
 axs.set_title("Validation Loss Across Rounds")
 axs.legend()
 plt.show()
+

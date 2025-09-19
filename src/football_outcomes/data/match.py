@@ -1,4 +1,4 @@
-"""
+﻿"""
 match.py
 """
 
@@ -11,13 +11,12 @@ from dateutil.parser import parse
 from datetime import datetime, timedelta
 import numpy as np
 from selenium.webdriver.common.devtools.v85.target import send_message_to_target
-
-import settings
-import utils as ut
+from football_outcomes.config import settings
+from football_outcomes.utils import common as utils as ut
 import time
-from feature import MatchFeatures
-import features_utils as feature_ut
-from globals import Global
+from football_outcomes.features.feature import MatchFeatures
+from football_outcomes.features import features_utils as feature_ut
+from football_outcomes.config.globals import Global
 
 
 class Match:
@@ -757,3 +756,4 @@ class Match:
             )
 
         return new_match_features
+

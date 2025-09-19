@@ -1,4 +1,4 @@
-from datetime import datetime
+﻿from datetime import datetime
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model, load_model
@@ -8,8 +8,8 @@ from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ReduceLROnPla
 from tensorflow.keras.optimizers import Adam
 import os
 import shutil
-import settings
-import utils as ut
+from football_outcomes.config import settings
+from football_outcomes.utils import common as utils as ut
 
 NUM_TRAINING_ROUNDS = 25
 
@@ -316,3 +316,4 @@ class CustomLRSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
 
     def get_config(self):
         return {"initial_lr": float(self.lr_var.numpy())}
+

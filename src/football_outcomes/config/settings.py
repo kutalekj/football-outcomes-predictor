@@ -1,4 +1,4 @@
-"""
+﻿"""
 settings.py
 """
 
@@ -74,8 +74,8 @@ COMPS_v2 = [
     {'id': 135, 'name': "Serie A", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie A"},
     {'id': 136, 'name': "Serie B", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Serie B"},
     {'id': 140, 'name': "La Liga", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "La Liga"},
-    {'id': 141, 'name': "Segunda División", 'regular_round_keywords': ['Regular Season'],
-     'fs_alias': "Segunda División"},
+    {'id': 141, 'name': "Segunda DivisiÃ³n", 'regular_round_keywords': ['Regular Season'],
+     'fs_alias': "Segunda DivisiÃ³n"},
     {'id': 144, 'name': "Jupiler Pro League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
      'fs_alias': "Pro League"},  # BEL
@@ -85,7 +85,7 @@ COMPS_v2 = [
     {'id': 188, 'name': "A-League",
      'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final'],
      'fs_alias': "A-League"},  # AUS
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
+    {'id': 203, 'name': "SÃ¼per Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "SÃ¼per Lig"},  # TUR
     {'id': 207, 'name': "Super League",
      'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
      'fs_alias': "Super League"},  # SUI
@@ -108,8 +108,8 @@ COMPS_v2 = [
     {'id': 137, 'name': "Coppa Italia", 'regular_round_keywords': [], 'fs_alias': "Coppa Italia"},
     {'id': 143, 'name': "Copa del Rey", 'regular_round_keywords': [], 'fs_alias': "Copa del Rey"},
     {'id': 90, 'name': "KNVB Beker", 'regular_round_keywords': [], 'fs_alias': "KNVB Cup"},  # NED
-    {'id': 96, 'name': "Taça de Portugal", 'regular_round_keywords': [], 'fs_alias': "Taça de Portugal"},
-    {'id': 97, 'name': "Taça da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
+    {'id': 96, 'name': "TaÃ§a de Portugal", 'regular_round_keywords': [], 'fs_alias': "TaÃ§a de Portugal"},
+    {'id': 97, 'name': "TaÃ§a da Liga", 'regular_round_keywords': [], 'fs_alias': "Portuguese League Cup"},
     {'id': 108, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Polish Cup"},  # POL
     {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': [], 'fs_alias': "Swiss Cup"},
     {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
@@ -175,3 +175,4 @@ MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=270)  # 9 months
 
 BOARD_QUEUE_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\Board\\board_queue_rel.json'
 FIREBASE_CREDENTIALS_PATH = 'C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\boardmobile-61491-firebase-adminsdk-fbsvc-5839d80385.json'
+

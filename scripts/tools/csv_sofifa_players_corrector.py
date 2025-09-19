@@ -1,4 +1,4 @@
-import os
+﻿import os
 import csv
 import shutil
 
@@ -112,3 +112,4 @@ def process_csv_files(folder_path):
 folder_path = r'C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full'  # Replace with your folder path
 
 process_csv_files(folder_path)
+

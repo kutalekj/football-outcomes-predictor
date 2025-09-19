@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+﻿from datetime import datetime, timezone
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential, Model
@@ -8,9 +8,9 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import tensorflow.keras.backend as K
 import os
-from settings import NUM_NUMERICAL_FEATURES
-from globals import Global
-from utils import get_n_previous_matches
+from football_outcomes.config.settings import NUM_NUMERICAL_FEATURES
+from football_outcomes.config.globals import Global
+from football_outcomes.utils.common import get_n_previous_matches
 
 
 EMBEDDING_OUT_SIZE_TEAM = 9
@@ -514,3 +514,4 @@ def get_data_for_round(regular_matches_in_rounds, round_number):
 
 def scale_to_0_1(x):
     return (x - K.min(x)) / (K.max(x) - K.min(x))
+

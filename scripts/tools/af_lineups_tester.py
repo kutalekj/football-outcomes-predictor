@@ -1,7 +1,7 @@
-import json
+﻿import json
 import http.client
 from datetime import timedelta, datetime
-import settings
+from football_outcomes.config import settings
 
 
 conn = http.client.HTTPSConnection(settings.HOST)
@@ -29,3 +29,4 @@ conn.request("GET", lineups_request_string, headers=settings.HEADERS)
 res = conn.getresponse()
 data = res.read()
 data_lineups = json.loads(data)['response']
+

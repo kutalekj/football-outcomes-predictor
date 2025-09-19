@@ -1,15 +1,14 @@
-"""
+﻿"""
 rounds.py
 
 "Regular" round = a table is maintained for it, contributes to a team position in a table
 (regular season, relegation or championship rounds)
 """
-
-import settings
+from football_outcomes.config import settings
 import http.client
 import urllib.parse
 import json
-import utils as ut
+from football_outcomes.utils import common as utils as ut
 
 
 class Round:
@@ -28,3 +27,4 @@ class Round:
             if keyword in self.name:
                 return True
         return False
+

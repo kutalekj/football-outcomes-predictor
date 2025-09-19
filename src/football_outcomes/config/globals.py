@@ -1,4 +1,4 @@
-class Global:
+﻿class Global:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -41,3 +41,4 @@ class Global:
         if not cls._instance:
             cls._instance = cls()
         return cls._instance
+

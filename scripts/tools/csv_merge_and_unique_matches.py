@@ -1,4 +1,4 @@
-import os
+﻿import os
 import csv
 
 def merge_csv_files_without_duplicates(input_csv_paths, output_csv_path):
@@ -69,3 +69,4 @@ if __name__ == "__main__":
     output_file = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\m_25-09-03_full.csv"
 
     merge_csv_files_without_duplicates(input_files, output_file)
+

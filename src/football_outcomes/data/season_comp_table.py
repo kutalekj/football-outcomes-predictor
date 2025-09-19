@@ -1,4 +1,4 @@
-"""
+﻿"""
 season_comp_table.py
 """
 
@@ -7,9 +7,9 @@ import json
 import requests
 from datetime import datetime
 import numpy as np
-import settings
-import utils as ut
-from globals import Global
+from football_outcomes.config import settings
+from football_outcomes.utils import common as utils as ut
+from football_outcomes.config.globals import Global
 
 
 class SeasonCompTable:
@@ -180,3 +180,4 @@ class SeasonCompTable:
 
                     team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
                                                                 'fs_players': selected_fs_players})
+

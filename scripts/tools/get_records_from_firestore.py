@@ -1,10 +1,10 @@
-import firebase_admin
+﻿import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
 from argparse import ArgumentParser
 from pathlib import Path
 import csv
-import settings
+from football_outcomes.config import settings
 
 
 # Init Firebase Admin (using service account file)
@@ -27,7 +27,7 @@ def fetch_records(input_csv_path, output_csv_path):
                 existing_records.append(row)
                 cnt += 1
     existing_match_ids = [x["match_id"] for x in existing_records]
-    print(f"📑 [DEBUG] {str(cnt)} existing records loaded from {input_csv_path}")
+    print(f"ðŸ“‘ [DEBUG] {str(cnt)} existing records loaded from {input_csv_path}")
 
     # Get new records from Firestore Database
     records_ref = db.collection("records")
@@ -61,7 +61,7 @@ def fetch_records(input_csv_path, output_csv_path):
         sorted_records.append(rec)
         cnt += 1
     sorted_records.sort(key=lambda x: x["parsed_datetime"])
-    print(f"📑 [DEBUG] {str(cnt)} new records successfully obtained from Firestore Database and sorted by datetime")
+    print(f"ðŸ“‘ [DEBUG] {str(cnt)} new records successfully obtained from Firestore Database and sorted by datetime")
 
     # Won
     for rec in sorted_records:
@@ -113,7 +113,7 @@ def fetch_records(input_csv_path, output_csv_path):
                 str(rec["won"])
             ])
             cnt += 1
-    print(f"📑 [DEBUG] {str(cnt)} records dumped to {output_csv_path}")
+    print(f"ðŸ“‘ [DEBUG] {str(cnt)} records dumped to {output_csv_path}")
 
 
 if __name__ == "__main__":
@@ -122,3 +122,4 @@ if __name__ == "__main__":
     parser.add_argument("output_path", type=Path, help="Path to the output CSV file")
     args = parser.parse_args()
     fetch_records(args.input_path, args.output_path)
+

@@ -1,4 +1,4 @@
-import os
+﻿import os
 import random
 import numpy as np
 from datetime import datetime
@@ -9,7 +9,7 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau
 from tensorflow.keras.callbacks import TensorBoard
 import tensorflow.keras.backend as K
 from sklearn.model_selection import train_test_split
-import settings
+from football_outcomes.config import settings
 import matplotlib.pyplot as plt
 plt.switch_backend('TkAgg')
 
@@ -358,3 +358,4 @@ def train_with_hard_negatives(all_input_data, batch_size=32, num_epochs=10, k=10
 
     # Final evaluation with evaluate_embeddings or your downstream tasks
     return siamese_model
+

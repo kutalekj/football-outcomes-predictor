@@ -1,11 +1,11 @@
-"""
+﻿"""
 feature_utils.py
 """
 
 import numpy as np
-import utils as ut
-from globals import Global
-from settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
+from football_outcomes.utils import common as utils as ut
+from football_outcomes.config.globals import Global
+from football_outcomes.config.settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
     GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\
     MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH, PLAYER_SKILLS, \
     TEAM_XG_NORM_COEFFICIENT, TOTAL_XG_NORM_COEFFICIENT, TEAM_PRE_MATCH_XG_NORM_COEFFICIENT, \
@@ -529,3 +529,4 @@ def normalize_team_pre_match_xg(xg_val):
 
 def normalize_total_pre_match_xg(xg_val):
     return ut.min_max_scaling_with_clipping(xg_val, TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT)
+

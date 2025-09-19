@@ -1,14 +1,14 @@
-import csv
+﻿import csv
 import json
 import datetime
 import numpy as np
-from team import Team
-from comp import Comp
-from rounds import Round
-from match import Match
-from feature import MatchFeatures
-from globals import Global
-import settings
+from football_outcomes.data.team import Team
+from football_outcomes.data.comp import Comp
+from football_outcomes.data.rounds import Round
+from football_outcomes.data.match import Match
+from football_outcomes.features.feature import MatchFeatures
+from football_outcomes.config.globals import Global
+from football_outcomes.config import settings
 
 
 def convert_datetime_in_lineup(lineup_list):
@@ -504,3 +504,4 @@ def load_all_matches_data():
     load_teams(settings.ALL_LS_TEAMS_CSV)
     # 4) load matches (which references comps, rounds, and teams)
     load_matches(settings.ALL_LS_MATCHES_CSV)
+

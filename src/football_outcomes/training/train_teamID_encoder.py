@@ -1,4 +1,4 @@
-import os
+﻿import os
 import numpy as np
 from datetime import datetime
 import tensorflow as tf
@@ -7,7 +7,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
-import settings
+from football_outcomes.config import settings
 tf.random.set_seed(42)
 tf.keras.utils.set_random_seed(41)
 
@@ -60,3 +60,4 @@ def normalize_embeddings(embeddings):
     min_val = np.min(embeddings)
     max_val = np.max(embeddings)
     return (embeddings - min_val) / (max_val - min_val)
+

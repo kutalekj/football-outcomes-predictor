@@ -1,4 +1,4 @@
-"""
+﻿"""
 feature.py
 """
 
@@ -124,3 +124,4 @@ class MatchFeatures:
         # features = np.append(features, features_dict["away_team_strength"])
 
         return features
+

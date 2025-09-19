@@ -1,15 +1,15 @@
-import datetime
+﻿import datetime
 import statistics
 import numpy as np
 import csv
 import random
-import utils as ut
-import settings
-from comp import Comp
-from season_comp_table import SeasonCompTable
-from match import Match
-from feature import MatchFeatures
-from globals import Global
+from football_outcomes.utils import common as utils as ut
+from football_outcomes.config import settings
+from football_outcomes.data.comp import Comp
+from football_outcomes.data.season_comp_table import SeasonCompTable
+from football_outcomes.data.match import Match
+from football_outcomes.features.feature import MatchFeatures
+from football_outcomes.config.globals import Global
 import in_out
 import in_out_mega
 # from train_rnn import train
@@ -142,3 +142,4 @@ train(regular_matches_in_rounds)
 
 """
 print("breakpoint")
+

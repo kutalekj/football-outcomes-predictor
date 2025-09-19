@@ -1,4 +1,4 @@
-import csv
+﻿import csv
 import datetime
 import os
 import json
@@ -6,12 +6,12 @@ import re
 from collections import defaultdict
 import numpy as np
 from dateutil.parser import parse as date_parse
-from globals import Global
-from match import Match
-from feature import MatchFeatures
-import utils as ut
-import settings
-import features_utils as feature_ut
+from football_outcomes.config.globals import Global
+from football_outcomes.data.match import Match
+from football_outcomes.features.feature import MatchFeatures
+from football_outcomes.utils import common as utils as ut
+from football_outcomes.config import settings
+from football_outcomes.features import features_utils as feature_ut
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -437,3 +437,4 @@ def load_sf_avg_team_strength():
             global_instance.sf_avg_team_strength[(season, team_id, position_category)] = skill_values
 
     print(f"[0] Successfully loaded team strength data from {settings.AVG_TEAM_STRENGTHS}")
+

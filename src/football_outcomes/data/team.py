@@ -1,6 +1,6 @@
-import requests
-import settings
-import utils as ut
+﻿import requests
+from football_outcomes.config import settings
+from football_outcomes.utils import common as utils as ut
 
 
 class Team:
@@ -112,3 +112,4 @@ class Team:
         else:
             self.fs_id, self.fs_clean_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)
         # TODO adj: Consider to forbid matching of teams already matched before
+

@@ -1,4 +1,4 @@
-"""
+﻿"""
 utils.py
 """
 
@@ -8,11 +8,11 @@ import unicodedata
 import difflib
 from rapidfuzz import fuzz
 from collections import Counter
-import settings
+from football_outcomes.config import settings
 import time
 import requests
-from globals import Global
-from settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
+from football_outcomes.config.globals import Global
+from football_outcomes.config.settings import MAX_MATCH_HISTORY_TO_CHECK_LOW
 from datetime import timedelta, datetime
 
 
@@ -796,3 +796,4 @@ def get_categorical_features_maps(regular_matches_sorted):
     comp_id_map = {comp_id: idx for idx, comp_id in enumerate(unique_comp_ids)}  # map to [0, 24)
 
     return team_id_map, comp_id_map
+
