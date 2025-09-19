@@ -58,3 +58,9 @@ src/margins_odds_per_comp_season/
 # secrets (DO NOT COMMIT)
 secrets/
 src/apifootball_model/boardmobile-*.json
+# Whole archives and background: keep out of git
+archive/
+background/
+
+# In case any sneaked in before
+*.Rhistory
