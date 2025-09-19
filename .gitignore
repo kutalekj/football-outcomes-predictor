@@ -1,4 +1,4 @@
-# Python
+﻿# Python
 __pycache__/
 *.py[cod]
 *.pyd
@@ -32,5 +32,5 @@ build/
 **/captures/
 **/*.iml
 
-# Old archived venvs (found under archive/Board)
+# Old archived venvs
 archive/**/venv/
