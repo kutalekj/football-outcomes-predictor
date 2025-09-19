@@ -9,7 +9,7 @@ from dateutil.parser import parse as date_parse
 from football_outcomes.config.globals import Global
 from football_outcomes.data.match import Match
 from football_outcomes.features.feature import MatchFeatures
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 from football_outcomes.config import settings
 from football_outcomes.features import features_utils as feature_ut
 

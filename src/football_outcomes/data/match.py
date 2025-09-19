@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import numpy as np
 from selenium.webdriver.common.devtools.v85.target import send_message_to_target
 from football_outcomes.config import settings
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 import time
 from football_outcomes.features.feature import MatchFeatures
 from football_outcomes.features import features_utils as feature_ut

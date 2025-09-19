@@ -8,7 +8,7 @@ import requests
 from datetime import datetime
 import numpy as np
 from football_outcomes.config import settings
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 from football_outcomes.config.globals import Global
 
 

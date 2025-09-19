@@ -1,6 +1,6 @@
 ﻿import requests
 from football_outcomes.config import settings
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 
 
 class Team:

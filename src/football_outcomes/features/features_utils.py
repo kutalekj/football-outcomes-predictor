@@ -3,7 +3,7 @@ feature_utils.py
 """
 
 import numpy as np
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 from football_outcomes.config.globals import Global
 from football_outcomes.config.settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
     GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\

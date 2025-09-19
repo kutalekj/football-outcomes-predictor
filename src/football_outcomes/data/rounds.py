@@ -8,7 +8,7 @@ from football_outcomes.config import settings
 import http.client
 import urllib.parse
 import json
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 
 
 class Round:

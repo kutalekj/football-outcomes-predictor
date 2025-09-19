@@ -14,7 +14,7 @@ import numpy as np
 from football_outcomes.data.team import Team
 from dateutil.parser import parse
 from football_outcomes.config.globals import Global
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 
 
 class Comp:

@@ -9,7 +9,7 @@ from tensorflow.keras.optimizers import Adam
 import os
 import shutil
 from football_outcomes.config import settings
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 
 NUM_TRAINING_ROUNDS = 25
 

@@ -9,7 +9,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
 from football_outcomes.config import settings
-from football_outcomes.utils import common as utils as ut
+from football_outcomes.utils import common as ut
 import matplotlib.pyplot as plt
 plt.switch_backend('TkAgg')
 
