@@ -10,29 +10,18 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Jakub Kutálek" }]
-
-# Keep core deps light; heavy ones go into extras.
 dependencies = [
   "numpy>=1.23",
   "pandas>=2.0",
   "scikit-learn>=1.3",
-  "matplotlib>=3.7",
   "pyyaml>=6.0",
   "tqdm>=4.65",
   "requests>=2.31"
 ]
 
 [project.optional-dependencies]
-# Install when training deep nets
-tf = ["tensorflow>=2.13"]
-# Firebase / Firestore client
-firebase = ["firebase-admin>=6.5.0"]
-# Scraping helpers
-scrape = ["selenium>=4.12"]
-# Dev toolchain
 dev = [
   "pytest>=7.4",
-  "pytest-cov>=4.1",
   "black>=24.3.0",
   "isort>=5.13.2",
   "flake8>=6.1.0",
@@ -40,9 +29,14 @@ dev = [
   "pre-commit>=3.6.0",
   "python-dotenv>=1.0.1"
 ]
+tf = ["tensorflow>=2.13"]
+firebase = ["firebase-admin>=6.5.0"]
+scrape = ["selenium>=4.12"]
 
-[project.urls]
-homepage = "https://github.com/kutalekj/MyFlashscoreScraper"
+[project.scripts]
+fop.main = "football_outcomes.cli.main:main"
+fop.app  = "football_outcomes.cli.app:main"
+fop.train-ann = "football_outcomes.training.train_ann:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -50,16 +44,3 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["football_outcomes*"]
-
-[project.scripts]
-# main pipeline and app
-fop.main = "football_outcomes.cli.main:main"
-fop.app  = "football_outcomes.cli.app:main"
-
-# training entrypoints (wrap your existing module mains)
-fop.train-ann                 = "football_outcomes.training.train_ann:main"
-fop.train-rnn                 = "football_outcomes.training.train_rnn:main"
-fop.train-team-strength       = "football_outcomes.training.train_team_strength:main"
-fop.train-teamid-encoder      = "football_outcomes.training.train_teamID_encoder:main"
-fop.train-compid-encoder      = "football_outcomes.training.train_compID_encoder:main"
-fop.train-cat-encoder-siamese = "football_outcomes.training.train_cat_encoder_siamese:main"
