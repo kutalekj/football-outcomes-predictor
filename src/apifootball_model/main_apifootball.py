@@ -28,7 +28,7 @@ if not settings.ALL_LOAD:
     # 1. Init comps (seasons, teams, AF rounds, FS matches)
     Comp.get_fs_leagues_list()
 
-    for comp in settings.COMPS_v2:
+    for comp in settings.COMPS_v2_TEST:
         new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
         new_comp.init_teams_in_comp()
         new_comp.init_all_rounds()

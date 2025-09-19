@@ -20,20 +20,20 @@ FS_HOST = "https://api.football-data-api.com"
 MATCH_DATA_LOAD = True
 MATCH_DATA_STORE = False
 
-MATCH_DATA_LOAD_FILENAME = "m_25-09-07_full.csv"
-MATCH_DATA_STORE_FILENAME = "m_25-09-07_full.csv"
+MATCH_DATA_LOAD_FILENAME = "m_25-09-18_BEL.csv"
+MATCH_DATA_STORE_FILENAME = "m_25-09-19_BEL.csv"
 
-ALL_STORE = True
+ALL_STORE = False
 ALL_LOAD = False
 
-ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-09-08.csv"
-ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-09-08.csv"
-ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-09-08.csv"
-ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-09-08.csv"
+ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-09-18.csv"
+ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-09-18.csv"
+ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-09-18.csv"
+ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-09-18.csv"
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 9, 6)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 9, 17)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
@@ -45,31 +45,10 @@ MAX_MATCH_HISTORY_TO_CHECK_LOW = 15
 
 # {v3API_id, name, regular_round_keywords, fs_alias}
 COMPS_v2_TEST = [
-    {'id': 179, 'name': "Premiership",
-     'regular_round_keywords': ['1st Phase', 'Championship Round', 'Relegation Round -'],
-     'fs_alias': "Premiership"},  # SCO
-    {'id': 188, 'name': "A-League",
-     'regular_round_keywords': ['Regular Season', 'Elimination Finals', 'Semi-finals', 'Grand Final'],
-     'fs_alias': "A-League"},  # AUS
-    {'id': 203, 'name': "Süper Lig", 'regular_round_keywords': ['Regular Season'], 'fs_alias': "Süper Lig"},  # TUR
-    {'id': 207, 'name': "Super League",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
-     'fs_alias': "Super League"},  # SUI
-    {'id': 218, 'name': "Bundesliga",
-     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Relegation Round -'],
-     'fs_alias': "Bundesliga"},  # AUT
-    {'id': 307, 'name': "Pro League", 'regular_round_keywords': ['Regular Season'],
-     'fs_alias': "Professional League"},  # SA
-    {'id': 323, 'name': "Indian Super League",
-     'regular_round_keywords': ['Regular Season', 'Qualifying Finals', 'Championship -'],
-     'fs_alias': "Indian Super League"},  # IND
-    {'id': 209, 'name': "Schweizer Cup", 'regular_round_keywords': [], 'fs_alias': "Swiss Cup"},
-    {'id': 206, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Turkish Cup"},  # TUR
-    {'id': 181, 'name': "FA Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish Cup"},  # SCO
-    {'id': 185, 'name': "League Cup", 'regular_round_keywords': [], 'fs_alias': "Scottish League Cup"},  # SCO
-    {'id': 220, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Austrian Cup"},  # AUT
-    {'id': 504, 'name': "King's Cup", 'regular_round_keywords': [], 'fs_alias': "Kings Cup"},  # SA
-    {'id': 874, 'name': "Australia Cup", 'regular_round_keywords': [], 'fs_alias': "FFA Cup"},  # AUS
+    {'id': 144, 'name': "Jupiler Pro League",
+     'regular_round_keywords': ['Regular Season', 'Championship Round', 'Conference League Play-off Group'],
+     'fs_alias': "Pro League"},  # BEL
+    {'id': 147, 'name': "Cup", 'regular_round_keywords': [], 'fs_alias': "Belgian Cup"},  # BEL
     {'id': 2, 'name': "UEFA Champions League", 'regular_round_keywords': [], 'fs_alias': "UEFA Champions League"},
     {'id': 3, 'name': "UEFA Europa League", 'regular_round_keywords': [], 'fs_alias': "UEFA Europa League"},
     {'id': 848, 'name': "UEFA Europa Conference League", 'regular_round_keywords': [],
