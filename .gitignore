@@ -38,3 +38,23 @@ archive/legacy_src/
 # R temp histories (you had src/.Rhistory)
 *.Rhistory
 */.Rhistory
+# Track models/checkpoints, ignore other model junk
+models/**
+!models/checkpoints/
+
+# apifootball_model generated/experiments and rarely needed heavy stuff
+src/apifootball_model/comps_val_acc*/
+src/apifootball_model/main_model_training_experiments/
+src/apifootball_model/apifootball_requests_outputs.png
+
+# backups & excel copies
+src/apifootball_model/*_old.csv
+src/apifootball_model/*.xlsx
+
+# validation & margins (large outputs; keep locally)
+src/validation_data/
+src/margins_odds_per_comp_season/
+
+# secrets (DO NOT COMMIT)
+secrets/
+src/apifootball_model/boardmobile-*.json
