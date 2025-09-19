@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# IDE / notebooks
+.idea/
+.vscode/
+.ipynb_checkpoints/
+
+# Generated data/models/logs
+data/raw/
+data/interim/
+data/external/
+models/
+experiments/runs/
+logs/
+src/logs/
+
+# Node / Android / Gradle
+**/node_modules/
+dist/
+build/
+**/.gradle/
+**/build/
+**/.cxx/
+**/captures/
+**/*.iml
+
+# Old archived venvs (found under archive/Board)
+archive/**/venv/
