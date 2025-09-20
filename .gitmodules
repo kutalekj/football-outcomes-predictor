@@ -5,4 +5,4 @@
 [submodule "apps/BoardMobile"]
 	path = apps/BoardMobile
 	url = https://github.com/kutalekj/BoardMobile.git
-	branch = master
+	branch = main
