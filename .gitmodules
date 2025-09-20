@@ -1,0 +1,4 @@
+[submodule "apps/sofifa_scraper"]
+	path = apps/sofifa_scraper
+	url = https://github.com/kutalekj/sofifa_scraper.git
+	branch = master
