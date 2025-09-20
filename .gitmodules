@@ -2,3 +2,7 @@
 	path = apps/sofifa_scraper
 	url = https://github.com/kutalekj/sofifa_scraper.git
 	branch = jku
+[submodule "apps/BoardMobile"]
+	path = apps/BoardMobile
+	url = https://github.com/kutalekj/BoardMobile.git
+	branch = master
