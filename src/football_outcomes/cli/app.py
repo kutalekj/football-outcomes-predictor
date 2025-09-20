@@ -1,10 +1,19 @@
-﻿def main(argv=None):
-    import argparse
-    p = argparse.ArgumentParser(description="Evaluation app runner (BoardMobile integration)")
-    p.add_argument("--port", type=int, default=8080)
-    args = p.parse_args(argv)
+﻿import argparse
 
-    # heavy imports AFTER parsing:
-    # from football_outcomes.evaluation import something
-    print(f"fop.app scaffold ready. Would start app on port {args.port}.")
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="fop.app",
+        description="Run the evaluation app (BoardMobile companion)."
+    )
+    p.add_argument("--port", type=int, default=8000, help="Port to serve on (default: 8000)")
+    return p
+
+def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    # TODO: start your app here (FastAPI/Flask/Streamlit/etc.)
+    print(f"App stub OK. Would start on port {args.port}.")
     return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
