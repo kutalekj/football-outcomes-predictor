@@ -1,22 +1,29 @@
-﻿import datetime
-import statistics
-import numpy as np
-import csv
-import random
-from football_outcomes.utils import common as utils as ut
+﻿# import csv
+import datetime
+
 from football_outcomes.config import settings
-from football_outcomes.data.comp import Comp
-from football_outcomes.data.season_comp_table import SeasonCompTable
-from football_outcomes.data.match import Match
-from football_outcomes.features.feature import MatchFeatures
 from football_outcomes.config.globals import Global
-import in_out
-import in_out_mega
-# from train_rnn import train
-from train_ann import train
-# from train_compID_encoder import train
-# from train_teamID_encoder import train
-# from train_team_strength import train
+from football_outcomes.data import io as in_out
+from football_outcomes.data import io_mega as in_out_mega
+from football_outcomes.data.comp import Comp
+from football_outcomes.data.match import Match
+from football_outcomes.data.season_comp_table import SeasonCompTable
+from football_outcomes.features.feature import MatchFeatures
+from football_outcomes.utils import common as utils
+
+# import random
+# import statistics
+
+# import numpy as np
+
+
+# from football_outcomes.training.train_rnn import train
+# from football_outcomes.training.train_ann import train
+
+# from football_outcomes.training.train_compID_encoder import train
+# from football_outcomes.training.train_teamID_encoder import train
+# from football_outcomes.training.train_team_strength import train
+ut = utils
 
 global_instance = Global.get_instance()
 
@@ -29,7 +36,7 @@ if not settings.ALL_LOAD:
     Comp.get_fs_leagues_list()
 
     for comp in settings.COMPS_v2_TEST:
-        new_comp = Comp(comp['id'], comp['name'], comp['regular_round_keywords'])
+        new_comp = Comp(comp["id"], comp["name"], comp["regular_round_keywords"])
         new_comp.init_teams_in_comp()
         new_comp.init_all_rounds()
 
@@ -46,7 +53,9 @@ if not settings.ALL_LOAD:
 
             if season not in global_instance.start_end_dates_per_country_season[comp.country]:
                 global_instance.start_end_dates_per_country_season[comp.country][season] = {
-                    'start': datetime.datetime.max, 'end': datetime.datetime.min}
+                    "start": datetime.datetime.max,
+                    "end": datetime.datetime.min,
+                }
 
             if len(comp.regular_round_keywords) == 0:
                 continue  # omit the cups - do not create tables for them
@@ -62,14 +71,18 @@ if not settings.ALL_LOAD:
     # 3a. Load match data from local
     if settings.MATCH_DATA_LOAD:
         in_out.load_matches(settings.MATCH_DATA_LOAD_FILENAME)
-    all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
+    all_loaded_comp_seasons = list(
+        set([(x.comp.id, x.season) for x in global_instance.all_matches])
+    )
 
     # 3b. Get new match data from API
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
     # 4. Correct (set) team regularity and match AF teams with FS teams
     for team in global_instance.all_teams:
-        team.matches = sorted(team.matches, key=lambda match_: match_.datetime)  # sort team matches by datetime (asc.)
+        team.matches = sorted(
+            team.matches, key=lambda match_: match_.datetime
+        )  # sort team matches by datetime (asc.)
         team.correct_team_regularity_and_match_af_fs_teams()  # assume each team plays exactly in one reg. comp season!
 
     # 5a. Exclude irregular teams from table calculations
@@ -82,7 +95,9 @@ if not settings.ALL_LOAD:
     in_out.load_player_stats()
 
     # 7. Calculate features for each match (must be done chronologically asc.!)
-    global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
+    global_instance.all_matches = sorted(
+        global_instance.all_matches, key=lambda match_: match_.datetime
+    )
     for match in global_instance.all_matches:
 
         # DEBUG
@@ -90,18 +105,24 @@ if not settings.ALL_LOAD:
             stop_here = True
 
         # Match AF/FS match lineups
-        ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
+        ut.get_fs_match_lineups(
+            match
+        )  # match players in AF match lineup with those in teams' FS comp season roster
 
         # Get xG match stats (FS)
-        if match.round.is_regular and\
-                match.datetime > settings.GET_XG_IF_MATCH_DATE_NEWER_THAN.replace(tzinfo=match.datetime.tzinfo) and\
-                (match.total_xg == -1 and match.total_pre_match_xg == -1):
+        if (
+            match.round.is_regular
+            and match.datetime
+            > settings.GET_XG_IF_MATCH_DATE_NEWER_THAN.replace(tzinfo=match.datetime.tzinfo)
+            and (match.total_xg == -1 and match.total_pre_match_xg == -1)
+        ):
             ut.get_fs_match_xg(match)
 
         # Feature calculation
         match.features_before_match_played = match.calculate_match_features()
         match.feature_vector_before_match_played = MatchFeatures.match_features_to_vector(
-            match.features_before_match_played)
+            match.features_before_match_played
+        )
 else:
     in_out_mega.load_all_matches_data()
 
@@ -142,4 +163,3 @@ train(regular_matches_in_rounds)
 
 """
 print("breakpoint")
-
