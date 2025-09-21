@@ -70,7 +70,7 @@ if not settings.ALL_LOAD:
 
     # 3a. Load match data from local
     if settings.MATCH_DATA_LOAD:
-        in_out.load_matches(settings.MATCH_DATA_LOAD_FILENAME)
+        in_out.load_matches(settings.M_LOAD_CSV)
     all_loaded_comp_seasons = list(
         set([(x.comp.id, x.season) for x in global_instance.all_matches])
     )
@@ -128,7 +128,7 @@ else:
 
 # 8a. Store matches to local
 if settings.MATCH_DATA_STORE:
-    in_out.store_matches(settings.MATCH_DATA_STORE_FILENAME)
+    in_out.store_matches(settings.M_STORE_CSV)
 
 # 8b. Store all data to local
 if settings.ALL_STORE:

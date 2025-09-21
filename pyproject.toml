@@ -44,3 +44,11 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["football_outcomes*"]
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = ["E203","W503"]
+per-file-ignores = [
+    "src/football_outcomes/config/settings.py:E501",
+]
+
