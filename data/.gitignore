@@ -1,0 +1,6 @@
+﻿# Ignore big snapshot CSVs
+data/processed/*.csv
+
+# Keep these two tracked (small)
+!data/processed/avg_team_strengths.csv
+!data/processed/records.csv
