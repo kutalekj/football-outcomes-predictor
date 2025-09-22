@@ -496,6 +496,7 @@ def load_sf_avg_team_strength():
     with open(settings.AVG_TEAM_STRENGTHS, "r", newline="", encoding="utf-8") as file:
         reader = csv.reader(file)
         # header = next(reader)  # read header row
+        _ = next(reader)  # read header row
 
         for row in reader:
             season = int(row[0])
