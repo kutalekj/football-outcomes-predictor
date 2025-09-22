@@ -16,8 +16,7 @@ dependencies = [
   "scikit-learn>=1.3",
   "pyyaml>=6.0",
   "tqdm>=4.65",
-  "requests>=2.31"
-]
+  "requests>=2.31"]
 
 [project.optional-dependencies]
 dev = [
@@ -28,8 +27,7 @@ dev = [
   "mypy>=1.7.0",
   "pre-commit>=3.6.0",
   "protobuf>=3.20.3,<5",
-  "python-dotenv>=1.0.1"
-]
+  "python-dotenv>=1.0.1"]
 tf = ["tensorflow>=2.13"]
 firebase = ["firebase-admin>=6.5.0"]
 scrape = ["selenium>=4.12"]
@@ -51,12 +49,11 @@ max-line-length = 120
 extend-ignore = ["E203","W503"]
 per-file-ignores = [
     "src/football_outcomes/config/settings.py:E501",
-]
+    "src/football_outcomes/data/match.py:E501"]
 
 [tool.black]
 line-length = 120
-extend-exclude = '''
-(
-  ^src/football_outcomes/config/settings\.py$
-)
-'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
