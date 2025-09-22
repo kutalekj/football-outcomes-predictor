@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "football-outcomes-predictor"
 version = "0.1.0"
-description = "Deep learning pipeline to predict football match outcomes."
+description = "A Deep Learning Framework for Predicting Football Match Outcomes."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Jakub Kutálek" }]
+authors = [{ name = "Jiří Kutálek" }]
 dependencies = [
   "numpy>=1.23",
   "pandas>=2.0",
@@ -27,6 +27,7 @@ dev = [
   "flake8>=6.1.0",
   "mypy>=1.7.0",
   "pre-commit>=3.6.0",
+  "protobuf>=3.20.3,<5",
   "python-dotenv>=1.0.1"
 ]
 tf = ["tensorflow>=2.13"]
@@ -52,3 +53,10 @@ per-file-ignores = [
     "src/football_outcomes/config/settings.py:E501",
 ]
 
+[tool.black]
+line-length = 120
+extend-exclude = '''
+(
+  ^src/football_outcomes/config/settings\.py$
+)
+'''
