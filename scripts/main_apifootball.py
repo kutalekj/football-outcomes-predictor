@@ -71,18 +71,14 @@ if not settings.ALL_LOAD:
     # 3a. Load match data from local
     if settings.MATCH_DATA_LOAD:
         in_out.load_matches(settings.M_LOAD_CSV)
-    all_loaded_comp_seasons = list(
-        set([(x.comp.id, x.season) for x in global_instance.all_matches])
-    )
+    all_loaded_comp_seasons = list(set([(x.comp.id, x.season) for x in global_instance.all_matches]))
 
     # 3b. Get new match data from API
     Match.get_new_matches_data_using_api(existing=all_loaded_comp_seasons)
 
     # 4. Correct (set) team regularity and match AF teams with FS teams
     for team in global_instance.all_teams:
-        team.matches = sorted(
-            team.matches, key=lambda match_: match_.datetime
-        )  # sort team matches by datetime (asc.)
+        team.matches = sorted(team.matches, key=lambda match_: match_.datetime)  # sort team matches by datetime (asc.)
         team.correct_team_regularity_and_match_af_fs_teams()  # assume each team plays exactly in one reg. comp season!
 
     # 5a. Exclude irregular teams from table calculations
@@ -95,9 +91,7 @@ if not settings.ALL_LOAD:
     in_out.load_player_stats()
 
     # 7. Calculate features for each match (must be done chronologically asc.!)
-    global_instance.all_matches = sorted(
-        global_instance.all_matches, key=lambda match_: match_.datetime
-    )
+    global_instance.all_matches = sorted(global_instance.all_matches, key=lambda match_: match_.datetime)
     for match in global_instance.all_matches:
 
         # DEBUG
@@ -105,15 +99,12 @@ if not settings.ALL_LOAD:
             stop_here = True
 
         # Match AF/FS match lineups
-        ut.get_fs_match_lineups(
-            match
-        )  # match players in AF match lineup with those in teams' FS comp season roster
+        ut.get_fs_match_lineups(match)  # match players in AF match lineup with those in teams' FS comp season roster
 
         # Get xG match stats (FS)
         if (
             match.round.is_regular
-            and match.datetime
-            > settings.GET_XG_IF_MATCH_DATE_NEWER_THAN.replace(tzinfo=match.datetime.tzinfo)
+            and match.datetime > settings.GET_XG_IF_MATCH_DATE_NEWER_THAN.replace(tzinfo=match.datetime.tzinfo)
             and (match.total_xg == -1 and match.total_pre_match_xg == -1)
         ):
             ut.get_fs_match_xg(match)

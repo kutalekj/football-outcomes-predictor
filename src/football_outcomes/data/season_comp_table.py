@@ -3,13 +3,16 @@ season_comp_table.py
 """
 
 import http.client
-import json
-import requests
+
+# import json
 from datetime import datetime
-import numpy as np
+
+# import numpy as np
+import requests
+
 from football_outcomes.config import settings
-from football_outcomes.utils import common as ut
 from football_outcomes.config.globals import Global
+from football_outcomes.utils import common as ut
 
 
 class SeasonCompTable:
@@ -28,12 +31,23 @@ class SeasonCompTable:
         global_instance = Global.get_instance()
         print(f"Initializing table for comp [{self.comp_name}].")
 
-        self.teams = [team for team in global_instance.all_teams if
-                      {'comp': ut.get_comp_by_id(self.comp_id), 'season': self.season, 'is_regular': False}
-                      in team.regularity_in_comp_season]  # at the moment there are no teams set as regular yet
+        self.teams = [
+            team
+            for team in global_instance.all_teams
+            if {"comp": ut.get_comp_by_id(self.comp_id), "season": self.season, "is_regular": False}
+            in team.regularity_in_comp_season
+        ]  # at the moment there are no teams set as regular yet
 
-        self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
-                                                  'avg_points_per_game': 0} for team in self.teams}
+        self.team_stats = {
+            (team.id, team.name): {
+                "points": 0,
+                "games_played": 0,
+                "goals_for": 0,
+                "goals_against": 0,
+                "avg_points_per_game": 0,
+            }
+            for team in self.teams
+        }
 
     def update_table(self, matches):
         for match in matches:
@@ -44,27 +58,28 @@ class SeasonCompTable:
             home_goals = match.home_team_goals
             away_goals = match.away_team_goals
 
-            self.team_stats[(home_team_id, home_team_name)]['games_played'] += 1
-            self.team_stats[(home_team_id, home_team_name)]['goals_for'] += home_goals
-            self.team_stats[(home_team_id, home_team_name)]['goals_against'] += away_goals
-            self.team_stats[(away_team_id, away_team_name)]['games_played'] += 1
-            self.team_stats[(away_team_id, away_team_name)]['goals_for'] += away_goals
-            self.team_stats[(away_team_id, away_team_name)]['goals_against'] += home_goals
+            self.team_stats[(home_team_id, home_team_name)]["games_played"] += 1
+            self.team_stats[(home_team_id, home_team_name)]["goals_for"] += home_goals
+            self.team_stats[(home_team_id, home_team_name)]["goals_against"] += away_goals
+            self.team_stats[(away_team_id, away_team_name)]["games_played"] += 1
+            self.team_stats[(away_team_id, away_team_name)]["goals_for"] += away_goals
+            self.team_stats[(away_team_id, away_team_name)]["goals_against"] += home_goals
 
             if home_goals > away_goals:
-                self.team_stats[(home_team_id, home_team_name)]['points'] += 3.0
+                self.team_stats[(home_team_id, home_team_name)]["points"] += 3.0
             elif home_goals < away_goals:
-                self.team_stats[(away_team_id, away_team_name)]['points'] += 3.0
+                self.team_stats[(away_team_id, away_team_name)]["points"] += 3.0
             else:
-                self.team_stats[(home_team_id, home_team_name)]['points'] += 1.0
-                self.team_stats[(away_team_id, away_team_name)]['points'] += 1.0
+                self.team_stats[(home_team_id, home_team_name)]["points"] += 1.0
+                self.team_stats[(away_team_id, away_team_name)]["points"] += 1.0
 
         # Normalize points (some teams might have more matches played up to a certain date)
         for team in self.teams:
-            self.team_stats[(team.id, team.name)]['avg_points_per_game'] = \
-                self.team_stats[(team.id, team.name)]['points'] / \
-                self.team_stats[(team.id, team.name)]['games_played'] \
-                    if self.team_stats[(team.id, team.name)]['games_played'] > 0 else 0.0
+            self.team_stats[(team.id, team.name)]["avg_points_per_game"] = (
+                self.team_stats[(team.id, team.name)]["points"] / self.team_stats[(team.id, team.name)]["games_played"]
+                if self.team_stats[(team.id, team.name)]["games_played"] > 0
+                else 0.0
+            )
 
     # TODO: How to handle transitions between individual seasons? - in a new season there might be different teams
     # TODO: Issue1: In a new season there might be a team that had no previous matches...
@@ -76,8 +91,16 @@ class SeasonCompTable:
     # TODO: Solution: Probably currently not fixing - possible future features (it might be faster, but complicated...)
     def calculate_and_get_teams_positions_in_season_up_to_date(self, date):
         # Reset team stats
-        self.team_stats = {(team.id, team.name): {'points': 0, 'games_played': 0, 'goals_for': 0, 'goals_against': 0,
-                                                  'avg_points_per_game': 0} for team in self.teams}
+        self.team_stats = {
+            (team.id, team.name): {
+                "points": 0,
+                "games_played": 0,
+                "goals_for": 0,
+                "goals_against": 0,
+                "avg_points_per_game": 0,
+            }
+            for team in self.teams
+        }
 
         # Get all matches up to the wanted date
         regular_matches_up_to_date = ut.get_all_regular_matches_in_season_table_up_to_date(self, date)
@@ -86,10 +109,16 @@ class SeasonCompTable:
         self.update_table(regular_matches_up_to_date)
 
         # TODO: Adj.: Team with equal sorting might get same position (e.g. 1st position for all teams before season)
-        sorted_teams = sorted(self.teams, key=lambda team: (
-            self.team_stats[(team.id, team.name)]['avg_points_per_game'],
-            self.team_stats[(team.id, team.name)]['goals_for'] - self.team_stats[(team.id, team.name)]['goals_against'],
-            self.team_stats[(team.id, team.name)]['goals_for']), reverse=True)
+        sorted_teams = sorted(
+            self.teams,
+            key=lambda team: (
+                self.team_stats[(team.id, team.name)]["avg_points_per_game"],
+                self.team_stats[(team.id, team.name)]["goals_for"]
+                - self.team_stats[(team.id, team.name)]["goals_against"],
+                self.team_stats[(team.id, team.name)]["goals_for"],
+            ),
+            reverse=True,
+        )
 
         return sorted_teams
 
@@ -101,27 +130,43 @@ class SeasonCompTable:
             if team.id == team_id:
                 return float(1.0 - (position / len(self.teams)))
 
-        raise Exception(f"Unable to calculate team [{str(team_id)}] position in the current comp season "
-                        f"[{self.comp_name}, {str(self.season)}]")
+        raise Exception(
+            f"Unable to calculate team [{str(team_id)}] position in the current comp season "
+            f"[{self.comp_name}, {str(self.season)}]"
+        )
 
     @staticmethod
     def exclude_irregular_teams_from_table_calc():
         global_instance = Global.get_instance()
 
         for table in global_instance.all_tables:
-            table.teams = [team for team in table.teams if
-                           any([season_elem for season_elem in team.regularity_in_comp_season if
-                                season_elem['comp'].id == table.comp_id and
-                                season_elem['season'] == table.season and
-                                season_elem['is_regular']])]
+            table.teams = [
+                team
+                for team in table.teams
+                if any(
+                    [
+                        season_elem
+                        for season_elem in team.regularity_in_comp_season
+                        if season_elem["comp"].id == table.comp_id
+                        and season_elem["season"] == table.season
+                        and season_elem["is_regular"]
+                    ]
+                )
+            ]
 
-            table.team_stats = {(team_id, team_name): stats for (team_id, team_name), stats in table.team_stats.items()
-                                if
-                                any([season_elem for season_elem in
-                                     ut.get_team_if_exists(team_id).regularity_in_comp_season
-                                     if season_elem['comp'].id == table.comp_id and
-                                     season_elem['season'] == table.season and
-                                     season_elem['is_regular']])}
+            table.team_stats = {
+                (team_id, team_name): stats
+                for (team_id, team_name), stats in table.team_stats.items()
+                if any(
+                    [
+                        season_elem
+                        for season_elem in ut.get_team_if_exists(team_id).regularity_in_comp_season
+                        if season_elem["comp"].id == table.comp_id
+                        and season_elem["season"] == table.season
+                        and season_elem["is_regular"]
+                    ]
+                )
+            }
 
     @staticmethod
     def get_fs_player_rosters_per_regular_comp_season_team():
@@ -138,12 +183,17 @@ class SeasonCompTable:
                 if fs_season_id is None:
                     continue
 
-                comp_season_players_stats_request_string_fs = settings.FS_HOST + "/league-players?key=" + \
-                                                              settings.FS_KEY + "&season_id=" + str(
-                    fs_season_id) + "&include=stats"
+                comp_season_players_stats_request_string_fs = (
+                    settings.FS_HOST
+                    + "/league-players?key="
+                    + settings.FS_KEY
+                    + "&season_id="
+                    + str(fs_season_id)
+                    + "&include=stats"
+                )
                 res = requests.get(comp_season_players_stats_request_string_fs)
                 data_comp_season_players_stats_fs = res.json()  # get data
-                num_pages = data_comp_season_players_stats_fs['pager']['max_page']
+                num_pages = data_comp_season_players_stats_fs["pager"]["max_page"]
 
                 all_data_comp_season_players_stats_fs = []
                 for page_num in range(1, num_pages + 1):  # iterate over all pages
@@ -151,33 +201,39 @@ class SeasonCompTable:
                     res_json = requests.get(request_url).json()
                     print(f"[5] \t\tFS req. remaining: {res_json['metadata']['request_remaining']}...")
 
-                    all_data_comp_season_players_stats_fs += [{
-                        'fs_id': x['id'],
-                        'fs_comp_id': x['competition_id'],
-                        'fs_full_name': x['full_name'],
-                        'fs_known_as': x['known_as'],
-                        'fs_birthday': datetime.utcfromtimestamp(x['birthday']),
-                        'fs_age': x['age'],
-                        'fs_weight': x['weight'],
-                        'fs_height': x['height'],
-                        'fs_league': x['league'],
-                        'fs_league_type': x['league_type'],
-                        'fs_club_team_id': x['club_team_id'],
-                        'fs_club_team_2_id': x['club_team_2_id'],
-                        'fs_position': x['position'],
-                        'fs_nationality': x['nationality'],
-                    } for x in res_json['data']]
+                    all_data_comp_season_players_stats_fs += [
+                        {
+                            "fs_id": x["id"],
+                            "fs_comp_id": x["competition_id"],
+                            "fs_full_name": x["full_name"],
+                            "fs_known_as": x["known_as"],
+                            "fs_birthday": datetime.utcfromtimestamp(x["birthday"]),
+                            "fs_age": x["age"],
+                            "fs_weight": x["weight"],
+                            "fs_height": x["height"],
+                            "fs_league": x["league"],
+                            "fs_league_type": x["league_type"],
+                            "fs_club_team_id": x["club_team_id"],
+                            "fs_club_team_2_id": x["club_team_2_id"],
+                            "fs_position": x["position"],
+                            "fs_nationality": x["nationality"],
+                        }
+                        for x in res_json["data"]
+                    ]
 
                 table.all_fs_players_involved = all_data_comp_season_players_stats_fs
 
                 # Then, when irregular teams should be already excluded from tables, assign comp season players to teams
                 for team in table.teams:
                     # Condition as follows, because player might have played for more teams in a comp season
-                    selected_fs_players = [x for x in table.all_fs_players_involved if
-                                           team.fs_id == x['fs_club_team_id']
-                                           or ('fs_club_team_2_id' in x and team.fs_id == x['fs_club_team_2_id'])]
+                    selected_fs_players = [
+                        x
+                        for x in table.all_fs_players_involved
+                        if team.fs_id == x["fs_club_team_id"]
+                        or ("fs_club_team_2_id" in x and team.fs_id == x["fs_club_team_2_id"])
+                    ]
                     # TODO check: Maybe debug check this teams matching condition
 
-                    team.players_in_regular_comp_season.append({'comp': comp, 'season': season,
-                                                                'fs_players': selected_fs_players})
-
+                    team.players_in_regular_comp_season.append(
+                        {"comp": comp, "season": season, "fs_players": selected_fs_players}
+                    )

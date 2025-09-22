@@ -2,14 +2,28 @@
 feature_utils.py
 """
 
-import numpy as np
-from football_outcomes.utils import common as ut
+# import numpy as np
+
 from football_outcomes.config.globals import Global
-from football_outcomes.config.settings import INIT_ELO, WINNER_TEAM_ID_CODE_FOR_DRAW, FIRST_SEASON, LAST_SEASON, SOG_NORM_COEFFICIENT, \
-    GOALS_NORM_COEFFICIENT, TOTAL_SHOTS_NORM_COEFFICIENT, SHOTS_IN_BOX_NORM_COEFFICIENT, CORNER_KICKS_NORM_COEFFICIENT,\
-    MATCH_LOAD_NORM_COEFFICIENT, ALMOST_ZERO, ALMOST_ONE, CSV_PLAYERS_PATH, PLAYER_SKILLS, \
-    TEAM_XG_NORM_COEFFICIENT, TOTAL_XG_NORM_COEFFICIENT, TEAM_PRE_MATCH_XG_NORM_COEFFICIENT, \
-    TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT  # TODO code: refactor this
+from football_outcomes.config.settings import (  # TODO code: refactor this
+    ALMOST_ONE,
+    ALMOST_ZERO,
+    CORNER_KICKS_NORM_COEFFICIENT,
+    FIRST_SEASON,
+    GOALS_NORM_COEFFICIENT,
+    INIT_ELO,
+    LAST_SEASON,
+    MATCH_LOAD_NORM_COEFFICIENT,
+    SHOTS_IN_BOX_NORM_COEFFICIENT,
+    SOG_NORM_COEFFICIENT,
+    TEAM_PRE_MATCH_XG_NORM_COEFFICIENT,
+    TEAM_XG_NORM_COEFFICIENT,
+    TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT,
+    TOTAL_SHOTS_NORM_COEFFICIENT,
+    TOTAL_XG_NORM_COEFFICIENT,
+    WINNER_TEAM_ID_CODE_FOR_DRAW,
+)
+from football_outcomes.utils import common as ut
 
 ELO_C = 10.0
 ELO_D = 400.0
@@ -25,8 +39,13 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 
     if home_away == "home":
         while True:
-            prev_match = ut.get_previous_match(new_curr_match, curr_match.home_team.id, same_comp=False,
-                                               same_season=False, regular=False)
+            prev_match = ut.get_previous_match(
+                new_curr_match,
+                curr_match.home_team.id,
+                same_comp=False,
+                same_season=False,
+                regular=False,
+            )
 
             if prev_match is None:
                 break
@@ -39,8 +58,13 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 
     elif home_away == "away":
         while True:
-            prev_match = ut.get_previous_match(new_curr_match, curr_match.away_team.id, same_comp=False,
-                                               same_season=False, regular=False)
+            prev_match = ut.get_previous_match(
+                new_curr_match,
+                curr_match.away_team.id,
+                same_comp=False,
+                same_season=False,
+                regular=False,
+            )
 
             if prev_match is None:
                 break
@@ -51,7 +75,7 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
             else:
                 break
     else:
-        raise Exception("The \"home_away\" parameter set to a wrong value.")
+        raise Exception('The "home_away" parameter set to a wrong value.')
 
     match_load = float(num_matches) / n
     return normalize_match_loads(match_load)
@@ -62,15 +86,27 @@ def get_match_load_per_day_last_n(curr_match, n, home_away):
 def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     # Check if wanted for currently HOME or currently AWAY team
     if home_away == "home":
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.home_team.id,
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.home_team.id
     elif home_away == "away":
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.away_team.id,
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.away_team.id
     else:
-        raise Exception("The \"home_away\" parameter set to a wrong value.")
+        raise Exception('The "home_away" parameter set to a wrong value.')
 
     total_points = 0
     total_none_values = 0
@@ -86,7 +122,8 @@ def get_avg_points_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
                 total_points += match.away_team_points
             else:
                 raise Exception(
-                    "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
+                    'The "team_id" parameter equals neither to home or away team in one of the previous matches.'
+                )
 
     # Avoid division by zero
     if n - total_none_values == 0:
@@ -103,19 +140,31 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
     if home_away == "home":
 
         # Last N matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.home_team.id,
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.home_team.id
 
     elif home_away == "away":
 
         # Last N matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.away_team.id,
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.away_team.id
 
     else:
-        raise Exception("The \"home_away\" parameter set to a wrong value.")
+        raise Exception('The "home_away" parameter set to a wrong value.')
 
     total_goals = 0
     total_none_values = 0
@@ -131,7 +180,8 @@ def get_avg_goals_last_n(curr_match, n, home_away):  # "N" 5 or 20 probably
                 total_goals += match.away_team_goals
             else:
                 raise Exception(
-                    "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
+                    'The "team_id" parameter equals neither to home or away team in one of the previous matches.'
+                )
 
     # Avoid division by zero
     if n - total_none_values == 0:
@@ -153,19 +203,31 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
     if home_away == "home":
 
         # Last N matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.home_team.id,
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.home_team.id
 
     elif home_away == "away":
 
         # Last N matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.away_team.id,
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.away_team.id
 
     else:
-        raise Exception("The \"home_away\" parameter set to a wrong value.")
+        raise Exception('The "home_away" parameter set to a wrong value.')
 
     total_value = 0
     total_none_values = 0
@@ -224,7 +286,8 @@ def get_avg_stat_value_last_n(curr_match, n, home_away, stat_name):  # "N" 5 or 
 
             else:
                 raise Exception(
-                    "The \"team_id\" parameter equals neither to home or away team in one of the previous matches.")
+                    'The "team_id" parameter equals neither to home or away team in one of the previous matches.'
+                )
 
             # This is the correction of case an irregular match misses a stats value (-1)
             if new_value != -1:
@@ -270,19 +333,33 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
     if home_away == "home":
 
         # Last N home matches of a home team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.home_team.id, "home", same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.home_team.id,
+            "home",
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.home_team.id
 
     elif home_away == "away":
 
         # Last N away matches of an away team
-        last_n_matches = ut.get_n_previous_matches(n, curr_match, curr_match.away_team.id, "away", same_comp=False,
-                                                   same_season=False, regular=False)
+        last_n_matches = ut.get_n_previous_matches(
+            n,
+            curr_match,
+            curr_match.away_team.id,
+            "away",
+            same_comp=False,
+            same_season=False,
+            regular=False,
+        )
         team_id = curr_match.away_team.id
 
     else:
-        raise Exception("The \"home_away\" parameter set to a wrong value.")
+        raise Exception('The "home_away" parameter set to a wrong value.')
 
     total_goals = 0
     total_none_values = 0
@@ -301,7 +378,8 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
                     total_goals += match.away_team_goals
                 else:
                     raise Exception(
-                        "The \"team_id\" param equals neither to home or away team in one of the previous matches.")
+                        'The "team_id" param equals neither to home or away team in one of the previous matches.'
+                    )
 
             # Counting number of conceded goals of a team
             elif scored_conceded == "conceded":
@@ -313,10 +391,11 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
                     total_goals += match.home_team_goals
                 else:
                     raise Exception(
-                        "The \"team_id\" param equals neither to home or away team in one of the previous matches.")
+                        'The "team_id" param equals neither to home or away team in one of the previous matches.'
+                    )
 
             else:
-                raise ValueError("The \"scored_conceded\" parameter equals neither to \"scored\" or \"conceded\".")
+                raise ValueError('The "scored_conceded" parameter equals neither to "scored" or "conceded".')
 
     # Avoid division by zero
     if n - total_none_values == 0:
@@ -330,8 +409,9 @@ def get_avg_goals_scored_conceded_home_or_away_last_n(curr_match, n, home_away, 
 def calculate_elo_for_both_teams(curr_match):
     # Get previous match of currently HOME team and find out if it was home or away team in that previous match
     # Then get its ELO in the previous match
-    home_team_prev_match = ut.get_previous_match(curr_match, curr_match.home_team.id, same_comp=False,
-                                                 same_season=False, regular=False)
+    home_team_prev_match = ut.get_previous_match(
+        curr_match, curr_match.home_team.id, same_comp=False, same_season=False, regular=False
+    )
     if home_team_prev_match is None:
         home_team_prev_match_elo = INIT_ELO
     else:
@@ -344,8 +424,9 @@ def calculate_elo_for_both_teams(curr_match):
 
     # Get previous match of currently AWAY team and find out if it was home or away team in that previous match
     # Then get its ELO in the previous match
-    away_team_prev_match = ut.get_previous_match(curr_match, curr_match.away_team.id, same_comp=False,
-                                                 same_season=False, regular=False)
+    away_team_prev_match = ut.get_previous_match(
+        curr_match, curr_match.away_team.id, same_comp=False, same_season=False, regular=False
+    )
     if away_team_prev_match is None:
         away_team_prev_match_elo = INIT_ELO
     else:
@@ -394,9 +475,11 @@ def calculate_team_strength(curr_match, team_id):
         team_name = curr_match.away_team.name
         team_fs_lineup = curr_match.away_fs_team_lineup
     else:
-        raise ValueError(f"Team ID {team_id} matches neither the home team {curr_match.home_team.name} "
-                         f"({curr_match.home_team.id}) or the away team {curr_match.away_team.name} "
-                         f"({curr_match.away_team.id})")
+        raise ValueError(
+            f"Team ID {team_id} matches neither the home team {curr_match.home_team.name} "
+            f"({curr_match.home_team.id}) or the away team {curr_match.away_team.name} "
+            f"({curr_match.away_team.id})"
+        )
 
     # Init players skills dict
     team_sf_players_skills = []
@@ -406,11 +489,15 @@ def calculate_team_strength(curr_match, team_id):
 
     # No lineup found
     if team_fs_lineup is None or len(team_fs_lineup) > 11:
-        raise ValueError(f"FS team lineup [{team_fs_lineup}] should never be \"None\" or more than 11 (match "
-                         f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
+        raise ValueError(
+            f'FS team lineup [{team_fs_lineup}] should never be "None" or more than 11 (match '
+            f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})"
+        )
     if len(team_fs_lineup) == 0:
-        print(f"No team FS lineup list found, but 11 expected (match "
-              f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})")
+        print(
+            f"No team FS lineup list found, but 11 expected (match "
+            f"{curr_match.home_team.name} - {curr_match.away_team.name} played at {curr_match.datetime})"
+        )
         # TODO manual output check: count how many such missing ones are there in total - hopefully very few!!!
 
         team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
@@ -424,14 +511,16 @@ def calculate_team_strength(curr_match, team_id):
 
         # 2. Iterate over them
         for fs_player in team_fs_lineup:
-            fs_player['fs_birthday'] = fs_player['fs_birthday'].replace(hour=0)  # match SOFIFA datetime formats
+            fs_player["fs_birthday"] = fs_player["fs_birthday"].replace(hour=0)  # match SOFIFA datetime formats
 
-            if fs_player['fs_birthday'] in global_instance.sofifa_players_by_dob:
+            if fs_player["fs_birthday"] in global_instance.sofifa_players_by_dob:
                 # Get SOFIFA player that is matching the FS player's date of birth
-                sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player['fs_birthday']]
+                sf_players_with_same_dob = global_instance.sofifa_players_by_dob[fs_player["fs_birthday"]]
                 if len(sf_players_with_same_dob) == 0:
-                    raise ValueError(f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
-                                     f"of FS player {fs_player['fs_known_as']}")
+                    raise ValueError(
+                        f"No sofifa players were found for the birth date {fs_player['fs_birthday']} "
+                        f"of FS player {fs_player['fs_known_as']}"
+                    )
             else:
                 print(f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in SOFIFA dob dict. Skipping...")
                 # TODO manual output check: count how many DOB misses are there in total
@@ -440,28 +529,37 @@ def calculate_team_strength(curr_match, team_id):
 
             # Match FS player to SOFIFA player
             sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(
-                fs_player, sf_players_with_same_dob)
+                fs_player, sf_players_with_same_dob
+            )
 
             if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
                 continue  # no FS/SOFIFA match because of too low similarity score
 
             # Get SOFIFA player skills
-            sf_player_skills = ut.get_sf_player_data(curr_match.datetime, sf_player_id,
-                                                     (team_id, team_name, curr_match.season), fs_player['fs_position'])
+            sf_player_skills = ut.get_sf_player_data(
+                curr_match.datetime,
+                sf_player_id,
+                (team_id, team_name, curr_match.season),
+                fs_player["fs_position"],
+            )
             team_sf_players_skills.append(sf_player_skills)
 
-            lineup_fs_positions.append(fs_player['fs_position'])  # store FS position
+            lineup_fs_positions.append(fs_player["fs_position"])  # store FS position
 
         if len(team_sf_players_skills) != 11:
-            print(f"There are {11 - len(team_sf_players_skills)} player skills missing for [{team_name}]! Imitating..."
-                  f"({curr_match.home_team.name} vs. {curr_match.away_team.name} played at {curr_match.datetime})")
+            print(
+                f"There are {11 - len(team_sf_players_skills)} player skills missing for [{team_name}]! Imitating..."
+                f"({curr_match.home_team.name} vs. {curr_match.away_team.name} played at {curr_match.datetime})"
+            )
 
-            team_sf_players_skills = ut.add_imitated_player_skills(curr_match.season, team_id, team_sf_players_skills,
-                                                                   lineup_fs_positions)
+            team_sf_players_skills = ut.add_imitated_player_skills(
+                curr_match.season, team_id, team_sf_players_skills, lineup_fs_positions
+            )
 
     # Check whether there are 1 goalkeeper skills and 10 outfield players skills, and possibly correct
-    team_sf_players_skills = ut.balance_goalkeeper_and_outfield_player_skills(curr_match.season, team_id,
-                                                                              team_sf_players_skills)
+    team_sf_players_skills = ut.balance_goalkeeper_and_outfield_player_skills(
+        curr_match.season, team_id, team_sf_players_skills
+    )
 
     # TODO manual output check: count how many balancing occurrences are there in total
     return team_sf_players_skills
@@ -529,4 +627,3 @@ def normalize_team_pre_match_xg(xg_val):
 
 def normalize_total_pre_match_xg(xg_val):
     return ut.min_max_scaling_with_clipping(xg_val, TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT)
-

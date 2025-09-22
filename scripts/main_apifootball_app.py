@@ -77,23 +77,13 @@ for comp in global_instance.all_comps:
 in_out_mega.load_all_matches_data()  # load matches data
 
 # 3+.
-for (
-    team
-) in (
-    global_instance.all_teams
-):  # init teams matches (mega load only loads "global_instance.all_matches")
-    team.matches = [
-        x
-        for x in global_instance.all_matches
-        if x.home_team.id == team.id or x.away_team.id == team.id
-    ]
+for team in global_instance.all_teams:  # init teams matches (mega load only loads "global_instance.all_matches")
+    team.matches = [x for x in global_instance.all_matches if x.home_team.id == team.id or x.away_team.id == team.id]
     team.matches = sorted(team.matches, key=lambda match_: match_.datetime)
 
 # 4. Correct (set) team regularity and match AF teams with FS teams
 for team in global_instance.all_teams:
-    team.matches = sorted(
-        team.matches, key=lambda match_: match_.datetime
-    )  # sort team matches by datetime (asc.)
+    team.matches = sorted(team.matches, key=lambda match_: match_.datetime)  # sort team matches by datetime (asc.)
     team.correct_team_regularity_and_match_af_fs_teams()  # assume each team plays exactly in one reg. comp season!
 
 # 5a. Exclude irregular teams from table calculations
@@ -109,9 +99,7 @@ model = load_model(settings.MAIN_MODEL_PATH)  # load prediction model
 
 regular_matches = [x for x in global_instance.all_matches if x.round.is_regular]
 regular_matches = sorted(regular_matches, key=lambda match_: match_.datetime)
-team_id_map, comp_id_map = ut.get_categorical_features_maps(
-    regular_matches
-)  # init categorical features mapping
+team_id_map, comp_id_map = ut.get_categorical_features_maps(regular_matches)  # init categorical features mapping
 
 comp_id_embedding_model = load_model(settings.COMP_ID_EMBEDDING_MODEL_PATH)
 team_id_embedding_model = load_model(settings.TEAM_ID_EMBEDDING_MODEL_PATH)
@@ -195,9 +183,7 @@ while True:
                 home_team_id = int(fixture["teams"]["home"]["id"])
                 home_team = ut.get_team_if_exists(home_team_id)
                 if home_team is None:
-                    print(
-                        f"\t\t\t\t\tFAILED to find a home team with ID {home_team_id} to assign a match."
-                    )
+                    print(f"\t\t\t\t\tFAILED to find a home team with ID {home_team_id} to assign a match.")
                     continue
                 new_match.home_team = home_team
                 home_team.matches.append(new_match)
@@ -206,9 +192,7 @@ while True:
                 away_team_id = int(fixture["teams"]["away"]["id"])
                 away_team = ut.get_team_if_exists(away_team_id)
                 if away_team is None:
-                    print(
-                        f"\t\t\t\t\tFAILED to find an away team with ID {home_team_id} to assign a match."
-                    )
+                    print(f"\t\t\t\t\tFAILED to find an away team with ID {home_team_id} to assign a match.")
                     continue
                 new_match.away_team = away_team
                 away_team.matches.append(new_match)
@@ -238,9 +222,7 @@ while True:
                             (x["player"]["id"], x["player"]["name"], x["player"]["pos"])
                             for x in data_lineups[0]["startXI"]
                         ]
-                        if (
-                            len(new_match.home_team_lineup) > 11
-                        ):  # if AF lineup is duplicated (API-football issue)
+                        if len(new_match.home_team_lineup) > 11:  # if AF lineup is duplicated (API-football issue)
                             if len(new_match.home_team_lineup) == 22:
                                 new_match.home_team_lineup = new_match.home_team_lineup[:11]  # fix
                             if len(new_match.home_team_lineup) != 11:  # check the fix
@@ -259,9 +241,7 @@ while True:
                             (x["player"]["id"], x["player"]["name"], x["player"]["pos"])
                             for x in data_lineups[1]["startXI"]
                         ]
-                        if (
-                            len(new_match.away_team_lineup) > 11
-                        ):  # if AF lineup is duplicated (API-football issue)
+                        if len(new_match.away_team_lineup) > 11:  # if AF lineup is duplicated (API-football issue)
                             if len(new_match.away_team_lineup) == 22:
                                 new_match.away_team_lineup = new_match.away_team_lineup[:11]  # fix
                             if len(new_match.away_team_lineup) != 11:  # check the fix
@@ -288,10 +268,7 @@ while True:
                 # TODO: I think the time zones are still not handled correctly here...
                 elif (
                     0
-                    < (
-                        new_match.datetime
-                        - datetime.now().replace(tzinfo=new_match.datetime.tzinfo)
-                    ).total_seconds()
+                    < (new_match.datetime - datetime.now().replace(tzinfo=new_match.datetime.tzinfo)).total_seconds()
                     <= 1800
                 ):
                     home_team_prev_match = ut.get_previous_match(
@@ -325,13 +302,11 @@ while True:
 
                     if len(new_match.home_team_lineup) != 11:  # check the fix
                         raise ValueError(
-                            f"AF match home team lineup: [{new_match.home_team_lineup}] "
-                            f"should contain 11 players"
+                            f"AF match home team lineup: [{new_match.home_team_lineup}] " f"should contain 11 players"
                         )
                     if len(new_match.away_team_lineup) != 11:  # check the fix
                         raise ValueError(
-                            f"AF match away team lineup: [{new_match.away_team_lineup}] "
-                            f"should contain 11 players"
+                            f"AF match away team lineup: [{new_match.away_team_lineup}] " f"should contain 11 players"
                         )
 
                     log_str = (
@@ -371,16 +346,10 @@ while True:
 
             # Scale team strength features skills to [0,1]
             home_strength = np.array(
-                [
-                    [z / 100.0 for z in y]
-                    for y in match.features_before_match_played.home_team_strength
-                ]
+                [[z / 100.0 for z in y] for y in match.features_before_match_played.home_team_strength]
             )
             away_strength = np.array(
-                [
-                    [z / 100.0 for z in y]
-                    for y in match.features_before_match_played.away_team_strength
-                ]
+                [[z / 100.0 for z in y] for y in match.features_before_match_played.away_team_strength]
             )
 
             # Normalize team strength features (expected shape is (11, 34) - add batch dimension, then remove it)
@@ -397,9 +366,7 @@ while True:
             away_strength_input = [away_strength_norm]
 
             # For categorical features add extra dimension so each input is shape (1,)
-            home_id_array = np.expand_dims(
-                np.array(home_id_input), axis=-1
-            )  # shape: (num_samples = 1, 1)
+            home_id_array = np.expand_dims(np.array(home_id_input), axis=-1)  # shape: (num_samples = 1, 1)
             away_id_array = np.expand_dims(np.array(away_id_input), axis=-1)
             comp_id_array = np.expand_dims(np.array(comp_id_input), axis=-1)
 

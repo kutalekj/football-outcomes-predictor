@@ -1,17 +1,26 @@
-﻿from datetime import datetime, timezone
+﻿import os
+from datetime import datetime, timezone
+
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Dropout, Embedding, Input, Flatten, Concatenate, BatchNormalization, Lambda, Activation, LSTM
-from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
-from tensorflow.keras.optimizers import Adam
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import tensorflow.keras.backend as K
-import os
-from football_outcomes.config.settings import NUM_NUMERICAL_FEATURES
-from football_outcomes.config.globals import Global
-from football_outcomes.utils.common import get_n_previous_matches
+from sklearn.preprocessing import OrdinalEncoder
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
+from tensorflow.keras.layers import (
+    LSTM,
+    Concatenate,
+    Dense,
+    Dropout,
+    Embedding,
+    Input,
+)
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 
+# from football_outcomes.config.globals import Global
+from football_outcomes.config.settings import NUM_NUMERICAL_FEATURES
+
+# from football_outcomes.utils.common import get_n_previous_matches
 
 EMBEDDING_OUT_SIZE_TEAM = 9
 EMBEDDING_OUT_SIZE_COMP = 2
@@ -19,14 +28,16 @@ SEQUENCE_LENGTH = 10
 
 
 def train(regular_matches_in_rounds):
-    print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))  # TODO: Acceleration
+    print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))  # TODO: Acceleration
 
     # Flatten and sort the list of matches
     all_matches = [match for matches in regular_matches_in_rounds for match in matches]
     all_matches.sort(key=lambda x: x.datetime)
 
     # Split data into training and validation sets
-    validation_fraction = 0.2  # TODO: Debug check if for this current approach there are really only the latest 20% of matches used as validation data - less validation matches in total
+    validation_fraction = 0.2
+    # TODO: Debug check if for this current approach there are really only the latest 20% of...
+    # TODO: ...matches used as validation data - less validation matches in total
     split_index = int(len(all_matches) * (1 - validation_fraction))
     train_matches = all_matches[:split_index]
     val_matches = all_matches[split_index:]
@@ -52,68 +63,98 @@ def train(regular_matches_in_rounds):
     print(dict(zip(unique, counts)))
 
     # Unpack sequences
-    train_home_numerical_sequences, train_away_numerical_sequences, \
-        train_home_team_sequences, train_away_team_sequences, \
-        train_home_comp_sequences, train_away_comp_sequences = train_sequences
+    (
+        train_home_numerical_sequences,
+        train_away_numerical_sequences,
+        train_home_team_sequences,
+        train_away_team_sequences,
+        train_home_comp_sequences,
+        train_away_comp_sequences,
+    ) = train_sequences
 
-    val_home_numerical_sequences, val_away_numerical_sequences, \
-        val_home_team_sequences, val_away_team_sequences, \
-        val_home_comp_sequences, val_away_comp_sequences = val_sequences
+    (
+        val_home_numerical_sequences,
+        val_away_numerical_sequences,
+        val_home_team_sequences,
+        val_away_team_sequences,
+        val_home_comp_sequences,
+        val_away_comp_sequences,
+    ) = val_sequences
 
     # Combine all team IDs from training sequences
-    all_team_ids = np.concatenate([
-        train_home_team_sequences.flatten(),
-        train_away_team_sequences.flatten(),
-        np.array([0])  # Include 0 for padding
-    ])
+    all_team_ids = np.concatenate(
+        [
+            train_home_team_sequences.flatten(),
+            train_away_team_sequences.flatten(),
+            np.array([0]),  # Include 0 for padding
+        ]
+    )
 
     # Combine all competition IDs from training sequences
-    all_comp_ids = np.concatenate([
-        train_home_comp_sequences.flatten(),
-        train_away_comp_sequences.flatten(),
-        np.array([0])  # Include 0 for padding
-    ])
+    all_comp_ids = np.concatenate(
+        [
+            train_home_comp_sequences.flatten(),
+            train_away_comp_sequences.flatten(),
+            np.array([0]),  # Include 0 for padding
+        ]
+    )
 
     # Reshape for OrdinalEncoder
     all_team_ids = all_team_ids.reshape(-1, 1)
     all_comp_ids = all_comp_ids.reshape(-1, 1)
 
     # Fit the encoders on training data
-    team_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+    team_encoder = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
     team_encoder.fit(all_team_ids)
 
-    comp_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+    comp_encoder = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
     comp_encoder.fit(all_comp_ids)
 
     # TODO: Check why there are so many teams and comps with ID=0? (dummies?)
 
     # Transform training data
-    train_home_team_sequences_mapped = team_encoder.transform(
-        train_home_team_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
-        train_home_team_sequences.shape)
-    train_away_team_sequences_mapped = team_encoder.transform(
-        train_away_team_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
-        train_away_team_sequences.shape)
-    train_home_comp_sequences_mapped = comp_encoder.transform(
-        train_home_comp_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
-        train_home_comp_sequences.shape)
-    train_away_comp_sequences_mapped = comp_encoder.transform(
-        train_away_comp_sequences.flatten().reshape(-1, 1)).astype(int).reshape(
-        train_away_comp_sequences.shape)
+    train_home_team_sequences_mapped = (
+        team_encoder.transform(train_home_team_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(train_home_team_sequences.shape)
+    )
+    train_away_team_sequences_mapped = (
+        team_encoder.transform(train_away_team_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(train_away_team_sequences.shape)
+    )
+    train_home_comp_sequences_mapped = (
+        comp_encoder.transform(train_home_comp_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(train_home_comp_sequences.shape)
+    )
+    train_away_comp_sequences_mapped = (
+        comp_encoder.transform(train_away_comp_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(train_away_comp_sequences.shape)
+    )
 
     # Transform validation data
-    val_home_team_sequences_mapped = team_encoder.transform(val_home_team_sequences.flatten().reshape(-1, 1)).astype(
-        int).reshape(
-        val_home_team_sequences.shape)
-    val_away_team_sequences_mapped = team_encoder.transform(val_away_team_sequences.flatten().reshape(-1, 1)).astype(
-        int).reshape(
-        val_away_team_sequences.shape)
-    val_home_comp_sequences_mapped = comp_encoder.transform(val_home_comp_sequences.flatten().reshape(-1, 1)).astype(
-        int).reshape(
-        val_home_comp_sequences.shape)
-    val_away_comp_sequences_mapped = comp_encoder.transform(val_away_comp_sequences.flatten().reshape(-1, 1)).astype(
-        int).reshape(
-        val_away_comp_sequences.shape)
+    val_home_team_sequences_mapped = (
+        team_encoder.transform(val_home_team_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(val_home_team_sequences.shape)
+    )
+    val_away_team_sequences_mapped = (
+        team_encoder.transform(val_away_team_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(val_away_team_sequences.shape)
+    )
+    val_home_comp_sequences_mapped = (
+        comp_encoder.transform(val_home_comp_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(val_home_comp_sequences.shape)
+    )
+    val_away_comp_sequences_mapped = (
+        comp_encoder.transform(val_away_comp_sequences.flatten().reshape(-1, 1))
+        .astype(int)
+        .reshape(val_away_comp_sequences.shape)
+    )
 
     # Shift indices by +1 to make all indices non-negative
     train_home_team_sequences_mapped += 1
@@ -126,7 +167,7 @@ def train(regular_matches_in_rounds):
     val_home_comp_sequences_mapped += 1
     val_away_comp_sequences_mapped += 1
 
-    print(f"Training data shapes:")
+    print("Training data shapes:")
     print(f"Home numerical sequences: {train_home_numerical_sequences.shape}")
     print(f"Away numerical sequences: {train_away_numerical_sequences.shape}")
     print(f"Home team sequences: {train_home_team_sequences_mapped.shape}")
@@ -146,40 +187,52 @@ def train(regular_matches_in_rounds):
         embedding_out_size_team=EMBEDDING_OUT_SIZE_TEAM,
         embedding_out_size_comp=EMBEDDING_OUT_SIZE_COMP,
         num_numerical_features=NUM_NUMERICAL_FEATURES,
-        sequence_length=SEQUENCE_LENGTH
+        sequence_length=SEQUENCE_LENGTH,
     )
 
     # Callbacks
-    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + '_rnn'
+    log_dir = os.path.join("logs", "fit" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_rnn"
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor="val_loss", patience=20, restore_best_weights=True)
 
     # Train the model
     model.fit(
         [
-            train_home_numerical_sequences, train_away_numerical_sequences,
-            train_home_team_sequences_mapped, train_away_team_sequences_mapped,
-            train_home_comp_sequences_mapped, train_away_comp_sequences_mapped
+            train_home_numerical_sequences,
+            train_away_numerical_sequences,
+            train_home_team_sequences_mapped,
+            train_away_team_sequences_mapped,
+            train_home_comp_sequences_mapped,
+            train_away_comp_sequences_mapped,
         ],
         train_labels,
         epochs=200,
         batch_size=32,
         validation_data=(
             [
-                val_home_numerical_sequences, val_away_numerical_sequences,
-                val_home_team_sequences_mapped, val_away_team_sequences_mapped,
-                val_home_comp_sequences_mapped, val_away_comp_sequences_mapped
+                val_home_numerical_sequences,
+                val_away_numerical_sequences,
+                val_home_team_sequences_mapped,
+                val_away_team_sequences_mapped,
+                val_home_comp_sequences_mapped,
+                val_away_comp_sequences_mapped,
             ],
-            val_labels
+            val_labels,
         ),
-        callbacks=[early_stopping, tensorboard_callback]
+        callbacks=[early_stopping, tensorboard_callback],
     )
 
     # Evaluate the model
     loss, accuracy = model.evaluate(
-        [val_home_numerical_sequences, val_away_numerical_sequences, val_home_team_sequences_mapped,
-         val_away_team_sequences_mapped, val_home_comp_sequences_mapped, val_away_comp_sequences_mapped],
-        val_labels
+        [
+            val_home_numerical_sequences,
+            val_away_numerical_sequences,
+            val_home_team_sequences_mapped,
+            val_away_team_sequences_mapped,
+            val_home_comp_sequences_mapped,
+            val_away_comp_sequences_mapped,
+        ],
+        val_labels,
     )
     print(f"Validation Loss: {loss}, Validation Accuracy: {accuracy}")
 
@@ -206,14 +259,16 @@ def train(regular_matches_in_rounds):
     val_comp_id_for_each_match = val_home_comp_sequences_mapped[:, -1]
 
     # 2) Get predictions
-    preds = model.predict([
-        val_home_numerical_sequences,
-        val_away_numerical_sequences,
-        val_home_team_sequences_mapped,
-        val_away_team_sequences_mapped,
-        val_home_comp_sequences_mapped,
-        val_away_comp_sequences_mapped
-    ])
+    preds = model.predict(
+        [
+            val_home_numerical_sequences,
+            val_away_numerical_sequences,
+            val_home_team_sequences_mapped,
+            val_away_team_sequences_mapped,
+            val_home_comp_sequences_mapped,
+            val_away_comp_sequences_mapped,
+        ]
+    )
     preds_bin = (preds >= 0.5).astype(int).flatten()
 
     # 3) Tally correctness per comp
@@ -241,28 +296,34 @@ def train(regular_matches_in_rounds):
     print("============================================\n")
 
 
-def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
-                    embedding_out_size_comp, num_numerical_features, sequence_length):
+def build_rnn_model(
+    num_unique_teams,
+    num_unique_comps,
+    embedding_out_size_team,
+    embedding_out_size_comp,
+    num_numerical_features,
+    sequence_length,
+):
     # Inputs
-    home_numerical_input = Input(shape=(sequence_length, num_numerical_features), name='home_numerical_input')
-    away_numerical_input = Input(shape=(sequence_length, num_numerical_features), name='away_numerical_input')
-    home_team_input = Input(shape=(sequence_length,), name='home_team_input', dtype='int32')
-    away_team_input = Input(shape=(sequence_length,), name='away_team_input', dtype='int32')
-    home_comp_input = Input(shape=(sequence_length,), name='home_comp_input', dtype='int32')
-    away_comp_input = Input(shape=(sequence_length,), name='away_comp_input', dtype='int32')
+    home_numerical_input = Input(shape=(sequence_length, num_numerical_features), name="home_numerical_input")
+    away_numerical_input = Input(shape=(sequence_length, num_numerical_features), name="away_numerical_input")
+    home_team_input = Input(shape=(sequence_length,), name="home_team_input", dtype="int32")
+    away_team_input = Input(shape=(sequence_length,), name="away_team_input", dtype="int32")
+    home_comp_input = Input(shape=(sequence_length,), name="home_comp_input", dtype="int32")
+    away_comp_input = Input(shape=(sequence_length,), name="away_comp_input", dtype="int32")
 
     # Embedding layers without masking
     team_embedding_layer = Embedding(
         input_dim=num_unique_teams,
         output_dim=embedding_out_size_team,
         mask_zero=False,
-        name='team_embedding'
+        name="team_embedding",
     )
     comp_embedding_layer = Embedding(
         input_dim=num_unique_comps,
         output_dim=embedding_out_size_comp,
         mask_zero=False,
-        name='comp_embedding'
+        name="comp_embedding",
     )
 
     # Embedded sequences
@@ -283,24 +344,30 @@ def build_rnn_model(num_unique_teams, num_unique_comps, embedding_out_size_team,
     combined = Concatenate()([home_lstm_out, away_lstm_out])
 
     # Dense layers
-    x = Dense(128, activation='relu')(combined)
+    x = Dense(128, activation="relu")(combined)
     x = Dropout(0.5)(x)
-    x = Dense(64, activation='relu')(x)
+    x = Dense(64, activation="relu")(x)
     x = Dropout(0.4)(x)
-    x = Dense(32, activation='relu')(x)
+    x = Dense(32, activation="relu")(x)
     x = Dropout(0.3)(x)
-    output = Dense(1, activation='sigmoid')(x)
+    output = Dense(1, activation="sigmoid")(x)
 
     # Define model
-    model = Model(inputs=[
-        home_numerical_input, away_numerical_input,
-        home_team_input, away_team_input,
-        home_comp_input, away_comp_input
-    ], outputs=output)
+    model = Model(
+        inputs=[
+            home_numerical_input,
+            away_numerical_input,
+            home_team_input,
+            away_team_input,
+            home_comp_input,
+            away_comp_input,
+        ],
+        outputs=output,
+    )
 
     # Compile model
     model_optimizer = Adam(learning_rate=0.00001)
-    model.compile(optimizer=model_optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=model_optimizer, loss="binary_crossentropy", metrics=["accuracy"])
     model.summary()
 
     return model
@@ -371,11 +438,16 @@ def prepare_sequences(matches, team_match_histories, is_training=True):
         home_comp_sequence = [m.comp.id for m in home_team_prev_matches]
         away_comp_sequence = [m.comp.id for m in away_team_prev_matches]
 
-        sequences.append((
-            home_numerical_sequence, away_numerical_sequence,
-            home_team_sequence, away_team_sequence,
-            home_comp_sequence, away_comp_sequence
-        ))
+        sequences.append(
+            (
+                home_numerical_sequence,
+                away_numerical_sequence,
+                home_team_sequence,
+                away_team_sequence,
+                home_comp_sequence,
+                away_comp_sequence,
+            )
+        )
 
         # Label: outcome of the current match
         total_goals = match.home_team_goals + match.away_team_goals
@@ -397,10 +469,13 @@ def prepare_sequences(matches, team_match_histories, is_training=True):
     labels = np.array(labels)
 
     return (
-               home_numerical_sequences, away_numerical_sequences,
-               home_team_sequences, away_team_sequences,
-               home_comp_sequences, away_comp_sequences
-           ), labels
+        home_numerical_sequences,
+        away_numerical_sequences,
+        home_team_sequences,
+        away_team_sequences,
+        home_comp_sequences,
+        away_comp_sequences,
+    ), labels
 
 
 def pad_matches(matches, sequence_length):
@@ -490,7 +565,12 @@ def extract_embedding_inputs(regular_matches_in_rounds, round_number, window_siz
             comp_id_input.append(match.comp.id)  # comp ID (integer)
             labels.append(label)
 
-    return np.array(home_team_input), np.array(away_team_input), np.array(comp_id_input), np.array(labels)
+    return (
+        np.array(home_team_input),
+        np.array(away_team_input),
+        np.array(comp_id_input),
+        np.array(labels),
+    )
 
 
 def get_data_for_round(regular_matches_in_rounds, round_number):
@@ -514,4 +594,3 @@ def get_data_for_round(regular_matches_in_rounds, round_number):
 
 def scale_to_0_1(x):
     return (x - K.min(x)) / (K.max(x) - K.min(x))
-

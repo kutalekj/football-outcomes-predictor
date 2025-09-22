@@ -1,63 +1,83 @@
 ﻿import os
 import random
-import numpy as np
 from datetime import datetime
-import tensorflow as tf
-from tensorflow.keras.layers import Input, Embedding, Flatten, Dense, Concatenate, Lambda, BatchNormalization
-from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import ReduceLROnPlateau
-from tensorflow.keras.callbacks import TensorBoard
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# import tensorflow as tf
 import tensorflow.keras.backend as K
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.callbacks import ReduceLROnPlateau, TensorBoard
+from tensorflow.keras.layers import (
+    BatchNormalization,
+    Concatenate,
+    Dense,
+    Embedding,
+    Flatten,
+    Input,
+    Lambda,
+)
+from tensorflow.keras.models import Model
+
 from football_outcomes.config import settings
-import matplotlib.pyplot as plt
-plt.switch_backend('TkAgg')
+
+plt.switch_backend("TkAgg")
 
 FINAL_EMBEDDING_SIZE = 16
 
 
 def create_match_embedding_model():
     # Inputs for one match
-    home_input = Input(shape=(1,), name='home_team_id')
-    away_input = Input(shape=(1,), name='away_team_id')
-    comp_input = Input(shape=(1,), name='comp_id')
+    home_input = Input(shape=(1,), name="home_team_id")
+    away_input = Input(shape=(1,), name="away_team_id")
+    comp_input = Input(shape=(1,), name="comp_id")
 
     # Embedding layers with separate weights for home and away teams
-    home_emb = Embedding(input_dim=settings.NUM_REGULAR_TEAMS,
-                         output_dim=settings.TEAM_ID_EMBEDDING_SIZE,
-                         name='home_team_embedding')(home_input)
-    away_emb = Embedding(input_dim=settings.NUM_REGULAR_TEAMS,
-                         output_dim=settings.TEAM_ID_EMBEDDING_SIZE,
-                         name='away_team_embedding')(away_input)
-    comp_emb = Embedding(input_dim=settings.NUM_REGULAR_COMPS,
-                         output_dim=settings.COMP_ID_EMBEDDING_SIZE,
-                         name='comp_embedding')(comp_input)
+    home_emb = Embedding(
+        input_dim=settings.NUM_REGULAR_TEAMS,
+        output_dim=settings.TEAM_ID_EMBEDDING_SIZE,
+        name="home_team_embedding",
+    )(home_input)
+    away_emb = Embedding(
+        input_dim=settings.NUM_REGULAR_TEAMS,
+        output_dim=settings.TEAM_ID_EMBEDDING_SIZE,
+        name="away_team_embedding",
+    )(away_input)
+    comp_emb = Embedding(
+        input_dim=settings.NUM_REGULAR_COMPS,
+        output_dim=settings.COMP_ID_EMBEDDING_SIZE,
+        name="comp_embedding",
+    )(comp_input)
 
     home_flat = Flatten()(home_emb)
     away_flat = Flatten()(away_emb)
     comp_flat = Flatten()(comp_emb)
 
     # Map to (0,1) range via a Dense layer with sigmoid (helps align scale with other features)
-    home_norm = Dense(settings.TEAM_ID_EMBEDDING_SIZE, activation='sigmoid')(home_flat)
-    away_norm = Dense(settings.TEAM_ID_EMBEDDING_SIZE, activation='sigmoid')(away_flat)
-    comp_norm = Dense(settings.COMP_ID_EMBEDDING_SIZE, activation='sigmoid')(comp_flat)
+    home_norm = Dense(settings.TEAM_ID_EMBEDDING_SIZE, activation="sigmoid")(home_flat)
+    away_norm = Dense(settings.TEAM_ID_EMBEDDING_SIZE, activation="sigmoid")(away_flat)
+    comp_norm = Dense(settings.COMP_ID_EMBEDDING_SIZE, activation="sigmoid")(comp_flat)
 
-    joint = Concatenate(name='joint_embedding')([home_norm, away_norm, comp_norm])
+    joint = Concatenate(name="joint_embedding")([home_norm, away_norm, comp_norm])
 
     # Learn embedding the match "triple"
-    x = Dense(64, activation='relu')(joint)
+    x = Dense(64, activation="relu")(joint)
     x = BatchNormalization()(x)
-    x = Dense(32, activation='relu')(x)
+    x = Dense(32, activation="relu")(x)
     x = BatchNormalization()(x)
-    x = Dense(16, activation='relu')(x)
+    x = Dense(16, activation="relu")(x)
     x = BatchNormalization()(x)
     embedding = Dense(FINAL_EMBEDDING_SIZE)(x)  # no activation before normalization
 
     # L2-normalize the final embedding - make distances comparable
-    normalized_embedding = Lambda(lambda t: K.l2_normalize(t, axis=1), name='normalized_embedding')(embedding)
+    normalized_embedding = Lambda(lambda t: K.l2_normalize(t, axis=1), name="normalized_embedding")(embedding)
 
-    model = Model(inputs=[home_input, away_input, comp_input], outputs=normalized_embedding,
-                  name='match_embedding_model')
+    model = Model(
+        inputs=[home_input, away_input, comp_input],
+        outputs=normalized_embedding,
+        name="match_embedding_model",
+    )
     return model
 
 
@@ -71,23 +91,25 @@ def build_siamese_model():
     embedding_model = create_match_embedding_model()
 
     # Inputs for a pair of matches
-    home_input_a = Input(shape=(1,), name='home_team_id_a')
-    away_input_a = Input(shape=(1,), name='away_team_id_a')
-    comp_input_a = Input(shape=(1,), name='comp_id_a')
+    home_input_a = Input(shape=(1,), name="home_team_id_a")
+    away_input_a = Input(shape=(1,), name="away_team_id_a")
+    comp_input_a = Input(shape=(1,), name="comp_id_a")
 
-    home_input_b = Input(shape=(1,), name='home_team_id_b')
-    away_input_b = Input(shape=(1,), name='away_team_id_b')
-    comp_input_b = Input(shape=(1,), name='comp_id_b')
+    home_input_b = Input(shape=(1,), name="home_team_id_b")
+    away_input_b = Input(shape=(1,), name="away_team_id_b")
+    comp_input_b = Input(shape=(1,), name="comp_id_b")
 
     # Process each with shared embedding network
     embedding_a = embedding_model([home_input_a, away_input_a, comp_input_a])
     embedding_b = embedding_model([home_input_b, away_input_b, comp_input_b])
 
-    distance = Lambda(euclidean_distance, name='distance')([embedding_a, embedding_b])  # embeddings Euclidean distance
+    distance = Lambda(euclidean_distance, name="distance")([embedding_a, embedding_b])  # embeddings Euclidean distance
 
-    siamese_net = Model(inputs=[home_input_a, away_input_a, comp_input_a,
-                                home_input_b, away_input_b, comp_input_b],
-                        outputs=distance, name='siamese_model')
+    siamese_net = Model(
+        inputs=[home_input_a, away_input_a, comp_input_a, home_input_b, away_input_b, comp_input_b],
+        outputs=distance,
+        name="siamese_model",
+    )
     return siamese_net
 
 
@@ -98,8 +120,9 @@ def contrastive_loss(y_true, y_pred):
     return K.mean(y_true * K.square(y_pred) + (1 - y_true) * K.square(K.maximum(margin - y_pred, 0)))
 
 
-def evaluate_embeddings(embedding_model, home_ids_a, away_ids_a, comp_ids_a,
-                        home_ids_b, away_ids_b, comp_ids_b, labels):
+def evaluate_embeddings(
+    embedding_model, home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b, labels
+):
 
     embeddings_a = embedding_model.predict([home_ids_a, away_ids_a, comp_ids_a])
     embeddings_b = embedding_model.predict([home_ids_b, away_ids_b, comp_ids_b])
@@ -117,33 +140,69 @@ def train(categorical_features, similarity_labels, batch_size, num_epochs):
 
     log_dir = os.path.join("logs", "siameseID_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    lr_scheduler = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=2, verbose=1)
+    lr_scheduler = ReduceLROnPlateau(monitor="loss", factor=0.5, patience=2, verbose=1)
 
     siamese_model = build_siamese_model()
-    siamese_model.compile(optimizer='adam', loss=contrastive_loss)
+    siamese_model.compile(optimizer="adam", loss=contrastive_loss)
     siamese_model.summary()
 
-    (train_home_ids_a, val_home_ids_a, train_away_ids_a, val_away_ids_a, train_comp_ids_a, val_comp_ids_a,
-     train_home_ids_b, val_home_ids_b, train_away_ids_b, val_away_ids_b, train_comp_ids_b, val_comp_ids_b,
-     train_similarity_labels, val_similarity_labels) = train_test_split(
-        home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b,
-        similarity_labels, test_size=0.2, random_state=42)
+    (
+        train_home_ids_a,
+        val_home_ids_a,
+        train_away_ids_a,
+        val_away_ids_a,
+        train_comp_ids_a,
+        val_comp_ids_a,
+        train_home_ids_b,
+        val_home_ids_b,
+        train_away_ids_b,
+        val_away_ids_b,
+        train_comp_ids_b,
+        val_comp_ids_b,
+        train_similarity_labels,
+        val_similarity_labels,
+    ) = train_test_split(
+        home_ids_a,
+        away_ids_a,
+        comp_ids_a,
+        home_ids_b,
+        away_ids_b,
+        comp_ids_b,
+        similarity_labels,
+        test_size=0.2,
+        random_state=42,
+    )
 
     # Train
-    siamese_model.fit([train_home_ids_a, train_away_ids_a, train_comp_ids_a,
-                       train_home_ids_b, train_away_ids_b, train_comp_ids_b],
-                      train_similarity_labels,
-                      batch_size=batch_size, epochs=num_epochs, validation_split=0.2,
-                      callbacks=[tensorboard_callback, lr_scheduler])
+    siamese_model.fit(
+        [
+            train_home_ids_a,
+            train_away_ids_a,
+            train_comp_ids_a,
+            train_home_ids_b,
+            train_away_ids_b,
+            train_comp_ids_b,
+        ],
+        train_similarity_labels,
+        batch_size=batch_size,
+        epochs=num_epochs,
+        validation_split=0.2,
+        callbacks=[tensorboard_callback, lr_scheduler],
+    )
 
     # Evaluate the embeddings
     similar_dists, dissimilar_dists = evaluate_embeddings(
         create_match_embedding_model(),
-        val_home_ids_a, val_away_ids_a, val_comp_ids_a, val_home_ids_b, val_away_ids_b, val_comp_ids_b,
-        val_similarity_labels
+        val_home_ids_a,
+        val_away_ids_a,
+        val_comp_ids_a,
+        val_home_ids_b,
+        val_away_ids_b,
+        val_comp_ids_b,
+        val_similarity_labels,
     )
-    plt.hist(similar_dists, bins=30, alpha=0.5, label='Similar')
-    plt.hist(dissimilar_dists, bins=30, alpha=0.5, label='Dissimilar')
+    plt.hist(similar_dists, bins=30, alpha=0.5, label="Similar")
+    plt.hist(dissimilar_dists, bins=30, alpha=0.5, label="Dissimilar")
     plt.legend()
     plt.xlabel("Euclidean Distance")
     plt.ylabel("Frequency")
@@ -201,9 +260,15 @@ def generate_pairs_random(all_input_data, k=10):
             comp_ids_b.append(b2)
             similarity_labels.append(0)
 
-    return (np.array(home_ids_a), np.array(away_ids_a), np.array(comp_ids_a),
-            np.array(home_ids_b), np.array(away_ids_b), np.array(comp_ids_b),
-            np.array(similarity_labels))
+    return (
+        np.array(home_ids_a),
+        np.array(away_ids_a),
+        np.array(comp_ids_a),
+        np.array(home_ids_b),
+        np.array(away_ids_b),
+        np.array(comp_ids_b),
+        np.array(similarity_labels),
+    )
 
 
 def generate_pairs_hard_negatives(embedding_model, original_pairs, margin=0.8, fraction_hard_neg=0.5):
@@ -213,13 +278,12 @@ def generate_pairs_hard_negatives(embedding_model, original_pairs, margin=0.8, f
     siamese_model: The trained Siamese model.
     embedding_model: The submodel that maps a single match to an embedding.
     all_input_data: The original list of matches (home_id, away_id, comp_id, label).
-    original_pairs: A tuple of (home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b, similarity_labels).
+    original_pairs: A tuple of (home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b,
+    comp_ids_b, similarity_labels).
     margin: The contrastive margin used in training.
     fraction_hard_neg: Proportion of negative pairs in the new dataset that should be "hard".
     """
-    (home_ids_a, away_ids_a, comp_ids_a,
-     home_ids_b, away_ids_b, comp_ids_b,
-     sim_labels) = original_pairs
+    (home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b, sim_labels) = original_pairs
 
     # 1. Compute embeddings for each side
     embeddings_a = embedding_model.predict([home_ids_a, away_ids_a, comp_ids_a])
@@ -229,11 +293,11 @@ def generate_pairs_hard_negatives(embedding_model, original_pairs, margin=0.8, f
     distances = np.sqrt(np.sum((embeddings_a - embeddings_b) ** 2, axis=1))
 
     # 3. Identify negative pairs (label=0) that are below the margin => "hard negatives"
-    neg_mask = (sim_labels == 0)
+    neg_mask = sim_labels == 0
     hard_neg_mask = neg_mask & (distances < margin)
 
     easy_neg_mask = neg_mask & (distances >= margin)
-    pos_mask = (sim_labels == 1)
+    pos_mask = sim_labels == 1
 
     # 4. Extract arrays for each category
     hard_neg_indices = np.where(hard_neg_mask)[0]
@@ -266,9 +330,15 @@ def generate_pairs_hard_negatives(embedding_model, original_pairs, margin=0.8, f
     np.random.shuffle(final_indices)
 
     # 6. Build final arrays
-    return (home_ids_a[final_indices], away_ids_a[final_indices], comp_ids_a[final_indices],
-            home_ids_b[final_indices], away_ids_b[final_indices], comp_ids_b[final_indices],
-            sim_labels[final_indices])
+    return (
+        home_ids_a[final_indices],
+        away_ids_a[final_indices],
+        comp_ids_a[final_indices],
+        home_ids_b[final_indices],
+        away_ids_b[final_indices],
+        comp_ids_b[final_indices],
+        sim_labels[final_indices],
+    )
 
 
 def train_with_hard_negatives(all_input_data, batch_size=32, num_epochs=10, k=10, margin=0.6, fraction_hard_neg=0.5):
@@ -279,77 +349,133 @@ def train_with_hard_negatives(all_input_data, batch_size=32, num_epochs=10, k=10
     """
     # --- 1. Generate initial random pairs ---
     initial_pairs = generate_pairs_random(all_input_data, k=k)
-    (home_ids_a, away_ids_a, comp_ids_a,
-     home_ids_b, away_ids_b, comp_ids_b,
-     sim_labels) = initial_pairs
+    (home_ids_a, away_ids_a, comp_ids_a, home_ids_b, away_ids_b, comp_ids_b, sim_labels) = initial_pairs
 
     # Train/test split
-    (train_home_ids_a, val_home_ids_a,
-     train_away_ids_a, val_away_ids_a,
-     train_comp_ids_a, val_comp_ids_a,
-     train_home_ids_b, val_home_ids_b,
-     train_away_ids_b, val_away_ids_b,
-     train_comp_ids_b, val_comp_ids_b,
-     train_similarity_labels, val_similarity_labels) = train_test_split(
-        home_ids_a, away_ids_a, comp_ids_a,
-        home_ids_b, away_ids_b, comp_ids_b,
-        sim_labels, test_size=0.2, random_state=42
+    (
+        train_home_ids_a,
+        val_home_ids_a,
+        train_away_ids_a,
+        val_away_ids_a,
+        train_comp_ids_a,
+        val_comp_ids_a,
+        train_home_ids_b,
+        val_home_ids_b,
+        train_away_ids_b,
+        val_away_ids_b,
+        train_comp_ids_b,
+        val_comp_ids_b,
+        train_similarity_labels,
+        val_similarity_labels,
+    ) = train_test_split(
+        home_ids_a,
+        away_ids_a,
+        comp_ids_a,
+        home_ids_b,
+        away_ids_b,
+        comp_ids_b,
+        sim_labels,
+        test_size=0.2,
+        random_state=42,
     )
 
     # --- 2. Build and train the Siamese model on random pairs ---
     siamese_model = build_siamese_model()
-    siamese_model.compile(optimizer='adam', loss=contrastive_loss)
+    siamese_model.compile(optimizer="adam", loss=contrastive_loss)
 
     log_dir = os.path.join("logs", "siameseID_" + datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
-    lr_scheduler = ReduceLROnPlateau(monitor='loss', factor=0.5, patience=2, verbose=1)
+    lr_scheduler = ReduceLROnPlateau(monitor="loss", factor=0.5, patience=2, verbose=1)
 
-    siamese_model.fit([train_home_ids_a, train_away_ids_a, train_comp_ids_a,
-                       train_home_ids_b, train_away_ids_b, train_comp_ids_b],
-                      train_similarity_labels,
-                      batch_size=batch_size, epochs=num_epochs, validation_split=0.2,
-                      callbacks=[tensorboard_callback, lr_scheduler])
+    siamese_model.fit(
+        [
+            train_home_ids_a,
+            train_away_ids_a,
+            train_comp_ids_a,
+            train_home_ids_b,
+            train_away_ids_b,
+            train_comp_ids_b,
+        ],
+        train_similarity_labels,
+        batch_size=batch_size,
+        epochs=num_epochs,
+        validation_split=0.2,
+        callbacks=[tensorboard_callback, lr_scheduler],
+    )
 
     # Evaluate on validation
     # You can also do your evaluate_embeddings(...) step here.
 
     # --- 3. Mine hard negatives and re-sample the training set ---
-    embedding_model = siamese_model.get_layer('match_embedding_model')  # The shared embedding submodel
+    embedding_model = siamese_model.get_layer("match_embedding_model")  # The shared embedding submodel
     # Build new pairs that incorporate more hard negatives
     new_train_pairs = generate_pairs_hard_negatives(
         embedding_model=embedding_model,
-        original_pairs=(train_home_ids_a, train_away_ids_a, train_comp_ids_a,
-                        train_home_ids_b, train_away_ids_b, train_comp_ids_b,
-                        train_similarity_labels),
+        original_pairs=(
+            train_home_ids_a,
+            train_away_ids_a,
+            train_comp_ids_a,
+            train_home_ids_b,
+            train_away_ids_b,
+            train_comp_ids_b,
+            train_similarity_labels,
+        ),
         margin=margin,
-        fraction_hard_neg=fraction_hard_neg
+        fraction_hard_neg=fraction_hard_neg,
     )
 
-    (train_home_ids_a_hn, train_away_ids_a_hn, train_comp_ids_a_hn,
-     train_home_ids_b_hn, train_away_ids_b_hn, train_comp_ids_b_hn,
-     train_similarity_labels_hn) = new_train_pairs
+    (
+        train_home_ids_a_hn,
+        train_away_ids_a_hn,
+        train_comp_ids_a_hn,
+        train_home_ids_b_hn,
+        train_away_ids_b_hn,
+        train_comp_ids_b_hn,
+        train_similarity_labels_hn,
+    ) = new_train_pairs
 
     # Optionally, you can keep the same validation set:
 
     # --- 4. Retrain (or continue training) with the new dataset containing more hard negatives ---
-    siamese_model.fit([train_home_ids_a_hn, train_away_ids_a_hn, train_comp_ids_a_hn,
-                       train_home_ids_b_hn, train_away_ids_b_hn, train_comp_ids_b_hn],
-                      train_similarity_labels_hn,
-                      batch_size=batch_size, epochs=num_epochs, validation_data=(
-            [val_home_ids_a, val_away_ids_a, val_comp_ids_a,
-             val_home_ids_b, val_away_ids_b, val_comp_ids_b],
-            val_similarity_labels
+    siamese_model.fit(
+        [
+            train_home_ids_a_hn,
+            train_away_ids_a_hn,
+            train_comp_ids_a_hn,
+            train_home_ids_b_hn,
+            train_away_ids_b_hn,
+            train_comp_ids_b_hn,
+        ],
+        train_similarity_labels_hn,
+        batch_size=batch_size,
+        epochs=num_epochs,
+        validation_data=(
+            [
+                val_home_ids_a,
+                val_away_ids_a,
+                val_comp_ids_a,
+                val_home_ids_b,
+                val_away_ids_b,
+                val_comp_ids_b,
+            ],
+            val_similarity_labels,
         ),
-                      callbacks=[tensorboard_callback, lr_scheduler])
+        callbacks=[tensorboard_callback, lr_scheduler],
+    )
 
     # Evaluate the embeddings
     similar_dists, dissimilar_dists = evaluate_embeddings(
         create_match_embedding_model(),
-        val_home_ids_a, val_away_ids_a, val_comp_ids_a, val_home_ids_b, val_away_ids_b, val_comp_ids_b,
-        val_similarity_labels
+        val_home_ids_a,
+        val_away_ids_a,
+        val_comp_ids_a,
+        val_home_ids_b,
+        val_away_ids_b,
+        val_comp_ids_b,
+        val_similarity_labels,
     )
-    plt.hist(similar_dists, bins=30, alpha=0.5, label='Similar')
-    plt.hist(dissimilar_dists, bins=30, alpha=0.5, label='Dissimilar')
+    plt.hist(similar_dists, bins=30, alpha=0.5, label="Similar")
+    plt.hist(dissimilar_dists, bins=30, alpha=0.5, label="Dissimilar")
     plt.legend()
     plt.xlabel("Euclidean Distance")
     plt.ylabel("Frequency")
@@ -358,4 +484,3 @@ def train_with_hard_negatives(all_input_data, batch_size=32, num_epochs=10, k=10
 
     # Final evaluation with evaluate_embeddings or your downstream tasks
     return siamese_model
-

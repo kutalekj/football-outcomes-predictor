@@ -2,13 +2,21 @@
 feature.py
 """
 
-
 import numpy as np
 
 
 class MatchFeatures:
-    def __init__(self, comp_id, season, home_team_id, away_team_id,
-                 hours_sin, hours_cos, month_sin, month_cos):
+    def __init__(
+        self,
+        comp_id,
+        season,
+        home_team_id,
+        away_team_id,
+        hours_sin,
+        hours_cos,
+        month_sin,
+        month_cos,
+    ):
         self.comp_id = comp_id
         self.season = season
 
@@ -114,7 +122,13 @@ class MatchFeatures:
         features = []
         for key, value in features_dict.items():
             # TODO: Pre-define list of categorical feature names
-            if key not in ["home_team_id", "away_team_id", "comp_id", "home_team_strength", "away_team_strength"]:
+            if key not in [
+                "home_team_id",
+                "away_team_id",
+                "comp_id",
+                "home_team_strength",
+                "away_team_strength",
+            ]:
                 features.append(value)
 
         features = np.array(features)
@@ -124,4 +138,3 @@ class MatchFeatures:
         # features = np.append(features, features_dict["away_team_strength"])
 
         return features
-

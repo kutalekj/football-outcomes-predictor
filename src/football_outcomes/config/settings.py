@@ -21,18 +21,10 @@ MATCH_DATA_STORE = False
 ALL_STORE = False
 ALL_LOAD = False
 
-ALL_LS_COMPS_CSV = (
-    "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-09-18.csv"
-)
-ALL_LS_TEAMS_CSV = (
-    "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-09-18.csv"
-)
-ALL_LS_ROUNDS_CSV = (
-    "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-09-18.csv"
-)
-ALL_LS_MATCHES_CSV = (
-    "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-09-18.csv"
-)
+ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-09-18.csv"
+ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-09-18.csv"
+ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-09-18.csv"
+ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-09-18.csv"
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
 
@@ -334,9 +326,7 @@ TOTAL_XG_NORM_COEFFICIENT = 5.25
 TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
-CSV_PLAYERS_PATH = (
-    "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full"
-)
+CSV_PLAYERS_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full"
 
 PLAYER_SKILLS = [
     "crossing",
@@ -526,9 +516,7 @@ SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=270)  # 9 months
 
-BOARD_QUEUE_PATH = (
-    "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\Board\\board_queue_rel.json"
-)
+BOARD_QUEUE_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\Board\\board_queue_rel.json"
 FIREBASE_CREDENTIALS_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\boardmobile-61491-firebase-adminsdk-fbsvc-5839d80385.json"
 
 # Repo root = .../MyFlashscoreScraper

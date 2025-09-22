@@ -1,4 +1,5 @@
-﻿import requests
+﻿# import requests
+
 from football_outcomes.config import settings
 from football_outcomes.utils import common as ut
 
@@ -60,32 +61,49 @@ class Team:
 
                     # Set the "is_regular" team attribute to True
                     for season_elem in self.regularity_in_comp_season:
-                        regular_team_matches_in_comp_season_booleans = \
-                            [match.round.is_regular for match in regular_team_matches_in_season
-                             if match.comp.id == season_elem['comp'].id]
+                        regular_team_matches_in_comp_season_booleans = [
+                            match.round.is_regular
+                            for match in regular_team_matches_in_season
+                            if match.comp.id == season_elem["comp"].id
+                        ]
 
-                        if season_elem['season'] == season and \
-                                len(season_elem['comp'].regular_round_keywords) > 0 and \
-                                any(regular_team_matches_in_comp_season_booleans):
+                        if (
+                            season_elem["season"] == season
+                            and len(season_elem["comp"].regular_round_keywords) > 0
+                            and any(regular_team_matches_in_comp_season_booleans)
+                        ):
                             print(f"[4] Setting team {self.name} as regular in {season_elem['comp'].name} in {season}.")
-                            season_elem['is_regular'] = True
+                            season_elem["is_regular"] = True
 
                             # 2. Match the regular AF team with FS team from the same comp_season
                             if self.fs_id is None:  # if not matched yet (might have been done is previous seasons)
-                                self.assign_fs_team_id_team_name_by_comp_season(season_elem['comp'], season)
+                                self.assign_fs_team_id_team_name_by_comp_season(season_elem["comp"], season)
 
         # TODO check: Add debug print for number of matches (both all and regulars) for each comp season
         # TODO code: Split in two functions (two different functionalities)? - currently like this because of reg. check
 
     def assign_fs_team_id_team_name_by_comp_season(self, comp, season):
-        fs_teams_comp_season = [x for x in comp.fs_teams_per_season if x['season'] == season]
+        fs_teams_comp_season = [x for x in comp.fs_teams_per_season if x["season"] == season]
         if len(fs_teams_comp_season) != 1:
-            raise ValueError(f"Unexpected to find none, or multiple FS teams for a single comp season "
-                             f"({comp.name}, {str(season)})")
+            raise ValueError(
+                f"Unexpected to find none, or multiple FS teams for a single comp season "
+                f"({comp.name}, {str(season)})"
+            )
         fs_teams_comp_season = fs_teams_comp_season[0]
 
         # Match AF team with FS team
-        if comp.id in [61, 88, 119, 179, 307] and self.id in [80, 85, 197, 201, 254, 402, 405, 406, 413, 2944]:
+        if comp.id in [61, 88, 119, 179, 307] and self.id in [
+            80,
+            85,
+            197,
+            201,
+            254,
+            402,
+            405,
+            406,
+            413,
+            2944,
+        ]:
             if comp.id == 61 and self.id == 80:
                 self.fs_id, self.fs_clean_name = 57, "Olympique Lyonnais"
             if comp.id == 61 and self.id == 85:
@@ -112,4 +130,3 @@ class Team:
         else:
             self.fs_id, self.fs_clean_name = ut.match_af_team_to_fs_team(self.name, fs_teams_comp_season)
         # TODO adj: Consider to forbid matching of teams already matched before
-
