@@ -64,3 +64,5 @@ background/
 
 # In case any sneaked in before
 *.Rhistory
+
+temp-check/
