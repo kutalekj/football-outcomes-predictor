@@ -44,6 +44,7 @@ models/**
 
 # apifootball_model generated/experiments and rarely needed heavy stuff
 src/apifootball_model/comps_val_acc*/
+!src/apifootball_model/comps_val_acc/result.png
 src/apifootball_model/main_model_training_experiments/
 src/apifootball_model/apifootball_requests_outputs.png
 
@@ -66,3 +67,8 @@ background/
 *.Rhistory
 
 temp-check/
+
+# legacy settings kept locally
+/local/legacy/
+/all_comp_settings.json
+/comp_settings.json
