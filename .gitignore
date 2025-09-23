@@ -72,3 +72,6 @@ temp-check/
 /local/legacy/
 /all_comp_settings.json
 /comp_settings.json
+
+# keep archives out of git
+archive/
