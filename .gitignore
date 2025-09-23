@@ -75,3 +75,7 @@ temp-check/
 
 # keep archives out of git
 archive/
+
+# Experiments archive
+archive/
+
