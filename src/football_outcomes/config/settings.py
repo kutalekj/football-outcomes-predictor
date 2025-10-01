@@ -16,7 +16,7 @@ FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
 MATCH_DATA_LOAD = True
-MATCH_DATA_STORE = False
+MATCH_DATA_STORE = True
 
 ALL_STORE = False
 ALL_LOAD = False
@@ -165,9 +165,9 @@ COMPS_v2 = [
     },
     {
         "id": 141,
-        "name": "Segunda DivisiÃ³n",
+        "name": "Segunda División",
         "regular_round_keywords": ["Regular Season"],
-        "fs_alias": "Segunda DivisiÃ³n",
+        "fs_alias": "Segunda División",
     },
     {
         "id": 144,
@@ -198,9 +198,9 @@ COMPS_v2 = [
     },  # AUS
     {
         "id": 203,
-        "name": "SÃ¼per Lig",
+        "name": "Süper Lig",
         "regular_round_keywords": ["Regular Season"],
-        "fs_alias": "SÃ¼per Lig",
+        "fs_alias": "Süper Lig",
     },  # TUR
     {
         "id": 207,
@@ -258,13 +258,13 @@ COMPS_v2 = [
     {"id": 90, "name": "KNVB Beker", "regular_round_keywords": [], "fs_alias": "KNVB Cup"},  # NED
     {
         "id": 96,
-        "name": "TaÃ§a de Portugal",
+        "name": "Taça de Portugal",
         "regular_round_keywords": [],
-        "fs_alias": "TaÃ§a de Portugal",
+        "fs_alias": "Taça de Portugal",
     },
     {
         "id": 97,
-        "name": "TaÃ§a da Liga",
+        "name": "Taça da Liga",
         "regular_round_keywords": [],
         "fs_alias": "Portuguese League Cup",
     },
@@ -528,8 +528,8 @@ PROCESSED_DIR = DATA_DIR / "processed"
 AVG_TEAM_STRENGTHS = PROCESSED_DIR / "avg_team_strengths.csv"
 RECORDS_CSV = PROCESSED_DIR / "records.csv"
 
-M_LOAD_CSV = PROCESSED_DIR / "m_25-09-18_BEL.csv"
-M_STORE_CSV = PROCESSED_DIR / "m_25-09-18_BEL.csv"
+M_LOAD_CSV = PROCESSED_DIR / "m_25-09-18_full.csv"
+M_STORE_CSV = PROCESSED_DIR / "m_25-09-29_full.csv"
 ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_25-09-18.csv"
 ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_25-09-18.csv"
 ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_25-09-18.csv"
