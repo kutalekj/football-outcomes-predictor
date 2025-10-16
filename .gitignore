@@ -1,0 +1,88 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+
+# IDE / notebooks
+.idea/
+.vscode/
+.ipynb_checkpoints/
+
+# Generated data/models/logs
+data/raw/
+data/interim/
+data/external/
+models/
+experiments/runs/
+logs/
+src/logs/
+
+# Node / Android / Gradle
+**/node_modules/
+dist/
+build/
+**/.gradle/
+**/build/
+**/.cxx/
+**/captures/
+**/*.iml
+
+# Old archived venvs
+archive/**/venv/
+archive/legacy_src/
+# R temp histories (you had src/.Rhistory)
+*.Rhistory
+*/.Rhistory
+# Track models/checkpoints, ignore other model junk
+models/**
+!models/checkpoints/
+
+# apifootball_model generated/experiments and rarely needed heavy stuff
+src/apifootball_model/comps_val_acc*/
+!src/apifootball_model/comps_val_acc/result.png
+src/apifootball_model/main_model_training_experiments/
+src/apifootball_model/apifootball_requests_outputs.png
+
+# backups & excel copies
+src/apifootball_model/*_old.csv
+src/apifootball_model/*.xlsx
+
+# validation & margins (large outputs; keep locally)
+src/validation_data/
+src/margins_odds_per_comp_season/
+
+# secrets (DO NOT COMMIT)
+secrets/
+src/apifootball_model/boardmobile-*.json
+# Whole archives and background: keep out of git
+archive/
+background/
+
+# In case any sneaked in before
+*.Rhistory
+
+temp-check/
+
+# legacy settings kept locally
+/local/legacy/
+/all_comp_settings.json
+/comp_settings.json
+
+# keep archives out of git
+archive/
+
+# Experiments archive
+archive/
+
+# ignore all backups and processed CSVs by default
+/data/backups/*
+/data/processed/*.csv
+
+# but keep these two small artifacts
+!/data/processed/avg_team_strengths.csv
+!/data/processed/records.csv

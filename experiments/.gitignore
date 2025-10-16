@@ -1,0 +1,10 @@
+# Keep notebooks, scripts, configs; ignore large/generated outputs
+runs/
+*.log
+*.ckpt
+*.event*
+*.tb
+*.npz
+*.npy
+*.csv
+!configs/**/*.yaml

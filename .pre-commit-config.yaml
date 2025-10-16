@@ -1,0 +1,25 @@
+﻿repos:
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+        exclude: |
+          (?x)^(
+            src/football_outcomes/config/settings\.py|
+            src/football_outcomes/data/match\.py
+          )$
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+        args:
+          - --isolated
+          - --max-line-length=120
+          - --extend-ignore=E203,W503
+          - --per-file-ignores=src/football_outcomes/config/settings.py:E501,src/football_outcomes/data/match.py:E501
