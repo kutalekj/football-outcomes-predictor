@@ -530,10 +530,10 @@ def load_matches(matches_csv_path):
 
 
 def store_all_matches_data():
-    store_comps(settings.ALL_LS_COMPS_CSV)
-    store_rounds(settings.ALL_LS_ROUNDS_CSV)
-    store_teams(settings.ALL_LS_TEAMS_CSV)
-    store_matches(settings.ALL_LS_MATCHES_CSV)
+    store_comps(settings.ALL_COMPS_CSV)
+    store_rounds(settings.ALL_ROUNDS_CSV)
+    store_teams(settings.ALL_TEAMS_CSV)
+    store_matches(settings.ALL_MATCHES_CSV)
 
 
 def load_all_matches_data():

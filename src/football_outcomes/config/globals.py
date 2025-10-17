@@ -10,9 +10,6 @@
             cls._instance.all_tables = []
             cls._instance.all_teams = []
 
-            cls._instance.num_unique_regular_teams_for_training = []
-            cls._instance.num_unique_regular_comps_for_training = []
-
             # Wanted are the start/end dates of season for each country, not for each comp separately
             # For example, for England 2021 there are PL, Championship, UEFA competitions, FA Cup and EFL Trophy
             cls._instance.start_end_dates_per_country_season = {}

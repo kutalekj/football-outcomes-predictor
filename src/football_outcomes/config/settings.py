@@ -15,20 +15,15 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = True
+MATCH_DATA_LOAD = False
 MATCH_DATA_STORE = False
 
 ALL_STORE = False
-ALL_LOAD = False
+ALL_LOAD = True
 
-ALL_LS_COMPS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-comps_25-09-18.csv"
-ALL_LS_TEAMS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-teams_25-09-18.csv"
-ALL_LS_ROUNDS_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-rounds_25-09-18.csv"
-ALL_LS_MATCHES_CSV = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\all-matches_25-09-18.csv"
+TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints"
 
-TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models"
-
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 9, 17)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 10, 16)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
@@ -306,10 +301,10 @@ COMP_ID_EMBEDDING_SIZE = 5
 TEAM_ID_EMBEDDING_SIZE = 8
 TEAM_STRENGTH_EMBEDDING_SIZE = 24
 
-COMP_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\comp_id_embedding_model.keras"
-TEAM_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\team_id_embedding_model.keras"
-TEAM_STRENGTH_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\team_strength_embedding_model_gk_outfield_balanced.keras"
-MAIN_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\learned_models\\main_model_ann.keras"
+COMP_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\comp_id_embedding_model.keras"
+TEAM_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\team_id_embedding_model.keras"
+TEAM_STRENGTH_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\team_strength_embedding_model_gk_outfield_balanced.keras"
+MAIN_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\main_model_ann.keras"
 
 ALMOST_ZERO = 0.001
 ALMOST_ONE = 0.999
@@ -516,8 +511,8 @@ SIMILARITY_THRESHOLD_FS_SOFIFA = 55  # rapidfuzz ratio ranges from 0 to 100
 MAX_MISSING_SF_SKILL_VALUES_ALLOWED = 5
 MAX_TIMEDELTA_SF_PLAYER_SKILL = timedelta(days=270)  # 9 months
 
-BOARD_QUEUE_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\Board\\board_queue_rel.json"
-FIREBASE_CREDENTIALS_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\MyFlashscoreScraper\\src\\apifootball_model\\boardmobile-61491-firebase-adminsdk-fbsvc-5839d80385.json"
+BOARD_QUEUE_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\Board\\board_queue_rel.json"
+FIREBASE_CREDENTIALS_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\boardmobile-61491-firebase-adminsdk-fbsvc-5839d80385.json"
 
 # Repo root = .../MyFlashscoreScraper
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -528,9 +523,9 @@ PROCESSED_DIR = DATA_DIR / "processed"
 AVG_TEAM_STRENGTHS = PROCESSED_DIR / "avg_team_strengths.csv"
 RECORDS_CSV = PROCESSED_DIR / "records.csv"
 
-M_LOAD_CSV = PROCESSED_DIR / "m_25-09-18_full.csv"
-M_STORE_CSV = PROCESSED_DIR / "m_25-09-29_full.csv"
-ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_25-09-18.csv"
-ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_25-09-18.csv"
-ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_25-09-18.csv"
-ALL_TEAMS_CSV = PROCESSED_DIR / "all-teams_25-09-18.csv"
+M_LOAD_CSV = PROCESSED_DIR / "m_25-10-16_full.csv"
+M_STORE_CSV = PROCESSED_DIR / "m_25-10-16_full.csv"
+ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_25-10-16.csv"
+ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_25-10-16.csv"
+ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_25-10-16.csv"
+ALL_TEAMS_CSV = PROCESSED_DIR / "all-teams_25-10-16.csv"
