@@ -15,11 +15,11 @@ FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
-MATCH_DATA_LOAD = False
+MATCH_DATA_LOAD = True
 MATCH_DATA_STORE = False
 
-ALL_STORE = False
-ALL_LOAD = True
+ALL_STORE = True
+ALL_LOAD = False
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints"
 
@@ -301,10 +301,10 @@ COMP_ID_EMBEDDING_SIZE = 5
 TEAM_ID_EMBEDDING_SIZE = 8
 TEAM_STRENGTH_EMBEDDING_SIZE = 24
 
-COMP_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\comp_id_embedding_model.keras"
-TEAM_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\team_id_embedding_model.keras"
-TEAM_STRENGTH_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\team_strength_embedding_model_gk_outfield_balanced.keras"
-MAIN_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\apifootball_model\\main_model_ann.keras"
+COMP_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints\\comp_id_embedding_model.keras"
+TEAM_ID_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints\\team_id_embedding_model.keras"
+TEAM_STRENGTH_EMBEDDING_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints\\team_strength_embedding_model_gk_outfield_balanced.keras"
+MAIN_MODEL_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints\\main_model_ann.keras"
 
 ALMOST_ZERO = 0.001
 ALMOST_ONE = 0.999
@@ -525,7 +525,7 @@ RECORDS_CSV = PROCESSED_DIR / "records.csv"
 
 M_LOAD_CSV = PROCESSED_DIR / "m_25-10-16_full.csv"
 M_STORE_CSV = PROCESSED_DIR / "m_25-10-16_full.csv"
-ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_25-10-16.csv"
-ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_25-10-16.csv"
-ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_25-10-16.csv"
-ALL_TEAMS_CSV = PROCESSED_DIR / "all-teams_25-10-16.csv"
+ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_BEL_25-10-16.csv"
+ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_BEL_25-10-16.csv"
+ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_BEL_25-10-16.csv"
+ALL_TEAMS_CSV = PROCESSED_DIR / "all-teams_BEL_25-10-16.csv"

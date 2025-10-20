@@ -27,6 +27,15 @@ class SeasonCompTable:
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state.pop("conn", None)
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.conn = http.client.HTTPSConnection(settings.HOST)
+
     def init_teams_in_season_comp(self):
         global_instance = Global.get_instance()
         print(f"Initializing table for comp [{self.comp_name}].")

@@ -36,6 +36,16 @@ class Comp:
 
         self.conn = http.client.HTTPSConnection(settings.HOST)
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state.pop("conn", None)
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        # Recreate transient connection
+        self.conn = http.client.HTTPSConnection(settings.HOST)
+
     def get_round_by_comp_season_round_name(self, season, round_name):
         for season_rounds in self.rounds_per_season:
             if season_rounds["season"] == season:

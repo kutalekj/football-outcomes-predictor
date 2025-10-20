@@ -4,11 +4,16 @@ import datetime
 from football_outcomes.config import settings
 from football_outcomes.config.globals import Global
 from football_outcomes.data import io as in_out
-from football_outcomes.data import io_mega as in_out_mega
+
+# from football_outcomes.data import io_mega as in_out_mega
 from football_outcomes.data.comp import Comp
 from football_outcomes.data.match import Match
 from football_outcomes.data.season_comp_table import SeasonCompTable
+from football_outcomes.data.state_io import export_summary_csvs, load_global_state, save_global_state
 from football_outcomes.features.feature import MatchFeatures
+
+# from football_outcomes.training.train_rnn import train
+# from football_outcomes.training.train_ann import train
 from football_outcomes.utils import common as utils
 
 # import random
@@ -16,9 +21,6 @@ from football_outcomes.utils import common as utils
 
 # import numpy as np
 
-
-# from football_outcomes.training.train_rnn import train
-# from football_outcomes.training.train_ann import train
 
 # from football_outcomes.training.train_compID_encoder import train
 # from football_outcomes.training.train_teamID_encoder import train
@@ -115,7 +117,10 @@ if not settings.ALL_LOAD:
             match.features_before_match_played
         )
 else:
-    in_out_mega.load_all_matches_data()
+    # in_out_mega.load_all_matches_data()
+
+    load_path = settings.PROCESSED_DIR / "test1.fop"
+    load_global_state(load_path)
 
 # 8a. Store matches to local
 if settings.MATCH_DATA_STORE:
@@ -123,7 +128,13 @@ if settings.MATCH_DATA_STORE:
 
 # 8b. Store all data to local
 if settings.ALL_STORE:
-    in_out_mega.store_all_matches_data()
+    # in_out_mega.store_all_matches_data()
+
+    save_path = settings.PROCESSED_DIR / "test1_full.fop"
+    snapshot_path = save_global_state(save_path)
+    print(f"Saved snapshot to: {snapshot_path}")
+
+    export_summary_csvs()
 
 """
 # 9a. Distribute regular matches into rounds for training
