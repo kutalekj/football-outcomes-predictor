@@ -26,11 +26,11 @@ dev = [
   "flake8>=6.1.0",
   "mypy>=1.7.0",
   "pre-commit>=3.6.0",
-  "protobuf>=3.20.3,<5",
+  "protobuf>=3.9.2,<3.20",  # prevously \"protobuf>=3.20.3,<5\",
   "python-dotenv>=1.0.1"]
-tf = ["tensorflow>=2.13"]
 firebase = ["firebase-admin>=6.5.0"]
 scrape = ["selenium>=4.12"]
+# tf = ["tensorflow>=2.13"]
 
 [project.scripts]
 fop-main = "football_outcomes.cli.main:main"
@@ -55,3 +55,17 @@ line-length = 120
 [tool.isort]
 profile = "black"
 line_length = 120
+
+[tool.poetry]
+name = "football-outcomes-predictor"
+version = "0.1.0"
+# ...
+packages = [{ include = "football_outcomes", from = "src" }]
+
+[tool.poetry.scripts]
+fop-main = "football_outcomes.cli.main:main"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "<1.24"
+protobuf = "3.19.6"

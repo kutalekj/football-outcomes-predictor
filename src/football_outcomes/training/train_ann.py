@@ -106,6 +106,18 @@ def build_mlp(
 def train(regular_matches_in_rounds, team_id_map, comp_id_map):
     print("Num GPUs Available: ", len(tf.config.list_physical_devices("GPU")))  # TODO: Acceleration
 
+    import os
+    from pathlib import Path
+
+    p = Path(settings.COMP_ID_EMBEDDING_MODEL_PATH)
+    print("MODEL PATH:", p)
+    print("exists:", p.exists(), "is_file:", p.is_file(), "is_dir:", p.is_dir())
+    if p.exists() and p.is_file():
+        print("size bytes:", p.stat().st_size)
+        with open(p, "rb") as f:
+            head = f.read(8)
+        print("first 8 bytes:", head)  # HDF5 header should be: b'\x89HDF\r\n\x1a\n'
+
     # Load pre-trained embedding models
     comp_id_embedding_model = load_model(settings.COMP_ID_EMBEDDING_MODEL_PATH)
     team_id_embedding_model = load_model(settings.TEAM_ID_EMBEDDING_MODEL_PATH)
@@ -173,6 +185,7 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
         )
 
         # Save validation data for feature importance analysis
+        """
         save_validation_data(
             round_number,
             val_numerical_features,
@@ -183,6 +196,7 @@ def train(regular_matches_in_rounds, team_id_map, comp_id_map):
             val_away_strengths,
             val_labels,
         )
+        """
 
         # Update learning rate
         new_lr = init_lr * (lr_decay ** (round_number - NUM_TRAINING_ROUNDS))
