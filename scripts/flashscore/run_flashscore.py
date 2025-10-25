@@ -2,8 +2,10 @@ import json
 import os
 import re
 import time
+from pathlib import Path
 
 import pandas as pd
+from pandas.errors import EmptyDataError
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
@@ -14,26 +16,38 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from webdriver_manager.chrome import ChromeDriverManager
 
-from src.flashscore_scraper.competition import CompSeason
-from src.flashscore_scraper.match import Match
-from src.flashscore_scraper.utils import hide_sdk_banner
+from flashscore_scraper.competition import CompSeason
+from flashscore_scraper.match import Match
+from flashscore_scraper.utils import hide_sdk_banner
 
-file_path = "matches.csv"
+DATA_DIR = Path("data/processed")
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+CSV = DATA_DIR / "flashscore.matches.csv"
 
-df = pd.DataFrame()
 
-"""
-if os.path.isfile("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\matches.csv"):
-    df = pd.read_csv("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\matches.csv")
-"""
-if os.path.isfile(file_path):
-    df = pd.read_csv(file_path)
-else:
-    print(f"Could not find and open the file {file_path}.")
+def load_existing_matches() -> pd.DataFrame:
+    """Return existing matches or an empty DataFrame if the file is missing/empty."""
+    if not CSV.exists() or os.stat(CSV).st_size == 0:
+        # no file yet or empty file -> start fresh
+        return pd.DataFrame()
+
+    try:
+        return pd.read_csv(CSV)
+    except EmptyDataError:
+        # file exists but has no rows/headers
+        return pd.DataFrame()
+
+
+def save_matches(df: pd.DataFrame) -> None:
+    """Append a chunk of matches to the CSV (write header only once)."""
+    mode = "w" if not CSV.exists() or os.stat(CSV).st_size == 0 else "a"
+    header = mode == "w"
+    df.to_csv(CSV, index=False, mode=mode, header=header)
+
 
 # Read settings.json file
-# with open("C:\\Users\\lip\\PycharmProjects\\MyFlashscoreScraper\\comp_settings.json", 'r') as f:
-with open("../comp_settings.json", "r") as f:
+HERE = Path(__file__).resolve().parent
+with open(HERE / "comp_settings.json", "r", encoding="utf-8") as f:
     comp_settings = json.load(f)
 
 # Create CompSeason instances
@@ -43,6 +57,10 @@ for s in comp_settings:
     comp.__dict__.update(s)
     comp_seasons.append(comp)
 
+# Start from whatever is already in the CSV (safe if empty / missing)
+df = load_existing_matches()
+
+# Scrape
 for c in comp_seasons:
     # Set webdriver
     options = Options()
@@ -102,8 +120,9 @@ for c in comp_seasons:
 
     driver.quit()
 
-df = Match.drop_duplicate_matches(df)
-
-df.to_csv(file_path, index=False)
+# final dedupe over the accumulated dataframe and overwrite cleanly
+if not df.empty:
+    df = Match.drop_duplicate_matches(df)
+    df.to_csv(CSV, index=False)
 
 break_point = 0

@@ -29,7 +29,10 @@ dev = [
   "protobuf>=3.9.2,<3.20",  # prevously \"protobuf>=3.20.3,<5\",
   "python-dotenv>=1.0.1"]
 firebase = ["firebase-admin>=6.5.0"]
-scrape = ["selenium>=4.12"]
+flashscore = [
+  "selenium>=4.25,<5",
+  "webdriver-manager>=4,<5"
+]
 # tf = ["tensorflow>=2.13"]
 
 [project.scripts]
