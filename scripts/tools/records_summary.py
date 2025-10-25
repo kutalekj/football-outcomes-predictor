@@ -11,15 +11,22 @@ import pandas as pd
 plt.switch_backend("TkAgg")
 
 
-def plot_winning_graph(records_file):
+def plot_winning_graph(records_file, min_bet=0.0, max_bet=999999.9):
 
     # Load and preprocess data
     df = pd.read_csv(records_file, encoding="utf-8")
     df["match_start_datetime_utc"] = pd.to_datetime(df["match_start_datetime_utc"], format="%Y-%m-%d %H:%M UTC")
     df = df.sort_values(by="match_start_datetime_utc").reset_index(drop=True)
 
-    df["cumulative_bet"] = df["bet_placed"].astype(float).cumsum()
-    df["cumulative_won"] = df["won"].astype(float).cumsum()
+    # df["cumulative_bet"] = df["bet_placed"].astype(float).cumsum()
+    df["cumulative_bet"] = (
+        df.loc[(df["bet_placed"] > min_bet) & (df["bet_placed"] < max_bet), "bet_placed"].astype(float).cumsum()
+    )
+
+    # df["cumulative_won"] = df["won"].astype(float).cumsum()
+    df["cumulative_won"] = (
+        df.loc[(df["bet_placed"] > min_bet) & (df["bet_placed"] < max_bet), "won"].astype(float).cumsum()
+    )
 
     x = list(range(len(df)))  # index as x-axis
     x_labels = df["match_start_datetime_utc"].dt.strftime("%Y-%m-%d")
@@ -89,7 +96,8 @@ def plot_winning_graph(records_file):
             )
 
     # Add final state label
-    final_idx = len(df) - 1
+    final_idx = df.loc[(df["bet_placed"] > min_bet) & (df["bet_placed"] < max_bet)].last_valid_index()
+    # final_idx = len(df) - 1
     final_diff = df["cumulative_won"].iloc[final_idx] - df["cumulative_bet"].iloc[final_idx]
     final_perc_gain = final_diff / df["cumulative_bet"].iloc[final_idx]
     final_color = "green" if final_diff >= 0 else "red"
@@ -103,7 +111,7 @@ def plot_winning_graph(records_file):
     )
 
     # Total number of bets label
-    total_bets = len(df)
+    total_bets = len(df.loc[(df["bet_placed"] > min_bet) & (df["bet_placed"] < max_bet)])
     plt.text(
         0.99,
         0.05,
@@ -129,8 +137,8 @@ def plot_winning_graph(records_file):
     tick_step = max(1, len(x) // 10)
     plt.xticks(ticks=x[::tick_step], labels=x_labels[::tick_step], rotation=45, ha="right")
     plt.xlabel("Date of match played", fontsize=14)
-    plt.ylabel("Value [KÄ]", fontsize=14)
-    plt.title("Cumulative sums of bet and won values (tested on Tipsport a.s.)", fontsize=18)
+    plt.ylabel("Value [Kč]", fontsize=14)
+    plt.title(f"Cumulative sums of bet and won values (bet_value>{str(min_bet)};tested on Tipsport a.s.)", fontsize=16)
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
