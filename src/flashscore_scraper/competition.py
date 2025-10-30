@@ -86,13 +86,13 @@ class CompSeason:
 
             if scroll:
                 driver.execute_script("arguments[0].scrollIntoView({block:'center'});", elem)
-                time.sleep(0.2)
+                time.sleep(0.1)
 
             # try JS click to avoid intercept
             if js_first:
                 try:
                     driver.execute_script("arguments[0].click();", elem)
-                    time.sleep(0.3)
+                    time.sleep(0.15)
                     return
                 except Exception:
                     pass
@@ -100,7 +100,7 @@ class CompSeason:
             # fallback normal click
             try:
                 elem.click()
-                time.sleep(0.3)
+                time.sleep(0.15)
             except Exception as e:
                 # last resort: raise a clearer message so we know where it failed
                 raise RuntimeError(f"Click intercepted on {description}: {e}")

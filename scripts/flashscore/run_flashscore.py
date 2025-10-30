@@ -1,6 +1,5 @@
 import json
 import os
-import time
 from pathlib import Path
 
 import pandas as pd
@@ -132,8 +131,6 @@ for c in comp_seasons:
         try:
             driver.get(url)
             dismiss_cookie_banner(driver)  # will be a no-op after first time
-            open_stats_tab(driver)  # ensure the stats section is present if needed
-            time.sleep(1)
 
             m = Match()
             m.get_match_statistics(driver, c.country1, c.name1, c.season)

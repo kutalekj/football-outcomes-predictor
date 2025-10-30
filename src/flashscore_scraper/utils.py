@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 
-def hide_sdk_banner(driver, sleep: float = 1.0, include_placeholder: bool = True):
+def hide_sdk_banner(driver, sleep: float = 0.5, include_placeholder: bool = True):
     """
     Hides the Flashscore/OneTrust banner if it exists.
     Safe to call even if the banner is not present.
@@ -34,14 +34,6 @@ def hide_sdk_banner(driver, sleep: float = 1.0, include_placeholder: bool = True
     import time
 
     time.sleep(sleep)
-
-
-def hide_advert_banner(driver, sleep=2.0):
-    time.sleep(sleep)
-    driver.execute_script(
-        "document.getElementsByClassName('boxOverContent boxOverContent--type-2 isSticky isMobile"
-        "Sticky disabledSkeleton isNotClosed boxOverContent--active')[0].style.display='none';"
-    )
 
 
 def hide_tipsport_consent_banner(driver, sleep=2.0):

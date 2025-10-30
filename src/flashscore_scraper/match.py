@@ -60,47 +60,61 @@ def _split_title_start_end(a_el):
     return (None, end)
 
 
+def _ensure_odds_table_loaded(driver, timeout=5):
+    # Wait for odds rows to exist on the CURRENT page (don't navigate again)
+    Wait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")))
+
+
 def open_odds_tab(driver):
-    # Be tolerant to "ODDS" or "Odds"
+    # Fast path: go straight to the 1X2 odds URL using base + mid
+    base, mid = _split_url_parts(driver.current_url)
+    direct_url = _make_url(base, "odds/1x2-odds/", mid)
     try:
-        btn = Wait(driver, 6).until(
+        if not driver.current_url.startswith(direct_url):
+            driver.get(direct_url)
+        # ensure odds table or widget is there quickly
+        Wait(driver, 4).until(
+            EC.any_of(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")),
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".wclOddsContent .wclOddsRow")),
+            )
+        )
+        return
+    except TimeoutException:
+        pass  # fallback below
+
+    # Fallback: try clicking the 'Odds' tab in case they're testing a different structure
+    try:
+        btn = Wait(driver, 3).until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[@role='tab' and translate(normalize-space(.),'odS','ods')='odds']")
             )
         )
         if btn.get_attribute("data-selected") != "true":
             driver.execute_script("arguments[0].click();", btn)
-            time.sleep(0.3)
+        # short wait for odds content
+        Wait(driver, 3).until(
+            EC.any_of(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")),
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".wclOddsContent .wclOddsRow")),
+            )
+        )
     except Exception:
-        # Fallback: navigate directly to /odds
-        base, mid = _split_url_parts(driver.current_url)
-        driver.get(_make_url(base, "odds/1x2-odds/", mid))
-        time.sleep(0.4)
+        # If all else fails we'll still continue; scrape_* will just miss odds for this match
+        pass
 
 
-def _open_stats_and_get_rows(driver, timeout=10):
+def _open_stats_and_get_rows(driver, timeout=6):
     # Best: navigate to a well-formed stats URL using base + mid
     base, mid = _split_url_parts(driver.current_url)
     stats_url = _make_url(base, "summary/stats", mid)
     if not driver.current_url.startswith(stats_url):
         driver.get(stats_url)
-        time.sleep(0.4)
 
-    # If the Stats tab anchor exists, click it (keeps analytics happy), else proceed
-    try:
-        a = Wait(driver, 2).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "a[data-analytics-alias='match-statistics']"))
-        )
-        driver.execute_script("arguments[0].click();", a)
-        time.sleep(0.2)
-    except Exception:
-        pass
-
+    # wait for at least one stat row
     rows = Wait(driver, timeout).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='wcl-statistics']"))
     )
-    if not rows:
-        raise RuntimeError("Stats rows not found")
     return rows
 
 
@@ -125,9 +139,12 @@ def _parse_number(text):
 def scrape_match_result_odds(driver, target):
     """
     Fill 1X2 start/end odds for Tipsport (49) and Fortuna (46).
-    Works with new 'wclOddsContent' widget and the old 'ui-table__row' table.
+    Returns a dict like {"tipsport": True/False, "fortuna": True/False}
+    indicating whether we managed to fill that bookmaker from this pass.
     """
     open_odds_tab(driver)
+
+    filled = {"tipsport": False, "fortuna": False}
 
     def _set(prefix, s1, e1, s0, e0, s2, e2):
         setattr(target, f"odd_{prefix}_1_start", s1 or "")
@@ -137,10 +154,8 @@ def scrape_match_result_odds(driver, target):
         setattr(target, f"odd_{prefix}_2_start", s2 or "")
         setattr(target, f"odd_{prefix}_2_end", e2 or "")
 
-    # --- A) New summary widget: .wclOddsContent ---
     def _handle_new_widget(bm_id, prefix):
         try:
-            # Find the 'odds' block with this bookmaker logo link
             block = driver.find_element(
                 By.XPATH,
                 f"//div[contains(@class,'wclOddsContent')]/div[contains(@class,'odds')]"
@@ -149,17 +164,15 @@ def scrape_match_result_odds(driver, target):
             row = block.find_element(By.CSS_SELECTOR, ".wclOddsRow")
             cells = row.find_elements(By.CSS_SELECTOR, "[data-testid='wcl-oddsCell']")
             if len(cells) >= 3:
-                # order 1, X, 2
-                s1, e1 = _split_title_start_end(cells[0])
-                s0, e0 = _split_title_start_end(cells[1])
-                s2, e2 = _split_title_start_end(cells[2])
+                s1, e1 = _split_title_start_end(cells[0])  # home
+                s0, e0 = _split_title_start_end(cells[1])  # draw
+                s2, e2 = _split_title_start_end(cells[2])  # away
                 _set(prefix, s1, e1, s0, e0, s2, e2)
                 return True
         except Exception:
             pass
         return False
 
-    # --- B) Old table fallback: .ui-table__row with data-analytics-bookmaker-id ---
     def _handle_old_table(bm_id, prefix):
         try:
             row = driver.find_element(
@@ -177,8 +190,12 @@ def scrape_match_result_odds(driver, target):
         return False
 
     for bm_id, prefix in (("49", "tipsport"), ("46", "fortuna")):
-        if not _handle_new_widget(bm_id, prefix):
-            _handle_old_table(bm_id, prefix)
+        ok = _handle_new_widget(bm_id, prefix)
+        if not ok:
+            ok = _handle_old_table(bm_id, prefix)
+        filled[prefix] = ok
+
+    return filled
 
 
 def open_over_under_tab(driver):
@@ -187,7 +204,7 @@ def open_over_under_tab(driver):
     driver.get(_make_url(base, "odds/over-under/full-time/", mid))
     # Wait for either old table or new widget to appear
     try:
-        Wait(driver, 6).until(
+        Wait(driver, 4).until(
             EC.any_of(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")),
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".wclOddsContent .wclOddsRow")),
@@ -202,7 +219,14 @@ def open_over_under_tab(driver):
                 )
             )
             driver.execute_script("arguments[0].click();", ou)
-            time.sleep(0.4)
+
+            # wait for actual odds rows instead of sleeping
+            Wait(driver, 4).until(
+                EC.any_of(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")),
+                    EC.presence_of_element_located((By.CSS_SELECTOR, ".wclOddsContent .wclOddsRow")),
+                )
+            )
         except Exception:
             pass
 
@@ -353,12 +377,10 @@ def scrape_stats(driver, target):
             continue
 
 
-def _open_odds_tab_1x2(driver, timeout=8):
+def _open_odds_tab_1x2(driver, timeout=5):
     base, mid = _split_url_parts(driver.current_url)
     driver.get(_make_url(base, "odds/1x2-odds/", mid))
-    Wait(driver, timeout).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table.oddsCell__odds .ui-table__row"))
-    )
+    Wait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")))
 
 
 def _parse_start_end_from_title(a_el):
@@ -378,7 +400,11 @@ def _parse_start_end_from_title(a_el):
 
 
 def scrape_1x2_from_odds_table(driver, target, bookmaker_alt="Tipsport.cz"):
-    _open_odds_tab_1x2(driver)
+    """
+    Fallback parser for old table layout.
+    Assumes we're ALREADY on the 1X2 odds page.
+    """
+    _ensure_odds_table_loaded(driver)
     rows = driver.find_elements(By.CSS_SELECTOR, ".ui-table.oddsCell__odds .ui-table__row")
     for row in rows:
         try:
@@ -607,7 +633,7 @@ class Match:
         return out
 
     def get_match_statistics(self, driver, country, comp_name, season):
-        def _find_first(driver, css_selectors, timeout=6):
+        def _find_first(driver, css_selectors, timeout=3):
             for css in css_selectors:
                 try:
                     if timeout and timeout > 0:
@@ -627,7 +653,7 @@ class Match:
                 "[data-testid='wcl-moment']",
                 ".wcl-moment",
             ],
-            timeout=8,
+            timeout=4,
         )
         if not dt_el:
             raise NoSuchElementException("Could not locate match date/time element")
@@ -703,7 +729,7 @@ class Match:
             self.neutral_field = False
 
         try:
-            finished_elem = Wait(driver, 10).until(
+            finished_elem = Wait(driver, 4).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "fixedHeaderDuel__detailStatus"))
             )
             finished_text = driver.execute_script("return arguments[0].innerText;", finished_elem)
@@ -717,7 +743,7 @@ class Match:
             return
 
         # --- 7/8/9) Score & result ---
-        score_div = _find_first(driver, [".detailScore__wrapper"], timeout=6)
+        score_div = _find_first(driver, [".detailScore__wrapper"], timeout=3)
         score_spans = score_div.find_elements(By.TAG_NAME, "span")
         if len(score_spans) >= 3:
             self.goals_home = int(score_spans[0].text)
@@ -730,25 +756,11 @@ class Match:
                 self.goals_home = self.goals_away = -1
         self.result = 1 if self.goals_home > self.goals_away else 0 if self.goals_home == self.goals_away else 2
 
-        # 1X2 odds (new widget + fallback)
-        scrape_match_result_odds(driver, self)
-        if any(
-            v in (None, "")
-            for v in [
-                self.odd_tipsport_0_start,
-                self.odd_tipsport_0_end,
-                self.odd_tipsport_1_start,
-                self.odd_tipsport_1_end,
-                self.odd_tipsport_2_start,
-                self.odd_tipsport_2_end,
-                self.odd_fortuna_0_start,
-                self.odd_fortuna_0_end,
-                self.odd_fortuna_1_start,
-                self.odd_fortuna_1_end,
-                self.odd_fortuna_2_start,
-                self.odd_fortuna_2_end,
-            ]
-        ):
+        # 1X2 odds (new widget or old table)
+        filled_status = scrape_match_result_odds(driver, self)
+
+        # If Tipsport or Fortuna wasn't filled at all, try fallback parser on the SAME page
+        if not (filled_status.get("tipsport") and filled_status.get("fortuna")):
             scrape_1x2_from_odds_table(driver, self)
 
         # Over/Under odds
