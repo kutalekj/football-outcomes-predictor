@@ -1,19 +1,442 @@
+import math
+import re
+import time
 from datetime import datetime
+from urllib.parse import parse_qs, urlparse, urlunparse
 
 import numpy as np
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from .utils import is_float
+
+def _split_url_parts(url: str):
+    """
+    Returns (base_no_query, mid_or_None).
+    base_no_query = https://.../match/football/<home>/<away>   (no trailing slash)
+    """
+    p = urlparse(url)
+    path = p.path  # no query
+    # cut at first of /summary or /odds
+    path = re.sub(r"/(?:summary|odds)(?:/.*)?$", "", path)
+    base = urlunparse((p.scheme, p.netloc, path.rstrip("/"), "", "", ""))
+    qs = parse_qs(p.query or "")
+    mid = None
+    if "mid" in qs and qs["mid"]:
+        mid = qs["mid"][0]
+    return base, mid
+
+
+def _make_url(base: str, tail: str, mid: str | None):
+    """Join base + tail and add ?mid=... if available."""
+    if not tail.startswith("/"):
+        tail = "/" + tail
+    url = base.rstrip("/") + tail
+    if mid:
+        url += "?mid=" + mid
+    return url
+
+
+def _split_title_start_end(a_el):
+    """
+    a_el.get_attribute('title') is like '4.86 » 5.90' or sometimes empty.
+    Returns (start, end) as floats or (None, None).
+    """
+    t = (a_el.get_attribute("title") or "").strip()
+    if "»" in t:
+        parts = [p.strip().replace(",", ".") for p in t.split("»")]
+        try:
+            return float(parts[0]), float(parts[-1])
+        except Exception:
+            return (None, None)
+    # fallback: no title → take visible text as 'end', unknown start
+    try:
+        end = float((a_el.text or a_el.get_attribute("textContent") or "").strip().replace(",", "."))
+    except Exception:
+        end = None
+    return (None, end)
+
+
+def open_odds_tab(driver):
+    # Be tolerant to "ODDS" or "Odds"
+    try:
+        btn = Wait(driver, 6).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[@role='tab' and translate(normalize-space(.),'odS','ods')='odds']")
+            )
+        )
+        if btn.get_attribute("data-selected") != "true":
+            driver.execute_script("arguments[0].click();", btn)
+            time.sleep(0.3)
+    except Exception:
+        # Fallback: navigate directly to /odds
+        base, mid = _split_url_parts(driver.current_url)
+        driver.get(_make_url(base, "odds/1x2-odds/", mid))
+        time.sleep(0.4)
+
+
+def _open_stats_and_get_rows(driver, timeout=10):
+    # Best: navigate to a well-formed stats URL using base + mid
+    base, mid = _split_url_parts(driver.current_url)
+    stats_url = _make_url(base, "summary/stats", mid)
+    if not driver.current_url.startswith(stats_url):
+        driver.get(stats_url)
+        time.sleep(0.4)
+
+    # If the Stats tab anchor exists, click it (keeps analytics happy), else proceed
+    try:
+        a = Wait(driver, 2).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "a[data-analytics-alias='match-statistics']"))
+        )
+        driver.execute_script("arguments[0].click();", a)
+        time.sleep(0.2)
+    except Exception:
+        pass
+
+    rows = Wait(driver, timeout).until(
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='wcl-statistics']"))
+    )
+    if not rows:
+        raise RuntimeError("Stats rows not found")
+    return rows
+
+
+def _parse_number(text):
+    t = text.strip()
+    # strip percent
+    if t.endswith("%"):
+        try:
+            return float(t[:-1])
+        except ValueError:
+            return None
+    # integer / float
+    try:
+        return int(t)
+    except ValueError:
+        try:
+            return float(t)
+        except ValueError:
+            return None
+
+
+def scrape_match_result_odds(driver, target):
+    """
+    Fill 1X2 start/end odds for Tipsport (49) and Fortuna (46).
+    Works with new 'wclOddsContent' widget and the old 'ui-table__row' table.
+    """
+    open_odds_tab(driver)
+
+    def _set(prefix, s1, e1, s0, e0, s2, e2):
+        setattr(target, f"odd_{prefix}_1_start", s1 or "")
+        setattr(target, f"odd_{prefix}_1_end", e1 or "")
+        setattr(target, f"odd_{prefix}_0_start", s0 or "")
+        setattr(target, f"odd_{prefix}_0_end", e0 or "")
+        setattr(target, f"odd_{prefix}_2_start", s2 or "")
+        setattr(target, f"odd_{prefix}_2_end", e2 or "")
+
+    # --- A) New summary widget: .wclOddsContent ---
+    def _handle_new_widget(bm_id, prefix):
+        try:
+            # Find the 'odds' block with this bookmaker logo link
+            block = driver.find_element(
+                By.XPATH,
+                f"//div[contains(@class,'wclOddsContent')]/div[contains(@class,'odds')]"
+                f"[.//a[contains(@href,'/bookmaker/{bm_id}/')]]",
+            )
+            row = block.find_element(By.CSS_SELECTOR, ".wclOddsRow")
+            cells = row.find_elements(By.CSS_SELECTOR, "[data-testid='wcl-oddsCell']")
+            if len(cells) >= 3:
+                # order 1, X, 2
+                s1, e1 = _split_title_start_end(cells[0])
+                s0, e0 = _split_title_start_end(cells[1])
+                s2, e2 = _split_title_start_end(cells[2])
+                _set(prefix, s1, e1, s0, e0, s2, e2)
+                return True
+        except Exception:
+            pass
+        return False
+
+    # --- B) Old table fallback: .ui-table__row with data-analytics-bookmaker-id ---
+    def _handle_old_table(bm_id, prefix):
+        try:
+            row = driver.find_element(
+                By.XPATH, f"//div[contains(@class,'ui-table__row')][.//div[@data-analytics-bookmaker-id='{bm_id}']]"
+            )
+            a_cells = row.find_elements(By.CSS_SELECTOR, "a.oddsCell__odd")
+            if len(a_cells) >= 3:
+                s1, e1 = _split_title_start_end(a_cells[0])
+                s0, e0 = _split_title_start_end(a_cells[1])
+                s2, e2 = _split_title_start_end(a_cells[2])
+                _set(prefix, s1, e1, s0, e0, s2, e2)
+                return True
+        except Exception:
+            pass
+        return False
+
+    for bm_id, prefix in (("49", "tipsport"), ("46", "fortuna")):
+        if not _handle_new_widget(bm_id, prefix):
+            _handle_old_table(bm_id, prefix)
+
+
+def open_over_under_tab(driver):
+    # Prefer direct navigation to avoid tab DOM variations
+    base, mid = _split_url_parts(driver.current_url)
+    driver.get(_make_url(base, "odds/over-under/full-time/", mid))
+    # Wait for either old table or new widget to appear
+    try:
+        Wait(driver, 6).until(
+            EC.any_of(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table__row .oddsCell__odd")),
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".wclOddsContent .wclOddsRow")),
+            )
+        )
+    except TimeoutException:
+        # Retry once via clicking the subtab if it exists
+        try:
+            ou = Wait(driver, 3).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[@data-testid='wcl-tab' and normalize-space()='Over/Under']")
+                )
+            )
+            driver.execute_script("arguments[0].click();", ou)
+            time.sleep(0.4)
+        except Exception:
+            pass
+
+
+def scrape_over_under_totals(driver, target, totals=(1.5, 2.5, 3.5)):
+    """
+    For each total T in totals and for each bookmaker (49 Tipsport, 46 Fortuna), fills:
+      ou{T*10}_tipsport_over_start/end, ou{T*10}_tipsport_under_start/end
+      ou{T*10}_fortuna_over_start/end,  ou{T*10}_fortuna_under_start/end
+    """
+
+    def _handle_ou_new_widget(bookmaker_id, prefix, T):
+        # Find a block for the bookmaker and rows with odds cells
+        try:
+            block = driver.find_element(
+                By.XPATH,
+                f"//div[contains(@class,'wclOddsContent')]"
+                f"//div[contains(@class,'odds')][.//a[contains(@href,'/bookmaker/{bookmaker_id}/')]]",
+            )
+        except Exception:
+            return False
+
+        # Find a row with the threshold label T (1.5 or 1,5)
+        labels = [f"{T:.1f}", f"{T:.1f}".replace(".", ",")]
+        rows = block.find_elements(By.CSS_SELECTOR, ".wclOddsRow")
+        for r in rows:
+            try:
+                has_T = any(
+                    (e.text or "").strip() in labels
+                    for e in r.find_elements(By.CSS_SELECTOR, "[data-testid='wcl-oddsValue']")
+                )
+                if not has_T:
+                    continue
+                cells = r.find_elements(By.CSS_SELECTOR, "[data-testid='wcl-oddsCell']")
+                if len(cells) < 2:
+                    continue
+                so, eo = _split_title_start_end(cells[0])  # Over
+                su, eu = _split_title_start_end(cells[1])  # Under
+                key = int(T * 10)
+                setattr(target, f"ou{key}_{prefix}_over_start", so or "")
+                setattr(target, f"ou{key}_{prefix}_over_end", eo or "")
+                setattr(target, f"ou{key}_{prefix}_under_start", su or "")
+                setattr(target, f"ou{key}_{prefix}_under_end", eu or "")
+                return True
+            except Exception:
+                continue
+        return False
+
+    open_over_under_tab(driver)
+
+    def _label_variants(T):
+        # both dot and comma, e.g. "1.5" or "1,5"
+        s = f"{T:.1f}"
+        return [s.replace(".", ","), s]
+
+    def _handle_ou_for(bookmaker_id, prefix, T):
+        rows = driver.find_elements(
+            By.XPATH, f"//div[contains(@class,'ui-table__row')][.//div[@data-analytics-bookmaker-id='{bookmaker_id}']]"
+        )
+        for row in rows:
+            try:
+                # try both 1.5 and 1,5
+                ok = False
+                for lab in _label_variants(T):
+                    els = row.find_elements(
+                        By.XPATH, f".//span[@data-testid='wcl-oddsValue' and normalize-space()='{lab}']"
+                    )
+                    if els:
+                        ok = True
+                        break
+                if not ok:
+                    continue
+
+                a_cells = row.find_elements(By.CSS_SELECTOR, "a.oddsCell__odd")
+                if len(a_cells) < 2:
+                    continue
+
+                so, eo = _split_title_start_end(a_cells[0])  # Over
+                su, eu = _split_title_start_end(a_cells[1])  # Under
+                key = int(T * 10)  # 1.5 -> 15
+                setattr(target, f"ou{key}_{prefix}_over_start", so or "")
+                setattr(target, f"ou{key}_{prefix}_over_end", eo or "")
+                setattr(target, f"ou{key}_{prefix}_under_start", su or "")
+                setattr(target, f"ou{key}_{prefix}_under_end", eu or "")
+                break
+            except Exception:
+                continue
+
+    for T in totals:
+        if not _handle_ou_new_widget("49", "tipsport", T):
+            _handle_ou_for("49", "tipsport", T)
+        if not _handle_ou_new_widget("46", "fortuna", T):
+            _handle_ou_for("46", "fortuna", T)
+
+
+def _parse_pct(text):
+    # "69%" -> 69 ; also handles "87% (548/633)" (we only need percentage)
+    return int(text.strip().split("%")[0])
+
+
+def scrape_stats(driver, target):
+    label_to_attr = {
+        "Expected Goals (xG)": ("expected_goals_home", "expected_goals_away"),
+        "Ball Possession": ("possession_home", "possession_away"),
+        "Total shots": ("shots_total_home", "shots_total_away"),
+        "Shots on target": ("shots_on_goal_home", "shots_on_goal_away"),
+        "Corner Kicks": ("corner_kicks_home", "corner_kicks_away"),
+        "Passes": ("pass_success_home", "pass_success_away"),
+    }
+
+    try:
+        rows = _open_stats_and_get_rows(driver)
+    except Exception as e:
+        print(f"⚠️ Statistics scraping failed: {type(e).__name__}: {repr(e)}")
+        return
+
+    def _num(t: str):
+        t = t.strip()
+        if not t:
+            return None
+        # drop "(x/y)" trailing info if present
+        t = re.sub(r"\s*\([^)]*\)\s*$", "", t)
+        if t.endswith("%"):
+            t = t[:-1]
+        t = t.replace(",", ".")
+        try:
+            if "." in t:
+                return float(t)
+            return int(t)
+        except ValueError:
+            return None
+
+    for row in rows:
+        try:
+            cat = row.find_element(By.CSS_SELECTOR, "[data-testid='wcl-statistics-category'] > strong").text.strip()
+            vals = row.find_elements(
+                By.CSS_SELECTOR, "[data-testid='wcl-statistics-value'] strong[data-testid='wcl-scores-simple-text-01']"
+            )
+            if len(vals) < 2:
+                continue
+            home_text, away_text = vals[0].text.strip(), vals[1].text.strip()
+
+            if cat in label_to_attr:
+                hk, ak = label_to_attr[cat]
+                setattr(target, hk, _num(home_text))
+                setattr(target, ak, _num(away_text))
+        except Exception:
+            continue
+
+
+def _open_odds_tab_1x2(driver, timeout=8):
+    base, mid = _split_url_parts(driver.current_url)
+    driver.get(_make_url(base, "odds/1x2-odds/", mid))
+    Wait(driver, timeout).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, ".ui-table.oddsCell__odds .ui-table__row"))
+    )
+
+
+def _parse_start_end_from_title(a_el):
+    # title="1.36 » 1.34" OR sometimes missing
+    title = a_el.get_attribute("title") or ""
+    m = re.search(r"([\d.]+)\s*»\s*([\d.]+)", title)
+    end_val_text = a_el.find_element(By.CSS_SELECTOR, "span").text.strip()
+    end_val = float(end_val_text) if end_val_text else None
+    if m:
+        start_val = float(m.group(1))
+        end_val_from_title = float(m.group(2))
+        # prefer title's end if present; otherwise use span
+        end_val = end_val_from_title
+    else:
+        start_val = None  # will be backfilled with end later
+    return start_val, end_val
+
+
+def scrape_1x2_from_odds_table(driver, target, bookmaker_alt="Tipsport.cz"):
+    _open_odds_tab_1x2(driver)
+    rows = driver.find_elements(By.CSS_SELECTOR, ".ui-table.oddsCell__odds .ui-table__row")
+    for row in rows:
+        try:
+            img = row.find_element(By.CSS_SELECTOR, ".oddsCell__bookmaker img.prematchLogo")
+            if (img.get_attribute("alt") or "").strip() != bookmaker_alt:
+                continue
+            cells = row.find_elements(By.CSS_SELECTOR, "a.oddsCell__odd")
+            if len(cells) < 3:
+                continue
+
+            s1, e1 = _parse_start_end_from_title(cells[0])
+            sX, eX = _parse_start_end_from_title(cells[1])
+            s2, e2 = _parse_start_end_from_title(cells[2])
+
+            target.odd_tipsport_1_start = s1
+            target.odd_tipsport_0_start = sX
+            target.odd_tipsport_2_start = s2
+            target.odd_tipsport_1_end = e1
+            target.odd_tipsport_0_end = eX
+            target.odd_tipsport_2_end = e2
+
+            # backfill
+            for a, b in (
+                ("odd_tipsport_1_start", "odd_tipsport_1_end"),
+                ("odd_tipsport_0_start", "odd_tipsport_0_end"),
+                ("odd_tipsport_2_start", "odd_tipsport_2_end"),
+            ):
+                if getattr(target, a) in (None, "") and getattr(target, b) not in (None, ""):
+                    setattr(target, a, getattr(target, b))
+            return True
+        except Exception:
+            continue
+    return False
+
+
+def _is_missing(x):
+    return x is None or (isinstance(x, float) and math.isnan(x)) or (isinstance(x, str) and x.strip() == "")
+
+
+def _backfill_starts(row_dict: dict) -> dict:
+    """
+    If key ends with '_end' and corresponding '_start' is missing/empty/NaN,
+    copy the end value into the start key.
+    """
+    for end_key, val in list(row_dict.items()):
+        m = re.match(r"^(.*)_end$", end_key)
+        if not m:
+            continue
+        start_key = m.group(1) + "_start"  # always WITH the underscore
+        if _is_missing(row_dict.get(start_key)) and not _is_missing(val):
+            row_dict[start_key] = val
+    return row_dict
 
 
 class Match:
     def __init__(self):
         self.id = None
         self.match_valid = True
-        self.date_time = None
         self.date_time = None
 
         self.team_home = None
@@ -27,10 +450,8 @@ class Match:
         self.season = None
         self.round = None
 
-        self.referee = None
         self.neutral_field = None
         self.finished = None
-        self.no_spectators = None
 
         self.odd_tipsport_1_start = None
         self.odd_tipsport_1_end = None
@@ -46,8 +467,35 @@ class Match:
         self.odd_fortuna_2_start = None
         self.odd_fortuna_2_end = None
 
+        self.ou15_tipsport_over_start = None
+        self.ou15_tipsport_over_end = None
+        self.ou15_tipsport_under_start = None
+        self.ou15_tipsport_under_end = None
+        self.ou25_tipsport_over_start = None
+        self.ou25_tipsport_over_end = None
+        self.ou25_tipsport_under_start = None
+        self.ou25_tipsport_under_end = None
+        self.ou35_tipsport_over_start = None
+        self.ou35_tipsport_over_end = None
+        self.ou35_tipsport_under_start = None
+        self.ou35_tipsport_under_end = None
+
+        self.ou15_fortuna_over_start = None
+        self.ou15_fortuna_over_end = None
+        self.ou15_fortuna_under_start = None
+        self.ou15_fortuna_under_end = None
+        self.ou25_fortuna_over_start = None
+        self.ou25_fortuna_over_end = None
+        self.ou25_fortuna_under_start = None
+        self.ou25_fortuna_under_end = None
+        self.ou35_fortuna_over_start = None
+        self.ou35_fortuna_over_end = None
+        self.ou35_fortuna_under_start = None
+        self.ou35_fortuna_under_end = None
+
         self.possession_home = -1
         self.possession_away = -1
+
         self.shots_total_home = -1
         self.shots_total_away = -1
         self.shots_on_goal_home = -1
@@ -57,170 +505,32 @@ class Match:
         self.shots_blocked_home = -1
         self.shots_blocked_away = -1
 
-        self.free_kicks_home = -1
-        self.free_kicks_away = -1
         self.corner_kicks_home = -1
         self.corner_kicks_away = -1
         self.offsides_home = -1
         self.offsides_away = -1
         self.throw_ins_home = -1
         self.throw_ins_away = -1
-        self.goalkeeper_saves_home = -1
-        self.goalkeeper_saves_away = -1
 
-        self.fouls_home = -1
-        self.fouls_away = -1
-        self.red_cards_on_pitch_home = -1
-        self.red_cards_on_pitch_away = -1
-        self.yellow_cards_on_pitch_home = -1
-        self.yellow_cards_on_pitch_away = -1
-        self.attacks_home = -1
-        self.attacks_away = -1
-        self.dangerous_attacks_home = -1
-        self.dangerous_attacks_away = -1
-        self.total_passes_home = -1
-        self.total_passes_away = -1
-        self.completed_passes_home = -1
-        self.completed_passes_away = -1
-        self.tackles_home = -1
-        self.tackles_away = -1
-        self.expected_goals_home = -1
-        self.expected_goals_away = -1
-        self.goal_kicks_home = -1
-        self.goal_kicks_away = -1
+        self.expected_goals_home = -1.0
+        self.expected_goals_away = -1.0
+
         self.pass_success_home = -1
         self.pass_success_away = -1
-        self.distance_covered_metres_home = -1
-        self.distance_covered_metres_away = -1
-        self.distance_covered_km_home = -1
-        self.distance_covered_km_away = -1
-        self.clearances_completed_home = -1
-        self.clearances_completed_away = -1
-        self.crosses_completed_home = -1
-        self.crosses_completed_away = -1
-        self.interceptions_home = -1
-        self.interceptions_away = -1
-
-        self.possession_home_1h = -1
-        self.possession_away_1h = -1
-        self.shots_total_home_1h = -1
-        self.shots_total_away_1h = -1
-        self.shots_on_goal_home_1h = -1
-        self.shots_on_goal_away_1h = -1
-        self.shots_off_goal_home_1h = -1
-        self.shots_off_goal_away_1h = -1
-        self.shots_blocked_home_1h = -1
-        self.shots_blocked_away_1h = -1
-
-        self.free_kicks_home_1h = -1
-        self.free_kicks_away_1h = -1
-        self.corner_kicks_home_1h = -1
-        self.corner_kicks_away_1h = -1
-        self.offsides_home_1h = -1
-        self.offsides_away_1h = -1
-        self.throw_ins_home_1h = -1
-        self.throw_ins_away_1h = -1
-        self.goalkeeper_saves_home_1h = -1
-        self.goalkeeper_saves_away_1h = -1
-
-        self.fouls_home_1h = -1
-        self.fouls_away_1h = -1
-        self.red_cards_on_pitch_home_1h = -1
-        self.red_cards_on_pitch_away_1h = -1
-        self.yellow_cards_on_pitch_home_1h = -1
-        self.yellow_cards_on_pitch_away_1h = -1
-        self.attacks_home_1h = -1
-        self.attacks_away_1h = -1
-        self.dangerous_attacks_home_1h = -1
-        self.dangerous_attacks_away_1h = -1
-        self.total_passes_home_1h = -1
-        self.total_passes_away_1h = -1
-        self.completed_passes_home_1h = -1
-        self.completed_passes_away_1h = -1
-        self.tackles_home_1h = -1
-        self.tackles_away_1h = -1
-        self.expected_goals_home_1h = -1
-        self.expected_goals_away_1h = -1
-        self.goal_kicks_home_1h = -1
-        self.goal_kicks_away_1h = -1
-        self.pass_success_home_1h = -1
-        self.pass_success_away_1h = -1
-        self.distance_covered_metres_home_1h = -1
-        self.distance_covered_metres_away_1h = -1
-        self.distance_covered_km_home_1h = -1
-        self.distance_covered_km_away_1h = -1
-        self.clearances_completed_home_1h = -1
-        self.clearances_completed_away_1h = -1
-        self.crosses_completed_home_1h = -1
-        self.crosses_completed_away_1h = -1
-        self.interceptions_home_1h = -1
-        self.interceptions_away_1h = -1
-
-        self.goals_home_1h = -1
-        self.goals_away_1h = -1
-
-        self.possession_home_2h = -1
-        self.possession_away_2h = -1
-        self.shots_total_home_2h = -1
-        self.shots_total_away_2h = -1
-        self.shots_on_goal_home_2h = -1
-        self.shots_on_goal_away_2h = -1
-        self.shots_off_goal_home_2h = -1
-        self.shots_off_goal_away_2h = -1
-        self.shots_blocked_home_2h = -1
-        self.shots_blocked_away_2h = -1
-
-        self.free_kicks_home_2h = -1
-        self.free_kicks_away_2h = -1
-        self.corner_kicks_home_2h = -1
-        self.corner_kicks_away_2h = -1
-        self.offsides_home_2h = -1
-        self.offsides_away_2h = -1
-        self.throw_ins_home_2h = -1
-        self.throw_ins_away_2h = -1
-        self.goalkeeper_saves_home_2h = -1
-        self.goalkeeper_saves_away_2h = -1
-
-        self.fouls_home_2h = -1
-        self.fouls_away_2h = -1
-        self.red_cards_on_pitch_home_2h = -1
-        self.red_cards_on_pitch_away_2h = -1
-        self.yellow_cards_on_pitch_home_2h = -1
-        self.yellow_cards_on_pitch_away_2h = -1
-        self.attacks_home_2h = -1
-        self.attacks_away_2h = -1
-        self.dangerous_attacks_home_2h = -1
-        self.dangerous_attacks_away_2h = -1
-        self.total_passes_home_2h = -1
-        self.total_passes_away_2h = -1
-        self.completed_passes_home_2h = -1
-        self.completed_passes_away_2h = -1
-        self.tackles_home_2h = -1
-        self.tackles_away_2h = -1
-        self.expected_goals_home_2h = -1
-        self.expected_goals_away_2h = -1
-        self.goal_kicks_home_2h = -1
-        self.goal_kicks_away_2h = -1
-        self.pass_success_home_2h = -1
-        self.pass_success_away_2h = -1
-        self.distance_covered_metres_home_2h = -1
-        self.distance_covered_metres_away_2h = -1
-        self.distance_covered_km_home_2h = -1
-        self.distance_covered_km_away_2h = -1
-        self.clearances_completed_home_2h = -1
-        self.clearances_completed_away_2h = -1
-        self.crosses_completed_home_2h = -1
-        self.crosses_completed_away_2h = -1
-        self.interceptions_home_2h = -1
-        self.interceptions_away_2h = -1
-
-        self.goals_home_2h = -1
-        self.goals_away_2h = -1
 
     def to_dict(self):
-        return {
+        def emit(v):
+            # blank only if None or sentinel -1/NaN
+            if v is None:
+                return ""
+            if isinstance(v, (int, float)):
+                if v == -1 or (isinstance(v, float) and (v != v)):  # NaN
+                    return ""
+            return v
+
+        out = {
             "id": self.id,
-            "date_time": self.date_time,
+            "datetime": self.date_time,
             "team_home": self.team_home,
             "team_away": self.team_away,
             "goals_home": self.goals_home,
@@ -229,658 +539,230 @@ class Match:
             "country": self.country,
             "competition": self.competition,
             "season": self.season,
-            "round": self.round,
-            "referee": self.referee,
-            "neutral_field": self.neutral_field,
-            "finished": self.finished,
-            "no_spectators": self.no_spectators,
-            "odd_tipsport_1_start": self.odd_tipsport_1_start,
-            "odd_tipsport_1_end": self.odd_tipsport_1_end,
-            "odd_tipsport_0_start": self.odd_tipsport_0_start,
-            "odd_tipsport_0_end": self.odd_tipsport_0_end,
-            "odd_tipsport_2_start": self.odd_tipsport_2_start,
-            "odd_tipsport_2_end": self.odd_tipsport_2_end,
-            "odd_fortuna_1_start": self.odd_fortuna_1_start,
-            "odd_fortuna_1_end": self.odd_fortuna_1_end,
-            "odd_fortuna_0_start": self.odd_fortuna_0_start,
-            "odd_fortuna_0_end": self.odd_fortuna_0_end,
-            "odd_fortuna_2_start": self.odd_fortuna_2_start,
-            "odd_fortuna_2_end": self.odd_fortuna_2_end,
-            "possession_home": self.possession_home,
-            "possession_away": self.possession_away,
-            "shots_total_home": self.shots_total_home,
-            "shots_total_away": self.shots_total_away,
-            "shots_on_goal_home": self.shots_on_goal_home,
-            "shots_on_goal_away": self.shots_on_goal_away,
-            "shots_off_goal_home": self.shots_off_goal_home,
-            "shots_off_goal_away": self.shots_off_goal_away,
-            "shots_blocked_home": self.shots_blocked_home,
-            "shots_blocked_away": self.shots_blocked_away,
-            "free_kicks_home": self.free_kicks_home,
-            "free_kicks_away": self.free_kicks_away,
-            "corner_kicks_home": self.corner_kicks_home,
-            "corner_kicks_away": self.corner_kicks_away,
-            "offsides_home": self.offsides_home,
-            "offsides_away": self.offsides_away,
-            "throw_ins_home": self.throw_ins_home,
-            "throw_ins_away": self.throw_ins_away,
-            "goalkeeper_saves_home": self.goalkeeper_saves_home,
-            "goalkeeper_saves_away": self.goalkeeper_saves_away,
-            "fouls_home": self.fouls_home,
-            "fouls_away": self.fouls_away,
-            "red_cards_on_pitch_home": self.red_cards_on_pitch_home,
-            "red_cards_on_pitch_away": self.red_cards_on_pitch_away,
-            "yellow_cards_on_pitch_home": self.yellow_cards_on_pitch_home,
-            "yellow_cards_on_pitch_away": self.yellow_cards_on_pitch_away,
-            "attacks_home": self.attacks_home,
-            "attacks_away": self.attacks_away,
-            "dangerous_attacks_home": self.dangerous_attacks_home,
-            "dangerous_attacks_away": self.dangerous_attacks_away,
-            "tackles_home": self.tackles_home,
-            "tackles_away": self.tackles_away,
-            "total_passes_home": self.total_passes_home,
-            "total_passes_away": self.total_passes_away,
-            "completed_passes_home": self.completed_passes_home,
-            "completed_passes_away": self.completed_passes_away,
-            "expected_goals_home": self.expected_goals_home,
-            "expected_goals_away": self.expected_goals_away,
-            "goal_kicks_home": self.goal_kicks_home,
-            "goal_kicks_away": self.goal_kicks_away,
-            "pass_success_home": self.pass_success_home,
-            "pass_success_away": self.pass_success_away,
-            "distance_covered_metres_home": self.distance_covered_metres_home,
-            "distance_covered_metres_away": self.distance_covered_metres_away,
-            "distance_covered_km_home": self.distance_covered_km_home,
-            "distance_covered_km_away": self.distance_covered_km_away,
-            "clearances_completed_home": self.clearances_completed_home,
-            "clearances_completed_away": self.clearances_completed_away,
-            "crosses_completed_home": self.crosses_completed_home,
-            "crosses_completed_away": self.crosses_completed_away,
-            "interceptions_home": self.interceptions_home,
-            "interceptions_away": self.interceptions_away,
-            "possession_home_1h": self.possession_home_1h,
-            "possession_away_1h": self.possession_away_1h,
-            "shots_total_home_1h": self.shots_total_home_1h,
-            "shots_total_away_1h": self.shots_total_away_1h,
-            "shots_on_goal_home_1h": self.shots_on_goal_home_1h,
-            "shots_on_goal_away_1h": self.shots_on_goal_away_1h,
-            "shots_off_goal_home_1h": self.shots_off_goal_home_1h,
-            "shots_off_goal_away_1h": self.shots_off_goal_away_1h,
-            "shots_blocked_home_1h": self.shots_blocked_home_1h,
-            "shots_blocked_away_1h": self.shots_blocked_away_1h,
-            "free_kicks_home_1h": self.free_kicks_home_1h,
-            "free_kicks_away_1h": self.free_kicks_away_1h,
-            "corner_kicks_home_1h": self.corner_kicks_home_1h,
-            "corner_kicks_away_1h": self.corner_kicks_away_1h,
-            "offsides_home_1h": self.offsides_home_1h,
-            "offsides_away_1h": self.offsides_away_1h,
-            "throw_ins_home_1h": self.throw_ins_home_1h,
-            "throw_ins_away_1h": self.throw_ins_away_1h,
-            "goalkeeper_saves_home_1h": self.goalkeeper_saves_home_1h,
-            "goalkeeper_saves_away_1h": self.goalkeeper_saves_away_1h,
-            "fouls_home_1h": self.fouls_home_1h,
-            "fouls_away_1h": self.fouls_away_1h,
-            "red_cards_on_pitch_home_1h": self.red_cards_on_pitch_home_1h,
-            "red_cards_on_pitch_away_1h": self.red_cards_on_pitch_away_1h,
-            "yellow_cards_on_pitch_home_1h": self.yellow_cards_on_pitch_home_1h,
-            "yellow_cards_on_pitch_away_1h": self.yellow_cards_on_pitch_away_1h,
-            "attacks_home_1h": self.attacks_home_1h,
-            "attacks_away_1h": self.attacks_away_1h,
-            "dangerous_attacks_home_1h": self.dangerous_attacks_home_1h,
-            "dangerous_attacks_away_1h": self.dangerous_attacks_away_1h,
-            "tackles_home_1h": self.tackles_home_1h,
-            "tackles_away_1h": self.tackles_away_1h,
-            "total_passes_home_1h": self.total_passes_home_1h,
-            "total_passes_away_1h": self.total_passes_away_1h,
-            "completed_passes_home_1h": self.completed_passes_home_1h,
-            "completed_passes_away_1h": self.completed_passes_away_1h,
-            "expected_goals_home_1h": self.expected_goals_home_1h,
-            "expected_goals_away_1h": self.expected_goals_away_1h,
-            "goal_kicks_home_1h": self.goal_kicks_home_1h,
-            "goal_kicks_away_1h": self.goal_kicks_away_1h,
-            "pass_success_home_1h": self.pass_success_home_1h,
-            "pass_success_away_1h": self.pass_success_away_1h,
-            "distance_covered_metres_home_1h": self.distance_covered_metres_home_1h,
-            "distance_covered_metres_away_1h": self.distance_covered_metres_away_1h,
-            "distance_covered_km_home_1h": self.distance_covered_km_home_1h,
-            "distance_covered_km_away_1h": self.distance_covered_km_away_1h,
-            "clearances_completed_home_1h": self.clearances_completed_home_1h,
-            "clearances_completed_away_1h": self.clearances_completed_away_1h,
-            "crosses_completed_home_1h": self.crosses_completed_home_1h,
-            "crosses_completed_away_1h": self.crosses_completed_away_1h,
-            "interceptions_home_1h": self.interceptions_home_1h,
-            "interceptions_away_1h": self.interceptions_away_1h,
-            "goals_home_1h": self.goals_home_1h,
-            "goals_away_1h": self.goals_away_1h,
-            "possession_home_2h": self.possession_home_2h,
-            "possession_away_2h": self.possession_away_2h,
-            "shots_total_home_2h": self.shots_total_home_2h,
-            "shots_total_away_2h": self.shots_total_away_2h,
-            "shots_on_goal_home_2h": self.shots_on_goal_home_2h,
-            "shots_on_goal_away_2h": self.shots_on_goal_away_2h,
-            "shots_off_goal_home_2h": self.shots_off_goal_home_2h,
-            "shots_off_goal_away_2h": self.shots_off_goal_away_2h,
-            "shots_blocked_home_2h": self.shots_blocked_home_2h,
-            "shots_blocked_away_2h": self.shots_blocked_away_2h,
-            "free_kicks_home_2h": self.free_kicks_home_2h,
-            "free_kicks_away_2h": self.free_kicks_away_2h,
-            "corner_kicks_home_2h": self.corner_kicks_home_2h,
-            "corner_kicks_away_2h": self.corner_kicks_away_2h,
-            "offsides_home_2h": self.offsides_home_2h,
-            "offsides_away_2h": self.offsides_away_2h,
-            "throw_ins_home_2h": self.throw_ins_home_2h,
-            "throw_ins_away_2h": self.throw_ins_away_2h,
-            "goalkeeper_saves_home_2h": self.goalkeeper_saves_home_2h,
-            "goalkeeper_saves_away_2h": self.goalkeeper_saves_away_2h,
-            "fouls_home_2h": self.fouls_home_2h,
-            "fouls_away_2h": self.fouls_away_2h,
-            "red_cards_on_pitch_home_2h": self.red_cards_on_pitch_home_2h,
-            "red_cards_on_pitch_away_2h": self.red_cards_on_pitch_away_2h,
-            "yellow_cards_on_pitch_home_2h": self.yellow_cards_on_pitch_home_2h,
-            "yellow_cards_on_pitch_away_2h": self.yellow_cards_on_pitch_away_2h,
-            "attacks_home_2h": self.attacks_home_2h,
-            "attacks_away_2h": self.attacks_away_2h,
-            "dangerous_attacks_home_2h": self.dangerous_attacks_home_2h,
-            "dangerous_attacks_away_2h": self.dangerous_attacks_away_2h,
-            "tackles_home_2h": self.tackles_home_2h,
-            "tackles_away_2h": self.tackles_away_2h,
-            "total_passes_home_2h": self.total_passes_home_2h,
-            "total_passes_away_2h": self.total_passes_away_2h,
-            "completed_passes_home_2h": self.completed_passes_home_2h,
-            "completed_passes_away_2h": self.completed_passes_away_2h,
-            "expected_goals_home_2h": self.expected_goals_home_2h,
-            "expected_goals_away_2h": self.expected_goals_away_2h,
-            "goal_kicks_home_2h": self.goal_kicks_home_2h,
-            "goal_kicks_away_2h": self.goal_kicks_away_2h,
-            "pass_success_home_2h": self.pass_success_home_2h,
-            "pass_success_away_2h": self.pass_success_away_2h,
-            "distance_covered_metres_home_2h": self.distance_covered_metres_home_2h,
-            "distance_covered_metres_away_2h": self.distance_covered_metres_away_2h,
-            "distance_covered_km_home_2h": self.distance_covered_km_home_2h,
-            "distance_covered_km_away_2h": self.distance_covered_km_away_2h,
-            "clearances_completed_home_2h": self.clearances_completed_home_2h,
-            "clearances_completed_away_2h": self.clearances_completed_away_2h,
-            "crosses_completed_home_2h": self.crosses_completed_home_2h,
-            "crosses_completed_away_2h": self.crosses_completed_away_2h,
-            "interceptions_home_2h": self.interceptions_home_2h,
-            "interceptions_away_2h": self.interceptions_away_2h,
-            "goals_home_2h": self.goals_home_2h,
-            "goals_away_2h": self.goals_away_2h,
+            "round": self.round if self.round is not None else "",
+            "neutral_field": int(bool(self.neutral_field)),
+            "finished": int(bool(self.finished)),
+            # 1X2
+            "odd_tipsport_1_start": emit(self.odd_tipsport_1_start),
+            "odd_tipsport_1_end": emit(self.odd_tipsport_1_end),
+            "odd_tipsport_0_start": emit(self.odd_tipsport_0_start),
+            "odd_tipsport_0_end": emit(self.odd_tipsport_0_end),
+            "odd_tipsport_2_start": emit(self.odd_tipsport_2_start),
+            "odd_tipsport_2_end": emit(self.odd_tipsport_2_end),
+            "odd_fortuna_1_start": emit(self.odd_fortuna_1_start),
+            "odd_fortuna_1_end": emit(self.odd_fortuna_1_end),
+            "odd_fortuna_0_start": emit(self.odd_fortuna_0_start),
+            "odd_fortuna_0_end": emit(self.odd_fortuna_0_end),
+            "odd_fortuna_2_start": emit(self.odd_fortuna_2_start),
+            "odd_fortuna_2_end": emit(self.odd_fortuna_2_end),
+            # Over/Under (1.5, 2.5, 3.5)
+            "ou15_tipsport_over_start": emit(self.ou15_tipsport_over_start),
+            "ou15_tipsport_over_end": emit(self.ou15_tipsport_over_end),
+            "ou15_tipsport_under_start": emit(self.ou15_tipsport_under_start),
+            "ou15_tipsport_under_end": emit(self.ou15_tipsport_under_end),
+            "ou25_tipsport_over_start": emit(self.ou25_tipsport_over_start),
+            "ou25_tipsport_over_end": emit(self.ou25_tipsport_over_end),
+            "ou25_tipsport_under_start": emit(self.ou25_tipsport_under_start),
+            "ou25_tipsport_under_end": emit(self.ou25_tipsport_under_end),
+            "ou35_tipsport_over_start": emit(self.ou35_tipsport_over_start),
+            "ou35_tipsport_over_end": emit(self.ou35_tipsport_over_end),
+            "ou35_tipsport_under_start": emit(self.ou35_tipsport_under_start),
+            "ou35_tipsport_under_end": emit(self.ou35_tipsport_under_end),
+            "ou15_fortuna_over_start": emit(self.ou15_fortuna_over_start),
+            "ou15_fortuna_over_end": emit(self.ou15_fortuna_over_end),
+            "ou15_fortuna_under_start": emit(self.ou15_fortuna_under_start),
+            "ou15_fortuna_under_end": emit(self.ou15_fortuna_under_end),
+            "ou25_fortuna_over_start": emit(self.ou25_fortuna_over_start),
+            "ou25_fortuna_over_end": emit(self.ou25_fortuna_over_end),
+            "ou25_fortuna_under_start": emit(self.ou25_fortuna_under_start),
+            "ou25_fortuna_under_end": emit(self.ou25_fortuna_under_end),
+            "ou35_fortuna_over_start": emit(self.ou35_fortuna_over_start),
+            "ou35_fortuna_over_end": emit(self.ou35_fortuna_over_end),
+            "ou35_fortuna_under_start": emit(self.ou35_fortuna_under_start),
+            "ou35_fortuna_under_end": emit(self.ou35_fortuna_under_end),
+            # Stats
+            "possession_home": emit(self.possession_home),
+            "possession_away": emit(self.possession_away),
+            "shots_total_home": emit(self.shots_total_home),
+            "shots_total_away": emit(self.shots_total_away),
+            "shots_on_goal_home": emit(self.shots_on_goal_home),
+            "shots_on_goal_away": emit(self.shots_on_goal_away),
+            "shots_off_goal_home": emit(self.shots_off_goal_home),
+            "shots_off_goal_away": emit(self.shots_off_goal_away),
+            "shots_blocked_home": emit(self.shots_blocked_home),
+            "shots_blocked_away": emit(self.shots_blocked_away),
+            "corners_home": emit(self.corner_kicks_home),
+            "corners_away": emit(self.corner_kicks_away),
+            "offsides_home": emit(self.offsides_home),
+            "offsides_away": emit(self.offsides_away),
+            "throw_ins_home": emit(self.throw_ins_home),
+            "throw_ins_away": emit(self.throw_ins_away),
+            "xg_home": emit(self.expected_goals_home),
+            "xg_away": emit(self.expected_goals_away),
+            "passes_accuracy_home": emit(self.pass_success_home),
+            "passes_accuracy_away": emit(self.pass_success_away),
         }
 
+        _backfill_starts(out)
+        return out
+
     def get_match_statistics(self, driver, country, comp_name, season):
-        # 1. Date & Time
-        date_time = driver.find_element(By.CSS_SELECTOR, ".duelParticipant__startTime > div").text
-        date_time_parsed = datetime.strptime(date_time, "%d.%m.%Y %H:%M")
-        self.date_time = date_time_parsed.strftime("%Y-%m-%d %H:%M")
+        def _find_first(driver, css_selectors, timeout=6):
+            for css in css_selectors:
+                try:
+                    if timeout and timeout > 0:
+                        return Wait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR, css)))
+                    else:
+                        return driver.find_element(By.CSS_SELECTOR, css)
+                except Exception:
+                    continue
+            return None
 
-        # 2./3. Teams
-        self.team_home = driver.find_element(
-            By.CSS_SELECTOR, ".duelParticipant__home .participant__participantName.participant__overflow > a"
-        ).text
-        self.team_away = driver.find_element(
-            By.CSS_SELECTOR, ".duelParticipant__away .participant__participantName.participant__overflow > a"
-        ).text
-        # print(self.team_home + " - " + self.team_away)
+        # --- 1) Date & time ---
+        dt_el = _find_first(
+            driver,
+            [
+                ".duelParticipant__startTime > div",
+                ".duelParticipant__startTime",
+                "[data-testid='wcl-moment']",
+                ".wcl-moment",
+            ],
+            timeout=8,
+        )
+        if not dt_el:
+            raise NoSuchElementException("Could not locate match date/time element")
+        raw_dt = dt_el.text.strip()
+        parsed = None
+        for fmt in ("%d.%m.%Y %H:%M", "%d/%m/%Y %H:%M", "%d.%m.%y %H:%M"):
+            try:
+                parsed = datetime.strptime(raw_dt, fmt)
+                break
+            except ValueError:
+                continue
+        self.date_time = parsed.strftime("%Y-%m-%d %H:%M") if parsed else None
 
-        # 0. PK
-        self.id = date_time + "_" + self.team_home + "_" + self.team_away
+        # --- 2/3) Teams ---
+        self.team_home = _find_first(
+            driver,
+            [
+                ".duelParticipant__home .participant__participantName.participant__overflow > a",
+                ".duelParticipant__home .participant__participantName > a",
+                ".duelParticipant__home .wcl-simpleText_2t3pL",
+            ],
+        ).text.strip()
+        self.team_away = _find_first(
+            driver,
+            [
+                ".duelParticipant__away .participant__participantName.participant__overflow > a",
+                ".duelParticipant__away .participant__participantName > a",
+                ".duelParticipant__away .wcl-simpleText_2t3pL",
+            ],
+        ).text.strip()
+        print(f"{self.team_home} - {self.team_away}")
 
-        # 4./5./6. Competition, Season, Round + COUNTRY
+        # --- 0) ID ---
+        self.id = f"{raw_dt}_{self.team_home}_{self.team_away}"
+
+        # --- 4/5/6) Competition, Season, Round, Country ---
         self.country = country
-        # self.competition = "FORTUNA:LIGA"
         self.competition = comp_name
-        # self.season = "2022-2023"
         self.season = season
-        self.round = int(driver.find_element(By.CSS_SELECTOR, ".tournamentHeader__country > a").text.split("ROUND ")[1])
-        # print(self.competition + " " + self.season + ": Round " + str(self.round))
 
-        # 11./12. Neutral field, Finished + NO_SPECTATORS?
         try:
-            match_info = driver.find_element(By.CSS_SELECTOR, ".infoBox__wrapper .infoBox__info").text
-            if "at a different stadium" in match_info:
-                self.neutral_field = True
-            else:
-                self.neutral_field = False
-                if "No spectators" not in match_info:
-                    print("\t\t\tNEW_MATCH_INFO: " + match_info)
+            Wait(driver, 5).until(
+                EC.presence_of_all_elements_located(
+                    (
+                        By.CSS_SELECTOR,
+                        "li[data-testid='wcl-breadcrumbsItem'] span[data-testid='wcl-scores-overline-03']",
+                    )
+                )
+            )
+            spans = driver.find_elements(
+                By.CSS_SELECTOR, "li[data-testid='wcl-breadcrumbsItem'] span[data-testid='wcl-scores-overline-03']"
+            )
+            txt = " | ".join(s.text for s in spans if s.text)
+        except Exception:
+            txt = ""
+        m = re.search(r"round[^0-9]{0,5}(\d+)", txt, re.IGNORECASE)
+        if not m:
+            header_el = _find_first(
+                driver,
+                [".tournamentHeader__country > a", ".wcl-headerTournament a", ".tournamentHeader__country"],
+                timeout=2,
+            )
+            header_text = header_el.text.strip() if header_el else ""
+            m = re.search(r"[Rr]ound(?:\s*|\xa0|-)*(\d+)", header_text)
+        self.round = int(m.group(1)) if m else None
+        print(f"{self.competition} {self.season}: Round {self.round if self.round else 'UNKNOWN'}")
+
+        # --- 11/12) Neutral field & finished ---
+        try:
+            info_box = driver.find_element(By.CSS_SELECTOR, ".infoBox__wrapper .infoBox__info").text
+            self.neutral_field = "at a different stadium" in info_box
         except NoSuchElementException:
             self.neutral_field = False
 
         try:
-            match_info = driver.find_element(By.CSS_SELECTOR, ".infoBox__wrapper .infoBox__info").text
-            if "No spectators" in match_info:
-                self.no_spectators = True
-            else:
-                self.no_spectators = False
-                if "at a different stadium" not in match_info:
-                    print("\t\t\tNEW_MATCH_INFO: " + match_info)
-        except NoSuchElementException:
-            self.no_spectators = False
+            finished_elem = Wait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "fixedHeaderDuel__detailStatus"))
+            )
+            finished_text = driver.execute_script("return arguments[0].innerText;", finished_elem)
+            self.finished = finished_text.strip().upper() in ("FINISHED", "FT")
+        except Exception:
+            self.finished = False
 
-        finished_elem = Wait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "fixedHeaderDuel__detailStatus"))
-        )
-        finished_text = driver.execute_script("return arguments[0].innerText;", finished_elem)
-        self.finished = True if finished_text == "FINISHED" else False
         if not self.finished:
-            print("WARNING: Unfinished match found")
+            print("⚠️ Unfinished match found — skipping.")
             self.match_valid = False
             return
-        # print("Referee: " + self.referee + ", neutral field = " + str(self.neutral_field) + ",
-        # finished = " + str(self.finished))
 
-        # 7./8./9. Result, Team Goals - Home/Away
-        score_div = driver.find_element(By.CSS_SELECTOR, ".detailScore__wrapper")
+        # --- 7/8/9) Score & result ---
+        score_div = _find_first(driver, [".detailScore__wrapper"], timeout=6)
         score_spans = score_div.find_elements(By.TAG_NAME, "span")
-
-        self.goals_home = int(score_spans[0].text)
-        self.goals_away = int(score_spans[2].text)
-
-        if self.goals_home >= self.goals_away:
-            if self.goals_home > self.goals_away:
-                self.result = 0
-            else:
-                self.result = 1
+        if len(score_spans) >= 3:
+            self.goals_home = int(score_spans[0].text)
+            self.goals_away = int(score_spans[2].text)
         else:
-            self.result = 2
-        # print(str(self.goals_home) + ":" + str(self.goals_away) + "\t(winner = " + str(self.result) + ")")
-
-        # 10. Referee
-        try:
-            referee_div = driver.find_element(By.CSS_SELECTOR, ".section .mi__data")
-            referee_div2 = referee_div.find_elements(By.TAG_NAME, "div")[0]
-            self.referee = referee_div2.find_element(By.CSS_SELECTOR, ".mi__item__val").text.strip()
-        except NoSuchElementException:
-            self.referee = None
-
-        # 13.- 24. Odds (Tipsport, Fortuna)
-        odds_elems = driver.find_elements(By.CSS_SELECTOR, ".oddsRowContent")
-        for odd_elem, i in zip(odds_elems, range(len(odds_elems))):
-            last_minute_odds = odd_elem.find_elements(By.CSS_SELECTOR, ".oddsValueInner")
-
-            if len(last_minute_odds) < 3:
-                last_minute_odd1 = -1
-                last_minute_odd0 = -1
-                last_minute_odd2 = -1
+            nums = re.findall(r"\d+", score_div.text)
+            if len(nums) >= 2:
+                self.goals_home, self.goals_away = map(int, nums[:2])
             else:
-                last_minute_odd1 = last_minute_odds[0].text
-                last_minute_odd0 = last_minute_odds[1].text
-                last_minute_odd2 = last_minute_odds[2].text
+                self.goals_home = self.goals_away = -1
+        self.result = 1 if self.goals_home > self.goals_away else 0 if self.goals_home == self.goals_away else 2
 
-            init_odds = odd_elem.find_elements(By.CSS_SELECTOR, ".cellWrapper")
-
-            odd1 = init_odds[0].get_attribute("title")
-            init_odd1 = odd1.split(" ")[0] if odd1 != "" else last_minute_odd1
-            odd0 = init_odds[1].get_attribute("title")
-            init_odd0 = odd0.split(" ")[0] if odd0 != "" else last_minute_odd0
-            odd2 = init_odds[2].get_attribute("title")
-            init_odd2 = odd2.split(" ")[0] if odd2 != "" else last_minute_odd2
-
-            if not all([is_float(init_odd1), is_float(init_odd0), is_float(init_odd2)]):
-                init_odd1 = -1
-                init_odd0 = -1
-                init_odd2 = -1
-
-            # print(str(init_odd1) + " >> " + str(last_minute_odd1) + ", " + str(init_odd0) + " >> "
-            # + str(last_minute_odd0) + ", " + str(init_odd2) + " >> " + str(last_minute_odd2))
-
-            if i == 0:
-                self.odd_tipsport_1_start = float(init_odd1)
-                self.odd_tipsport_1_end = float(last_minute_odd1)
-                self.odd_tipsport_0_start = float(init_odd0)
-                self.odd_tipsport_0_end = float(last_minute_odd0)
-                self.odd_tipsport_2_start = float(init_odd2)
-                self.odd_tipsport_2_end = float(last_minute_odd2)
-            else:
-                self.odd_fortuna_1_start = float(init_odd1)
-                self.odd_fortuna_1_end = float(last_minute_odd1)
-                self.odd_fortuna_0_start = float(init_odd0)
-                self.odd_fortuna_0_end = float(last_minute_odd0)
-                self.odd_fortuna_2_start = float(init_odd2)
-                self.odd_fortuna_2_end = float(last_minute_odd2)
-
-        # Yellow/Red cards Not on pitch
-        yellows_not_on_pitch_counter = 0
-        reds_not_on_pitch_counter = 0
-
-        incidents_section = driver.find_element(By.CSS_SELECTOR, ".smv__verticalSections.section")
-        incidents = incidents_section.find_elements(By.CSS_SELECTOR, ".smv__incident")
-        for inc in incidents:
-            try:
-                smv_assist = inc.find_element(By.CSS_SELECTOR, ".smv__assist")
-                if smv_assist.text == "(Not on pitch)":
-                    icon = inc.find_element(By.CSS_SELECTOR, ".smv__incidentIcon")
-                    if (
-                        "yellow card" in icon.get_attribute("title")
-                        or len(driver.find_elements(By.CSS_SELECTOR, ".card-ico.yellowCard-ico")) > 0
-                    ):
-                        yellows_not_on_pitch_counter += 1
-                        print("_____Found YELLOW not on pitch_____")
-                    if (
-                        "red card" in icon.get_attribute("title")
-                        or len(driver.find_elements(By.CSS_SELECTOR, ".card-ico.redCard-ico")) > 0
-                    ):
-                        reds_not_on_pitch_counter += 1
-                        print("_____Found RED not on pitch_____")
-            except NoSuchElementException:
-                pass
-                # print("_____no sub_incident found_____")
-
-        # --- STATS ---
-        try:
-            Wait(driver, 4).until(EC.presence_of_element_located((By.XPATH, "//button[text()='Stats']")))
-            driver.find_element(By.XPATH, "//button[text()='Stats']").click()
-        except (TimeoutException, NoSuchElementException):
-            return
-
-        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "._row_n1rcj_9")))
-        stat_rows = driver.find_elements(By.CSS_SELECTOR, "._row_n1rcj_9")
-        for sr in stat_rows:
-            cat = sr.find_element(By.CSS_SELECTOR, "._category_n1rcj_16")
-            cat_name = cat.find_element(By.CSS_SELECTOR, "._category_1vze3_5").text
-
-            if cat_name == "Ball Possession":
-                self.possession_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text[:-1])
-                self.possession_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text[:-1])
-            elif cat_name == "Goal Attempts":
-                self.shots_total_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_total_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Shots on Goal":
-                self.shots_on_goal_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_on_goal_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Shots off Goal":
-                self.shots_off_goal_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_off_goal_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Blocked Shots":
-                self.shots_blocked_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_blocked_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Free Kicks":
-                self.free_kicks_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.free_kicks_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Corner Kicks":
-                self.corner_kicks_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.corner_kicks_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Offsides":
-                self.offsides_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.offsides_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Throw-ins":
-                self.throw_ins_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.throw_ins_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Goalkeeper Saves":
-                self.goalkeeper_saves_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.goalkeeper_saves_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Fouls":
-                self.fouls_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.fouls_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Red Cards":
-                self.red_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.red_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Yellow Cards":
-                self.yellow_cards_on_pitch_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.yellow_cards_on_pitch_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Attacks":
-                self.attacks_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.attacks_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Dangerous Attacks":
-                self.dangerous_attacks_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.dangerous_attacks_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Tackles":
-                self.tackles_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.tackles_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Total Passes":
-                self.total_passes_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.total_passes_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Completed Passes":
-                self.completed_passes_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.completed_passes_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Expected Goals (xG)":
-                self.expected_goals_home = float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.expected_goals_away = float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Goal Kicks":
-                self.goal_kicks_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.goal_kicks_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Pass Success %":
-                self.pass_success_home = int(float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text))
-                self.pass_success_away = int(float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text))
-            elif cat_name == "Distance Covered (metres)":
-                self.distance_covered_metres_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.distance_covered_metres_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Distance Covered (km)":
-                self.distance_covered_km_home = float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.distance_covered_km_away = float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Clearances Completed":
-                self.clearances_completed_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.clearances_completed_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Crosses Completed":
-                self.crosses_completed_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.crosses_completed_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Interceptions":
-                self.interceptions_home = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.interceptions_away = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            else:
-                raise ValueError("Unknown category name in statistics found.")
-
-        # --- 1st HALF STATS ---
-        try:
-            Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='1st Half']")))
-            driver.find_element(By.XPATH, "//button[text()='1st Half']").click()
-        except (NoSuchElementException, TimeoutException):
-            print("WARNING: Timeout, or 1st half stats not found.")
-            self.match_valid = False
-            return
-
-        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "._row_n1rcj_9")))
-        stat_rows = driver.find_elements(By.CSS_SELECTOR, "._row_n1rcj_9")
-
-        for sr in stat_rows:
-            cat = sr.find_element(By.CSS_SELECTOR, "._category_n1rcj_16")
-            cat_name = cat.find_element(By.CSS_SELECTOR, "._category_1vze3_5").text
-
-            if cat_name == "Ball Possession":
-                self.possession_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text[:-1])
-                self.possession_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text[:-1])
-            elif cat_name == "Goal Attempts":
-                self.shots_total_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_total_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Shots on Goal":
-                self.shots_on_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_on_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Shots off Goal":
-                self.shots_off_goal_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_off_goal_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Blocked Shots":
-                self.shots_blocked_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_blocked_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Free Kicks":
-                self.free_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.free_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Corner Kicks":
-                self.corner_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.corner_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Offsides":
-                self.offsides_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.offsides_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Throw-ins":
-                self.throw_ins_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.throw_ins_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Goalkeeper Saves":
-                self.goalkeeper_saves_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.goalkeeper_saves_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Fouls":
-                self.fouls_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.fouls_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Red Cards":
-                self.red_cards_on_pitch_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.red_cards_on_pitch_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Yellow Cards":
-                self.yellow_cards_on_pitch_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.yellow_cards_on_pitch_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Attacks":
-                self.attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Dangerous Attacks":
-                self.dangerous_attacks_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.dangerous_attacks_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Tackles":
-                self.tackles_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.tackles_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Total Passes":
-                self.total_passes_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.total_passes_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Completed Passes":
-                self.completed_passes_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.completed_passes_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Expected Goals (xG)":
-                self.expected_goals_home_1h = float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.expected_goals_away_1h = float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Goal Kicks":
-                self.goal_kicks_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.goal_kicks_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Pass Success %":
-                self.pass_success_home_1h = int(float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text))
-                self.pass_success_away_1h = int(float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text))
-            elif cat_name == "Distance Covered (metres)":
-                self.distance_covered_metres_home_1h = int(
-                    cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text
-                )
-                self.distance_covered_metres_away_1h = int(
-                    cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text
-                )
-            elif cat_name == "Distance Covered (km)":
-                self.distance_covered_km_home_1h = float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.distance_covered_km_away_1h = float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Clearances Completed":
-                self.clearances_completed_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.clearances_completed_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Crosses Completed":
-                self.crosses_completed_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.crosses_completed_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Interceptions":
-                self.interceptions_home_1h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.interceptions_away_1h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            else:
-                raise ValueError("Unknown category name in statistics found.")
-
-        if None in (
-            self.shots_on_goal_home_1h,
-            self.shots_on_goal_away_1h,
-            self.goalkeeper_saves_home_1h,
-            self.goalkeeper_saves_away_1h,
+        # 1X2 odds (new widget + fallback)
+        scrape_match_result_odds(driver, self)
+        if any(
+            v in (None, "")
+            for v in [
+                self.odd_tipsport_0_start,
+                self.odd_tipsport_0_end,
+                self.odd_tipsport_1_start,
+                self.odd_tipsport_1_end,
+                self.odd_tipsport_2_start,
+                self.odd_tipsport_2_end,
+                self.odd_fortuna_0_start,
+                self.odd_fortuna_0_end,
+                self.odd_fortuna_1_start,
+                self.odd_fortuna_1_end,
+                self.odd_fortuna_2_start,
+                self.odd_fortuna_2_end,
+            ]
         ):
-            raise ValueError("Missing statistics for 1st half: Shots on goal/Goalkeeper saves.")
-        self.goals_home_1h = self.shots_on_goal_home_1h - self.goalkeeper_saves_away_1h
-        self.goals_away_1h = self.shots_on_goal_away_1h - self.goalkeeper_saves_home_1h
+            scrape_1x2_from_odds_table(driver, self)
 
-        # --- 2nd HALF STATS ---
-        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//button[text()='2nd Half']")))
-        driver.find_element(By.XPATH, "//button[text()='2nd Half']").click()
+        # Over/Under odds
+        scrape_over_under_totals(driver, self, totals=(1.5, 2.5, 3.5))
 
-        Wait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "._row_n1rcj_9")))
-        stat_rows = driver.find_elements(By.CSS_SELECTOR, "._row_n1rcj_9")
+        # Team statistics (this opens the Stats tab itself, robust to layout)
+        scrape_stats(driver, self)
 
-        for sr in stat_rows:
-            cat = sr.find_element(By.CSS_SELECTOR, "._category_n1rcj_16")
-            cat_name = cat.find_element(By.CSS_SELECTOR, "._category_1vze3_5").text
-
-            if cat_name == "Ball Possession":
-                self.possession_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text[:-1])
-                self.possession_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text[:-1])
-            elif cat_name == "Goal Attempts":
-                self.shots_total_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_total_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Shots on Goal":
-                self.shots_on_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_on_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Shots off Goal":
-                self.shots_off_goal_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_off_goal_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Blocked Shots":
-                self.shots_blocked_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.shots_blocked_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Free Kicks":
-                self.free_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.free_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Corner Kicks":
-                self.corner_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.corner_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Offsides":
-                self.offsides_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.offsides_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Throw-ins":
-                self.throw_ins_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.throw_ins_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Goalkeeper Saves":
-                self.goalkeeper_saves_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.goalkeeper_saves_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Fouls":
-                self.fouls_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.fouls_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Red Cards":
-                self.red_cards_on_pitch_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.red_cards_on_pitch_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Yellow Cards":
-                self.yellow_cards_on_pitch_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.yellow_cards_on_pitch_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Attacks":
-                self.attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Dangerous Attacks":
-                self.dangerous_attacks_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.dangerous_attacks_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Tackles":
-                self.tackles_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.tackles_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Total Passes":
-                self.total_passes_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.total_passes_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Completed Passes":
-                self.completed_passes_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.completed_passes_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Expected Goals (xG)":
-                self.expected_goals_home_2h = float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.expected_goals_away_2h = float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Goal Kicks":
-                self.goal_kicks_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.goal_kicks_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Pass Success %":
-                self.pass_success_home_2h = int(float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text))
-                self.pass_success_away_2h = int(float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text))
-            elif cat_name == "Distance Covered (metres)":
-                self.distance_covered_metres_home_2h = int(
-                    cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text
-                )
-                self.distance_covered_metres_away_2h = int(
-                    cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text
-                )
-            elif cat_name == "Distance Covered (km)":
-                self.distance_covered_km_home_2h = float(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.distance_covered_km_away_2h = float(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Clearances Completed":
-                self.clearances_completed_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.clearances_completed_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Crosses Completed":
-                self.crosses_completed_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.crosses_completed_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            elif cat_name == "Interceptions":
-                self.interceptions_home_2h = int(cat.find_element(By.CSS_SELECTOR, "._homeValue_bwnrp_10").text)
-                self.interceptions_away_2h = int(cat.find_element(By.CSS_SELECTOR, "._awayValue_bwnrp_14").text)
-            else:
-                raise ValueError("Unknown category name in statistics found.")
-
-        if None in (
-            self.shots_on_goal_home_2h,
-            self.shots_on_goal_away_2h,
-            self.goalkeeper_saves_home_2h,
-            self.goalkeeper_saves_away_2h,
-        ):
-            raise ValueError("Missing statistics for 2nd half: Shots on goal/Goalkeeper saves.")
-        self.goals_home_2h = self.shots_on_goal_home_2h - self.goalkeeper_saves_away_2h
-        self.goals_away_2h = self.shots_on_goal_away_2h - self.goalkeeper_saves_home_2h
+        self.match_valid = True
 
     @staticmethod
     def correct_zero_values(matches):
-        attributes_to_check = [
+        """If a metric appears for any match, normalize missing ones to 0 (or 0.0)."""
+        int_metrics = [
             "possession_home",
             "possession_away",
             "shots_total_home",
@@ -891,165 +773,28 @@ class Match:
             "shots_off_goal_away",
             "shots_blocked_home",
             "shots_blocked_away",
-            "free_kicks_home",
-            "free_kicks_away",
             "corner_kicks_home",
             "corner_kicks_away",
             "offsides_home",
             "offsides_away",
             "throw_ins_home",
             "throw_ins_away",
-            "goalkeeper_saves_home",
-            "goalkeeper_saves_away",
-            "fouls_home",
-            "fouls_away",
-            "red_cards_on_pitch_home",
-            "red_cards_on_pitch_away",
-            "yellow_cards_on_pitch_home",
-            "yellow_cards_on_pitch_away",
-            "attacks_home",
-            "attacks_away",
-            "dangerous_attacks_home",
-            "dangerous_attacks_away",
-            "tackles_home",
-            "tackles_away",
-            "total_passes_home",
-            "total_passes_away",
-            "completed_passes_home",
-            "completed_passes_away",
-            "expected_goals_home",
-            "expected_goals_away",
-            "goal_kicks_home",
-            "goal_kicks_away",
             "pass_success_home",
             "pass_success_away",
-            "distance_covered_metres_home",
-            "distance_covered_metres_away",
-            "distance_covered_km_home",
-            "distance_covered_km_away",
-            "clearances_completed_home",
-            "clearances_completed_away",
-            "crosses_completed_home",
-            "crosses_completed_away",
-            "interceptions_home",
-            "interceptions_away",
-            "possession_home_1h",
-            "possession_away_1h",
-            "shots_total_home_1h",
-            "shots_total_away_1h",
-            "shots_on_goal_home_1h",
-            "shots_on_goal_away_1h",
-            "shots_off_goal_home_1h",
-            "shots_off_goal_away_1h",
-            "shots_blocked_home_1h",
-            "shots_blocked_away_1h",
-            "free_kicks_home_1h",
-            "free_kicks_away_1h",
-            "corner_kicks_home_1h",
-            "corner_kicks_away_1h",
-            "offsides_home_1h",
-            "offsides_away_1h",
-            "throw_ins_home_1h",
-            "throw_ins_away_1h",
-            "goalkeeper_saves_home_1h",
-            "goalkeeper_saves_away_1h",
-            "fouls_home_1h",
-            "fouls_away_1h",
-            "red_cards_on_pitch_home_1h",
-            "red_cards_on_pitch_away_1h",
-            "yellow_cards_on_pitch_home_1h",
-            "yellow_cards_on_pitch_away_1h",
-            "attacks_home_1h",
-            "attacks_away_1h",
-            "dangerous_attacks_home_1h",
-            "dangerous_attacks_away_1h",
-            "tackles_home_1h",
-            "tackles_away_1h",
-            "total_passes_home_1h",
-            "total_passes_away_1h",
-            "completed_passes_home_1h",
-            "completed_passes_away_1h",
-            "expected_goals_home_1h",
-            "expected_goals_away_1h",
-            "goal_kicks_home_1h",
-            "goal_kicks_away_1h",
-            "pass_success_home_1h",
-            "pass_success_away_1h",
-            "distance_covered_metres_home_1h",
-            "distance_covered_metres_away_1h",
-            "distance_covered_km_home_1h",
-            "distance_covered_km_away_1h",
-            "clearances_completed_home_1h",
-            "clearances_completed_away_1h",
-            "crosses_completed_home_1h",
-            "crosses_completed_away_1h",
-            "interceptions_home_1h",
-            "interceptions_away_1h",
-            "goals_home_1h",
-            "goals_away_1h",
-            "possession_home_2h",
-            "possession_away_2h",
-            "shots_total_home_2h",
-            "shots_total_away_2h",
-            "shots_on_goal_home_2h",
-            "shots_on_goal_away_2h",
-            "shots_off_goal_home_2h",
-            "shots_off_goal_away_2h",
-            "shots_blocked_home_2h",
-            "shots_blocked_away_2h",
-            "free_kicks_home_2h",
-            "free_kicks_away_2h",
-            "corner_kicks_home_2h",
-            "corner_kicks_away_2h",
-            "offsides_home_2h",
-            "offsides_away_2h",
-            "throw_ins_home_2h",
-            "throw_ins_away_2h",
-            "goalkeeper_saves_home_2h",
-            "goalkeeper_saves_away_2h",
-            "fouls_home_2h",
-            "fouls_away_2h",
-            "red_cards_on_pitch_home_2h",
-            "red_cards_on_pitch_away_2h",
-            "yellow_cards_on_pitch_home_2h",
-            "yellow_cards_on_pitch_away_2h",
-            "attacks_home_2h",
-            "attacks_away_2h",
-            "dangerous_attacks_home_2h",
-            "dangerous_attacks_away_2h",
-            "tackles_home_2h",
-            "tackles_away_2h",
-            "total_passes_home_2h",
-            "total_passes_away_2h",
-            "completed_passes_home_2h",
-            "completed_passes_away_2h",
-            "expected_goals_home_2h",
-            "expected_goals_away_2h",
-            "goal_kicks_home_2h",
-            "goal_kicks_away_2h",
-            "pass_success_home_2h",
-            "pass_success_away_2h",
-            "distance_covered_metres_home_2h",
-            "distance_covered_metres_away_2h",
-            "distance_covered_km_home_2h",
-            "distance_covered_km_away_2h",
-            "clearances_completed_home_2h",
-            "clearances_completed_away_2h",
-            "crosses_completed_home_2h",
-            "crosses_completed_away_2h",
-            "interceptions_home_2h",
-            "interceptions_away_2h",
-            "goals_home_2h",
-            "goals_away_2h",
         ]
-        # For each attribute to check
-        for attr in attributes_to_check:
-            # If any Match object has the current attribute greater than -1
-            if any(getattr(match, attr) > -1 for match in matches):
-                # Set the current attribute which is -1 to 0 for all matches
-                for match in matches:
-                    if getattr(match, attr) == -1:
-                        setattr(match, attr, 0)
+        float_metrics = ["expected_goals_home", "expected_goals_away"]
+
+        for attr in int_metrics:
+            if any(getattr(m, attr, -1) > -1 for m in matches):
+                for m in matches:
+                    if getattr(m, attr, -1) == -1:
+                        setattr(m, attr, 0)
+
+        for attr in float_metrics:
+            if any((getattr(m, attr, -1.0) is not None) and (getattr(m, attr) >= 0) for m in matches):
+                for m in matches:
+                    if getattr(m, attr, -1.0) == -1.0:
+                        setattr(m, attr, 0.0)
 
     @staticmethod
     def check_num_of_matches(matches, comp):
@@ -1058,35 +803,101 @@ class Match:
 
     @staticmethod
     def drop_duplicate_matches(df):
-        # Create a DataFrame where -1.0 and NaN are considered the same
+        """Prefer rows with more non-null / non -1.0 values."""
         df_copy = df.copy()
         df_copy[df_copy == -1.0] = np.nan
-
-        # Add a column that gives priority to rows with more initialized values
-        df_copy["priority"] = df_copy.count(axis=1)
-
-        # Sort by priority (descending) and then drop duplicates
-        df_result = (
-            df_copy.sort_values(by="priority", ascending=False).drop_duplicates(keep="first").drop(columns="priority")
+        df_copy["__priority__"] = df_copy.count(axis=1)
+        out = (
+            df_copy.sort_values("__priority__", ascending=False)
+            .drop_duplicates(keep="first")
+            .drop(columns="__priority__")
         )
+        # Fill back metric NaNs with -1.0 (keep string columns as-is)
+        for col in out.columns:
+            if out[col].dtype.kind in "biufc":
+                out[col] = out[col].fillna(-1.0)
+        return out
 
-        # Replace NaN with -1.0 unless it's not the "referee" attribute (keep that as NaN if empty)
-        cols_to_replace = [col for col in df_result.columns if col != "referee"]
-        df_result[cols_to_replace] = df_result[cols_to_replace].fillna(-1.0)
 
-        # Check for remaining NaN values (should be only referee)
-        """
-        for idx, row in df_result.iloc[::100, :].iterrows():
-            if row.isnull().any():
-                print(f"Row {idx} has NaN values in columns: {row[row.isnull()].index.tolist()}")
-        """
+def _dismiss_overlays(driver):
+    # Cookie banner
+    for css in ["#onetrust-accept-btn-handler", "button#onetrust-accept-btn-handler"]:
+        try:
+            btn = driver.find_element(By.CSS_SELECTOR, css)
+            driver.execute_script("arguments[0].click();", btn)
+            time.sleep(0.2)
+            break
+        except Exception:
+            pass
+    # Occasionally a tooltip/banner can block clicks; ESC gets rid of some
+    try:
+        ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    except Exception:
+        pass
 
-        # Check for filtered duplicates
-        """
-        filtered = df_result[
-            (df_result['competition'] == "FORTUNA:LIGA") & (df_result['season'] == "2023-2024") &
-            (df_result['round'] == 6) & (
-                        df_result['team_home'] == "Sparta Prague")]
-        """
 
-        return df_result
+def _open_stats_tab(driver):
+    _dismiss_overlays(driver)
+    wait = Wait(driver, 12)
+
+    # Ensure the tab bar is present before we try to click anything
+    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='wcl-tab']")))
+
+    # Primary: click the real stats anchor
+    try:
+        a = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a[data-analytics-alias='match-statistics']")))
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", a)
+        driver.execute_script("arguments[0].click();", a)
+    except Exception:
+        # Fallback: navigate directly
+        cur = driver.current_url.rstrip("/")
+        stats_url = re.sub(r"/summary(?:/.*)?$", "/summary/stats", cur)
+        if not stats_url.endswith("/summary/stats"):
+            stats_url += "/summary/stats"
+        driver.get(stats_url)
+
+    # Rows must appear
+    wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='wcl-statistics']")))
+
+
+def _parse_stats_rows(driver):
+    # Works on the new Flashscore layout you pasted
+    rows = driver.find_elements(By.CSS_SELECTOR, "[data-testid='wcl-statistics']")
+    if not rows:
+        raise RuntimeError("Stats rows not found")
+
+    stats = {}
+    for row in rows:
+        try:
+            label_el = row.find_element(By.CSS_SELECTOR, "[data-testid='wcl-statistics-category'] strong")
+            label = label_el.text.strip()
+            # Two values exist – first (home) and last (away)
+            vals = row.find_elements(By.CSS_SELECTOR, "[data-testid='wcl-statistics-value'] strong")
+            if len(vals) >= 2:
+                home_raw = vals[0].text.strip()
+                away_raw = vals[-1].text.strip()
+            else:
+                # very rare, skip row
+                continue
+
+            # Strip extra parentheses like "(344/410)"
+            home = re.sub(r"\s*\([^)]*\)", "", home_raw).strip()
+            away = re.sub(r"\s*\([^)]*\)", "", away_raw).strip()
+
+            # Normalize label to a safe column name
+            key = (
+                label.lower()
+                .replace(" ", "_")
+                .replace("(", "")
+                .replace(")", "")
+                .replace("%", "pct")
+                .replace("/", "_")
+                .replace("-", "_")
+            )
+            stats[f"stats_home__{key}"] = home
+            stats[f"stats_away__{key}"] = away
+        except Exception:
+            # continue; some rows may be odd
+            continue
+
+    return stats

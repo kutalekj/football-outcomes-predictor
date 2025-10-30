@@ -1,11 +1,62 @@
 import time
 
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from .utils import hide_advert_banner, hide_sdk_banner
+from .utils import dismiss_cookie_banner, hide_sdk_banner
+
+
+def show_all_matches(driver, max_clicks=200, settle_wait=1.0):
+    """
+    Click "Show more matches" (or "Show more") until no more matches appear.
+    Uses the visible match tiles count to decide when to stop.
+    """
+
+    def match_count():
+        # both older and newer layouts
+        elems = driver.find_elements(
+            By.CSS_SELECTOR, ".soccer .event__match--static, a.event__match, div.event__match--static"
+        )
+        return len(elems)
+
+    prev = -1
+    same_count_hits = 0
+    for _ in range(max_clicks):
+        # try to find any button variant
+        btns = driver.find_elements(
+            By.XPATH,
+            "//a[@data-testid='wcl-buttonLink'][.//span[contains(translate(normalize-space(),"
+            "'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'show more')]]",
+        )
+        if not btns:
+            # some comps use a different markup; try a generic fallback
+            btns = driver.find_elements(By.XPATH, "//a[.//span[contains(., 'Show more')]]")
+
+        # if no button visible, we may already be at the end
+        if not btns:
+            break
+
+        btn = btns[0]
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn)
+        time.sleep(0.25)
+        driver.execute_script("arguments[0].click();", btn)
+
+        # allow new chunk to render + trigger lazy load
+        time.sleep(settle_wait)
+        driver.execute_script("window.scrollBy(0, 400);")
+        time.sleep(0.25)
+
+        cur = match_count()
+        if cur == prev:
+            same_count_hits += 1
+            if same_count_hits >= 2:
+                break
+        else:
+            same_count_hits = 0
+        prev = cur
+
+    print("All matches found successfully. Continuing...")
 
 
 class CompSeason:
@@ -130,75 +181,7 @@ class CompSeason:
                 'a[href="/football/' + self.country2 + "/" + self.name2 + '/results/"]#li2.tabs__tab.results',
             ).click()
 
-        # Show more matches -> Show more matches... (max. 3 times)
         hide_sdk_banner(driver)
-
-        try:
-            Wait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]'))
-            )
-            driver.find_element(By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]').click()
-            try:
-                Wait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]'))
-                )
-                hide_advert_banner(driver)
-                driver.find_element(By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]').click()
-                try:
-                    Wait(driver, 10).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]'))
-                    )
-                    hide_advert_banner(driver)
-                    driver.find_element(By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]').click()
-                    try:
-                        Wait(driver, 10).until(
-                            EC.presence_of_element_located(
-                                (By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]')
-                            )
-                        )
-                        hide_advert_banner(driver)
-                        driver.find_element(By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]').click()
-                        try:
-                            Wait(driver, 10).until(
-                                EC.presence_of_element_located(
-                                    (By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]')
-                                )
-                            )
-                            hide_advert_banner(driver)
-                            driver.find_element(By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]').click()
-                            try:
-                                Wait(driver, 10).until(
-                                    EC.presence_of_element_located(
-                                        (By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]')
-                                    )
-                                )
-                                hide_advert_banner(driver)
-                                driver.find_element(
-                                    By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]'
-                                ).click()
-                                try:
-                                    Wait(driver, 10).until(
-                                        EC.presence_of_element_located(
-                                            (By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]')
-                                        )
-                                    )
-                                    hide_advert_banner(driver)
-                                    driver.find_element(
-                                        By.CSS_SELECTOR, 'a.event__more.event__more--static[href="#"]'
-                                    ).click()
-                                except (TimeoutException, NoSuchElementException):
-                                    print("Warning: Element not present or timeout exceeded.")
-                            except (TimeoutException, NoSuchElementException):
-                                print("Warning: Element not present or timeout exceeded.")
-                        except (TimeoutException, NoSuchElementException):
-                            print("Warning: Element not present or timeout exceeded.")
-                    except (TimeoutException, NoSuchElementException):
-                        print("Warning: Element not present or timeout exceeded.")
-                except (TimeoutException, NoSuchElementException):
-                    print("Warning: Element not present or timeout exceeded.")
-            except (TimeoutException, NoSuchElementException):
-                print("Warning: Element not present or timeout exceeded.")
-        except (TimeoutException, NoSuchElementException):
-            print("Warning: Element not present or timeout exceeded.")
-        finally:
-            print("All matches found successfully. Continuing...")
+        dismiss_cookie_banner(driver)
+        show_all_matches(driver)
+        print("All matches found successfully. Continuing...")
