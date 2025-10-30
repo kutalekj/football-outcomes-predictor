@@ -60,38 +60,45 @@ _cookie_handled = False  # process-wide flag
 
 
 def dismiss_cookie_banner(driver, timeout_short=2):
-    """Hide/dismiss cookie banner if present. No blocking waits."""
-    global _cookie_handled
-    if _cookie_handled:
-        return
-
+    """
+    Hide/dismiss OneTrust cookie banner if present.
+    Always checks the DOM; safe to call many times.
+    """
     try:
-        # Fast presence check by ID
-        if driver.execute_script("return !!document.getElementById('onetrust-banner-sdk');"):
-            # Try button variations quickly
-            for locator in [
-                (By.ID, "onetrust-accept-btn-handler"),
-                (
-                    By.CSS_SELECTOR,
-                    "#onetrust-accept-btn-handler, #onetrust-reject-all-handler, .onetrust-close-btn-handler",
-                ),
-                (By.XPATH, "//button[contains(., 'Accept')]"),
-            ]:
-                try:
-                    btn = Wait(driver, timeout_short).until(EC.element_to_be_clickable(locator))
-                    btn.click()
-                    _cookie_handled = True
-                    return
-                except TimeoutException:
-                    continue
-            # As a last resort: hide the banner via JS and mark handled
-            driver.execute_script(
-                """
-                var b=document.getElementById('onetrust-banner-sdk');
-                if (b) { b.style.display='none'; }
+        # Is the banner present & displayed?
+        is_present = driver.execute_script(
             """
-            )
-            _cookie_handled = True
+            var el = document.getElementById('onetrust-banner-sdk');
+            return !!(el && el.offsetParent !== null);
+        """
+        )
+        if not is_present:
+            return
+
+        # Try the standard buttons quickly
+        for locator in [
+            (By.ID, "onetrust-accept-btn-handler"),
+            (By.ID, "onetrust-reject-all-handler"),
+            (By.CSS_SELECTOR, ".onetrust-close-btn-handler"),
+        ]:
+            try:
+                btn = Wait(driver, timeout_short).until(EC.element_to_be_clickable(locator))
+                btn.click()
+                # brief settle
+                time.sleep(0.2)
+                break
+            except TimeoutException:
+                continue
+
+        # If banner still visible, hard-hide it
+        driver.execute_script(
+            """
+            var b=document.getElementById('onetrust-banner-sdk');
+            if (b) { b.style.display='none'; }
+            var pc=document.getElementById('onetrust-pc-sdk');
+            if (pc) { pc.style.display='none'; }
+        """
+        )
     except Exception:
         # Never block scraping because of the banner
         pass

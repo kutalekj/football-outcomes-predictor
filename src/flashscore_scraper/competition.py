@@ -38,6 +38,8 @@ def show_all_matches(driver, max_clicks=200, settle_wait=1.0):
             break
 
         btn = btns[0]
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
         driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn)
         time.sleep(0.25)
         driver.execute_script("arguments[0].click();", btn)
@@ -70,117 +72,125 @@ class CompSeason:
         self.num_of_matches_expected = None
 
     def load_comp_season_match_page(self, driver):
-        # Show more countries -> Czech Republic -> FORTUNA:LIGA (for instance)
-        time.sleep(1.5)
-        Wait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "lmc__itemMore")))
-        driver.find_element(By.CLASS_NAME, "lmc__itemMore").click()
+        # Ensure no overlay before any click
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
 
-        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//span[text()='" + self.country1 + "']")))
-        driver.find_element(By.XPATH, "//span[text()='" + self.country1 + "']").click()
+        time.sleep(1.0)
+        # Show more countries
+        btn = Wait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "lmc__itemMore")))
+        try:
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn)
+            dismiss_cookie_banner(driver)
+            hide_sdk_banner(driver)
+            driver.execute_script("arguments[0].click();", btn)  # JS click avoids interception
+        except Exception:
+            # as a fallback, try a normal click after hiding overlays
+            dismiss_cookie_banner(driver)
+            hide_sdk_banner(driver)
+            btn.click()
 
+        # Country
+        Wait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f"//span[text()='{self.country1}']")))
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
+        driver.find_element(By.XPATH, f"//span[text()='{self.country1}']").click()
+
+        # League
         Wait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, 'a[href="/football/' + self.country2 + "/" + self.name2 + '/"].lmc__templateHref')
+                (By.CSS_SELECTOR, f'a[href="/football/{self.country2}/{self.name2}/"].lmc__templateHref')
             )
         )
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
         driver.find_element(
-            By.CSS_SELECTOR, 'a[href="/football/' + self.country2 + "/" + self.name2 + '/"].lmc__templateHref'
+            By.CSS_SELECTOR, f'a[href="/football/{self.country2}/{self.name2}/"].lmc__templateHref'
         ).click()
 
-        # Archive -> FORTUNA:LIGA 2022/2023 -> Results
+        # Archive tab
         hide_sdk_banner(driver)
+        dismiss_cookie_banner(driver)
         Wait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//div[@class="heading__name" and text()="' + self.name1 + '"]'))
+            EC.presence_of_element_located((By.XPATH, f'//div[@class="heading__name" and text()="{self.name1}"]'))
         )
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
         driver.find_element(
-            By.CSS_SELECTOR,
-            'a[href="/football/' + self.country2 + "/" + self.name2 + '/archive/"]#li5.tabs__tab.archive',
+            By.CSS_SELECTOR, f'a[href="/football/{self.country2}/{self.name2}/archive/"]#li5.tabs__tab.archive'
         ).click()
 
+        # Season (finished vs. current) + Results
         hide_sdk_banner(driver)
+        dismiss_cookie_banner(driver)
         if self.finished is True:
             Wait(driver, 10).until(
                 EC.presence_of_element_located(
                     (
                         By.CSS_SELECTOR,
-                        'a.archive__text.archive__text--clickable[href="/football/'
-                        + self.country2
-                        + "/"
-                        + self.name2
-                        + "-"
-                        + self.season
-                        + '/"]',
+                        f'a.archive__text.archive__text--clickable[href="/football/{self.country2}/'
+                        f'{self.name2}-{self.season}/"]',
                     )
                 )
             )
+            dismiss_cookie_banner(driver)
+            hide_sdk_banner(driver)
             driver.find_element(
                 By.CSS_SELECTOR,
-                'a.archive__text.archive__text--clickable[href="/football/'
-                + self.country2
-                + "/"
-                + self.name2
-                + "-"
-                + self.season
-                + '/"]',
+                f'a.archive__text.archive__text--clickable[href="/football/{self.country2}/'
+                f'{self.name2}-{self.season}/"]',
             ).click()
 
             hide_sdk_banner(driver)
+            dismiss_cookie_banner(driver)
             Wait(driver, 10).until(
                 EC.presence_of_element_located(
                     (
                         By.CSS_SELECTOR,
-                        'a[href="/football/'
-                        + self.country2
-                        + "/"
-                        + self.name2
-                        + "-"
-                        + self.season
-                        + '/results/"]#li2.tabs__tab.results',
+                        f'a[href="/football/{self.country2}/{self.name2}-{self.season}/results/'
+                        f'"]#li2.tabs__tab.results',
                     )
                 )
             )
+            dismiss_cookie_banner(driver)
+            hide_sdk_banner(driver)
             driver.find_element(
                 By.CSS_SELECTOR,
-                'a[href="/football/'
-                + self.country2
-                + "/"
-                + self.name2
-                + "-"
-                + self.season
-                + '/results/"]#li2.tabs__tab.results',
+                f'a[href="/football/{self.country2}/{self.name2}-{self.season}/results/' f'"]#li2.tabs__tab.results',
             ).click()
         else:
             Wait(driver, 10).until(
                 EC.presence_of_element_located(
                     (
                         By.CSS_SELECTOR,
-                        'a.archive__text.archive__text--clickable[href="/football/'
-                        + self.country2
-                        + "/"
-                        + self.name2
-                        + '/"]',
+                        f'a.archive__text.archive__text--clickable[href="/football/{self.country2}/{self.name2}/"]',
                     )
                 )
             )
+            dismiss_cookie_banner(driver)
+            hide_sdk_banner(driver)
             driver.find_element(
                 By.CSS_SELECTOR,
-                'a.archive__text.archive__text--clickable[href="/football/' + self.country2 + "/" + self.name2 + '/"]',
+                f'a.archive__text.archive__text--clickable[href="/football/{self.country2}/{self.name2}/"]',
             ).click()
 
             hide_sdk_banner(driver)
+            dismiss_cookie_banner(driver)
             Wait(driver, 10).until(
                 EC.presence_of_element_located(
                     (
                         By.CSS_SELECTOR,
-                        'a[href="/football/' + self.country2 + "/" + self.name2 + '/results/"]#li2.tabs__tab.results',
+                        f'a[href="/football/{self.country2}/{self.name2}/results/"]#li2.tabs__tab.results',
                     )
                 )
             )
+            dismiss_cookie_banner(driver)
+            hide_sdk_banner(driver)
             driver.find_element(
-                By.CSS_SELECTOR,
-                'a[href="/football/' + self.country2 + "/" + self.name2 + '/results/"]#li2.tabs__tab.results',
+                By.CSS_SELECTOR, f'a[href="/football/{self.country2}/{self.name2}/results/"]#li2.tabs__tab.results'
             ).click()
 
+        # Now expand all matches
         hide_sdk_banner(driver)
         dismiss_cookie_banner(driver)
         show_all_matches(driver)
