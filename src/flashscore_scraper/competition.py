@@ -70,17 +70,12 @@ class CompSeason:
         self.season = None
         self.finished = None
         self.num_of_matches_expected = None
+        self.slug = None  # e.g. "isl" for ISL, or None for Premier League
 
     def load_comp_season_match_page(self, driver):
         def safe_click(by, sel, wait_time=10, scroll=True, js_first=True, description="element"):
-            """
-            Wait until the element is both present and clickable, dismiss overlays,
-            scroll into view, then click (JS first, fallback to native click).
-            """
-            # wait until Selenium thinks it's clickable (not just present)
             elem = Wait(driver, wait_time).until(EC.element_to_be_clickable((by, sel)))
 
-            # keep trying to clear banners right before click
             dismiss_cookie_banner(driver)
             hide_sdk_banner(driver)
 
@@ -88,7 +83,6 @@ class CompSeason:
                 driver.execute_script("arguments[0].scrollIntoView({block:'center'});", elem)
                 time.sleep(0.1)
 
-            # try JS click to avoid intercept
             if js_first:
                 try:
                     driver.execute_script("arguments[0].click();", elem)
@@ -97,105 +91,236 @@ class CompSeason:
                 except Exception:
                     pass
 
-            # fallback normal click
             try:
                 elem.click()
                 time.sleep(0.15)
             except Exception as e:
-                # last resort: raise a clearer message so we know where it failed
                 raise RuntimeError(f"Click intercepted on {description}: {e}")
 
-        # make sure no banners before starting
+        # --- 0) make sure overlay banners are gone
         dismiss_cookie_banner(driver)
         hide_sdk_banner(driver)
-        time.sleep(1.0)
+        time.sleep(0.5)
 
-        # 1) Show more countries (“All countries / Show more” row)
+        # --- 1) Click "Show more countries" to expand the full left list
         btn = Wait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "lmc__itemMore")))
         driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn)
         dismiss_cookie_banner(driver)
         hide_sdk_banner(driver)
         try:
-            driver.execute_script("arguments[0].click();", btn)  # JS click avoids intercept
+            driver.execute_script("arguments[0].click();", btn)
             time.sleep(0.3)
         except Exception:
-            # fallback to native click
             dismiss_cookie_banner(driver)
             hide_sdk_banner(driver)
             btn.click()
             time.sleep(0.3)
 
-        # 2) Click the desired country (self.country1)
-        safe_click(
-            By.XPATH,
-            f"//span[normalize-space()='{self.country1}']",
-            wait_time=10,
-            description=f"country '{self.country1}'",
+        #
+        # --- 2) Scroll the left menu, find the country ("India"), expand it
+        #
+
+        # 2a. After "Show more", the menu re-renders. We cannot reuse 'btn' (stale).
+        #     Instead, wait for any country block to exist, then grab its ancestor
+        #     as the scroll container.
+        block_el = Wait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[contains(@class,'lmc__block')]"))
         )
 
-        # 3) Click the league (self.name2) under that country
-        league_href = f"/football/{self.country2}/{self.name2}/"
-        safe_click(
-            By.CSS_SELECTOR,
-            f'a[href="{league_href}"].lmc__templateHref',
-            wait_time=10,
-            description=f"league '{self.name2}'",
+        # The parent scrollable container of these 'lmc__block's:
+        menu_container = block_el.find_element(By.XPATH, "./ancestor::div[contains(@class,'lmc')][1]")
+
+        # 2b. XPath for the country <a> that wraps the span "India"
+        country_xpath = (
+            f"//a[contains(@class,'lmc__element') and "
+            f".//span[@class='lmc__elementName' and normalize-space()='{self.country1}']]"
         )
 
-        # 4) Click Archive tab
-        # We first wait for the heading with competition name so we know we're on the league page.
+        country_el = None
+
+        # 2c. Scroll the container until we see the country element in the DOM
+        for _ in range(20):
+            try:
+                country_el = driver.find_element(By.XPATH, country_xpath)
+                break
+            except Exception:
+                driver.execute_script("arguments[0].scrollBy(0, 400);", menu_container)
+                time.sleep(0.2)
+
+        if country_el is None:
+            raise RuntimeError(f"Could not find country '{self.country1}' in left menu after scrolling.")
+
+        # 2d. Scroll the country element into view and JS-click it to expand its leagues
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", country_el)
+        time.sleep(0.15)
+
+        try:
+            driver.execute_script("arguments[0].click();", country_el)
+            time.sleep(0.3)
+        except Exception:
+            try:
+                country_el.click()
+                time.sleep(0.3)
+            except Exception as e:
+                raise RuntimeError(f"Could not click country '{self.country1}': {e}")
+
+        #
+        # --- 3) Now wait for the ISL link to appear under India
+        #
+        league_href_menu = self._leftmenu_href()  # e.g. "/football/india/isl/"
+        league_sel = f"a.lmc__templateHref[href='{league_href_menu}']"
+
+        league_el = None
+        for _ in range(20):
+            try:
+                league_el = driver.find_element(By.CSS_SELECTOR, league_sel)
+                break
+            except Exception:
+                # Scroll a bit more in case submenu rendered below current viewport
+                driver.execute_script("arguments[0].scrollBy(0, 300);", menu_container)
+                time.sleep(0.2)
+
+        if league_el is None:
+            raise RuntimeError(
+                f"Could not find league '{self.name1}' with href {league_href_menu} under {self.country1}."
+            )
+
+        # 3b. Scroll league link into view and JS-click it
+        dismiss_cookie_banner(driver)
+        hide_sdk_banner(driver)
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", league_el)
+        time.sleep(0.15)
+
+        try:
+            driver.execute_script("arguments[0].click();", league_el)
+            time.sleep(0.3)
+        except Exception:
+            try:
+                league_el.click()
+                time.sleep(0.3)
+            except Exception as e:
+                raise RuntimeError(f"Could not click league '{self.name1}': {e}")
+
+        # --- 4) Wait for league header on the league page
+        # After clicking the league, Flashscore might redirect to /isl/
+        # Header looks like:
+        #   <div class="heading__name">ISL</div>
+        expected_heading = self.name1
+
         Wait(driver, 10).until(
             EC.presence_of_element_located(
-                (By.XPATH, f'//div[@class="heading__name" and normalize-space()="{self.name1}"]')
+                (By.XPATH, f'//div[@class="heading__name" and normalize-space()="{expected_heading}"]')
             )
         )
-        archive_selector = f'a[href="/football/{self.country2}/{self.name2}/archive/"]#li5.tabs__tab.archive'
-        safe_click(
-            By.CSS_SELECTOR,
-            archive_selector,
-            wait_time=10,
-            description="archive tab",
-        )
 
-        # 5) Choose season and go to Results
-        if self.finished is True:
-            # finished season is like /football/england/premier-league-2024-2025/
-            season_href = f"/football/{self.country2}/{self.name2}-{self.season}/"
+        # --- 5) Navigate to the correct Results page for the desired season
+        # finished == True  → go via Archive -> pick season -> Results
+        # finished == False → go straight to current Results
+
+        if self.finished:
+            # click Archive tab
+            archive_href = self._archive_href()
             safe_click(
                 By.CSS_SELECTOR,
-                f'a.archive__text.archive__text--clickable[href="{season_href}"]',
+                f'a[href="{archive_href}"]',
+                wait_time=10,
+                description="archive tab",
+            )
+
+            # click the season row in archive
+            season_root_href = self._season_root_href()
+            safe_click(
+                By.CSS_SELECTOR,
+                f'a.archive__text.archive__text--clickable[href="{season_root_href}"]',
                 wait_time=10,
                 description=f"season '{self.season}'",
             )
 
-            results_href = f"/football/{self.country2}/{self.name2}-{self.season}/results/"
+            # now click Results for that season
+            season_results_href = self._season_results_href()
             safe_click(
                 By.CSS_SELECTOR,
-                f'a[href="{results_href}"]#li2.tabs__tab.results',
+                f'a[href="{season_results_href}"]',
                 wait_time=10,
-                description="results tab (finished)",
+                description="results tab (finished season)",
             )
 
         else:
-            # current season still at /football/england/premier-league/
-            current_href = f"/football/{self.country2}/{self.name2}/"
+            # go directly to Results of the current season
+            current_results_href = self._results_href_current()
             safe_click(
                 By.CSS_SELECTOR,
-                f'a.archive__text.archive__text--clickable[href="{current_href}"]',
+                f'a[href="{current_results_href}"]',
                 wait_time=10,
-                description="current season link",
+                description="results tab (current season)",
             )
 
-            results_current_href = f"/football/{self.country2}/{self.name2}/results/"
-            safe_click(
-                By.CSS_SELECTOR,
-                f'a[href="{results_current_href}"]#li2.tabs__tab.results',
-                wait_time=10,
-                description="results tab (current)",
-            )
-
-        # 6) Expand all matches on the results page
+        # --- 6) Expand all matches on the Results page
         dismiss_cookie_banner(driver)
         hide_sdk_banner(driver)
         show_all_matches(driver)
         print("All matches found successfully. Continuing...")
+
+    def _root_href(self):
+        """
+        Return the base href for this competition's main page.
+        For ISL -> "/isl/"
+        For Premier League -> f"/football/{self.country2}/{self.name2}/"
+        """
+        if self.slug:
+            return f"/{self.slug.strip('/')}/"
+        return f"/football/{self.country2}/{self.name2}/"
+
+    def _results_href_current(self):
+        """
+        Where to click to get match results for the current/selected season.
+        ISL uses /isl/results/
+        Premier League uses /football/england/premier-league/results/
+        """
+        root = self._root_href()
+        return root + "results/"
+
+    def _archive_href(self):
+        """
+        Where the Archive tab lives.
+        ISL: /isl/archive/
+        Premier League: /football/england/premier-league/archive/
+        """
+        root = self._root_href()
+        return root + "archive/"
+
+    def _season_root_href(self):
+        """
+        Where a specific season lives *after selecting in Archive*.
+        ISL just links the current season back to /isl/.
+        Premier League links e.g. /football/england/premier-league-2024-2025/
+        """
+        if self.slug:
+            # ISL case: archive "season" link points back to base /isl/
+            return self._root_href()
+        return f"/football/{self.country2}/{self.name2}-{self.season}/"
+
+    def _season_results_href(self):
+        """
+        Where the 'Results' tab is for that season.
+        ISL: /isl/results/
+        Premier League: /football/england/premier-league-2024-2025/results/
+        """
+        # derive from season root
+        base = self._season_root_href()
+        return base + "results/"
+
+    def _leftmenu_href(self):
+        """
+        The href used in the LEFT MENU for this competition.
+        We know from your HTML that under India it looks like:
+        <a href="/football/india/isl/" class="lmc__templateHref">ISL</a>
+
+        For Premier League under England it's:
+        <a href="/football/england/premier-league/" class="lmc__templateHref">Premier League</a>
+
+        So this ALWAYS uses the country/name form, never the slug.
+        """
+        return f"/football/{self.country2}/{self.name2}/"
