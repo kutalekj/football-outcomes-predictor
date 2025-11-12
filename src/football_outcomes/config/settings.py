@@ -16,14 +16,14 @@ FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
 MATCH_DATA_LOAD = True
-MATCH_DATA_STORE = False
+MATCH_DATA_STORE = True
 
-ALL_STORE = True
+ALL_STORE = False
 ALL_LOAD = False
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 10, 16)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 10, 15)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
@@ -36,16 +36,49 @@ MAX_MATCH_HISTORY_TO_CHECK_LOW = 15
 # {v3API_id, name, regular_round_keywords, fs_alias}
 COMPS_v2_TEST = [
     {
-        "id": 144,
-        "name": "Jupiler Pro League",
-        "regular_round_keywords": [
-            "Regular Season",
-            "Championship Round",
-            "Conference League Play-off Group",
-        ],
-        "fs_alias": "Pro League",
-    },  # BEL
-    {"id": 147, "name": "Cup", "regular_round_keywords": [], "fs_alias": "Belgian Cup"},  # BEL
+        "id": 39,
+        "name": "Premier League",
+        "regular_round_keywords": ["Regular Season"],
+        "fs_alias": "Premier League",
+    },
+    {
+        "id": 40,
+        "name": "Championship",
+        "regular_round_keywords": ["Regular Season"],
+        "fs_alias": "Championship",
+    },
+    {
+        "id": 41,
+        "name": "League One",
+        "regular_round_keywords": ["Regular Season"],
+        "fs_alias": "EFL League One",
+    },
+    {
+        "id": 42,
+        "name": "League Two",
+        "regular_round_keywords": ["Regular Season"],
+        "fs_alias": "EFL League Two",
+    },
+    {
+        "id": 61,
+        "name": "Ligue 1",
+        "regular_round_keywords": ["Regular Season"],
+        "fs_alias": "Ligue 1",
+    },
+    {
+        "id": 62,
+        "name": "Ligue 2",
+        "regular_round_keywords": ["Regular Season"],
+        "fs_alias": "Ligue 2",
+    },
+    {"id": 45, "name": "FA Cup", "regular_round_keywords": [], "fs_alias": "FA Cup"},
+    {"id": 46, "name": "EFL Trophy", "regular_round_keywords": [], "fs_alias": "EFL Trophy"},
+    {
+        "id": 66,
+        "name": "Coupe de France",
+        "regular_round_keywords": [],
+        "fs_alias": "Coupe de France",
+    },
     {
         "id": 2,
         "name": "UEFA Champions League",
@@ -63,7 +96,7 @@ COMPS_v2_TEST = [
         "name": "UEFA Europa Conference League",
         "regular_round_keywords": [],
         "fs_alias": "UEFA Europa Conference League",
-    },
+    }
 ]
 
 # {v3API_id, name, regular_round_keywords, fs_alias}
@@ -524,7 +557,7 @@ AVG_TEAM_STRENGTHS = PROCESSED_DIR / "avg_team_strengths.csv"
 RECORDS_CSV = PROCESSED_DIR / "records.csv"
 
 M_LOAD_CSV = PROCESSED_DIR / "m_25-10-16_full.csv"
-M_STORE_CSV = PROCESSED_DIR / "m_25-10-16_full.csv"
+M_STORE_CSV = PROCESSED_DIR / "m_25-11-06_full.csv"
 ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_BEL_25-10-16.csv"
 ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_BEL_25-10-16.csv"
 ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_BEL_25-10-16.csv"

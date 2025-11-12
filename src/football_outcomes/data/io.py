@@ -141,6 +141,8 @@ def load_matches(file_name):
                 )
                 match.season = int(row["season"])
                 match.round = match.comp.get_round_by_comp_season_round_name(match.season, row["round_name"])
+                if match.round is None:
+                    raise ValueError(f"Unable to get round for the match {str(match.id)}")
 
                 # Home team
                 home_team = ut.get_team_if_exists(int(row["home_team_id"]))

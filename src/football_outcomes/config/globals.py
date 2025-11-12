@@ -31,6 +31,30 @@
             # Indexed by dates of birth; each elem is list of triples (player_id, name, full_name)
             cls._instance.sofifa_players_by_dob = {}
 
+            # Missing players checking
+            cls._instance.mp0_all_players_involved_in_AF_FS_checking = 0
+            cls._instance.mpX_OK_players_AF_FS_matching = 0
+            cls._instance.mp1a_AF_lineups_missing = 0
+            cls._instance.mp1b_FS_lineups_missing = 0
+            cls._instance.mp2_AF_FS_players_matching_potential_misses = 0
+
+            cls._instance.mp3_all_players_involved_in_team_strength_calculation = 0
+            cls._instance.mp4_team_strength_complete_lineup_imitation = 0
+            cls._instance.mp5_team_strength_DOB_missing = 0
+            cls._instance.mp6_team_strength_FS_SF_matching = 0
+            cls._instance.mp7_team_strength_imitated_skills_as_no_CSV_data = 0
+            cls._instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data = 0
+            cls._instance.mp8a_team_strength_imitated_players_as_no_CSV_data = 0
+            cls._instance.mp8b_team_strength_imitated_players_as_no_CSV_data = 0
+
+            cls._instance.mp9_team_strength_balancing_field_to_gk = 0
+            cls._instance.mp9_team_strength_balancing_gk_to_def = 0
+            cls._instance.mp9_team_strength_balancing_gk_to_mid = 0
+            cls._instance.mp9_team_strength_balancing_gk_to_att = 0
+
+            cls._instance.mp2_AF_FS_players_matching_potential_misses_couples = []
+            cls._instance.mp6_FS_SF_players_matching_potential_misses_couples = []
+
         return cls._instance
 
     @classmethod

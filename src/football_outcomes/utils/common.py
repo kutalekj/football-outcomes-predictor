@@ -290,6 +290,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
             f"Imputing..."
         )
         # TODO manual output check: count how many such players without CSV data are there
+        global_instance.mp7_team_strength_imitated_skills_as_no_CSV_data += 1
         return get_imitated_player_skills(season, team_id, fs_position)
 
     # DEBUG PRINT
@@ -348,6 +349,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
             collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(season, team_id, player_pos)][
                 index
             ]  # impute a single value
+            global_instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data += 1
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(
@@ -387,16 +389,20 @@ def match_af_team_to_fs_team(af_team_name, fs_teams_in_comp_season):
 
 
 def get_fs_match_lineups(curr_match):  # for both home and away teams!
+    global_instance = Global.get_instance()
+
     if len(curr_match.comp.regular_round_keywords) == 0:  # skip for irregular matches
         return
 
     if len(curr_match.home_fs_team_lineup) > 0 and len(curr_match.away_fs_team_lineup) > 0:
+        global_instance.mpX_OK_players_AF_FS_matching += 22
         return  # case for both teams' FS lineups already loaded from CSV
 
     print(
         f"[7]\t\t Going to match AF players from match lineup [{curr_match.home_team.name}] vs. "
         f"[{curr_match.away_team.name}] ({curr_match.datetime}) with teams' FS players in comp season roster..."
-    )
+    )  # TODO: Players_check 0: Log each match checked (two teams) to know number of total samples
+    global_instance.mp0_all_players_involved_in_AF_FS_checking += 22
 
     # Home team
     home_team_fs_players_in_comp_season = [
@@ -419,17 +425,20 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     ):  # empty
         if len(curr_match.home_fs_team_lineup) > 0:
             pass  # case for only home team's FS lineup already loaded from CSV - do nothing
+            global_instance.mpX_OK_players_AF_FS_matching += 11
         elif len(home_team_fs_players_in_comp_season) == 0:
             print(
                 f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
                 f"({curr_match.datetime}) is regular, but no FS players found for the home team comp season "
                 f"- no FS team lineups"
-            )
+            )  # TODO: Players_check 1a: FS team lineups missing
+            global_instance.mp1a_AF_lineups_missing += 11
         else:
             print(
                 f"WARNING!!! - No AF home team lineup for match between {curr_match.home_team.name} and "
                 f"{curr_match.away_team.name} ({curr_match.datetime})"
-            )
+            )  # TODO: Players_check 1b: AF team lineups missing
+            global_instance.mp1b_FS_lineups_missing += 11
         curr_match.home_fs_team_lineup = []
 
     else:  # ok
@@ -467,17 +476,20 @@ def get_fs_match_lineups(curr_match):  # for both home and away teams!
     ):  # empty
         if len(curr_match.away_fs_team_lineup) > 0:
             pass  # case for only away team's FS lineup already loaded from CSV - do nothing
+            global_instance.mpX_OK_players_AF_FS_matching += 11
         elif len(away_team_fs_players_in_comp_season) == 0:
             print(
                 f"Match between {curr_match.home_team.name} and {curr_match.away_team.name} "
                 f"({curr_match.datetime}) is regular, but no FS players found for the away team comp season "
                 f"- no FS team lineups"
-            )
+            )  # TODO: Players_check 1a: FS team lineups missing
+            global_instance.mp1a_AF_lineups_missing += 11
         else:
             print(
                 f"WARNING!!! - No AF away team lineup for match between {curr_match.home_team.name} and "
                 f"{curr_match.away_team.name} ({curr_match.datetime})"
-            )
+            )  # TODO: Players_check 1b: AF team lineups missing
+            global_instance.mp1b_FS_lineups_missing += 11
         curr_match.away_fs_team_lineup = []
 
     else:  # ok
@@ -587,7 +599,15 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
             best_fs_match = fs_player
 
     print(f"[{af_player[1]}][{best_fs_match['fs_known_as']}]", end="\t")
-    # TODO manual output check: AF/FS players matching accuracy
+    if highest_similarity < 65:
+        global_instance = Global.get_instance()
+        global_instance.mp2_AF_FS_players_matching_potential_misses += 1
+        global_instance.mp2_AF_FS_players_matching_potential_misses_couples.append(
+            (af_player[1], best_fs_match["fs_known_as"])
+        )
+
+    # TODO: Players_check 2: log all best match couples below 80% similarity to CSV - (then get accuracy from GPT)
+    # TODO: Players_check 2: And again,increment counter for each final match to know total number of matches performed
 
     return best_fs_match, highest_similarity
 
@@ -627,9 +647,17 @@ def match_fs_player_to_sf_players(fs_player, sf_players_with_same_dob):
         f"({highest_similarity_sf_player[1]}) with score \t\t{highest_similarity_score:.2f}"
     )
 
+    global_instance = Global.get_instance()
+    if highest_similarity_score < 65:
+        global_instance.mp6_FS_SF_players_matching_potential_misses_couples.append(
+            (fs_player["fs_known_as"], highest_similarity_sf_player[2], highest_similarity_score)
+        )
+
     if highest_similarity_score < settings.SIMILARITY_THRESHOLD_FS_SOFIFA:
         print("(but rejected for too low similarity score :/)")
+        global_instance.mp6_team_strength_FS_SF_matching += 1
         return None, None, None
+        # TODO: Players_check 6: Number of failed FS/SF matches due to low matching score
 
     return highest_similarity_sf_player
 
@@ -687,21 +715,38 @@ def get_imitated_team_strength(season, team_id):
 def get_imitated_player_skills(season, team_id, fs_position):
     global_instance = Global.get_instance()
 
-    if fs_position == "Goalkeeper":
-        gk_skills = global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]
-        imitated_player_skills = (
-            global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")]
-            if all(x == 0 for x in gk_skills)
-            else gk_skills
-        )  # handle possible missing values
-    elif fs_position == "Defender":
-        imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "defender")]
-    elif fs_position == "Midfielder":
-        imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "midfielder")]
-    elif fs_position == "Forward":
-        imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "attacker")]
-    else:
-        raise ValueError(f"Player FS position [{fs_position}] not a valid position for player skills imitation")
+    try:  # TODO: THIS IS HOTFIX (for checking missing players). REMOVE!
+        if fs_position == "Goalkeeper":
+            gk_skills = global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]
+            imitated_player_skills = (
+                global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")]
+                if all(x == 0 for x in gk_skills)
+                else gk_skills
+            )  # handle possible missing values
+        elif fs_position == "Defender":
+            imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "defender")]
+        elif fs_position == "Midfielder":
+            imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "midfielder")]
+        elif fs_position == "Forward":
+            imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "attacker")]
+        else:
+            raise ValueError(f"Player FS position [{fs_position}] not a valid position for player skills imitation")
+    except Exception:
+        season = 2024
+        team_id = 948
+        if fs_position == "Goalkeeper":
+            gk_skills = global_instance.sf_avg_team_strength[(season, team_id, "goalkeeper")]
+            imitated_player_skills = (
+                global_instance.sf_avg_team_strength[(-1, -1, "goalkeeper")]
+                if all(x == 0 for x in gk_skills)
+                else gk_skills
+            )  # handle possible missing values
+        elif fs_position == "Defender":
+            imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "defender")]
+        elif fs_position == "Midfielder":
+            imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "midfielder")]
+        elif fs_position == "Forward":
+            imitated_player_skills = global_instance.sf_avg_team_strength[(season, team_id, "attacker")]
 
     if not is_valid_n_float_list(imitated_player_skills):
         raise ValueError(f"Unexpected shape of player skills variable: {imitated_player_skills}")
@@ -726,6 +771,9 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
             print(f"Adding imitated player skill (for position [{position}]), because not enough FS/SOFIFA matches")
 
             imitated_player_skills = get_imitated_player_skills(season, team_id, position)  # get imitated skills
+
+            global_instance = Global.get_instance()
+            global_instance.mp8b_team_strength_imitated_players_as_no_CSV_data += 1
 
             # Dependency of the insertion index on position - try to maintain the positions order for consistency
             if position == "Goalkeeper":
@@ -755,6 +803,8 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
 
 
 def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills):
+    global_instance = Global.get_instance()
+
     for idx, player in enumerate(team_skills):
         # Compute normalized skill means
         outfield_mean = sum(player[i] for i in range(29)) / 29  # avg of indices [0,28]
@@ -767,6 +817,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills):
                 f"Balancing player skills - replacing outfield player with goalkeeper: "
                 f"{team_skills[idx]}\n->\n{imitated_gk_skills}"
             )
+            global_instance.mp9_team_strength_balancing_field_to_gk += 1
             team_skills[idx] = imitated_gk_skills
 
         elif idx > 0 and goalkeeper_mean > outfield_mean:  # replace probable goalkeeper with an outfield player
@@ -779,6 +830,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills):
                 # TODO code: Results always in replacing goalkeeper with a defender, ...
                 # TODO: ...never with midfielders or forwards
                 team_skills[idx] = imitated_gk_skills
+                global_instance.mp9_team_strength_balancing_gk_to_def += 1
             elif idx in [5, 6, 7, 8]:
                 imitated_gk_skills = get_imitated_player_skills(season, team_id, "Midfielder")
                 print(
@@ -786,6 +838,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills):
                     f"{team_skills[idx]}\n->\n{imitated_gk_skills}"
                 )
                 team_skills[idx] = imitated_gk_skills
+                global_instance.mp9_team_strength_balancing_gk_to_mid += 1
             elif idx in [9, 10]:
                 imitated_gk_skills = get_imitated_player_skills(season, team_id, "Forward")
                 print(
@@ -793,6 +846,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills):
                     f"{team_skills[idx]}\n->\n{imitated_gk_skills}"
                 )
                 team_skills[idx] = imitated_gk_skills
+                global_instance.mp9_team_strength_balancing_gk_to_att += 1
             else:
                 raise ValueError(
                     f"Found player skills list containing more than 11 players (>={idx + 1}, " f"concretely)"

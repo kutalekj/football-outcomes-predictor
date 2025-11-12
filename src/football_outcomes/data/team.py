@@ -55,8 +55,19 @@ class Team:
 
             # If team participating in the season, check if it played some regular matches
             if len(team_matches_in_season) > 0:
+                try:
+                    regular_team_matches_in_season = [
+                        match for match in team_matches_in_season if match.round.is_regular
+                    ]
+                except Exception as e:
+                    raise ValueError(
+                        f"Exception: [{e}]\nFailed for team "
+                        f"[{str(self.id), str(self.fs_id), self.name, self.fs_clean_name}], "
+                        f"which played {len(team_matches_in_season)} in this "
+                        f"season {str(season)} in the following rounds: "
+                        f"[{[str(m.round) for m in team_matches_in_season]}]"
+                    )
 
-                regular_team_matches_in_season = [match for match in team_matches_in_season if match.round.is_regular]
                 if any([match.round.is_regular for match in team_matches_in_season]):
 
                     # Set the "is_regular" team attribute to True

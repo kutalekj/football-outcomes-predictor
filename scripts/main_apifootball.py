@@ -1,5 +1,6 @@
-﻿# import csv
+﻿import csv
 import datetime
+import os
 
 from football_outcomes.config import settings
 from football_outcomes.config.globals import Global
@@ -135,6 +136,57 @@ if settings.ALL_STORE:
     print(f"Saved snapshot to: {snapshot_path}")
 
     export_summary_csvs()
+
+# MISSING PLAYERS CHECKING
+output_dir = r"C:\Users\kutalekj\Downloads"
+os.makedirs(output_dir, exist_ok=True)
+
+print(id(global_instance))
+
+# --- Dump first list (tuples of 2) ---
+mp2_path = os.path.join(output_dir, "mp2_AF_FS.csv")
+with open(mp2_path, mode="w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerows(global_instance.mp2_AF_FS_players_matching_potential_misses_couples)
+
+# --- Dump second list (tuples of 3) ---
+mp6_path = os.path.join(output_dir, "mp6_FS_SF.csv")
+with open(mp6_path, mode="w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerows(global_instance.mp6_FS_SF_players_matching_potential_misses_couples)
+
+print(f"CSV files saved to:\n{mp2_path}\n{mp6_path}\n")
+
+# --- Write numerical variables to a text file instead of console ---
+mp_out_path = os.path.join(output_dir, "mp_out.txt")
+
+numeric_vars = [
+    "mp0_all_players_involved_in_AF_FS_checking",
+    "mpX_OK_players_AF_FS_matching",
+    "mp1a_AF_lineups_missing",
+    "mp1b_FS_lineups_missing",
+    "mp2_AF_FS_players_matching_potential_misses",
+    "mp3_all_players_involved_in_team_strength_calculation",
+    "mp4_team_strength_complete_lineup_imitation",
+    "mp5_team_strength_DOB_missing",
+    "mp6_team_strength_FS_SF_matching",
+    "mp7_team_strength_imitated_skills_as_no_CSV_data",
+    "mp7_SKILLS_team_strength_imitated_skills_as_no_data",
+    "mp8a_team_strength_imitated_players_as_no_CSV_data",
+    "mp8b_team_strength_imitated_players_as_no_CSV_data",
+    "mp9_team_strength_balancing_field_to_gk",
+    "mp9_team_strength_balancing_gk_to_def",
+    "mp9_team_strength_balancing_gk_to_mid",
+    "mp9_team_strength_balancing_gk_to_att",
+]
+
+with open(mp_out_path, mode="w", encoding="utf-8") as f:
+    f.write(f"CSV files saved to:\n{mp2_path}\n{mp6_path}\n\n")
+    for var_name in numeric_vars:
+        value = getattr(global_instance, var_name, None)
+        f.write(f"{var_name}: {value}\n")
+
+print(f"Output written to:\n{mp_out_path}")
 
 """
 # 9a. Distribute regular matches into rounds for training
