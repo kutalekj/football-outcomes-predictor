@@ -38,22 +38,49 @@
             cls._instance.mp1b_FS_lineups_missing = 0
             cls._instance.mp2_AF_FS_players_matching_potential_misses = 0
 
-            cls._instance.mp3_all_players_involved_in_team_strength_calculation = 0
-            cls._instance.mp4_team_strength_complete_lineup_imitation = 0
-            cls._instance.mp5_team_strength_DOB_missing = 0
-            cls._instance.mp6_team_strength_FS_SF_matching = 0
-            cls._instance.mp7_team_strength_imitated_skills_as_no_CSV_data = 0
-            cls._instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data = 0
-            cls._instance.mp8a_team_strength_imitated_players_as_no_CSV_data = 0
-            cls._instance.mp8b_team_strength_imitated_players_as_no_CSV_data = 0
+            competition_ids = [
+                39,
+                40,
+                41,
+                42,
+                61,
+                62,
+                78,
+                79,
+                88,
+                94,
+                106,
+                119,
+                135,
+                136,
+                140,
+                141,
+                144,
+                179,
+                188,
+                203,
+                207,
+                218,
+                307,
+                323,
+            ]
 
-            cls._instance.mp9_team_strength_balancing_field_to_gk = 0
-            cls._instance.mp9_team_strength_balancing_gk_to_def = 0
-            cls._instance.mp9_team_strength_balancing_gk_to_mid = 0
-            cls._instance.mp9_team_strength_balancing_gk_to_att = 0
+            cls._instance.mp3_all_players_involved_in_team_strength_calculation = {cid: 0 for cid in competition_ids}
+            cls._instance.mp4_team_strength_complete_lineup_imitation = {cid: 0 for cid in competition_ids}
+            cls._instance.mp5_team_strength_DOB_missing = {cid: 0 for cid in competition_ids}
+            cls._instance.mp6_team_strength_FS_SF_matching = {cid: 0 for cid in competition_ids}
+            cls._instance.mp7_team_strength_imitated_skills_as_no_CSV_data = {cid: 0 for cid in competition_ids}
+            cls._instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data = {cid: 0 for cid in competition_ids}
+            cls._instance.mp8a_team_strength_imitated_players_as_no_CSV_data = {cid: 0 for cid in competition_ids}
+            cls._instance.mp8b_team_strength_imitated_players_as_no_CSV_data = {cid: 0 for cid in competition_ids}
+
+            cls._instance.mp9_team_strength_balancing_field_to_gk = {cid: 0 for cid in competition_ids}
+            cls._instance.mp9_team_strength_balancing_gk_to_def = {cid: 0 for cid in competition_ids}
+            cls._instance.mp9_team_strength_balancing_gk_to_mid = {cid: 0 for cid in competition_ids}
+            cls._instance.mp9_team_strength_balancing_gk_to_att = {cid: 0 for cid in competition_ids}
 
             cls._instance.mp2_AF_FS_players_matching_potential_misses_couples = []
-            cls._instance.mp6_FS_SF_players_matching_potential_misses_couples = []
+            cls._instance.mp6_FS_SF_players_matching_potential_misses_couples = {cid: [] for cid in competition_ids}
 
         return cls._instance
 

@@ -147,17 +147,23 @@ print(id(global_instance))
 mp2_path = os.path.join(output_dir, "mp2_AF_FS.csv")
 with open(mp2_path, mode="w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
-    writer.writerows(global_instance.mp2_AF_FS_players_matching_potential_misses_couples)
+    # still a plain list of (str, str)
+    writer.writerows(getattr(global_instance, "mp2_AF_FS_players_matching_potential_misses_couples", []))
 
-# --- Dump second list (tuples of 3) ---
+# --- Dump second (dict of lists with tuples of 3): prepend comp_id for context ---
 mp6_path = os.path.join(output_dir, "mp6_FS_SF.csv")
 with open(mp6_path, mode="w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
-    writer.writerows(global_instance.mp6_FS_SF_players_matching_potential_misses_couples)
+    mp6_dict = getattr(global_instance, "mp6_FS_SF_players_matching_potential_misses_couples", {})
+    # Expecting {comp_id: [(str, str, float), ...], ...}
+    for comp_id in sorted(mp6_dict.keys()):
+        for tup in mp6_dict[comp_id]:
+            # Write: comp_id, fs_name, sf_name, score
+            writer.writerow([comp_id, *tup])
 
 print(f"CSV files saved to:\n{mp2_path}\n{mp6_path}\n")
 
-# --- Write numerical variables to a text file instead of console ---
+# --- Write numerical variables (dicts of ints) to a text file ---
 mp_out_path = os.path.join(output_dir, "mp_out.txt")
 
 numeric_vars = [
@@ -184,7 +190,12 @@ with open(mp_out_path, mode="w", encoding="utf-8") as f:
     f.write(f"CSV files saved to:\n{mp2_path}\n{mp6_path}\n\n")
     for var_name in numeric_vars:
         value = getattr(global_instance, var_name, None)
-        f.write(f"{var_name}: {value}\n")
+        if isinstance(value, dict):
+            f.write(f"{var_name}:\n")
+            for cid in sorted(value.keys()):
+                f.write(f"  {cid}: {value[cid]}\n")
+        else:
+            f.write(f"{var_name}: {value}\n")
 
 print(f"Output written to:\n{mp_out_path}")
 

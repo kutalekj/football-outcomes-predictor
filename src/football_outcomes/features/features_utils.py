@@ -468,7 +468,7 @@ def calculate_team_strength(curr_match, team_id):
     global_instance = Global.get_instance()
 
     # TODO: Players_check 3: Log each call of this function to know total number of players involved
-    global_instance.mp3_all_players_involved_in_team_strength_calculation += 11
+    global_instance.mp3_all_players_involved_in_team_strength_calculation[curr_match.comp.id] += 11
 
     # Get FS lineup
     if team_id == curr_match.home_team.id:
@@ -505,7 +505,7 @@ def calculate_team_strength(curr_match, team_id):
         #  hopefully very few!!!
         # TODO: Players_check 4: count number of calls of this complete team imitation (BAD THING)
         #  - should be same number as mp1b???
-        global_instance.mp4_team_strength_complete_lineup_imitation += 11
+        global_instance.mp4_team_strength_complete_lineup_imitation[curr_match.comp.id] += 11
 
         team_sf_players_skills = ut.get_imitated_team_strength(curr_match.season, team_id)
         return team_sf_players_skills
@@ -535,13 +535,13 @@ def calculate_team_strength(curr_match, team_id):
                 # TODO manual output check: count how many DOB misses are there in total
                 # TODO: PLayers_check 5: Count FS lineup players failed to match to SF players by
                 #  DOB (their DOB not found in SF data)
-                global_instance.mp5_team_strength_DOB_missing += 1
+                global_instance.mp5_team_strength_DOB_missing[curr_match.comp.id] += 1
                 # TODO implement: extend the matching logic to prevent so many mismatches
                 continue
 
             # Match FS player to SOFIFA player
             sf_player_id, sf_player_name, sf_player_full_name = ut.match_fs_player_to_sf_players(
-                fs_player, sf_players_with_same_dob
+                fs_player, sf_players_with_same_dob, curr_match.comp.id
             )
 
             if sf_player_id is None and sf_player_name is None and sf_player_full_name is None:
@@ -553,6 +553,7 @@ def calculate_team_strength(curr_match, team_id):
                 sf_player_id,
                 (team_id, team_name, curr_match.season),
                 fs_player["fs_position"],
+                curr_match.comp.id,
             )
             team_sf_players_skills.append(sf_player_skills)
 
@@ -567,15 +568,15 @@ def calculate_team_strength(curr_match, team_id):
             )
             # TODO: Players_check 8: count number of calls of this additional imitation (BAD THING)
             #  - this should equal to mp5 + mp6 + mp7?
-            global_instance.mp8a_team_strength_imitated_players_as_no_CSV_data += 1
+            global_instance.mp8a_team_strength_imitated_players_as_no_CSV_data[curr_match.comp.id] += 1
 
             team_sf_players_skills = ut.add_imitated_player_skills(
-                curr_match.season, team_id, team_sf_players_skills, lineup_fs_positions
+                curr_match.season, team_id, team_sf_players_skills, lineup_fs_positions, curr_match.comp.id
             )
 
     # Check whether there are 1 goalkeeper skills and 10 outfield players skills, and possibly correct
     team_sf_players_skills = ut.balance_goalkeeper_and_outfield_player_skills(
-        curr_match.season, team_id, team_sf_players_skills
+        curr_match.season, team_id, team_sf_players_skills, curr_match.comp.id
     )  # TODO: Players_check 9: count number of final balancing calls
 
     # TODO manual output check: count how many balancing occurrences are there in total
