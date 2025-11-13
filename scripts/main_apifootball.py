@@ -143,27 +143,28 @@ os.makedirs(output_dir, exist_ok=True)
 
 print(id(global_instance))
 
-# --- Dump first list (tuples of 2) ---
+# --- Dump first list (tuples of 2) - unchanged ---
 mp2_path = os.path.join(output_dir, "mp2_AF_FS.csv")
 with open(mp2_path, mode="w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
-    # still a plain list of (str, str)
     writer.writerows(getattr(global_instance, "mp2_AF_FS_players_matching_potential_misses_couples", []))
 
-# --- Dump second (dict of lists with tuples of 3): prepend comp_id for context ---
+# --- Dump second (dict[comp_id][season] -> list of tuples) ---
 mp6_path = os.path.join(output_dir, "mp6_FS_SF.csv")
 with open(mp6_path, mode="w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     mp6_dict = getattr(global_instance, "mp6_FS_SF_players_matching_potential_misses_couples", {})
-    # Expecting {comp_id: [(str, str, float), ...], ...}
+    # CSV header is optional; if you want one, uncomment:
+    # writer.writerow(["comp_id", "season", "fs_name", "sf_name", "score"])
     for comp_id in sorted(mp6_dict.keys()):
-        for tup in mp6_dict[comp_id]:
-            # Write: comp_id, fs_name, sf_name, score
-            writer.writerow([comp_id, *tup])
+        seasons_map = mp6_dict[comp_id]
+        for season in sorted(seasons_map.keys()):
+            for tup in seasons_map[season]:
+                writer.writerow([comp_id, season, *tup])
 
 print(f"CSV files saved to:\n{mp2_path}\n{mp6_path}\n")
 
-# --- Write numerical variables (dicts of ints) to a text file ---
+# --- Write numerical variables (dict[comp_id][season] -> int) to a text file ---
 mp_out_path = os.path.join(output_dir, "mp_out.txt")
 
 numeric_vars = [
@@ -171,7 +172,7 @@ numeric_vars = [
     "mpX_OK_players_AF_FS_matching",
     "mp1a_AF_lineups_missing",
     "mp1b_FS_lineups_missing",
-    "mp2_AF_FS_players_matching_potential_misses",
+    "mp2_AF_FS_players_matching_potential_misses",  # still a scalar
     "mp3_all_players_involved_in_team_strength_calculation",
     "mp4_team_strength_complete_lineup_imitation",
     "mp5_team_strength_DOB_missing",
@@ -193,7 +194,13 @@ with open(mp_out_path, mode="w", encoding="utf-8") as f:
         if isinstance(value, dict):
             f.write(f"{var_name}:\n")
             for cid in sorted(value.keys()):
-                f.write(f"  {cid}: {value[cid]}\n")
+                inner = value[cid]
+                if isinstance(inner, dict):  # per-season map
+                    for season in sorted(inner.keys()):
+                        f.write(f"  {cid} / {season}: {inner[season]}\n")
+                else:
+                    # fallback if some older var remains {cid: int}
+                    f.write(f"  {cid}: {inner}\n")
         else:
             f.write(f"{var_name}: {value}\n")
 

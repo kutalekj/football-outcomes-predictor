@@ -290,7 +290,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
             f"Imputing..."
         )
         # TODO manual output check: count how many such players without CSV data are there
-        global_instance.mp7_team_strength_imitated_skills_as_no_CSV_data[comp_id] += 1
+        global_instance.mp7_team_strength_imitated_skills_as_no_CSV_data[comp_id][season] += 1
         return get_imitated_player_skills(season, team_id, fs_position)
 
     # DEBUG PRINT
@@ -349,7 +349,7 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
             collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(season, team_id, player_pos)][
                 index
             ]  # impute a single value
-            global_instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data[comp_id] += 1
+            global_instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data[comp_id][season] += 1
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
         raise ValueError(
@@ -612,7 +612,7 @@ def match_af_player_to_fs_player_alternative(af_player, fs_players_in_comp_seaso
     return best_fs_match, highest_similarity
 
 
-def match_fs_player_to_sf_players(fs_player, sf_players_with_same_dob, comp_id):
+def match_fs_player_to_sf_players(fs_player, sf_players_with_same_dob, comp_id, season):
     normalized_fs_known_as = normalize_name(fs_player["fs_known_as"])
     normalized_fs_full_name = normalize_name(fs_player["fs_full_name"])
 
@@ -649,13 +649,13 @@ def match_fs_player_to_sf_players(fs_player, sf_players_with_same_dob, comp_id):
 
     global_instance = Global.get_instance()
     if highest_similarity_score < 65:
-        global_instance.mp6_FS_SF_players_matching_potential_misses_couples[comp_id].append(
+        global_instance.mp6_FS_SF_players_matching_potential_misses_couples[comp_id][season].append(
             (fs_player["fs_known_as"], highest_similarity_sf_player[2], highest_similarity_score)
         )
 
     if highest_similarity_score < settings.SIMILARITY_THRESHOLD_FS_SOFIFA:
         print("(but rejected for too low similarity score :/)")
-        global_instance.mp6_team_strength_FS_SF_matching[comp_id] += 1
+        global_instance.mp6_team_strength_FS_SF_matching[comp_id][season] += 1
         return None, None, None
         # TODO: Players_check 6: Number of failed FS/SF matches due to low matching score
 
@@ -773,7 +773,7 @@ def add_imitated_player_skills(season, team_id, team_sf_players_skills, lineup_f
             imitated_player_skills = get_imitated_player_skills(season, team_id, position)  # get imitated skills
 
             global_instance = Global.get_instance()
-            global_instance.mp8b_team_strength_imitated_players_as_no_CSV_data[comp_id] += 1
+            global_instance.mp8b_team_strength_imitated_players_as_no_CSV_data[comp_id][season] += 1
 
             # Dependency of the insertion index on position - try to maintain the positions order for consistency
             if position == "Goalkeeper":
@@ -817,7 +817,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills, 
                 f"Balancing player skills - replacing outfield player with goalkeeper: "
                 f"{team_skills[idx]}\n->\n{imitated_gk_skills}"
             )
-            global_instance.mp9_team_strength_balancing_field_to_gk[comp_id] += 1
+            global_instance.mp9_team_strength_balancing_field_to_gk[comp_id][season] += 1
             team_skills[idx] = imitated_gk_skills
 
         elif idx > 0 and goalkeeper_mean > outfield_mean:  # replace probable goalkeeper with an outfield player
@@ -830,7 +830,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills, 
                 # TODO code: Results always in replacing goalkeeper with a defender, ...
                 # TODO: ...never with midfielders or forwards
                 team_skills[idx] = imitated_gk_skills
-                global_instance.mp9_team_strength_balancing_gk_to_def[comp_id] += 1
+                global_instance.mp9_team_strength_balancing_gk_to_def[comp_id][season] += 1
             elif idx in [5, 6, 7, 8]:
                 imitated_gk_skills = get_imitated_player_skills(season, team_id, "Midfielder")
                 print(
@@ -838,7 +838,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills, 
                     f"{team_skills[idx]}\n->\n{imitated_gk_skills}"
                 )
                 team_skills[idx] = imitated_gk_skills
-                global_instance.mp9_team_strength_balancing_gk_to_mid[comp_id] += 1
+                global_instance.mp9_team_strength_balancing_gk_to_mid[comp_id][season] += 1
             elif idx in [9, 10]:
                 imitated_gk_skills = get_imitated_player_skills(season, team_id, "Forward")
                 print(
@@ -846,7 +846,7 @@ def balance_goalkeeper_and_outfield_player_skills(season, team_id, team_skills, 
                     f"{team_skills[idx]}\n->\n{imitated_gk_skills}"
                 )
                 team_skills[idx] = imitated_gk_skills
-                global_instance.mp9_team_strength_balancing_gk_to_att[comp_id] += 1
+                global_instance.mp9_team_strength_balancing_gk_to_att[comp_id][season] += 1
             else:
                 raise ValueError(
                     f"Found player skills list containing more than 11 players (>={idx + 1}, " f"concretely)"

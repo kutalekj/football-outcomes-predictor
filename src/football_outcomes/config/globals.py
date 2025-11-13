@@ -65,22 +65,42 @@
                 323,
             ]
 
-            cls._instance.mp3_all_players_involved_in_team_strength_calculation = {cid: 0 for cid in competition_ids}
-            cls._instance.mp4_team_strength_complete_lineup_imitation = {cid: 0 for cid in competition_ids}
-            cls._instance.mp5_team_strength_DOB_missing = {cid: 0 for cid in competition_ids}
-            cls._instance.mp6_team_strength_FS_SF_matching = {cid: 0 for cid in competition_ids}
-            cls._instance.mp7_team_strength_imitated_skills_as_no_CSV_data = {cid: 0 for cid in competition_ids}
-            cls._instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data = {cid: 0 for cid in competition_ids}
-            cls._instance.mp8a_team_strength_imitated_players_as_no_CSV_data = {cid: 0 for cid in competition_ids}
-            cls._instance.mp8b_team_strength_imitated_players_as_no_CSV_data = {cid: 0 for cid in competition_ids}
+            SEASONS = [2021, 2022, 2023, 2024, 2025]
 
-            cls._instance.mp9_team_strength_balancing_field_to_gk = {cid: 0 for cid in competition_ids}
-            cls._instance.mp9_team_strength_balancing_gk_to_def = {cid: 0 for cid in competition_ids}
-            cls._instance.mp9_team_strength_balancing_gk_to_mid = {cid: 0 for cid in competition_ids}
-            cls._instance.mp9_team_strength_balancing_gk_to_att = {cid: 0 for cid in competition_ids}
+            def _zeros_by_comp_and_season(competition_ids):
+                return {cid: {s: 0 for s in SEASONS} for cid in competition_ids}
 
+            def _lists_by_comp_and_season(competition_ids):
+                return {cid: {s: [] for s in SEASONS} for cid in competition_ids}
+
+            # --- counters (dict[comp_id][season] -> int) ---
+            cls._instance.mp3_all_players_involved_in_team_strength_calculation = _zeros_by_comp_and_season(
+                competition_ids
+            )
+            cls._instance.mp4_team_strength_complete_lineup_imitation = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp5_team_strength_DOB_missing = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp6_team_strength_FS_SF_matching = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp7_team_strength_imitated_skills_as_no_CSV_data = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data = _zeros_by_comp_and_season(
+                competition_ids
+            )
+            cls._instance.mp8a_team_strength_imitated_players_as_no_CSV_data = _zeros_by_comp_and_season(
+                competition_ids
+            )
+            cls._instance.mp8b_team_strength_imitated_players_as_no_CSV_data = _zeros_by_comp_and_season(
+                competition_ids
+            )
+
+            cls._instance.mp9_team_strength_balancing_field_to_gk = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp9_team_strength_balancing_gk_to_def = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp9_team_strength_balancing_gk_to_mid = _zeros_by_comp_and_season(competition_ids)
+            cls._instance.mp9_team_strength_balancing_gk_to_att = _zeros_by_comp_and_season(competition_ids)
+
+            # --- couples (dict[comp_id][season] -> list[tuple]) ---
+            cls._instance.mp6_FS_SF_players_matching_potential_misses_couples = _lists_by_comp_and_season(
+                competition_ids
+            )
             cls._instance.mp2_AF_FS_players_matching_potential_misses_couples = []
-            cls._instance.mp6_FS_SF_players_matching_potential_misses_couples = {cid: [] for cid in competition_ids}
 
         return cls._instance
 
