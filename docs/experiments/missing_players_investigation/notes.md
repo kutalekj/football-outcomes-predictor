@@ -55,3 +55,5 @@ mp9_team_strength_balancing_gk_to_att: 29
 - **2.5% players missmatched** by date of birth (18_463) - discrepancy in FS and SF data
 - **4.5% player names missmatched** (33_480) - discrepancy in FS and SF data (players with same DOB matched against each other)
 - results in **7-8% imputations**
+
+- *"per_comp_per_season_v2" contains also SF CSV files from 09/2025 and 11/2025, which are missing in "per_comp_per_season"*

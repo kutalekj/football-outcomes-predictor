@@ -113,7 +113,7 @@ def process_csv_files(folder_path):
 
 
 # Specify the folder containing the CSV files
-folder_path = r"C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full"
+folder_path = r"C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase6\\full"
 # replace with the folder path
 
 process_csv_files(folder_path)
