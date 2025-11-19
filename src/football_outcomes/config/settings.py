@@ -16,14 +16,14 @@ FS_HOST = "https://api.football-data-api.com"
 
 # Load/Store
 MATCH_DATA_LOAD = True
-MATCH_DATA_STORE = True
+MATCH_DATA_STORE = False
 
 ALL_STORE = False
 ALL_LOAD = False
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 11, 10)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 11, 16)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
@@ -354,7 +354,7 @@ TOTAL_XG_NORM_COEFFICIENT = 5.25
 TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
-CSV_PLAYERS_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase5\\full"
+CSV_PLAYERS_PATH = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase6\\full"
 
 PLAYER_SKILLS = [
     "crossing",

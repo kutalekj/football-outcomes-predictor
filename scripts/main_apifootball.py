@@ -150,6 +150,28 @@ with open(mp2_path, mode="w", newline="", encoding="utf-8") as f:
     writer.writerows(getattr(global_instance, "mp2_AF_FS_players_matching_potential_misses_couples", []))
 
 # --- Dump second (dict[comp_id][season] -> list of tuples) ---
+mp5_path = os.path.join(output_dir, "mp5_DOB.csv")
+with open(mp5_path, mode="w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    mp5_dict = getattr(global_instance, "mp5_DOB_misses_couples", {})
+    writer.writerow(
+        [
+            "comp_id",
+            "season",
+            "match_datetime",
+            "home_team",
+            "away_team",
+            "fs_known_as",
+            "fs_birthday",
+        ]
+    )
+    for comp_id in sorted(mp5_dict.keys()):
+        seasons_map = mp5_dict[comp_id]
+        for season in sorted(seasons_map.keys()):
+            for tup in seasons_map[season]:
+                writer.writerow([comp_id, season, *tup])
+
+# --- Dump third (dict[comp_id][season] -> list of tuples) ---
 mp6_path = os.path.join(output_dir, "mp6_FS_SF.csv")
 with open(mp6_path, mode="w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)

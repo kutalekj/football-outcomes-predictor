@@ -97,6 +97,7 @@
             cls._instance.mp9_team_strength_balancing_gk_to_att = _zeros_by_comp_and_season(competition_ids)
 
             # --- couples (dict[comp_id][season] -> list[tuple]) ---
+            cls._instance.mp5_DOB_misses_couples = _lists_by_comp_and_season(competition_ids)
             cls._instance.mp6_FS_SF_players_matching_potential_misses_couples = _lists_by_comp_and_season(
                 competition_ids
             )

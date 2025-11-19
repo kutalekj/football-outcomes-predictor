@@ -3,6 +3,7 @@ feature_utils.py
 """
 
 # import numpy as np
+from datetime import date, datetime
 
 from football_outcomes.config.globals import Global
 from football_outcomes.config.settings import (  # TODO code: refactor this
@@ -532,10 +533,47 @@ def calculate_team_strength(curr_match, team_id):
                 print(
                     f"\t\tWarning! FS player {fs_player['fs_known_as']} not found in " f"SOFIFA dob dict. Skipping..."
                 )
+
+                print(
+                    "[DOB MISS DEBUG]",
+                    "comp_id=",
+                    curr_match.comp.id,
+                    "season=",
+                    curr_match.season,
+                    "match_dt=",
+                    repr(curr_match.datetime),
+                    "type=",
+                    type(curr_match.datetime),
+                    "fs_bday=",
+                    repr(fs_player.get("fs_birthday")),
+                    "fs_bday_type=",
+                    type(fs_player.get("fs_birthday")),
+                )
                 # TODO manual output check: count how many DOB misses are there in total
                 # TODO: PLayers_check 5: Count FS lineup players failed to match to SF players by
                 #  DOB (their DOB not found in SF data)
+                match_dt = curr_match.datetime
+                if isinstance(match_dt, (datetime, date)):
+                    match_dt_str = match_dt.isoformat()
+                else:
+                    match_dt_str = str(match_dt)
+
+                bday = fs_player.get("fs_birthday")
+                if isinstance(bday, (datetime, date)):
+                    bday_str = bday.isoformat()
+                else:
+                    bday_str = str(bday)
+
                 global_instance.mp5_team_strength_DOB_missing[curr_match.comp.id][curr_match.season] += 1
+                global_instance.mp5_DOB_misses_couples[curr_match.comp.id][curr_match.season].append(
+                    (
+                        match_dt_str,
+                        curr_match.home_team.name,
+                        curr_match.away_team.name,
+                        fs_player["fs_known_as"],
+                        bday_str,
+                    )
+                )
                 # TODO implement: extend the matching logic to prevent so many mismatches
                 continue
 
