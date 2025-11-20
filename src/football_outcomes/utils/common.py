@@ -346,9 +346,20 @@ def get_sf_player_data(match_datetime, sf_player_id, team_season_info, fs_positi
     for index, (skill_name, value) in enumerate(collected_player_skills.items()):
         if value == -1:
             player_pos = get_most_frequent_string(all_player_positions)  # get most probable player position
-            collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[(season, team_id, player_pos)][
-                index
-            ]  # impute a single value
+            try:  # TODO: THIS IS HOTFIX (for checking missing players). REMOVE!
+                collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[
+                    (season, team_id, player_pos)
+                ][
+                    index
+                ]  # impute a single value
+            except Exception:
+                season = 2024
+                team_id = 948
+                collected_player_skills[skill_name] = global_instance.sf_avg_team_strength[
+                    (season, team_id, player_pos)
+                ][
+                    index
+                ]  # impute a single value
             global_instance.mp7_SKILLS_team_strength_imitated_skills_as_no_data[comp_id][season] += 1
 
     if len(collected_player_skills) != len(settings.PLAYER_SKILLS):
