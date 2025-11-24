@@ -279,6 +279,14 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 39,2025,2025-11-09T14:00:00+00:00,Aston Villa,Bournemouth,Alex Scott,1970-01-01T00:00:00
 39,2025,2025-11-09T16:30:00+00:00,Manchester City,Liverpool,Nico O'Reilly,1970-01-01T00:00:00
 39,2025,2025-11-09T16:30:00+00:00,Manchester City,Liverpool,Nico O'Reilly,1970-01-01T00:00:00
+39,2025,2025-11-22T12:30:00+00:00,Burnley,Chelsea,Liam Delap,1970-01-01T00:00:00
+39,2025,2025-11-22T15:00:00+00:00,Bournemouth,West Ham,Alex Scott,1970-01-01T00:00:00
+39,2025,2025-11-22T15:00:00+00:00,Bournemouth,West Ham,Freddie Botts,1970-01-01T00:00:00
+39,2025,2025-11-22T15:00:00+00:00,Wolves,Crystal Palace,Adam Wharton,1970-01-01T00:00:00
+39,2025,2025-11-22T15:00:00+00:00,Brighton,Brentford,Jan Paul van Hecke,1970-01-01T00:00:00
+39,2025,2025-11-22T15:00:00+00:00,Brighton,Brentford,Carlos Balepa Noom Quomah,1970-01-01T00:00:00
+39,2025,2025-11-22T15:00:00+00:00,Brighton,Brentford,Dango Aboubacar Faissal Ouattara,1970-01-01T00:00:00
+39,2025,2025-11-22T17:30:00+00:00,Newcastle,Manchester City,Nico O'Reilly,1970-01-01T00:00:00
 40,2021,2021-08-07T14:00:00+00:00,Bristol City,Blackpool,Robert Atkinson,1970-01-01T00:00:00
 40,2021,2021-08-07T14:00:00+00:00,Bristol City,Blackpool,Alex Scott,1970-01-01T00:00:00
 40,2021,2021-08-07T14:00:00+00:00,Stoke City,Reading,Ethan Briston,1970-01-01T00:00:00
@@ -2262,6 +2270,35 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 40,2025,2025-11-08T15:00:00+00:00,Wrexham,Charlton,Max Cleworth,1970-01-01T00:00:00
 40,2025,2025-11-08T15:00:00+00:00,Wrexham,Charlton,Isaac Olaofe,1970-01-01T00:00:00
 40,2025,2025-11-08T15:00:00+00:00,Wrexham,Charlton,Tyreece Campbell,1970-01-01T00:00:00
+40,2025,2025-11-21T20:00:00+00:00,Preston,Blackburn,Thierr Small,1970-01-01T00:00:00
+40,2025,2025-11-21T20:00:00+00:00,Preston,Blackburn,George Pratt,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Bristol City,Swansea,Elijah Morrison,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Bristol City,Swansea,Ishé Samuels-Smith,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Charlton,Southampton,Karoy Anderson,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Charlton,Southampton,Miles Leaburn,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Charlton,Southampton,Tyreece Campbell,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Charlton,Southampton,Tom Fellows,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Charlton,Southampton,Cameron Bragg,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Coventry,West Brom,Carl Rushworth,1970-01-01T00:00:00
+40,2025,2025-11-22T12:30:00+00:00,Coventry,West Brom,Bobby Thomas,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Leicester,Stoke City,Junior Tchamadeu,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Leicester,Stoke City,Ashley Phillips,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Birmingham,Norwich,Kellen Fisher,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Ipswich,Wrexham,Sindre Walle Egeli,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Ipswich,Wrexham,Jaden Philogene-Bidace,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Ipswich,Wrexham,Max Cleworth,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Derby,Watford,Bobby Clark,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Derby,Watford,Kwadwo Baah,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,QPR,Hull City,Jonathan Varane,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Oxford United,Middlesbrough,Luke Harris,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Oxford United,Middlesbrough,Tyler Goodhram,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Oxford United,Middlesbrough,Will Lankshear,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Portsmouth,Millwall,Tristan Crama,1970-01-01T00:00:00
+40,2025,2025-11-22T15:00:00+00:00,Portsmouth,Millwall,Zack Sturge,1970-01-01T00:00:00
+40,2025,2025-11-23T12:00:00+00:00,Sheffield Wednesday,Sheffield Utd,Harry Amass,1970-01-01T00:00:00
+40,2025,2025-11-23T12:00:00+00:00,Sheffield Wednesday,Sheffield Utd,Andre Brookes,1970-01-01T00:00:00
+40,2025,2025-11-23T12:00:00+00:00,Sheffield Wednesday,Sheffield Utd,Femi Seriki,1970-01-01T00:00:00
+40,2025,2025-11-23T12:00:00+00:00,Sheffield Wednesday,Sheffield Utd,Sydie Peck,1970-01-01T00:00:00
 41,2021,2021-08-07T14:00:00+00:00,Ipswich,Morecambe,Wes McDonald,1970-01-01T00:00:00
 41,2021,2021-08-07T14:00:00+00:00,Sunderland,Wigan,Daniel Neill,1970-01-01T00:00:00
 41,2021,2021-08-07T14:00:00+00:00,Fleetwood Town,Portsmouth,Gassan Ahadme Yahyai,1970-01-01T00:00:00
@@ -5375,6 +5412,45 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 41,2025,2025-11-15T15:00:00+00:00,Leyton Orient,Exeter City,Jayden Wareham,1970-01-01T00:00:00
 41,2025,2025-11-15T15:00:00+00:00,Lincoln,Doncaster,George Wickens,1970-01-01T00:00:00
 41,2025,2025-11-15T15:00:00+00:00,Lincoln,Doncaster,Francis Okoronkko,1970-01-01T00:00:00
+41,2025,2025-11-20T20:00:00+00:00,Peterborough,Stockport County,Peter Kioso,1970-01-01T00:00:00
+41,2025,2025-11-20T20:00:00+00:00,Peterborough,Stockport County,Harley Mills,1970-01-01T00:00:00
+41,2025,2025-11-20T20:00:00+00:00,Peterborough,Stockport County,Harry Leonard,1970-01-01T00:00:00
+41,2025,2025-11-20T20:00:00+00:00,Peterborough,Stockport County,Ethan Pye,1970-01-01T00:00:00
+41,2025,2025-11-22T12:30:00+00:00,Port Vale,Plymouth,Connor Hall,1970-01-01T00:00:00
+41,2025,2025-11-22T12:30:00+00:00,Port Vale,Plymouth,George Hall,1970-01-01T00:00:00
+41,2025,2025-11-22T12:30:00+00:00,Port Vale,Plymouth,Ben Garrity,1970-01-01T00:00:00
+41,2025,2025-11-22T12:30:00+00:00,Port Vale,Plymouth,Rhys Walters,1970-01-01T00:00:00
+41,2025,2025-11-22T12:30:00+00:00,Port Vale,Plymouth,Alex Mitchell,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Reading,Rotherham,Kelvin Abretti,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Reading,Rotherham,Kami Doyle,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Reading,Rotherham,Kelvin Ehibhaimha,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Reading,Rotherham,Hamish Douglas,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Bolton,Bradford,Teddy Sharman-Lowe,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Bolton,Bradford,Max Conway,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Bolton,Bradford,Mason Burstow,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Bolton,Bradford,Jenson Metcalfe,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Bolton,Bradford,Bobby Pointon,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Barnsley,Luton,Jack Shepherd,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Barnsley,Luton,Reyes Cleary,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Barnsley,Luton,Josh Keeley,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Barnsley,Luton,Gideon Kadua,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Barnsley,Luton,Zack Nelson,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,AFC Wimbledon,Wigan,Aron Sasu,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,AFC Wimbledon,Wigan,Danilo Orsi-Dadamo,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Northampton,Cardiff,Jack Perkins,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Northampton,Cardiff,Ethan Wheatley,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Northampton,Cardiff,Ronan Kpakio,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Wycombe,Lincoln,Samuel John Bell,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Wycombe,Lincoln,George Wickens,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Wycombe,Lincoln,Francis Okoronkko,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Stevenage,Doncaster,Filip Marshall,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Leyton Orient,Blackpool,Tayo Adaramola,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Leyton Orient,Blackpool,Dominic Ballard,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Leyton Orient,Blackpool,Zachary Ashworth,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Mansfield Town,Huddersfield,Jamie McDonnell,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Mansfield Town,Huddersfield,Joe Gardner,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Mansfield Town,Huddersfield,Owen Goodman,1970-01-01T00:00:00
+41,2025,2025-11-22T15:00:00+00:00,Mansfield Town,Huddersfield,Josh Feeney,1970-01-01T00:00:00
 42,2021,2021-08-07T14:00:00+00:00,Scunthorpe,Swindon Town,Sam Burns,1970-01-01T00:00:00
 42,2021,2021-08-07T14:00:00+00:00,Scunthorpe,Swindon Town,Kaine Kessler,1970-01-01T00:00:00
 42,2021,2021-08-07T14:00:00+00:00,Stevenage,Barrow,Joseph Anang,1970-01-01T00:00:00
@@ -9756,6 +9832,64 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 42,2025,2025-11-15T17:30:00+00:00,Gillingham,Crawley Town,Charlie Barker,1970-01-01T00:00:00
 42,2025,2025-11-15T17:30:00+00:00,Gillingham,Crawley Town,Louis Flower,1970-01-01T00:00:00
 42,2025,2025-11-15T17:30:00+00:00,Gillingham,Crawley Town,Ade Adeyemo,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Gillingham,Barnet,Remeao Hutton,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Gillingham,Barnet,Seb Palmer-Houlden,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Gillingham,Barnet,Cieran Slicker,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Gillingham,Barnet,Adam Senior,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Gillingham,Barnet,Callum Stead,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Gillingham,Barnet,Lee Ndlovu,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Zico Asare,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Jacob Slater,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Tom Cursons,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Jid Okeke,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Miles Roberts,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Ryan Finnigan,1970-01-01T00:00:00
+42,2025,2025-11-22T12:30:00+00:00,Harrogate Town,Walsall,Daniel Kanu,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Fleetwood Town,Shrewsbury,Kayden Hughes,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Fleetwood Town,Shrewsbury,Harrison Neal,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Fleetwood Town,Shrewsbury,Ethan Ennis,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Oldham,Newport County,Michael Mellon,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Oldham,Newport County,Jordan Wright,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Oldham,Newport County,Lee Jenkins,1979-01-28T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Oldham,Newport County,Habeeb Ogunneye,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Oldham,Newport County,Sammy Braybroke,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Swindon Town,Grimsby,Jamie Knight-Lebel,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Swindon Town,Grimsby,Finley Munroe,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Charlie Barker,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Louis Flower,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Ade Adeyemo,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Connor O'Brien,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Devon Matthews,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Benn Ward,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Isaac Heath,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crawley Town,Accrington ST,Isaac Sinclair,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crewe,Chesterfield,Tommi O'Reilly,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crewe,Chesterfield,Owen Lunt,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Crewe,Chesterfield,Emre Tezgel,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Cheltenham,Bristol Rovers,Jake Bickerstaff,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Cheltenham,Bristol Rovers,Tom Taylor,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Cheltenham,Bristol Rovers,Ethon Archer,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Cheltenham,Bristol Rovers,Stephen Negru,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Cheltenham,Bristol Rovers,Joel Cotterill,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Notts County,Colchester,Lucas Ness,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Notts County,Colchester,Lewis Macarai,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Notts County,Colchester,Micah Mbick,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Notts County,Colchester,Samson Tovide,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Notts County,Colchester,Harvey Araujo,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Notts County,Colchester,Kyrell Lisbie,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Tranmere,Milton Keynes Dons,Billy Blacker,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Tranmere,Milton Keynes Dons,Jayden Joseph,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Tranmere,Milton Keynes Dons,Charlie Whitaker,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Barrow,Cambridge United,Charlie McCann,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Barrow,Cambridge United,Liam Bennett,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Barrow,Cambridge United,Mamadou Jobe,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Barrow,Cambridge United,Adam Major,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Barrow,Cambridge United,Adam Major,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Barrow,Cambridge United,Glenn McConnell,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Bromley,Salford City,Deji Elerewe,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Bromley,Salford City,Ben Krauhaus,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Bromley,Salford City,Adebola Olowu,1970-01-01T00:00:00
+42,2025,2025-11-22T15:00:00+00:00,Bromley,Salford City,Kelly N’Mai,1970-01-01T00:00:00
 61,2021,2021-10-31T14:00:00+00:00,Bordeaux,Reims,Fodé Doucouré,1970-01-01T00:00:00
 61,2021,2022-01-15T16:00:00+00:00,Saint Etienne,Lens,Abdoulaye Bakayoko,1970-01-01T00:00:00
 61,2021,2022-01-21T20:00:00+00:00,Lyon,Saint Etienne,Abdoulaye Bakayoko,1970-01-01T00:00:00
@@ -10020,6 +10154,27 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 61,2025,2025-11-09T16:15:00+00:00,Angers,Auxerre,Rudy Matondo,1970-01-01T00:00:00
 61,2025,2025-11-09T16:15:00+00:00,Angers,Auxerre,Rudy Matondo,1970-01-01T00:00:00
 61,2025,2025-11-09T16:15:00+00:00,Metz,Nice,Kojo Peprah Oppong,1970-01-01T00:00:00
+61,2025,2025-11-21T19:45:00+00:00,Nice,Marseille,Kojo Peprah Oppong,1970-01-01T00:00:00
+61,2025,2025-11-22T16:00:00+00:00,Lens,Strasbourg,Samir El Mourabet,1970-01-01T00:00:00
+61,2025,2025-11-22T18:00:00+00:00,Rennes,Monaco,Abdelhamid Ait Boudlal,1970-01-01T00:00:00
+61,2025,2025-11-22T18:00:00+00:00,Rennes,Monaco,Djaoui Cisse,1970-01-01T00:00:00
+61,2025,2025-11-23T14:00:00+00:00,Auxerre,Lyon,Rudy Matondo,1970-01-01T00:00:00
+61,2025,2025-11-23T14:00:00+00:00,Auxerre,Lyon,Rudy Matondo,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Nantes,Lorient,Tylel Tati,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Nantes,Lorient,Tylel Tati,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Nantes,Lorient,Noah Cadiou,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Nantes,Lorient,Abdoul Bamo Meité,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Nantes,Lorient,Karim Dermane,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Nantes,Lorient,Sambou Soumano,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Alexis Vossah,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Lillian Rao-Lisoa,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Ousmane Camara,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Jacques Ekomie,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Yassine Belkdim,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Sidiki Cherif,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Toulouse,Angers,Mohamed Amine Sbai,1970-01-01T00:00:00
+61,2025,2025-11-23T16:15:00+00:00,Stade Brestois 29,Metz,Pathé Mboup,1970-01-01T00:00:00
+61,2025,2025-11-23T19:45:00+00:00,Lille,Paris FC,Adama Camara,1970-01-01T00:00:00
 62,2021,2021-07-24T13:00:00+00:00,Bastia,Nimes,Léon Delpech,1970-01-01T00:00:00
 62,2021,2021-07-24T17:00:00+00:00,Caen,Rodez,Caleb Zady Sery,1970-01-01T00:00:00
 62,2021,2021-07-24T17:00:00+00:00,Caen,Rodez,Andreas Hountondji,1970-01-01T00:00:00
@@ -10900,6 +11055,38 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 62,2025,2025-11-08T13:00:00+00:00,Le Mans,RED Star FC 93,Kemo Cissé,1970-01-01T00:00:00
 62,2025,2025-11-08T19:00:00+00:00,Estac Troyes,Saint Etienne,Antoine Mille,1970-01-01T00:00:00
 62,2025,2025-11-08T19:00:00+00:00,Estac Troyes,Saint Etienne,Joshua Duffus,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Laval,Estac Troyes,Joseph Samb,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Laval,Estac Troyes,Malik Sellouki,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Laval,Estac Troyes,William Benard,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Laval,Estac Troyes,Ethan Clavreul,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Laval,Estac Troyes,Antoine Mille,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,PAU,Le Mans,Joseph Kalulu Kyatengwa,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,PAU,Le Mans,Rayan Touzghar,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,PAU,Le Mans,Omar Sissoko,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Wilitty Younoussa,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Jordan Mendes Correia,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Octave Joly,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Mathys Niflore,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Geoffrey Kondo,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Pape Daouda Diongu,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Rodez,Dunkerque,Gessime Yassine,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Annecy,Bastia,Axel Drouhin,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Annecy,Bastia,Alexis Casadei,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Annecy,Bastia,Ben Hamed Touru00e9,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Annecy,Bastia,Jocelyn Janneh,1970-01-01T00:00:00
+62,2025,2025-11-21T19:00:00+00:00,Annecy,Bastia,Zakaria Ariss,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Amine Chabane,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Siaka Bakayoko,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Ilan Daf,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Yvan Ikia Dimi,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Sohaib Nair,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Jérémy Hatchi,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,Amiens,Guingamp,Stanislas Kielt,1970-01-01T00:00:00
+62,2025,2025-11-22T13:00:00+00:00,RED Star FC 93,Clermont Foot,Jovany Ikanga,1970-01-01T00:00:00
+62,2025,2025-11-22T19:00:00+00:00,Saint Etienne,Nancy,Rayan Bamba,1970-01-01T00:00:00
+62,2025,2025-11-22T19:00:00+00:00,Saint Etienne,Nancy,Enzo Tacafred,1970-01-01T00:00:00
+62,2025,2025-11-22T19:00:00+00:00,Saint Etienne,Nancy,Brandon Bokangou,1970-01-01T00:00:00
+62,2025,2025-11-22T19:00:00+00:00,Saint Etienne,Nancy,Walid Bouabdelli,1970-01-01T00:00:00
 78,2022,2023-01-27T19:30:00+00:00,RB Leipzig,VfB Stuttgart,Thomas Kastanaras,1970-01-01T00:00:00
 78,2023,2023-08-19T13:30:00+00:00,VfL Wolfsburg,1. FC Heidenheim,Eren Dinkci,1970-01-01T00:00:00
 78,2023,2023-08-26T13:30:00+00:00,1. FC Heidenheim,1899 Hoffenheim,Eren Dinkci,1970-01-01T00:00:00
@@ -11001,6 +11188,10 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 78,2025,2025-11-01T14:30:00+00:00,Union Berlin,SC Freiburg,Jordy Makengo,1970-01-01T00:00:00
 78,2025,2025-11-08T14:30:00+00:00,1899 Hoffenheim,RB Leipzig,Yan Diomande,1970-01-01T00:00:00
 78,2025,2025-11-08T14:30:00+00:00,Hamburger SV,Borussia Dortmund,Carney Chukwuemeka,1970-01-01T00:00:00
+78,2025,2025-11-22T14:30:00+00:00,Bayern München,SC Freiburg,Jordy Makengo,1970-01-01T00:00:00
+78,2025,2025-11-22T14:30:00+00:00,Borussia Dortmund,VfB Stuttgart,Carney Chukwuemeka,1970-01-01T00:00:00
+78,2025,2025-11-23T14:30:00+00:00,RB Leipzig,Werder Bremen,Yan Diomande,1970-01-01T00:00:00
+78,2025,2025-11-23T16:30:00+00:00,FC St. Pauli,Union Berlin,Andreas Hountondji,1970-01-01T00:00:00
 79,2021,2021-07-24T11:30:00+00:00,1. FC Heidenheim,SC Paderborn 07,Jannis Heuer,1999-12-12T00:00:00
 79,2021,2021-07-30T16:30:00+00:00,SC Paderborn 07,1. FC Nürnberg,Jannis Heuer,1999-12-12T00:00:00
 79,2021,2021-08-15T11:30:00+00:00,Werder Bremen,SC Paderborn 07,Eren Dinkci,1970-01-01T00:00:00
@@ -11265,6 +11456,16 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 79,2025,2025-11-09T12:30:00+00:00,Holstein Kiel,Fortuna Düsseldorf,Jonas Therkelsen,1970-01-01T00:00:00
 79,2025,2025-11-09T12:30:00+00:00,Eintracht Braunschweig,VfL Bochum,Marko Rajkovačić,1970-01-01T00:00:00
 79,2025,2025-11-09T12:30:00+00:00,Eintracht Braunschweig,VfL Bochum,Fabio Di Michele Sanchez,1970-01-01T00:00:00
+79,2025,2025-11-21T17:30:00+00:00,Hertha BSC,Eintracht Braunschweig,Marko Rajkovačić,1970-01-01T00:00:00
+79,2025,2025-11-21T17:30:00+00:00,Hertha BSC,Eintracht Braunschweig,Fabio Di Michele Sanchez,1970-01-01T00:00:00
+79,2025,2025-11-22T12:00:00+00:00,Preußen Münster,FC Schalke 04,Jano ter Horst,1970-01-01T00:00:00
+79,2025,2025-11-22T12:00:00+00:00,Preußen Münster,FC Schalke 04,Jannis Heuer,1999-12-12T00:00:00
+79,2025,2025-11-23T12:30:00+00:00,1. FC Nürnberg,Arminia Bielefeld,Jan Reichert,1970-01-01T00:00:00
+79,2025,2025-11-23T12:30:00+00:00,1. FC Nürnberg,Arminia Bielefeld,Thaddäus-Monju Momuluh,1970-01-01T00:00:00
+79,2025,2025-11-23T12:30:00+00:00,1. FC Kaiserslautern,Holstein Kiel,Kasper Davidsen,1970-01-01T00:00:00
+79,2025,2025-11-23T12:30:00+00:00,1. FC Kaiserslautern,Holstein Kiel,Jonas Therkelsen,1970-01-01T00:00:00
+79,2025,2025-11-23T12:30:00+00:00,Karlsruher SC,SV Elversberg,Rafael Pinto Pedrosa,1970-01-01T00:00:00
+79,2025,2025-11-23T12:30:00+00:00,Karlsruher SC,SV Elversberg,Eymen Laghrissi,1970-01-01T00:00:00
 88,2021,2021-08-13T18:00:00+00:00,GO Ahead Eagles,Heerenveen,Milan van Ewijk,1970-01-01T00:00:00
 88,2021,2021-08-14T14:30:00+00:00,Waalwijk,AZ Alkmaar,Tijani Reijnders,1970-01-01T00:00:00
 88,2021,2021-08-14T18:00:00+00:00,Fortuna Sittard,Twente,Jesse Bosch,1970-01-01T00:00:00
@@ -11883,6 +12084,20 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 88,2025,2025-11-09T13:30:00+00:00,NEC Nijmegen,Groningen,Stije Resink,1970-01-01T00:00:00
 88,2025,2025-11-09T19:00:00+00:00,GO Ahead Eagles,Feyenoord,Yassir Salah Rahmouni,1970-01-01T00:00:00
 88,2025,2025-11-09T19:00:00+00:00,GO Ahead Eagles,Feyenoord,Anis Hadj Moussa,1970-01-01T00:00:00
+88,2025,2025-11-22T15:30:00+00:00,NAC Breda,PSV Eindhoven,Maximilien Balard,1970-01-01T00:00:00
+88,2025,2025-11-22T17:45:00+00:00,Ajax,Excelsior,Gerald Alders,1970-01-01T00:00:00
+88,2025,2025-11-22T17:45:00+00:00,Ajax,Excelsior,Oscar Gluh,1970-01-01T00:00:00
+88,2025,2025-11-22T17:45:00+00:00,Ajax,Excelsior,Irakli Yegoian,1970-01-01T00:00:00
+88,2025,2025-11-22T17:45:00+00:00,FC Volendam,Twente,Gibson Yah,1970-01-01T00:00:00
+88,2025,2025-11-22T17:45:00+00:00,FC Volendam,Twente,Robin van Cruijsen,1970-01-01T00:00:00
+88,2025,2025-11-22T17:45:00+00:00,FC Volendam,Twente,Ruud Nijstad,1970-01-01T00:00:00
+88,2025,2025-11-22T20:00:00+00:00,Heracles,GO Ahead Eagles,Timo Jansink,1970-01-01T00:00:00
+88,2025,2025-11-22T20:00:00+00:00,Heracles,GO Ahead Eagles,Yassir Salah Rahmouni,1970-01-01T00:00:00
+88,2025,2025-11-23T13:30:00+00:00,Feyenoord,NEC Nijmegen,Anis Hadj Moussa,1970-01-01T00:00:00
+88,2025,2025-11-23T13:30:00+00:00,Feyenoord,NEC Nijmegen,Basar Onal,1970-01-01T00:00:00
+88,2025,2025-11-23T15:45:00+00:00,Groningen,PEC Zwolle,Stije Resink,1970-01-01T00:00:00
+88,2025,2025-11-23T15:45:00+00:00,Groningen,PEC Zwolle,Anselmo García McNulty,1970-01-01T00:00:00
+88,2025,2025-11-23T15:45:00+00:00,Groningen,PEC Zwolle,Shola Shoretire,1970-01-01T00:00:00
 94,2021,2021-11-27T20:30:00+00:00,Belenenses,Benfica,Player 1,1970-01-01T00:00:00
 94,2021,2021-11-27T20:30:00+00:00,Belenenses,Benfica,Player 2,1970-01-01T00:00:00
 94,2022,2022-08-27T14:30:00+00:00,Maritimo,Portimonense,Antonio Zarzana,1970-01-01T00:00:00
@@ -11946,7 +12161,6 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 94,2025,2025-08-10T19:30:00+00:00,Moreirense,Alverca,Cédric Nuozzi,1970-01-01T00:00:00
 94,2025,2025-08-11T17:45:00+00:00,Estoril,Estrela,Kevin Boma,1970-01-01T00:00:00
 94,2025,2025-08-11T17:45:00+00:00,Estoril,Estrela,João Moisés Gastão,1970-01-01T00:00:00
-94,2025,2025-08-11T19:45:00+00:00,FC Porto,Guimaraes,Oumar Camara,2007-05-11T00:00:00
 94,2025,2025-08-15T14:30:00+00:00,AVS,Casa Pia,Babatunde Akinsola,1970-01-01T00:00:00
 94,2025,2025-08-15T14:30:00+00:00,AVS,Casa Pia,Iyad Mohamed,1970-01-01T00:00:00
 94,2025,2025-08-15T14:30:00+00:00,AVS,Casa Pia,Fahem Benaissa-Yahia,1970-01-01T00:00:00
@@ -12057,7 +12271,6 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 94,2025,2025-11-01T18:00:00+00:00,Casa Pia,Estrela,Oumar Ngom,1970-01-01T00:00:00
 94,2025,2025-11-01T18:00:00+00:00,Casa Pia,Estrela,Oumar Ngom,1970-01-01T00:00:00
 94,2025,2025-11-01T18:00:00+00:00,Casa Pia,Estrela,Abraham Marcus,1970-01-01T00:00:00
-94,2025,2025-11-01T20:30:00+00:00,Guimaraes,Benfica,Oumar Camara,2007-05-11T00:00:00
 94,2025,2025-11-02T18:00:00+00:00,Arouca,Moreirense,Landerson Costa Araujo,1970-01-01T00:00:00
 94,2025,2025-11-02T18:00:00+00:00,Arouca,Moreirense,Landerson Costa Araujo,1970-01-01T00:00:00
 94,2025,2025-11-03T20:45:00+00:00,GIL Vicente,Santa Clara,Santiago Garcia Gonzalez,1970-01-01T00:00:00
@@ -12067,7 +12280,6 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 94,2025,2025-11-08T15:30:00+00:00,Alverca,Rio Ave,Isaac James,1970-01-01T00:00:00
 94,2025,2025-11-08T15:30:00+00:00,Alverca,Rio Ave,Cédric Nuozzi,1970-01-01T00:00:00
 94,2025,2025-11-08T18:00:00+00:00,Tondela,Guimaraes,Jeffrey Rodriguez,1970-01-01T00:00:00
-94,2025,2025-11-08T18:00:00+00:00,Tondela,Guimaraes,Oumar Camara,2007-05-11T00:00:00
 94,2025,2025-11-08T20:30:00+00:00,Santa Clara,Sporting CP,Ousmane Diomande,1970-01-01T00:00:00
 94,2025,2025-11-09T15:30:00+00:00,Estrela,Nacional,Oumar Ngom,1970-01-01T00:00:00
 94,2025,2025-11-09T15:30:00+00:00,Estrela,Nacional,Abraham Marcus,1970-01-01T00:00:00
@@ -12441,6 +12653,12 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 106,2025,2025-11-08T13:45:00+00:00,Lechia Gdansk,Widzew Łódź,Maxim Dyachuk,1970-01-01T00:00:00
 106,2025,2025-11-08T13:45:00+00:00,Lechia Gdansk,Widzew Łódź,Ivan Zhelizko,1970-01-01T00:00:00
 106,2025,2025-11-09T13:45:00+00:00,Korona Kielce,Raków Częstochowa,Stjepan Davidović,1970-01-01T00:00:00
+106,2025,2025-11-21T19:30:00+00:00,Gornik Zabrze,Wisla Plock,Maksym Khlan,1970-01-01T00:00:00
+106,2025,2025-11-21T19:30:00+00:00,Gornik Zabrze,Wisla Plock,Ousmane Sow,1970-01-01T00:00:00
+106,2025,2025-11-21T19:30:00+00:00,Gornik Zabrze,Wisla Plock,Ousmane Sow,1970-01-01T00:00:00
+106,2025,2025-11-22T19:15:00+00:00,Legia Warszawa,Lechia Gdansk,Maxim Dyachuk,1970-01-01T00:00:00
+106,2025,2025-11-22T19:15:00+00:00,Legia Warszawa,Lechia Gdansk,Ivan Zhelizko,1970-01-01T00:00:00
+106,2025,2025-11-23T16:30:00+00:00,Widzew Łódź,Korona Kielce,Stjepan Davidović,1970-01-01T00:00:00
 119,2021,2021-07-18T12:00:00+00:00,FC Nordsjaelland,Viborg,Oliver Antman,1970-01-01T00:00:00
 119,2021,2021-08-23T17:00:00+00:00,FC Nordsjaelland,Vejle,Oliver Antman,1970-01-01T00:00:00
 119,2021,2021-08-27T17:00:00+00:00,Aalborg,FC Nordsjaelland,Oliver Antman,1970-01-01T00:00:00
@@ -13046,6 +13264,16 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 119,2025,2025-11-09T15:00:00+00:00,Randers FC,FC Midtjylland,Mikel Johan Gogorza Krüger-Johnsen,1970-01-01T00:00:00
 119,2025,2025-11-09T17:00:00+00:00,Aarhus,Sonderjyske,Tobias Bach,1970-01-01T00:00:00
 119,2025,2025-11-09T19:00:00+00:00,Brondby,FC Nordsjaelland,Prince Amoako Junior,1970-01-01T00:00:00
+119,2025,2025-11-21T18:00:00+00:00,Silkeborg,Aarhus,Mads Lautrup Freundlich,1970-01-01T00:00:00
+119,2025,2025-11-21T18:00:00+00:00,Silkeborg,Aarhus,Tobias Bach,1970-01-01T00:00:00
+119,2025,2025-11-23T11:00:00+00:00,FC Copenhagen,Brondby,Liam Christopher West,1970-01-01T00:00:00
+119,2025,2025-11-23T13:00:00+00:00,Viborg,Vejle,Sami Jalal Karchoud,1970-01-01T00:00:00
+119,2025,2025-11-23T13:00:00+00:00,Viborg,Vejle,Tobias Bach,1970-01-01T00:00:00
+119,2025,2025-11-23T15:00:00+00:00,FC Nordsjaelland,FC Fredericia,Levy Nene,1970-01-01T00:00:00
+119,2025,2025-11-23T15:00:00+00:00,FC Nordsjaelland,FC Fredericia,Prince Amoako Junior,1970-01-01T00:00:00
+119,2025,2025-11-23T15:00:00+00:00,FC Nordsjaelland,FC Fredericia,Frederik Thykær Rieper,1970-01-01T00:00:00
+119,2025,2025-11-23T15:00:00+00:00,FC Nordsjaelland,FC Fredericia,Daníel Freyr Kristjánsson,1970-01-01T00:00:00
+119,2025,2025-11-23T15:00:00+00:00,FC Nordsjaelland,FC Fredericia,Adam Nygaard Andersen,1970-01-01T00:00:00
 135,2021,2021-11-07T17:00:00+00:00,Napoli,Verona,Juan Jesus,1980-02-17T00:00:00
 135,2021,2021-12-04T19:45:00+00:00,Napoli,Atalanta,Juan Jesus,1980-02-17T00:00:00
 135,2021,2021-12-12T17:00:00+00:00,Napoli,Empoli,Juan Jesus,1980-02-17T00:00:00
@@ -13171,6 +13399,10 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 135,2025,2025-11-08T14:00:00+00:00,Como,Cagliari,Jayden Addai,1970-01-01T00:00:00
 135,2025,2025-11-09T14:00:00+00:00,Bologna,Napoli,Jon Rowe,1970-01-01T00:00:00
 135,2025,2025-11-09T19:45:00+00:00,Inter,Lazio,Ange-Yoan Bonny,1970-01-01T00:00:00
+135,2025,2025-11-22T14:00:00+00:00,Udinese,Bologna,Benjamín Domínguez,1970-01-01T00:00:00
+135,2025,2025-11-23T14:00:00+00:00,Cremonese,AS Roma,Tommaso Barbieri,1970-01-01T00:00:00
+135,2025,2025-11-23T17:00:00+00:00,Lazio,Lecce,Tiago Gabriel Coelho Oliveira,1970-01-01T00:00:00
+135,2025,2025-11-23T17:00:00+00:00,Lazio,Lecce,Mohamed Kaba,1970-01-01T00:00:00
 136,2021,2021-08-22T16:00:00+00:00,Reggina,Monza,Mario Paura,1970-01-01T00:00:00
 136,2021,2021-08-22T16:00:00+00:00,Reggina,Monza,Adriano Montalto,1988-04-06T00:00:00
 136,2021,2021-08-22T18:30:00+00:00,Benevento,Alessandria,Marco Sau,1987-12-03T00:00:00
@@ -13560,6 +13792,18 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 136,2025,2025-11-08T16:15:00+00:00,Juve Stabia,Palermo,Omar Correia,1970-01-01T00:00:00
 136,2025,2025-11-08T18:30:00+00:00,Venezia,Sampdoria,Richie Sagrado Sebastiao,1970-01-01T00:00:00
 136,2025,2025-11-08T18:30:00+00:00,Venezia,Sampdoria,Antoine Hainaut,1970-01-01T00:00:00
+136,2025,2025-11-21T19:30:00+00:00,Catanzaro,Pescara,Alphadjo Cisse,1970-01-01T00:00:00
+136,2025,2025-11-22T14:00:00+00:00,Avellino,Empoli,Brando Moruzzi,1970-01-01T00:00:00
+136,2025,2025-11-22T14:00:00+00:00,Carrarese,Reggiana,Fabio Abiuso,1970-01-01T00:00:00
+136,2025,2025-11-22T14:00:00+00:00,Carrarese,Reggiana,Simone Bonetti,1970-01-01T00:00:00
+136,2025,2025-11-22T16:15:00+00:00,Padova,Venezia,Mattia Fortin,1970-01-01T00:00:00
+136,2025,2025-11-22T16:15:00+00:00,Padova,Venezia,Richie Sagrado Sebastiao,1970-01-01T00:00:00
+136,2025,2025-11-22T16:15:00+00:00,Padova,Venezia,Antoine Hainaut,1970-01-01T00:00:00
+136,2025,2025-11-22T18:30:00+00:00,Bari,Frosinone,Gabriele Bracaglia,1970-01-01T00:00:00
+136,2025,2025-11-23T14:00:00+00:00,Modena,Sudtirol,Alessandro Sersanti,1970-01-01T00:00:00
+136,2025,2025-11-23T14:00:00+00:00,Modena,Sudtirol,Alessandro Sersanti,1970-01-01T00:00:00
+136,2025,2025-11-23T14:00:00+00:00,Modena,Sudtirol,Raphael Kofler,1970-01-01T00:00:00
+136,2025,2025-11-23T14:00:00+00:00,Mantova,Spezia,Francesco Ruocco,1970-01-01T00:00:00
 140,2021,2021-08-15T15:30:00+00:00,Celta Vigo,Atletico Madrid,José Fontán,1970-01-01T00:00:00
 140,2021,2021-08-22T15:00:00+00:00,Real Sociedad,Rayo Vallecano,Andrés Martín,1970-01-01T00:00:00
 140,2021,2021-09-17T19:00:00+00:00,Celta Vigo,Cadiz,José Fontán,1970-01-01T00:00:00
@@ -13685,6 +13929,12 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 140,2025,2025-11-08T17:30:00+00:00,Atletico Madrid,Levante,Karl Edouard Blaise Etta Eyong,1970-01-01T00:00:00
 140,2025,2025-11-08T20:00:00+00:00,Espanyol,Villarreal,José Salinas Morán,1970-01-01T00:00:00
 140,2025,2025-11-09T15:15:00+00:00,Rayo Vallecano,Real Madrid,Nobel Mendy,1970-01-01T00:00:00
+140,2025,2025-11-21T20:00:00+00:00,Valencia,Levante,Karl Edouard Blaise Etta Eyong,1970-01-01T00:00:00
+140,2025,2025-11-22T13:00:00+00:00,Alaves,Celta Vigo,Javier Rodríguez Galiano,1970-01-01T00:00:00
+140,2025,2025-11-22T15:15:00+00:00,Barcelona,Athletic Club,Gerard Martín Langreo,1970-01-01T00:00:00
+140,2025,2025-11-22T17:30:00+00:00,Osasuna,Real Sociedad,Abel Bretones Cruz,1970-01-01T00:00:00
+140,2025,2025-11-22T20:00:00+00:00,Villarreal,Mallorca,Antonio Sánchez Navarro,1970-01-01T00:00:00
+140,2025,2025-11-23T13:00:00+00:00,Oviedo,Rayo Vallecano,Nobel Mendy,1970-01-01T00:00:00
 141,2021,2021-08-14T20:00:00+00:00,Ponferradina,Alcorcon,Carlos Bellvís LLorens,1985-04-25T00:00:00
 141,2021,2021-08-21T20:00:00+00:00,Alcorcon,Fuenlabrada,Carlos Bellvís LLorens,1985-04-25T00:00:00
 141,2021,2021-08-21T20:00:00+00:00,Alcorcon,Fuenlabrada,Damián Damián,1970-01-01T00:00:00
@@ -14345,6 +14595,29 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 141,2025,2025-11-17T19:30:00+00:00,Cultural Leonesa,Malaga,Mamadou Selu Diallo Diallo,1970-01-01T00:00:00
 141,2025,2025-11-17T19:30:00+00:00,Cultural Leonesa,Malaga,Rafael Garrido Hierro,1970-01-01T00:00:00
 141,2025,2025-11-17T19:30:00+00:00,Cultural Leonesa,Malaga,Rafael Rodríguez Ruiz,1970-01-01T00:00:00
+141,2025,2025-11-21T19:30:00+00:00,Las Palmas,Albacete,Iván Gil Calero,1970-01-01T00:00:00
+141,2025,2025-11-21T19:30:00+00:00,Las Palmas,Albacete,Antonio Pacheco Ruiz,1970-01-01T00:00:00
+141,2025,2025-11-22T15:15:00+00:00,FC Andorra,Castellón,Gael Alonso Moreno,1970-01-01T00:00:00
+141,2025,2025-11-22T15:15:00+00:00,FC Andorra,Castellón,Daniel Villahermosa Martínez,1970-01-01T00:00:00
+141,2025,2025-11-22T15:15:00+00:00,FC Andorra,Castellón,Théo Le Normand,1970-01-01T00:00:00
+141,2025,2025-11-22T15:15:00+00:00,FC Andorra,Castellón,Pablo Santiago López,1970-01-01T00:00:00
+141,2025,2025-11-22T17:30:00+00:00,Leganes,Almeria,Djibril Gueye,1970-01-01T00:00:00
+141,2025,2025-11-22T17:30:00+00:00,Eibar,Zaragoza,Yussif Saidu,1970-01-01T00:00:00
+141,2025,2025-11-22T20:00:00+00:00,Granada CF,Cordoba,Oscar Naasei Oppong,1970-01-01T00:00:00
+141,2025,2025-11-22T20:00:00+00:00,Granada CF,Cordoba,Daniel Albuera Fernández,1970-01-01T00:00:00
+141,2025,2025-11-23T13:00:00+00:00,Deportivo La Coruna,AD Ceuta FC,Daniel Barcia Rama,1970-01-01T00:00:00
+141,2025,2025-11-23T13:00:00+00:00,Deportivo La Coruna,AD Ceuta FC,Diego Villares Yáñez,1970-01-01T00:00:00
+141,2025,2025-11-23T15:15:00+00:00,Cadiz,Cultural Leonesa,Victor Wehbi Aznar Ussen,1970-01-01T00:00:00
+141,2025,2025-11-23T15:15:00+00:00,Cadiz,Cultural Leonesa,Álvaro Miguel García Pascual,1970-01-01T00:00:00
+141,2025,2025-11-23T15:15:00+00:00,Cadiz,Cultural Leonesa,Efe Ugiagbe Aghama,1970-01-01T00:00:00
+141,2025,2025-11-23T15:15:00+00:00,Cadiz,Cultural Leonesa,Rodrigo Suárez Marcos,1970-01-01T00:00:00
+141,2025,2025-11-23T15:15:00+00:00,Cadiz,Cultural Leonesa,Mamadou Selu Diallo Diallo,1970-01-01T00:00:00
+141,2025,2025-11-23T15:15:00+00:00,Huesca,Sporting Gijon,Diego Sánchez Pérez,1970-01-01T00:00:00
+141,2025,2025-11-23T17:30:00+00:00,Burgos,Racing Santander,Fernando Niño Rodriguez,1970-01-01T00:00:00
+141,2025,2025-11-23T17:30:00+00:00,Burgos,Racing Santander,Jorge Salinas Viadero,1970-01-01T00:00:00
+141,2025,2025-11-23T20:00:00+00:00,Malaga,Mirandes,Igor Nikić,1970-01-01T00:00:00
+141,2025,2025-11-23T20:00:00+00:00,Malaga,Mirandes,Rafel Bauzà Sureda,1970-01-01T00:00:00
+141,2025,2025-11-23T20:00:00+00:00,Malaga,Mirandes,Aarón Martin Luis,1970-01-01T00:00:00
 144,2021,2021-07-25T14:00:00+00:00,Club Brugge KV,AS Eupen,Konan N'Dri,1970-01-01T00:00:00
 144,2021,2021-07-31T18:45:00+00:00,AS Eupen,Anderlecht,Konan N'Dri,1970-01-01T00:00:00
 144,2021,2021-08-07T16:30:00+00:00,KV Mechelen,AS Eupen,Konan N'Dri,1970-01-01T00:00:00
@@ -14752,6 +15025,22 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 144,2025,2025-11-09T18:15:00+00:00,KV Mechelen,Union St. Gilloise,Ian Struyf,1970-01-01T00:00:00
 144,2025,2025-11-09T18:15:00+00:00,KV Mechelen,Union St. Gilloise,Kjell Scherpen,1970-01-01T00:00:00
 144,2025,2025-11-09T18:15:00+00:00,KV Mechelen,Union St. Gilloise,Giorgi Kavelashvili,1970-01-01T00:00:00
+144,2025,2025-11-21T19:45:00+00:00,Standard Liege,Zulte Waregem,Matthieu Luka Epolo,1970-01-01T00:00:00
+144,2025,2025-11-21T19:45:00+00:00,Standard Liege,Zulte Waregem,Anosike Ementa,1970-01-01T00:00:00
+144,2025,2025-11-22T15:00:00+00:00,Union St. Gilloise,Cercle Brugge,Kjell Scherpen,1970-01-01T00:00:00
+144,2025,2025-11-22T15:00:00+00:00,Union St. Gilloise,Cercle Brugge,Giorgi Kavelashvili,1970-01-01T00:00:00
+144,2025,2025-11-22T15:00:00+00:00,Union St. Gilloise,Cercle Brugge,Ibrahim Diakité,1970-01-01T00:00:00
+144,2025,2025-11-22T17:15:00+00:00,KVC Westerlo,Gent,Lucas Mbamba-Muanda,2006-08-12T00:00:00
+144,2025,2025-11-22T19:45:00+00:00,Club Brugge KV,Charleroi,Mohamed Kone,1970-01-01T00:00:00
+144,2025,2025-11-22T19:45:00+00:00,Club Brugge KV,Charleroi,Check keita,1970-01-01T00:00:00
+144,2025,2025-11-23T12:30:00+00:00,Genk,KV Mechelen,Ignacio Mirás Blanco,1970-01-01T00:00:00
+144,2025,2025-11-23T12:30:00+00:00,Genk,KV Mechelen,Ian Struyf,1970-01-01T00:00:00
+144,2025,2025-11-23T15:00:00+00:00,Antwerp,Dender,Rosen Bozhinov,1970-01-01T00:00:00
+144,2025,2025-11-23T15:00:00+00:00,Antwerp,Dender,Mauricio Benítez,1970-01-01T00:00:00
+144,2025,2025-11-23T15:00:00+00:00,Antwerp,Dender,Marwan Al Sahafi,1970-01-01T00:00:00
+144,2025,2025-11-23T17:30:00+00:00,RAAL La Louvière,Anderlecht,Djibril Lamego,1970-01-01T00:00:00
+144,2025,2025-11-23T17:30:00+00:00,RAAL La Louvière,Anderlecht,Oucasse Mendy,1970-01-01T00:00:00
+144,2025,2025-11-23T18:15:00+00:00,OH Leuven,St. Truiden,Leo Brian Kokubo,1970-01-01T00:00:00
 179,2021,2021-07-31T14:00:00+00:00,Dundee,ST Mirren,Jay Henderson,1970-01-01T00:00:00
 179,2021,2021-08-29T14:00:00+00:00,Aberdeen,Ross County,Austin Samuels,1970-01-01T00:00:00
 179,2021,2021-09-18T14:00:00+00:00,Aberdeen,ST Johnstone,Austin Samuels,1970-01-01T00:00:00
@@ -15289,6 +15578,18 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 179,2025,2025-11-09T15:00:00+00:00,Heart Of Midlothian,Dundee Utd,Harry Milne,1970-01-01T00:00:00
 179,2025,2025-11-09T15:00:00+00:00,Heart Of Midlothian,Dundee Utd,Luca Stephenson,1970-01-01T00:00:00
 179,2025,2025-11-09T16:00:00+00:00,Celtic,Kilmarnock,Eddie Beech,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Hibernian,Dundee,Ethan Ingram,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Hibernian,Dundee,Tony Yogane,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Hibernian,Dundee,Cameron Congreve,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Kilmarnock,Motherwell,Elliot Ward,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Kilmarnock,Motherwell,Ibrahim Sa’id,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Rangers,Livingston,Igmane Hamza,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Rangers,Livingston,Mahamadou Susoho,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Dundee Utd,Falkirk,Luca Stephenson,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Dundee Utd,Falkirk,Filip Lissah,1970-01-01T00:00:00
+179,2025,2025-11-22T15:00:00+00:00,Dundee Utd,Falkirk,Ethan Williams,1970-01-01T00:00:00
+179,2025,2025-11-22T20:00:00+00:00,ST Mirren,Celtic,Miguel Freckleton,1970-01-01T00:00:00
+179,2025,2025-11-23T15:00:00+00:00,Aberdeen,Heart Of Midlothian,Harry Milne,1970-01-01T00:00:00
 188,2021,2022-03-26T06:05:00+00:00,Wellington Phoenix,Perth Glory,Joshua Anasmo,1970-01-01T00:00:00
 188,2021,2022-04-02T08:45:00+00:00,Adelaide United,Melbourne Victory,Steven Hall,1970-01-01T00:00:00
 188,2021,2022-04-13T09:05:00+00:00,Perth Glory,Wellington Phoenix,Chris Donnell,1970-01-01T00:00:00
@@ -15995,13 +16296,43 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 188,2025,2025-11-09T06:00:00+00:00,Brisbane Roar,Newcastle Jets,Justin Vidic,1970-01-01T00:00:00
 188,2025,2025-11-09T06:00:00+00:00,Brisbane Roar,Newcastle Jets,Ben Gibson,1970-01-01T00:00:00
 188,2025,2025-11-09T06:00:00+00:00,Brisbane Roar,Newcastle Jets,Will Dobson,1970-01-01T00:00:00
-203,2024,2024-08-10T18:45:00+00:00,Fenerbahce,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2024-08-17T18:45:00+00:00,Adana Demirspor,Rizespor,Deniz Donmezer,2008-09-21T00:00:00
+188,2025,2025-11-21T08:35:00+00:00,Adelaide United,Melbourne City,Panagiotis Kikianis,1970-01-01T00:00:00
+188,2025,2025-11-21T08:35:00+00:00,Adelaide United,Melbourne City,Luke Duzel,1970-01-01T00:00:00
+188,2025,2025-11-21T08:35:00+00:00,Adelaide United,Melbourne City,Patrick Beach,1970-01-01T00:00:00
+188,2025,2025-11-21T08:35:00+00:00,Adelaide United,Melbourne City,Besian Kutleshi,1970-01-01T00:00:00
+188,2025,2025-11-21T08:35:00+00:00,Adelaide United,Melbourne City,Liam Bonetig,1970-01-01T00:00:00
+188,2025,2025-11-21T08:35:00+00:00,Adelaide United,Melbourne City,Zane Schreiber,1970-01-01T00:00:00
+188,2025,2025-11-22T04:00:00+00:00,Wellington Phoenix,Macarthur,Isaac Hughes,1970-01-01T00:00:00
+188,2025,2025-11-22T04:00:00+00:00,Wellington Phoenix,Macarthur,Ifeanyi Eze,1970-01-01T00:00:00
+188,2025,2025-11-22T04:00:00+00:00,Wellington Phoenix,Macarthur,Harry Politidis,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Aidan Simmons,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Alex Bonetig,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Awan Lual,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Bailey Brandtman,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Nathan Paull,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Bailey Brandtman,1970-01-01T00:00:00
+188,2025,2025-11-22T06:00:00+00:00,Western Sydney Wanderers,Central Coast Mariners,Nicholas Duarte,1970-01-01T00:00:00
+188,2025,2025-11-22T08:35:00+00:00,Sydney,Melbourne Victory,Rhys Youlley,1970-01-01T00:00:00
+188,2025,2025-11-22T08:35:00+00:00,Sydney,Melbourne Victory,Paul Michael Junior Okon-Engstler,1970-01-01T00:00:00
+188,2025,2025-11-22T08:35:00+00:00,Sydney,Melbourne Victory,Joshua Inserra,1970-01-01T00:00:00
+188,2025,2025-11-22T08:35:00+00:00,Sydney,Melbourne Victory,Keegan Jelacic,1970-01-01T00:00:00
+188,2025,2025-11-22T08:35:00+00:00,Sydney,Melbourne Victory,Jordi Valadon,1970-01-01T00:00:00
+188,2025,2025-11-22T08:35:00+00:00,Sydney,Melbourne Victory,Jing Reec,1970-01-01T00:00:00
+188,2025,2025-11-23T02:00:00+00:00,Auckland,Brisbane Roar,Jake Girdwood-Reich,1970-01-01T00:00:00
+188,2025,2025-11-23T02:00:00+00:00,Auckland,Brisbane Roar,Lucas Herrington,1970-01-01T00:00:00
+188,2025,2025-11-23T02:00:00+00:00,Auckland,Brisbane Roar,Samuel Klein,1970-01-01T00:00:00
+188,2025,2025-11-23T02:00:00+00:00,Auckland,Brisbane Roar,Justin Vidic,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Joel Bertolissio,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Joel Bertolissio,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Will Dobson,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Lachlam Rose,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Andriano Lebib,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Charbel Shamoon,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Sebastian Despotovski,1970-01-01T00:00:00
+188,2025,2025-11-23T06:00:00+00:00,Newcastle Jets,Perth Glory,Adam Bugarija,1970-01-01T00:00:00
 203,2024,2024-08-19T18:00:00+00:00,Eyüpspor,BB Bodrumspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
 203,2024,2024-08-24T18:45:00+00:00,BB Bodrumspor,Konyaspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
-203,2024,2024-08-25T16:15:00+00:00,Kasimpasa,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
 203,2024,2024-08-31T18:45:00+00:00,Goztepe,BB Bodrumspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
-203,2024,2024-08-31T18:45:00+00:00,Adana Demirspor,Galatasaray,Deniz Donmezer,2008-09-21T00:00:00
 203,2024,2024-09-14T17:00:00+00:00,BB Bodrumspor,Istanbul Basaksehir,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
 203,2024,2024-09-20T17:00:00+00:00,Hatayspor,BB Bodrumspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
 203,2024,2024-09-29T16:00:00+00:00,BB Bodrumspor,Adana Demirspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
@@ -16011,22 +16342,8 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 203,2024,2024-11-03T13:00:00+00:00,BB Bodrumspor,Alanyaspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
 203,2024,2024-11-23T16:00:00+00:00,BB Bodrumspor,Galatasaray,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
 203,2024,2024-11-30T10:30:00+00:00,Samsunspor,BB Bodrumspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
-203,2024,2024-12-07T13:00:00+00:00,Goztepe,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2024-12-16T16:00:00+00:00,Adana Demirspor,Besiktas,Deniz Donmezer,2008-09-21T00:00:00
 203,2024,2024-12-22T16:00:00+00:00,Trabzonspor,BB Bodrumspor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
-203,2024,2024-12-23T17:00:00+00:00,Hatayspor,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-01-04T10:30:00+00:00,Adana Demirspor,Istanbul Basaksehir,Deniz Donmezer,2008-09-21T00:00:00
 203,2024,2025-01-05T13:00:00+00:00,BB Bodrumspor,Kayserispor,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
-203,2024,2025-01-12T16:00:00+00:00,Gazişehir Gaziantep,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-01-19T16:00:00+00:00,Adana Demirspor,Fenerbahce,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-01-26T10:30:00+00:00,Rizespor,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-02-02T10:30:00+00:00,Adana Demirspor,Kasimpasa,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-02-09T16:00:00+00:00,Galatasaray,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-02-14T17:00:00+00:00,Adana Demirspor,Antalyaspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-05-04T16:00:00+00:00,Adana Demirspor,Goztepe,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-05-11T16:00:00+00:00,Besiktas,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-05-17T16:00:00+00:00,Adana Demirspor,Hatayspor,Deniz Donmezer,2008-09-21T00:00:00
-203,2024,2025-05-25T16:00:00+00:00,Istanbul Basaksehir,Adana Demirspor,Deniz Donmezer,2008-09-21T00:00:00
 203,2024,2025-05-30T17:00:00+00:00,Antalyaspor,Trabzonspor,Hasan Yakub İlçin,2009-03-24T00:00:00
 203,2024,2025-06-01T16:00:00+00:00,BB Bodrumspor,Besiktas,Zdravko Minchev Dimitrov,1970-01-01T00:00:00
 203,2025,2025-08-10T16:00:00+00:00,Rizespor,Goztepe,Ibrahim Olawoyin,1970-01-01T00:00:00
@@ -16084,6 +16401,9 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 203,2025,2025-11-08T17:00:00+00:00,Kasimpasa,Goztepe,Adam Arous,1970-01-01T00:00:00
 203,2025,2025-11-08T17:00:00+00:00,Kasimpasa,Goztepe,Junior Olaitan,1970-01-01T00:00:00
 203,2025,2025-11-09T11:30:00+00:00,Fatih Karagümrük,Konyaspor,Marius Tresor Doh,1970-01-01T00:00:00
+203,2025,2025-11-22T14:00:00+00:00,Eyüpspor,Fatih Karagümrük,Marius Tresor Doh,1970-01-01T00:00:00
+203,2025,2025-11-23T14:00:00+00:00,Alanyaspor,Kasimpasa,Adam Arous,1970-01-01T00:00:00
+203,2025,2025-11-23T17:00:00+00:00,Rizespor,Fenerbahce,Jesuran Rak-Sakyi,1970-01-01T00:00:00
 207,2021,2021-12-19T15:30:00+00:00,FC Sion,Lausanne,Archie Brown,1970-01-01T00:00:00
 207,2021,2022-01-30T13:15:00+00:00,Lausanne,FC ST. Gallen,Archie Brown,1970-01-01T00:00:00
 207,2021,2022-02-05T17:00:00+00:00,Servette FC,Lausanne,Archie Brown,1970-01-01T00:00:00
@@ -16254,6 +16574,12 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 207,2025,2025-11-09T15:30:00+00:00,FC ST. Gallen,BSC Young Boys,Dominik Pech,1970-01-01T00:00:00
 207,2025,2025-11-09T15:30:00+00:00,Lausanne,FC Sion,Gabriel Sigua,1970-01-01T00:00:00
 207,2025,2025-11-09T15:30:00+00:00,Lausanne,FC Sion,Sekou Fofana,1970-01-01T00:00:00
+207,2025,2025-11-22T17:00:00+00:00,FC Luzern,Servette FC,Lucas Manuel Silva Ferreira,1970-01-01T00:00:00
+207,2025,2025-11-22T17:00:00+00:00,FC Luzern,Servette FC,Lilian Njoh,1970-01-01T00:00:00
+207,2025,2025-11-23T13:00:00+00:00,FC Sion,FC Zurich,David Vujevic,1970-01-01T00:00:00
+207,2025,2025-11-23T13:00:00+00:00,FC Sion,FC Zurich,Philippe Paulin Keny,1970-01-01T00:00:00
+207,2025,2025-11-23T15:30:00+00:00,FC ST. Gallen,Lausanne,Cyrill May,1970-01-01T00:00:00
+207,2025,2025-11-23T15:30:00+00:00,FC ST. Gallen,Lausanne,Sekou Fofana,1970-01-01T00:00:00
 218,2021,2021-07-24T15:00:00+00:00,Rapid Vienna,TSV Hartberg,Rene Swete,1990-06-11T00:00:00
 218,2021,2021-07-31T15:00:00+00:00,TSV Hartberg,SCR Altach,Rene Swete,1990-06-11T00:00:00
 218,2021,2021-08-22T15:00:00+00:00,Lask Linz,TSV Hartberg,Rene Swete,1990-06-11T00:00:00
@@ -16526,6 +16852,10 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 218,2025,2025-11-08T16:00:00+00:00,Wolfsberger AC,TSV Hartberg,Chibuike Nwaiwu,1970-01-01T00:00:00
 218,2025,2025-11-08T16:00:00+00:00,Ried,FC BW Linz,Viktor Baier,1970-01-01T00:00:00
 218,2025,2025-11-09T13:30:00+00:00,Lask Linz,SCR Altach,Mohamed Ouédraogo,1970-01-01T00:00:00
+218,2025,2025-11-22T16:00:00+00:00,SCR Altach,Wolfsberger AC,Mohamed Ouédraogo,1970-01-01T00:00:00
+218,2025,2025-11-22T16:00:00+00:00,SCR Altach,Wolfsberger AC,Chibuike Nwaiwu,1970-01-01T00:00:00
+218,2025,2025-11-22T16:00:00+00:00,FC BW Linz,Austria Vienna,Viktor Baier,1970-01-01T00:00:00
+218,2025,2025-11-23T16:00:00+00:00,Rapid Vienna,Grazer AK,Ramiz Harakaté,1970-01-01T00:00:00
 307,2021,2021-08-12T16:15:00+00:00,Abha,Al Shabab,Moteb Al-Harbi,1970-01-01T00:00:00
 307,2021,2021-08-12T16:20:00+00:00,Al-Raed,Al-Fateh,Khalid Abdulaziz Al-Khathlan,1970-01-01T00:00:00
 307,2021,2021-08-12T16:20:00+00:00,Al-Raed,Al-Fateh,Mohammed Al Doseri,1970-01-01T00:00:00
@@ -17937,6 +18267,22 @@ comp_id,season,match_datetime,home_team,away_team,fs_known_as,fs_birthday
 307,2025,2025-11-08T14:45:00+00:00,Al Shabab,Al-Ettifaq,Mohammed Al Shwirekh,1970-01-01T00:00:00
 307,2025,2025-11-08T14:45:00+00:00,Al Shabab,Al-Ettifaq,Faisal Al Sibyani,1970-01-01T00:00:00
 307,2025,2025-11-08T14:45:00+00:00,Al Shabab,Al-Ettifaq,Mashel Ali,1970-01-01T00:00:00
+307,2025,2025-11-21T14:50:00+00:00,Al Kholood,Al-Hazm,Jassim Al Ashban,1970-01-01T00:00:00
+307,2025,2025-11-21T14:50:00+00:00,Al Kholood,Al-Hazm,Abdurahman Al Dakheel,1970-01-01T00:00:00
+307,2025,2025-11-21T14:50:00+00:00,Al Kholood,Al-Hazm,Elias Mokwana,1970-01-01T00:00:00
+307,2025,2025-11-21T15:15:00+00:00,Al-Ittihad FC,Al Riyadh,Mohammed Alkhaibari,1970-01-01T00:00:00
+307,2025,2025-11-21T15:15:00+00:00,Al-Ittihad FC,Al Riyadh,Mohammed Alkhaibari,1970-01-01T00:00:00
+307,2025,2025-11-21T15:15:00+00:00,Al-Ittihad FC,Al Riyadh,Jan Petek,1970-01-01T00:00:00
+307,2025,2025-11-22T13:40:00+00:00,Damac,Al Najma,Naser Al Ghamdi,1970-01-01T00:00:00
+307,2025,2025-11-22T13:40:00+00:00,Damac,Al Najma,Abdullah Al Qahtani,1970-01-01T00:00:00
+307,2025,2025-11-22T14:25:00+00:00,Al-Ettifaq,Al-Fayha,Mashel Ali,1970-01-01T00:00:00
+307,2025,2025-11-22T14:40:00+00:00,Al-Hilal Saudi FC,Al-Fateh,Saeed Baattia,1970-01-01T00:00:00
+307,2025,2025-11-23T15:05:00+00:00,Al Okhdood,Al Shabab,Mateo Borrell,1970-01-01T00:00:00
+307,2025,2025-11-23T15:05:00+00:00,Al Okhdood,Al Shabab,Mohammed Al Shwirekh,1970-01-01T00:00:00
+307,2025,2025-11-23T15:05:00+00:00,Al Okhdood,Al Shabab,Faisal Al Sibyani,1970-01-01T00:00:00
+307,2025,2025-11-23T17:30:00+00:00,Al Taawon,NEOM,Abdulaziz Noor,1970-01-01T00:00:00
+307,2025,2025-11-23T17:30:00+00:00,Al-Nassr,Al Khaleej Saihat,Nawaf Alaqidi,1970-01-01T00:00:00
+307,2025,2025-11-23T17:30:00+00:00,Al-Nassr,Al Khaleej Saihat,Ayman Yahya,1970-01-01T00:00:00
 323,2021,2021-11-19T14:00:00+00:00,ATK Mohun Bagan,Kerala Blasters,Sahal Abdul Samad,1970-01-01T00:00:00
 323,2021,2021-11-20T14:00:00+00:00,Bengaluru,NorthEast United,Roshan Singh,1970-01-01T00:00:00
 323,2021,2021-11-20T14:00:00+00:00,Bengaluru,NorthEast United,Roshan Singh,1970-01-01T00:00:00
