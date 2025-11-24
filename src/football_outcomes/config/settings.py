@@ -23,7 +23,7 @@ ALL_LOAD = False
 
 TRAINED_MODELS_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\models\\checkpoints"
 
-GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 11, 16)  # YYYY-MM-DD
+GET_XG_IF_MATCH_DATE_NEWER_THAN = datetime(2025, 11, 23)  # YYYY-MM-DD
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
@@ -556,8 +556,8 @@ PROCESSED_DIR = DATA_DIR / "processed"
 AVG_TEAM_STRENGTHS = PROCESSED_DIR / "avg_team_strengths.csv"
 RECORDS_CSV = PROCESSED_DIR / "records.csv"
 
-M_LOAD_CSV = PROCESSED_DIR / "m_25-11-17_full.csv"
-M_STORE_CSV = PROCESSED_DIR / "m_25-11-17_full.csv"
+M_LOAD_CSV = PROCESSED_DIR / "m_25-11-23_full.csv"
+M_STORE_CSV = PROCESSED_DIR / "m_25-11-23_full.csv"
 ALL_COMPS_CSV = PROCESSED_DIR / "all-comps_BEL_25-10-16.csv"
 ALL_MATCHES_CSV = PROCESSED_DIR / "all-matches_BEL_25-10-16.csv"
 ALL_ROUNDS_CSV = PROCESSED_DIR / "all-rounds_BEL_25-10-16.csv"
