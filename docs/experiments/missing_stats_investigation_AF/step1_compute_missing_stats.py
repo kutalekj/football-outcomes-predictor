@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 
 CSV_PATH = "m_25-11-23_full.csv"
@@ -152,8 +154,59 @@ def get_comp_display_name(comp_id: int) -> str:
     return info[0]
 
 
+def print_data_summary(df: pd.DataFrame) -> None:
+    df["round_group"] = df.apply(
+        lambda row: (row["country"], row["comp_id"], row["season"]),
+        axis=1,
+    )
+
+    matches = {}
+    min_date = datetime.date(1970, 1, 1)
+    max_date = datetime.date(2025, 12, 2)
+    for index, row in df.iterrows():
+        if row["round_group"] not in matches:
+            matches[row["round_group"]] = (0, max_date, min_date)
+
+        count, earliest, latest = matches[row["round_group"]]
+        count += 1
+
+        # row_date = datetime.datetime.strptime(row["datetime"], '%Y-%m-%d %H:%M').date()
+        row_date = datetime.datetime.fromisoformat(row["datetime"]).date()
+        if row_date < earliest:
+            earliest = row_date
+        if row_date > latest:
+            latest = row_date
+
+        matches[row["round_group"]] = (count, earliest, latest)
+
+    # matches_sorted = sorted(matches, key=lambda x: (x[0], x[1], x[2]))
+
+    # Turkey Turkish Cup (2025):    117 matches (from 2025-01-08 00:00:00+00:00 to 2025-10-30 00:00:00+00:00)
+    out_list = []
+    for k, v in matches.items():
+        country, comp_id, season = k
+        num_matches, min_d, max_d = v
+
+        if country == "World":
+            country = "Europe"
+        out_line = (
+            f"{country} {str(comp_id)} ({str(season)}):\t\t{str(num_matches)} matches "
+            f"(from {str(min_d)} 00:00:00+00:00 to {str(max_d)} 00:00:00+00:00)"
+        )
+        out_list.append(out_line)
+
+    out_list.sort()
+
+    for line in out_list:
+        print(line)
+
+    pass
+
+
 def main():
     df = pd.read_csv(CSV_PATH)
+
+    print_data_summary(df)
 
     # keep only competitions that are in the color/name mapping
     valid_comp_ids = set(COMP_INFO.keys())
