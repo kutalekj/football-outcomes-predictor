@@ -34,7 +34,8 @@ def main(argv: list[str] | None = None) -> int:
     args, rest = parser.parse_known_args(argv)
 
     if args.command == "pipeline":
-        return _run_script("scripts/main_apifootball.py", rest)
+        # return _run_script("scripts/main_apifootball.py", rest)
+        return _run_script("scripts/main_footystats.py", rest)
 
     if args.command == "app":
         return _run_script("scripts/main_apifootball_app.py", rest)

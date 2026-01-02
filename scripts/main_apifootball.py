@@ -201,8 +201,8 @@ class FSPlayer:
 
 
 BASE_DIR = Path(__file__).resolve().parent
-LOAD_SNAPSHOT_PATH = BASE_DIR / "cache" / "fs_full_25-01-01.pkl"
-SAVE_SNAPSHOT_PATH = BASE_DIR / "cache" / "fs_full_25-01-01_v2.pkl"
+LOAD_SNAPSHOT_PATH = BASE_DIR / "cache" / "fs_full_25-01-01_v3.pkl"
+SAVE_SNAPSHOT_PATH = BASE_DIR / "cache" / "fs_full_25-01-02.pkl"
 SNAPSHOT_VERSION = 1  # bump if you make incompatible changes
 
 
@@ -525,7 +525,8 @@ if cache is not None:
             "Germany 2. Bundesliga",
             "Saudi Arabia Professional League",
             "India Indian Super League",
-            "Australia A-League" "Austria Bundesliga",
+            "Australia A-League",
+            "Austria Bundesliga",
             "Spain La Liga",
             "Spain Segunda División",
             "Italy Serie A",
@@ -535,6 +536,28 @@ if cache is not None:
             "Denmark Superliga",
             "Portugal Liga NOS",
             "Switzerland Super League",
+            "Spain Copa del Rey",
+            "Scotland Scottish League Cup",
+            "Scotland Scottish Cup",
+            "Poland Polish Cup",
+            "Turkey Turkish Cup",
+            "Switzerland Swiss Cup",
+            "Saudi Arabia Kings Cup",
+            "Portugal Taça de Portugal",
+            "Portugal Portuguese League Cup",
+            "Netherlands KNVB Cup",
+            "Austria Austrian Cup",
+            "Europe UEFA Champions League",
+            "Europe UEFA Europa League",
+            "Europe UEFA Europa Conference League",
+            "Germany DFB Pokal",
+            "Italy Coppa Italia",
+            "France Coupe de France",
+            "England FA Cup",
+            "England EFL Trophy",
+            "Denmark Danish Cup",
+            "Belgium Belgian Cup",
+            "Australia FFA Cup",
         ]
     ]
     league_seasons = []
@@ -894,11 +917,12 @@ if cache is not None:
             all_matches.append(new_match)
             existing_match_ids.add(new_match.id)
             id_to_match[m["id"]] = new_match
-            time.sleep(2.15)
+            time.sleep(2.5)
         print(
             f"All {str(len(matches_data))} matches [{new_comp_season.name}, "
             f"{str(new_comp_season.season)}] were successfully retrieved."
         )
+        time.sleep(30.0)
 
     bundle = FSDataBundle(
         comp_seasons=all_comp_seasons,
