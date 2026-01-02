@@ -10,28 +10,6 @@ from football_outcomes.data.fs_models import FSDataBundle
 SNAPSHOT_VERSION = 1
 
 
-class _RenamingUnpickler(pickle.Unpickler):
-    """
-    Allows loading old pickles created when classes lived in __main__ (executed script),
-    by remapping them to the canonical module path.
-
-    Add more mappings if you ever saved snapshots from other script modules.
-    """
-
-    RENAMES = {
-        # Old "everything defined in the executed script"
-        ("__main__", "FSDataBundle"): ("football_outcomes.data.fs_models", "FSDataBundle"),
-        ("__main__", "FSCompSeason"): ("football_outcomes.data.fs_models", "FSCompSeason"),
-        ("__main__", "FSTeam"): ("football_outcomes.data.fs_models", "FSTeam"),
-        ("__main__", "FSPlayer"): ("football_outcomes.data.fs_models", "FSPlayer"),
-        ("__main__", "FSMatch"): ("football_outcomes.data.fs_models", "FSMatch"),
-    }
-
-    def find_class(self, module: str, name: str):
-        module, name = self.RENAMES.get((module, name), (module, name))
-        return super().find_class(module, name)
-
-
 def load_snapshot(path: Path = LOAD_SNAPSHOT_PATH) -> FSDataBundle:
     with path.open("rb") as f:
         bundle: FSDataBundle = pickle.load(f)

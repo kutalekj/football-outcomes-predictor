@@ -8,8 +8,8 @@ LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-02.pkl"
 SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-02_v2.pkl"
 
 ALL_LOAD = True
-ALL_GET_NEW = True
-ALL_STORE = True
+ALL_GET_NEW = False
+ALL_STORE = False
 
 COUNTRIES = [
     "Belgium",

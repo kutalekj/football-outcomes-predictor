@@ -11,10 +11,6 @@ from football_outcomes.config import settings
 class FSDataBundle:
     """
     Snapshot container.
-
-    Backward compatibility:
-    - Old snapshots used attribute name: fs_leagues_list
-    - New code uses: leagues_list
     """
 
     comp_seasons: Dict[int, "FSCompSeason"] = field(default_factory=dict)
@@ -25,19 +21,7 @@ class FSDataBundle:
     leagues_list: Any = None
     meta: Dict[str, Any] = field(default_factory=dict)
 
-    # ---- Backward compatibility helpers ----
-    @property
-    def fs_leagues_list(self) -> Any:
-        # legacy alias
-        return self.leagues_list
-
-    @fs_leagues_list.setter
-    def fs_leagues_list(self, value: Any) -> None:
-        self.leagues_list = value
-
     def __setstate__(self, state: dict) -> None:  # called by pickle on load (if present)
-        if "leagues_list" not in state and "fs_leagues_list" in state:
-            state["leagues_list"] = state["fs_leagues_list"]  # rename handle
         self.__dict__.update(state)
 
 
