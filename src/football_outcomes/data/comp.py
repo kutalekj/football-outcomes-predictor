@@ -266,7 +266,7 @@ class Comp:
 
     @staticmethod
     def get_fs_leagues_list():
-        global_instance = Global().get_instance()
+        global_instance = Global.get_instance()
 
         leagues_list_request_string = settings.FS_HOST + "/league-list?key=" + settings.FS_KEY
         res = requests.get(leagues_list_request_string)
@@ -278,7 +278,7 @@ class Comp:
         if comp_country == "Saudi-Arabia":
             comp_country = "Saudi Arabia"
 
-        global_instance = Global().get_instance()
+        global_instance = Global.get_instance()
         league_list = global_instance.fs_leagues_list
 
         if league_list["pager"]["max_page"] != 1:

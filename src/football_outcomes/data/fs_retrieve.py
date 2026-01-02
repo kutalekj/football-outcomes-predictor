@@ -16,7 +16,7 @@ from football_outcomes.data.fs_models import (
 
 
 def fill_globals_with_cache(cache: FSDataBundle, update_leagues_list: bool = False) -> None:
-    global_instance = Global()
+    global_instance = Global.get_instance()
     global_instance.all_comp_seasons = cache.comp_seasons
     global_instance.all_teams = cache.teams
     global_instance.all_players = cache.players
@@ -37,7 +37,7 @@ def fill_globals_with_cache(cache: FSDataBundle, update_leagues_list: bool = Fal
 
 
 def retrieve_new_data() -> FSDataBundle:
-    global_instance = Global()
+    global_instance = Global.get_instance()
 
     id_to_match: dict[int, FSMatch] = {}
     for match in global_instance.all_matches:

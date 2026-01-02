@@ -179,7 +179,7 @@ class SeasonCompTable:
 
     @staticmethod
     def get_fs_player_rosters_per_regular_comp_season_team():
-        global_instance = Global().get_instance()
+        global_instance = Global.get_instance()
         for comp in global_instance.all_comps:
             if len(comp.regular_round_keywords) == 0:
                 continue  # skip for irregulars
