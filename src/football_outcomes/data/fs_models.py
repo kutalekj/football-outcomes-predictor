@@ -155,6 +155,18 @@ class FSCompSeason:
 
         return sorted(self.team_stats.keys(), key=key, reverse=True)
 
+    def _sorted_team_ids_subset(self, team_ids):
+        self._ensure_table()
+        self._recompute_avg_points()
+
+        def key(tid: int):
+            s = self.team_stats[tid]
+            gd = s["goals_for"] - s["goals_against"]
+            return s["avg_points_per_game"], gd, s["goals_for"], -tid
+
+        team_ids = [tid for tid in team_ids if tid in self.team_stats]
+        return sorted(team_ids, key=key, reverse=True)
+
     @staticmethod
     def _rank_to_position01(rank_1based: int, n_teams: int) -> float:
         """Best team => 1.0, worst => 0.0 (unlike the old 1 - pos/len behavior)."""
@@ -192,6 +204,14 @@ class FSCompSeason:
             key=self._match_time_key,
         )
 
+        # Last match time per team (to determine active teams at a given moment)
+        last_key_by_team = {}
+        for m in matches_sorted:
+            if m.home_team is not None:
+                last_key_by_team[m.home_team.id] = self._match_time_key(m)
+            if m.away_team is not None:
+                last_key_by_team[m.away_team.id] = self._match_time_key(m)
+
         self._pre_match_positions = {}
 
         i = 0
@@ -206,14 +226,18 @@ class FSCompSeason:
                 batch.append(matches_sorted[i])
                 i += 1
 
-            # Positions before the batch
-            ordered = self._sorted_team_ids()
+            # Active teams (those whose last match is >= current batch key)
+            batch_key = (dt_i, hr_i, -1)
+            active_team_ids = [tid for tid, last_key in last_key_by_team.items() if last_key >= batch_key]
+
+            # Rank only active teams
+            ordered = self._sorted_team_ids_subset(active_team_ids)
             n = len(ordered)
             rank_by_team = {tid: r for r, tid in enumerate(ordered, start=1)}
 
             for m in batch:
                 if m.home_team is None or m.away_team is None:
-                    raise ValueError("Precomputing positions failed: Match contains a None team.")
+                    continue
                 hid = m.home_team.id
                 aid = m.away_team.id
                 self._pre_match_positions[m.id] = {
@@ -221,7 +245,7 @@ class FSCompSeason:
                     aid: self._rank_to_position01(rank_by_team.get(aid, n), n),
                 }
 
-            # apply batch
+            # Apply results
             for m in batch:
                 self._apply_match_to_table(m)
 
