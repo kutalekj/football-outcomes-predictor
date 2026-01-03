@@ -47,7 +47,8 @@ def retrieve_new_data() -> FSDataBundle:
     print(f"{str(len(global_instance.all_matches))} matches found after dropping duplicates.")
 
     comp_seasons = [x for x in global_instance.leagues_list if x["country"] in sett.COUNTRIES]
-    leagues = [x for x in comp_seasons if x["name"] in sett.COMPS_LEAGUE + sett.COMPS_CUP + sett.COMPS_EUROPE]
+    leagues = [x for x in comp_seasons if x["name"] in sett.COMPS_QUICK_TEST]
+    # sett.COMPS_LEAGUE + sett.COMPS_CUP + sett.COMPS_EUROPE]
     league_seasons = []
     for league in leagues:
         league_seasons += [x for x in league["season"] if x["year"] >= 20212022]

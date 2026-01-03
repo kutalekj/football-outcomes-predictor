@@ -4,7 +4,11 @@ import http.client
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from football_outcomes.config import settings
+from football_outcomes.config import fs_settings as sett
+
+
+def _conn_host() -> str:
+    return sett.FS_HOST.replace("https://", "").replace("http://", "")
 
 
 @dataclass
@@ -46,7 +50,7 @@ class FSCompSeason:
         self._pre_match_positions: Dict[int, Dict[int, float]] = {}
         self._table_initialized: bool = False
 
-        self.conn = http.client.HTTPSConnection(settings.HOST)  # transient (not pickled)
+        self.conn = http.client.HTTPSConnection(_conn_host())  # transient (not pickled)
 
     def __getstate__(self) -> dict:
         state = self.__dict__.copy()
@@ -55,7 +59,7 @@ class FSCompSeason:
 
     def __setstate__(self, state: dict) -> None:
         self.__dict__.update(state)
-        self.conn = http.client.HTTPSConnection(settings.HOST)
+        self.conn = http.client.HTTPSConnection(_conn_host())
 
     # --------------------------
     # League table functionality
