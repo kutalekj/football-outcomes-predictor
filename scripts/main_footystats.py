@@ -15,11 +15,12 @@ load_avg_team_strength()
 cache = try_load_snapshot()
 if sett.ALL_LOAD and cache is not None:
     fill_globals_with_cache(cache, update_leagues_list=False)
+    ut.ensure_comp_season_dates(force=False)
     ut.initialize_league_tables(precompute_positions=True, force_rebuild=False)
 
 if sett.ALL_GET_NEW:
     bundle = retrieve_new_data()
-    ut.populate_comp_season_first_last_dates()
+    ut.ensure_comp_season_dates(force=True)
     ut.initialize_league_tables(precompute_positions=True, force_rebuild=True)
 
 if sett.ALL_STORE:

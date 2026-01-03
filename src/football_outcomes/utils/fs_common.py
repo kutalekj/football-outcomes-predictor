@@ -145,6 +145,16 @@ def populate_comp_season_first_last_dates() -> None:
             )
 
 
+def ensure_comp_season_dates(force: bool = False) -> None:
+    global_instance = Global.get_instance()
+    if (not force) and all(
+        (cs.first_match_date is not None and cs.last_match_date is not None)
+        for cs in global_instance.all_comp_seasons.values()
+    ):
+        return
+    populate_comp_season_first_last_dates()
+
+
 def initialize_league_tables(precompute_positions: bool = True, force_rebuild: bool = False) -> None:
     global_instance = Global.get_instance()
 
