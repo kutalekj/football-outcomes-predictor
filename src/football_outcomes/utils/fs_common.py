@@ -170,7 +170,7 @@ def initialize_league_tables(precompute_positions: bool = True, force_rebuild: b
             continue
 
         cs.init_league_table()
-        if precompute_positions:
+        if precompute_positions:  # False when don’t need positions yet/plan to compute them later
             cs.build_pre_match_positions_cache()
 
     print("[tables] Done.")

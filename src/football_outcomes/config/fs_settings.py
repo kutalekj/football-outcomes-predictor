@@ -20,6 +20,9 @@ ALL_STORE = False
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
 
+SOFIFA_CSV_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase6\\full"
+SOFIFA_FILENAME_DATE_FORMAT = "%Y-%m-%d"  # e.g. 2024-01-15.csv
+
 COUNTRIES = [
     "Belgium",
     "England",
