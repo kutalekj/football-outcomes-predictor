@@ -351,10 +351,14 @@ def retrieve_new_data() -> FSDataBundle:
             team_a_lineup = lineups.get("team_a", [])
             team_b_lineup = lineups.get("team_b", [])
             if not isinstance(team_a_lineup, list) or not isinstance(team_b_lineup, list):
-                print(f"Unexpected lineup structure [{new_comp_season.name}, {new_match.season}]. Skipping match...")
+                print(
+                    f"Unexpected lineup structure [{new_comp_season.name}, {new_match.season}]. " f"Skipping match..."
+                )
                 continue
             if not all(isinstance(p.get("player_id"), int) for p in (team_a_lineup + team_b_lineup)):
-                print(f"Found a non-integer player ID [{new_comp_season.name}, {new_match.season}]. Skipping match...")
+                print(
+                    f"Found a non-integer player ID [{new_comp_season.name}, {new_match.season}]. " f"Skipping match..."
+                )
                 continue
             home_lineup_player_ids = [x["player_id"] for x in team_a_lineup]
             for p_id in home_lineup_player_ids:

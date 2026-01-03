@@ -36,6 +36,8 @@ class FSCompSeason:
         self.division: Optional[int] = None
         self.total_game_week: Optional[int] = None
         self.matches: List["FSMatch"] = []
+        self.first_match_date = None
+        self.last_match_date = None
 
         self.conn = http.client.HTTPSConnection(settings.HOST)  # transient (not pickled)
 

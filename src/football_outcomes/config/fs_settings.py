@@ -3,13 +3,22 @@ from pathlib import Path
 FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
 FS_HOST = "https://api.football-data-api.com"
 
+PROJECT_ROOT = Path(__file__).resolve().parents[3]  # .../football-outcomes-predictor
 BASE_SRC_DIR = Path(__file__).resolve().parents[1]  # .../src/football_outcomes
+
+DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
+PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
+
 LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-02.pkl"
 SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-02_v2.pkl"
+AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
 ALL_GET_NEW = False
 ALL_STORE = False
+
+FIRST_SEASON = 2021
+LAST_SEASON = 2025
 
 COUNTRIES = [
     "Belgium",
@@ -89,4 +98,41 @@ COMPS_QUICK_TEST = [
     "Europe UEFA Europa League",
     "Europe UEFA Europa Conference League",
     "Belgium Belgian Cup",
+]
+
+PLAYER_SKILLS = [
+    "crossing",
+    "finishing",
+    "heading_accuracy",
+    "short_passing",
+    "volleys",
+    "dribbling",
+    "curve",
+    "fk_accuracy",
+    "long_passing",
+    "ball_control",
+    "acceleration",
+    "sprint_speed",
+    "agility",
+    "reactions",
+    "balance",
+    "shot_power",
+    "jumping",
+    "stamina",
+    "strength",
+    "long_shots",
+    "aggression",
+    "interceptions",
+    "positioning",
+    "vision",
+    "penalties",
+    "composure",
+    "defensive_awareness",
+    "standing_tackle",
+    "sliding_tackle",
+    "gk_diving",
+    "gk_handling",
+    "gk_kicking",
+    "gk_positioning",
+    "gk_reflexes",
 ]

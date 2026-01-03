@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_io import save_snapshot, try_load_snapshot
+from football_outcomes.data.fs_io import load_avg_team_strength, save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
-from football_outcomes.utils import common as utils
+from football_outcomes.utils import fs_common as utils
 
 ut = utils
 global_instance = Global.get_instance()
 
+load_avg_team_strength()
 
 cache = try_load_snapshot()
 if sett.ALL_LOAD and cache is not None:
@@ -17,6 +18,7 @@ if sett.ALL_LOAD and cache is not None:
 
 if sett.ALL_GET_NEW:
     bundle = retrieve_new_data()
+    ut.populate_comp_season_first_last_dates()
 
 if sett.ALL_STORE:
     save_snapshot(

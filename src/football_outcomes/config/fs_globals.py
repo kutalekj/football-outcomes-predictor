@@ -12,6 +12,8 @@ class Global:
 
             cls._instance.leagues_list = []  # list[dict]
 
+            cls._instance.sf_avg_team_strength = {}
+
         return cls._instance
 
     @classmethod
