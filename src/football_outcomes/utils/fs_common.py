@@ -143,3 +143,24 @@ def populate_comp_season_first_last_dates() -> None:
                 if _season_key(estimated_end, start_month) >= _season_key(own_last, start_month)
                 else own_last
             )
+
+
+def initialize_league_tables(precompute_positions: bool = True, force_rebuild: bool = False) -> None:
+    global_instance = Global.get_instance()
+
+    league_seasons = [cs for cs in global_instance.all_comp_seasons.values() if cs.name in sett.COMPS_LEAGUE]
+
+    print(f"[tables] Initializing league tables for {len(league_seasons)} competition seasons...")
+
+    for cs in league_seasons:
+        already_ready = getattr(cs, "_table_initialized", False) and bool(getattr(cs, "team_stats", {}))
+        already_cached = bool(getattr(cs, "_pre_match_positions", {}))
+
+        if (not force_rebuild) and already_ready and ((not precompute_positions) or already_cached):
+            continue
+
+        cs.init_league_table()
+        if precompute_positions:
+            cs.build_pre_match_positions_cache()
+
+    print("[tables] Done.")
