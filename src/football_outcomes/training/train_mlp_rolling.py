@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import os
+import random
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import List
 
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.layers import (
     Concatenate,
@@ -19,6 +22,7 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.models import Model
 
+from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch
 from football_outcomes.training.fs_training_utils import (
     CatMaps,
@@ -40,6 +44,24 @@ class TrainConfig:
     strength_emb_dim: int = 24
 
     max_goals_class: int = 10
+    seed: int | None = 42
+
+
+def set_global_seed(seed: int) -> None:
+    """
+    Best-effort reproducibility for TF/Keras.
+    Note: full determinism on GPU may still vary unless you also enable deterministic ops.
+    """
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+
+    # Optional: more determinism (can be slower)
+    try:
+        tf.config.experimental.enable_op_determinism()
+    except Exception:
+        pass
 
 
 def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
@@ -88,6 +110,10 @@ def train_rolling(
     sample_feat = matches_sorted[0].features_before_match
     num_num = extract_numerical_features(sample_feat).shape[0]
 
+    if cfg.seed is not None:
+        set_global_seed(cfg.seed)
+        print(f"[seed] Using seed={cfg.seed}")
+
     model = build_model(
         num_num=num_num,
         num_teams=len(cat_maps.team_id_map),
@@ -97,7 +123,12 @@ def train_rolling(
 
     early = EarlyStopping(patience=2, restore_best_weights=True)
 
-    log_dir = os.path.join("logs", f"mlp_{cfg.mode}_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
+    # ---- TensorBoard logging (always under sett.DATA_DIR)
+    run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_root = Path(sett.DATA_DIR) / "tensorboard_logs"
+    log_root.mkdir(parents=True, exist_ok=True)
+
+    log_dir = str(log_root / f"mlp_{cfg.mode}_{run_stamp}")
     tb = TensorBoard(
         log_dir=log_dir,
         histogram_freq=1,
