@@ -4,8 +4,6 @@ import http.client
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-import numpy as np
-
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 
@@ -425,6 +423,7 @@ class FSMatch:
     def calculate_match_features(self, team_index_league, team_index_all) -> FSMatchFeatures:
         from football_outcomes.config import fs_settings as sett
         from football_outcomes.utils import fs_feature_utils as fu
+        from football_outcomes.utils.fs_player_skill_utils import calculate_team_strength
 
         if self.home_team is None or self.away_team is None:
             raise ValueError("Match missing teams.")
@@ -861,9 +860,9 @@ class FSMatch:
             fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.away_team.id, self, 20, "away")
         )
 
-        # ---- Team strength placeholders (requested)
-        mf.home_team_strength = []
-        mf.away_team_strength = []
+        # ---- Team strength calculation
+        mf.home_team_strength = calculate_team_strength(self, self.home_team.id)
+        mf.away_team_strength = calculate_team_strength(self, self.away_team.id)
 
         return mf
 
@@ -988,26 +987,148 @@ class FSMatchFeatures:
         self.away_team_strength = None
 
     @staticmethod
-    def match_features_to_vector(match_features):
-        # Convert the match_features object to a dictionary
-        features_dict = vars(match_features)
+    def match_features_to_vector(f: "FSMatchFeatures") -> List[float]:
+        """
+        Convert FSMatchFeatures into a flat float vector.
 
-        features = []
-        for key, value in features_dict.items():
-            # TODO: Pre-define list of categorical feature names
-            if key not in [
-                "home_team_id",
-                "away_team_id",
-                "comp_id",
-                "home_team_strength",
-                "away_team_strength",
-            ]:
-                features.append(value)
+        Notes:
+        - Excludes categorical IDs (home_team_id, away_team_id). Keeps comp_id and season as numeric scalars
+          (you can one-hot later).
+        - Includes team strength matrices by direct flattening (temporary until autoencoder embedding is added).
+        - Converts None to 0.0.
+        - Keeps a fixed, explicit ordering (do NOT change lightly once you train models).
+        """
 
-        features = np.array(features)
+        def v(x: Optional[float]) -> float:
+            return 0.0 if x is None else float(x)
 
-        # Append team strength vectors
-        # features = np.append(features, features_dict["home_team_strength"])
-        # features = np.append(features, features_dict["away_team_strength"])
+        vec: List[float] = []
 
-        return features
+        # --- Core categorical-as-numeric (stable small ints)
+        vec.append(float(f.comp_id))
+        vec.append(float(f.season))
+
+        # --- Cyclic time features
+        vec.append(v(f.hours_sin))
+        vec.append(v(f.hours_cos))
+        vec.append(v(f.month_sin))
+        vec.append(v(f.month_cos))
+
+        # --- Elo + season position
+        vec.append(v(f.home_elo))
+        vec.append(v(f.away_elo))
+        vec.append(v(f.match_position_in_season))
+
+        # --- xG features
+        vec.append(v(f.home_avg_xg_last_5))
+        vec.append(v(f.home_avg_xg_last_20))
+        vec.append(v(f.away_avg_xg_last_5))
+        vec.append(v(f.away_avg_xg_last_20))
+
+        vec.append(v(f.home_avg_xg_total_last_5))
+        vec.append(v(f.home_avg_xg_total_last_20))
+        vec.append(v(f.away_avg_xg_total_last_5))
+        vec.append(v(f.away_avg_xg_total_last_20))
+
+        vec.append(v(f.home_avg_pre_match_xg_last_5))
+        vec.append(v(f.home_avg_pre_match_xg_last_20))
+        vec.append(v(f.away_avg_pre_match_xg_last_5))
+        vec.append(v(f.away_avg_pre_match_xg_last_20))
+
+        vec.append(v(f.home_avg_pre_match_xg_total_last_5))
+        vec.append(v(f.home_avg_pre_match_xg_total_last_20))
+        vec.append(v(f.away_avg_pre_match_xg_total_last_5))
+        vec.append(v(f.away_avg_pre_match_xg_total_last_20))
+
+        # --- match load
+        vec.append(v(f.home_match_load_per_day_last_10_days))
+        vec.append(v(f.home_match_load_per_day_last_25_days))
+        vec.append(v(f.away_match_load_per_day_last_10_days))
+        vec.append(v(f.away_match_load_per_day_last_25_days))
+
+        # --- points/goals
+        vec.append(v(f.home_avg_points_last_5))
+        vec.append(v(f.home_avg_points_last_20))
+        vec.append(v(f.away_avg_points_last_5))
+        vec.append(v(f.away_avg_points_last_20))
+
+        vec.append(v(f.home_avg_goals_last_5))
+        vec.append(v(f.home_avg_goals_last_20))
+        vec.append(v(f.away_avg_goals_last_5))
+        vec.append(v(f.away_avg_goals_last_20))
+
+        # --- shots/corners/possession/fouls/attacks
+        vec.append(v(f.home_avg_shots_on_target_last_5))
+        vec.append(v(f.home_avg_shots_on_target_last_20))
+        vec.append(v(f.away_avg_shots_on_target_last_5))
+        vec.append(v(f.away_avg_shots_on_target_last_20))
+
+        vec.append(v(f.home_avg_shots_off_target_last_5))
+        vec.append(v(f.home_avg_shots_off_target_last_20))
+        vec.append(v(f.away_avg_shots_off_target_last_5))
+        vec.append(v(f.away_avg_shots_off_target_last_20))
+
+        vec.append(v(f.home_avg_total_shots_last_5))
+        vec.append(v(f.home_avg_total_shots_last_20))
+        vec.append(v(f.away_avg_total_shots_last_5))
+        vec.append(v(f.away_avg_total_shots_last_20))
+
+        vec.append(v(f.home_avg_corner_kicks_last_5))
+        vec.append(v(f.home_avg_corner_kicks_last_20))
+        vec.append(v(f.away_avg_corner_kicks_last_5))
+        vec.append(v(f.away_avg_corner_kicks_last_20))
+
+        vec.append(v(f.home_avg_ball_possession_last_5))
+        vec.append(v(f.home_avg_ball_possession_last_20))
+        vec.append(v(f.away_avg_ball_possession_last_5))
+        vec.append(v(f.away_avg_ball_possession_last_20))
+
+        vec.append(v(f.home_avg_fouls_last_5))
+        vec.append(v(f.home_avg_fouls_last_20))
+        vec.append(v(f.away_avg_fouls_last_5))
+        vec.append(v(f.away_avg_fouls_last_20))
+
+        vec.append(v(f.home_avg_attacks_last_5))
+        vec.append(v(f.home_avg_attacks_last_20))
+        vec.append(v(f.away_avg_attacks_last_5))
+        vec.append(v(f.away_avg_attacks_last_20))
+
+        vec.append(v(f.home_avg_dang_attacks_last_5))
+        vec.append(v(f.home_avg_dang_attacks_last_20))
+        vec.append(v(f.away_avg_dang_attacks_last_5))
+        vec.append(v(f.away_avg_dang_attacks_last_20))
+
+        # --- league table position
+        vec.append(v(f.home_curr_position))
+        vec.append(v(f.away_curr_position))
+
+        # --- home/away-only scored/conceded
+        vec.append(v(f.home_avg_goals_scored_home_last_5))
+        vec.append(v(f.home_avg_goals_scored_home_last_20))
+        vec.append(v(f.away_avg_goals_scored_away_last_5))
+        vec.append(v(f.away_avg_goals_scored_away_last_20))
+
+        vec.append(v(f.home_avg_goals_conceded_home_last_5))
+        vec.append(v(f.home_avg_goals_conceded_home_last_20))
+        vec.append(v(f.away_avg_goals_conceded_away_last_5))
+        vec.append(v(f.away_avg_goals_conceded_away_last_20))
+
+        # --- team strength (temporary: raw flatten)
+        def flatten_strength(mat) -> List[float]:
+            if mat is None:
+                return [0.0] * (11 * 34)
+            out: List[float] = []
+            # Expect list[list[float]] of size 11x34
+            for row in mat:
+                for x in row:
+                    out.append(float(x))
+            # pad if malformed
+            need = 11 * 34
+            if len(out) < need:
+                out.extend([0.0] * (need - len(out)))
+            return out[:need]
+
+        vec.extend(flatten_strength(f.home_team_strength))
+        vec.extend(flatten_strength(f.away_team_strength))
+
+        return vec

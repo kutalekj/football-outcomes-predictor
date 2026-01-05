@@ -33,6 +33,19 @@ MIN_ELO_MATCHES = 5  # min number of matches in dataset for opponent's ELO being
 ELO_NON_LEAGUE_WEIGHT = 0.25  # down-weight domestic and European cups
 WINNER_TEAM_ID_CODE_FOR_DRAW = -1
 
+SF_MATCH_LOWER_THRESHOLD = 55  # names matching (when DOB matches)
+SF_MATCH_HIGHER_THRESHOLD = 85  # names matching (when DOB doesn't match)
+SF_MAX_TIMEDELTA_DAYS = 120  # snapshot search (within +/- N days of match date)
+SF_MAX_SNAPSHOTS_TO_SCAN = 6  # num of snapshots to search (past+future ordered)
+
+TEAM_STRENGTH_NUM_PLAYERS = 11
+TEAM_STRENGTH_NUM_SKILLS = 34  # should equal to len(PLAYER_SKILLS)
+GK_SKILL_START_INDEX = 29
+GK_SKILL_END_INDEX = 34  # Python slice end
+FORCE_EXACTLY_ONE_GK_ROW = True
+GK_ROLE_SCORE_MIN_GAP = 0.5  # minimal separation to treat as GK-like (TODO: tune)
+DEBUG_TEAM_STRENGTH = True  # optional log
+
 SOG_NORM_COEFFICIENT = 12.5
 GOALS_NORM_COEFFICIENT = 5.19
 MATCH_LOAD_NORM_COEFFICIENT = 0.246

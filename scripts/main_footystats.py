@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import load_avg_team_strength, load_sofifa_players, save_snapshot, try_load_snapshot
@@ -7,6 +9,14 @@ from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
+
+
+def log_feature_error(msg: str) -> None:
+    os.makedirs("logs", exist_ok=True)
+    path = os.path.join("logs", "feature_errors.log")
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(msg.rstrip("\n") + "\n")
+
 
 ut = utils
 global_instance = Global.get_instance()
@@ -35,14 +45,44 @@ league_matches_sorted = [m for m in all_matches_sorted if m.comp_name in sett.CO
 team_index_all = fu.build_team_match_index(all_matches_sorted)
 team_index_league = fu.build_team_match_index(league_matches_sorted)
 
-for match in league_matches_sorted:
-    match.features_before_match = match.calculate_match_features(
-        team_index_league=team_index_league,
-        team_index_all=team_index_all,
-    )
+last_progress_month = None  # type: tuple[int,int] | None  # (year, month)
+processed = 0
+total = len(league_matches_sorted)
 
-    if match.home_team.name == "KRC Genk" or match.away_team.name == "KRC Genk":
-        fu.debug_print_match_and_features(match)  # DEBUG
+skipped_matches = 0
+
+for match in league_matches_sorted:
+    processed += 1
+
+    dt = match.datetime  # datetime at 00:00
+    year = dt.year
+    month = dt.month
+
+    curr_month = (year, month)
+    if curr_month != last_progress_month:
+        last_progress_month = curr_month
+        print(f"[features] {year:04d}-{month:02d}  (processed {processed}/{total})")
+
+    try:
+        match.features_before_match = match.calculate_match_features(
+            team_index_league=team_index_league,
+            team_index_all=team_index_all,
+        )
+
+        # if match.home_team.name == "KRC Genk" or match.away_team.name == "KRC Genk":
+        #     fu.debug_print_match_and_features(match)  # DEBUG
+
+    except ValueError as e:
+        skipped_matches += 1
+        log_feature_error(
+            f"[SKIP] match_id={match.id} {match.comp_name} {match.season} "
+            f"{match.datetime} h={match.hour_utc} "
+            f"{match.home_team.name} vs {match.away_team.name} "
+            f"error={repr(e)}"
+        )
+        continue
+
+print(f"[features] Done. Skipped matches: {skipped_matches}")
 
 if sett.ALL_STORE:
     save_snapshot(
