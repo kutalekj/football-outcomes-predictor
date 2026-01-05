@@ -228,6 +228,7 @@ class FSCompSeason:
         )
 
         # Last match time per team (to determine active teams at a given moment)
+        # TODO: Deal with points halving in Belgium and Austria
         last_key_by_team = {}
         for m in matches_sorted:
             if m.home_team is not None:

@@ -7,6 +7,8 @@ from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import load_avg_team_strength, load_sofifa_players, save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
+from football_outcomes.training.fs_training_utils import build_categorical_maps
+from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
 
@@ -83,6 +85,24 @@ for match in league_matches_sorted:
         continue
 
 print(f"[features] Done. Skipped matches: {skipped_matches}")
+
+league_matches_sorted = [
+    m for m in league_matches_sorted if hasattr(m, "features_before_match") and m.features_before_match is not None
+]
+print(f"[features] usable matches for training: {len(league_matches_sorted)}")
+
+cat_maps = build_categorical_maps(league_matches_sorted)
+
+cfg = TrainConfig(
+    mode="binary_u25",  # or "goals_dist"
+    window_rounds=25,
+    epochs_per_step=5,
+    batch_size=64,
+)
+
+model = train_rolling(league_matches_sorted, cat_maps, cfg)
+model.save("mlp_first_run.keras")
+print("Model saved.")
 
 if sett.ALL_STORE:
     save_snapshot(
