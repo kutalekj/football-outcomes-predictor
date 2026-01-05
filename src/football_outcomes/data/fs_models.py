@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import http.client
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from datetime import date
+from typing import Any, Dict, List, Optional, Tuple
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -26,8 +27,25 @@ class FSDataBundle:
     leagues_list: Any = None
     meta: Dict[str, Any] = field(default_factory=dict)
 
-    def __setstate__(self, state: dict) -> None:  # called by pickle on load (if present)
+    sofifa_snapshots: List[Tuple[date, Dict[int, Dict[str, Any]]]] = field(default_factory=list)
+    sofifa_player_occurrences: Dict[int, List[Tuple[int, date]]] = field(default_factory=dict)
+    sofifa_players_by_dob: Dict[date, List[Tuple[int, str, str]]] = field(default_factory=dict)
+
+    fs_to_sofifa_cache: Dict[int, Tuple[Optional[int], float, float, bool, str]] = field(default_factory=dict)
+
+    def __setstate__(self, state: dict) -> None:
+        # Backward compatible load: populate missing keys with defaults
         self.__dict__.update(state)
+
+        # Ensure new fields exist even for older pickles
+        if "sofifa_snapshots" not in self.__dict__:
+            self.sofifa_snapshots = []
+        if "sofifa_player_occurrences" not in self.__dict__:
+            self.sofifa_player_occurrences = {}
+        if "sofifa_players_by_dob" not in self.__dict__:
+            self.sofifa_players_by_dob = {}
+        if "fs_to_sofifa_cache" not in self.__dict__:
+            self.fs_to_sofifa_cache = {}
 
 
 class FSCompSeason:

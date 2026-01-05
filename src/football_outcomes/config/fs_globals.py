@@ -26,6 +26,9 @@ class Global:
             # Indexed by dates of birth; each elem is list of triples (player_id, name, full_name)
             # dict[datetime.date, list[tuple[int, str, str]]]
             cls._instance.sofifa_players_by_dob = {}
+
+            # fs_player_id -> (sofifa_id/None, best_score, second_score, used_dob_gate, reason)
+            cls._instance.fs_to_sofifa_cache = {}
         return cls._instance
 
     @classmethod

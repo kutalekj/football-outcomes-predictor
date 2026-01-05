@@ -9,8 +9,8 @@ BASE_SRC_DIR = Path(__file__).resolve().parents[1]  # .../src/football_outcomes
 DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-03_v3.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-03_v4.pkl"
+LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-05.pkl"
+SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-05.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True

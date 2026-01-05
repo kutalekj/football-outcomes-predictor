@@ -92,5 +92,9 @@ if sett.ALL_STORE:
             global_instance.all_players,
             global_instance.all_matches,
             global_instance.leagues_list,
+            sofifa_snapshots=getattr(global_instance, "sofifa_snapshots", []),
+            sofifa_player_occurrences=getattr(global_instance, "sofifa_player_occurrences", {}),
+            sofifa_players_by_dob=getattr(global_instance, "sofifa_players_by_dob", {}),
+            fs_to_sofifa_cache=getattr(global_instance, "fs_to_sofifa_cache", {}),
         )
     )

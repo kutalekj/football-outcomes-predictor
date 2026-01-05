@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from football_outcomes.data.fs_models import FSMatch, FSPlayer
+    from football_outcomes.data.fs_models import FSMatch
 
 import os
 from dataclasses import dataclass
@@ -14,6 +14,7 @@ from rapidfuzz import fuzz
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
+from football_outcomes.data.fs_models import FSPlayer
 
 _debug_log_path: Optional[str] = None
 
@@ -113,6 +114,11 @@ def _match_fs_to_sofifa(
     """
     g = Global.get_instance()
 
+    cached = g.fs_to_sofifa_cache.get(fs_player.id)
+    if cached is not None:
+        sofifa_id, best, second, used_dob_gate, reason = cached
+        return MatchResult(sofifa_id, best, second, used_dob_gate, f"cache:{reason}")
+
     fs_name = _norm_name(_player_display_name(fs_player))
     fs_full = _norm_name(fs_player.full_name)
 
@@ -151,9 +157,6 @@ def _match_fs_to_sofifa(
         for sofifa_id, sf_name, sf_full in dob_bucket:
             candidates.append((sofifa_id, sf_name, sf_full, None))
 
-    if not candidates:
-        return MatchResult(None, 0.0, 0.0, used_dob_gate, "no_candidates")
-
     # Evaluate
     for sofifa_id, sf_name, sf_full, dob in candidates:
         score = _similarity(fs_name, fs_full, _norm_name(sf_name), _norm_name(sf_full))
@@ -164,20 +167,33 @@ def _match_fs_to_sofifa(
         else:
             second_score = max(second_score, score)
 
-    if best is None:
-        return MatchResult(None, 0.0, 0.0, used_dob_gate, "no_best")
+    if not candidates:
+        res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_candidates")
+    elif best is None:
+        res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_best")
+    else:
+        # Apply your rule
+        if used_dob_gate:
+            if best.score >= sett.SF_MATCH_LOWER_THRESHOLD:
+                res = MatchResult(best.sofifa_id, best.score, second_score, True, "dob_gate_pass")
+            else:
+                res = MatchResult(None, best.score, second_score, True, "dob_gate_fail")
+        else:
+            # No DOB gate: require higher threshold
+            if best.score >= sett.SF_MATCH_HIGHER_THRESHOLD:
+                res = MatchResult(best.sofifa_id, best.score, second_score, False, "high_threshold_pass")
+            else:
+                res = MatchResult(None, best.score, second_score, False, "high_threshold_fail")
 
-    # Apply your rule
-    if used_dob_gate:
-        if best.score >= sett.SF_MATCH_LOWER_THRESHOLD:
-            return MatchResult(best.sofifa_id, best.score, second_score, True, "dob_gate_pass")
-        return MatchResult(None, best.score, second_score, True, "dob_gate_fail")
-
-    # No DOB gate: require higher threshold
-    if best.score >= sett.SF_MATCH_HIGHER_THRESHOLD:
-        return MatchResult(best.sofifa_id, best.score, second_score, False, "high_threshold_pass")
-
-    return MatchResult(None, best.score, second_score, False, "high_threshold_fail")
+    # Cache write
+    g.fs_to_sofifa_cache[fs_player.id] = (
+        res.sofifa_id,
+        res.score_best,
+        res.score_second,
+        res.used_dob_gate,
+        res.reason,
+    )
+    return res
 
 
 # ---------- helpers: skill retrieval across snapshots ----------
@@ -336,7 +352,7 @@ def calculate_team_strength(curr_match: "FSMatch", team_id: int) -> list[list[fl
         * If DOB matches: accept if similarity >= LOWER threshold
         * Else accept only if similarity >= HIGHER threshold
     - Build skills vector:
-        * Start from closest past snapshot, then fill missing from other snapshots
+        * Start from the closest past snapshot, then fill missing from other snapshots
         * Allow looking into near future snapshots (past-first), within +/- window
     - Missing player or missing skills remain -1.
     - Pad/truncate to exactly 11 players.

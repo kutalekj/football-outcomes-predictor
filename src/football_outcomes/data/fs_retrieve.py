@@ -35,6 +35,14 @@ def fill_globals_with_cache(cache: FSDataBundle, update_leagues_list: bool = Fal
     else:
         global_instance.leagues_list = cache.leagues_list
 
+    global_instance.sofifa_snapshots = getattr(cache, "sofifa_snapshots", [])
+    global_instance.sofifa_player_occurrences = getattr(cache, "sofifa_player_occurrences", {})
+    global_instance.sofifa_players_by_dob = getattr(cache, "sofifa_players_by_dob", {})
+    global_instance.fs_to_sofifa_cache = getattr(cache, "fs_to_sofifa_cache", {})
+
+    print(f"{len(global_instance.sofifa_snapshots)} sofifa snapshots loaded from snapshot.")
+    print(f"{len(global_instance.fs_to_sofifa_cache)} fs->sofifa cached matches loaded from snapshot.")
+
 
 def retrieve_new_data() -> FSDataBundle:
     global_instance = Global.get_instance()
