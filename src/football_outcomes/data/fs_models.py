@@ -4,7 +4,10 @@ import http.client
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+import numpy as np
+
 from football_outcomes.config import fs_settings as sett
+from football_outcomes.config.fs_globals import Global
 
 
 def _conn_host() -> str:
@@ -401,8 +404,610 @@ class FSMatch:
         self.home_lineup: List[FSPlayer] = []
         self.away_lineup: List[FSPlayer] = []
 
+        # Competition-season link (needed for table position + comp_id feature)
+        self.comp_season_id: Optional[int] = None
+        self.comp_name: Optional[str] = None
+        self.country: Optional[str] = None
+
+        # Features (pre-match)
+        self.features_before_match: Optional["FSMatchFeatures"] = None
+
+        # ELO (raw value only used for propagation)
+        self.home_elo_after_match_raw: Optional[float] = None
+        self.away_elo_after_match_raw: Optional[float] = None
+
     def __eq__(self, other: object) -> bool:
         return isinstance(other, FSMatch) and self.id == other.id
 
     def __hash__(self) -> int:
         return hash(self.id)
+
+    def calculate_match_features(self, team_index_league, team_index_all) -> FSMatchFeatures:
+        from football_outcomes.config import fs_settings as sett
+        from football_outcomes.utils import fs_feature_utils as fu
+
+        if self.home_team is None or self.away_team is None:
+            raise ValueError("Match missing teams.")
+
+        comp_season_id = self.comp_season_id
+        if comp_season_id is None:
+            raise ValueError(f"Match {self.id} missing comp_season_id.")
+
+        # comp_id must be integer category index (stable)
+        comp_name = self.comp_name or ""
+        try:
+            comp_id = sett.COMPS_LEAGUE.index(comp_name)
+        except ValueError:
+            # non-league comps can still exist in globals; we just keep -1
+            comp_id = -1
+
+        hour = int(self.hour_utc or 0)
+        month = int(self.month or 1)
+        hs, hc, ms, mc = fu.hour_month_cyclic(hour, month)
+
+        mf = FSMatchFeatures(
+            comp_id=comp_id,
+            season=self.season,
+            home_team_id=self.home_team.id,
+            away_team_id=self.away_team.id,
+            hours_sin=hs,
+            hours_cos=hc,
+            month_sin=ms,
+            month_cos=mc,
+        )
+
+        # ---- ELO (pre-match, computed from previous matches only, then stored on the match for next matches)
+        mf.home_elo, mf.away_elo = fu.calculate_elo_for_match(
+            team_index_league=team_index_league,
+            team_index_all=team_index_all,
+            curr_match=self,
+        )
+
+        # ---- Match position in season (requires populated first/last dates)
+        g = Global.get_instance()
+        cs = g.all_comp_seasons.get(comp_season_id)
+        if cs is not None and cs.first_match_date is not None and cs.last_match_date is not None:
+            total_seconds = (cs.last_match_date - cs.first_match_date).total_seconds()
+            curr_seconds = (self.datetime - cs.first_match_date).total_seconds()
+            # hour-level tie-break
+            curr_seconds += float(hour) * 3600.0
+            mf.match_position_in_season = (
+                fu.clip01(curr_seconds / total_seconds) if total_seconds > 0 else sett.ALMOST_ZERO
+            )
+        else:
+            mf.match_position_in_season = sett.ALMOST_ZERO
+
+        # ---- xG averages
+        mf.home_avg_xg_last_5 = fu.avg_stat_last_n(
+            team_index_league, self.home_team.id, self, 5, "home_xg", "away_xg", fu.normalize_team_xg
+        )
+        mf.home_avg_xg_last_20 = fu.avg_stat_last_n(
+            team_index_league, self.home_team.id, self, 20, "home_xg", "away_xg", fu.normalize_team_xg
+        )
+        mf.away_avg_xg_last_5 = fu.avg_stat_last_n(
+            team_index_league, self.away_team.id, self, 5, "home_xg", "away_xg", fu.normalize_team_xg
+        )
+        mf.away_avg_xg_last_20 = fu.avg_stat_last_n(
+            team_index_league, self.away_team.id, self, 20, "home_xg", "away_xg", fu.normalize_team_xg
+        )
+
+        mf.home_avg_xg_total_last_5 = fu.avg_total_stat_last_n(
+            team_index_league, self.home_team.id, self, 5, fu.total_xg, fu.normalize_total_xg
+        )
+        mf.home_avg_xg_total_last_20 = fu.avg_total_stat_last_n(
+            team_index_league, self.home_team.id, self, 20, fu.total_xg, fu.normalize_total_xg
+        )
+        mf.away_avg_xg_total_last_5 = fu.avg_total_stat_last_n(
+            team_index_league, self.away_team.id, self, 5, fu.total_xg, fu.normalize_total_xg
+        )
+        mf.away_avg_xg_total_last_20 = fu.avg_total_stat_last_n(
+            team_index_league, self.away_team.id, self, 20, fu.total_xg, fu.normalize_total_xg
+        )
+
+        # ---- pre-match xG averages
+        mf.home_avg_pre_match_xg_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_prematch_xg",
+            "away_prematch_xg",
+            fu.normalize_team_pre_match_xg,
+        )
+        mf.home_avg_pre_match_xg_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_prematch_xg",
+            "away_prematch_xg",
+            fu.normalize_team_pre_match_xg,
+        )
+        mf.away_avg_pre_match_xg_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_prematch_xg",
+            "away_prematch_xg",
+            fu.normalize_team_pre_match_xg,
+        )
+        mf.away_avg_pre_match_xg_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_prematch_xg",
+            "away_prematch_xg",
+            fu.normalize_team_pre_match_xg,
+        )
+
+        mf.home_avg_pre_match_xg_total_last_5 = fu.avg_total_stat_last_n(
+            team_index_league, self.home_team.id, self, 5, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
+        )
+        mf.home_avg_pre_match_xg_total_last_20 = fu.avg_total_stat_last_n(
+            team_index_league, self.home_team.id, self, 20, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
+        )
+        mf.away_avg_pre_match_xg_total_last_5 = fu.avg_total_stat_last_n(
+            team_index_league, self.away_team.id, self, 5, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
+        )
+        mf.away_avg_pre_match_xg_total_last_20 = fu.avg_total_stat_last_n(
+            team_index_league, self.away_team.id, self, 20, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
+        )
+
+        # ---- match load
+        mf.home_match_load_per_day_last_10_days = fu.match_load_per_day_last_n_days(
+            team_index_all, self.home_team.id, self, 10
+        )
+        mf.home_match_load_per_day_last_25_days = fu.match_load_per_day_last_n_days(
+            team_index_all, self.home_team.id, self, 25
+        )
+        mf.away_match_load_per_day_last_10_days = fu.match_load_per_day_last_n_days(
+            team_index_all, self.away_team.id, self, 10
+        )
+        mf.away_match_load_per_day_last_25_days = fu.match_load_per_day_last_n_days(
+            team_index_all, self.away_team.id, self, 25
+        )
+
+        # ---- points/goals
+        mf.home_avg_points_last_5 = fu.avg_points_last_n(team_index_league, self.home_team.id, self, 5)
+        mf.home_avg_points_last_20 = fu.avg_points_last_n(team_index_league, self.home_team.id, self, 20)
+        mf.away_avg_points_last_5 = fu.avg_points_last_n(team_index_league, self.away_team.id, self, 5)
+        mf.away_avg_points_last_20 = fu.avg_points_last_n(team_index_league, self.away_team.id, self, 20)
+
+        mf.home_avg_goals_last_5 = fu.avg_goals_last_n(team_index_league, self.home_team.id, self, 5)
+        mf.home_avg_goals_last_20 = fu.avg_goals_last_n(team_index_league, self.home_team.id, self, 20)
+        mf.away_avg_goals_last_5 = fu.avg_goals_last_n(team_index_league, self.away_team.id, self, 5)
+        mf.away_avg_goals_last_20 = fu.avg_goals_last_n(team_index_league, self.away_team.id, self, 20)
+
+        # ---- shots/corners/etc.
+        mf.home_avg_shots_on_target_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_shots_on_target",
+            "away_shots_on_target",
+            fu.normalize_sog,
+        )
+        mf.home_avg_shots_on_target_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_shots_on_target",
+            "away_shots_on_target",
+            fu.normalize_sog,
+        )
+        mf.away_avg_shots_on_target_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_shots_on_target",
+            "away_shots_on_target",
+            fu.normalize_sog,
+        )
+        mf.away_avg_shots_on_target_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_shots_on_target",
+            "away_shots_on_target",
+            fu.normalize_sog,
+        )
+
+        mf.home_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_shots_off_target",
+            "away_shots_off_target",
+            fu.normalize_sog,
+        )
+        mf.home_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_shots_off_target",
+            "away_shots_off_target",
+            fu.normalize_sog,
+        )
+        mf.away_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_shots_off_target",
+            "away_shots_off_target",
+            fu.normalize_sog,
+        )
+        mf.away_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_shots_off_target",
+            "away_shots_off_target",
+            fu.normalize_sog,
+        )
+
+        mf.home_avg_total_shots_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_total_shots",
+            "away_total_shots",
+            fu.normalize_total_shots,
+        )
+        mf.home_avg_total_shots_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_total_shots",
+            "away_total_shots",
+            fu.normalize_total_shots,
+        )
+        mf.away_avg_total_shots_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_total_shots",
+            "away_total_shots",
+            fu.normalize_total_shots,
+        )
+        mf.away_avg_total_shots_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_total_shots",
+            "away_total_shots",
+            fu.normalize_total_shots,
+        )
+
+        mf.home_avg_corner_kicks_last_5 = fu.avg_stat_last_n(
+            team_index_league, self.home_team.id, self, 5, "home_corners", "away_corners", fu.normalize_corners
+        )
+        mf.home_avg_corner_kicks_last_20 = fu.avg_stat_last_n(
+            team_index_league, self.home_team.id, self, 20, "home_corners", "away_corners", fu.normalize_corners
+        )
+        mf.away_avg_corner_kicks_last_5 = fu.avg_stat_last_n(
+            team_index_league, self.away_team.id, self, 5, "home_corners", "away_corners", fu.normalize_corners
+        )
+        mf.away_avg_corner_kicks_last_20 = fu.avg_stat_last_n(
+            team_index_league, self.away_team.id, self, 20, "home_corners", "away_corners", fu.normalize_corners
+        )
+
+        # possession/fouls/attacks/dang attacks are already in [0..100] or similar.
+        # For now, we normalize by simple /100 for possession and /50 for fouls/attacks-ish later if needed.
+        # To avoid inventing wrong caps, we keep them in [0..1] by clipping after /100 or /200 etc would be risky.
+        # So: scale possession by /100; keep the rest min-max with conservative caps later (you can tune).
+        def poss_norm(x: float) -> float:
+            return fu.clip01(x / 100.0)
+
+        mf.home_avg_ball_possession_last_5 = fu.avg_stat_last_n(
+            team_index_league, self.home_team.id, self, 5, "home_possession", "away_possession", poss_norm
+        )
+        mf.home_avg_ball_possession_last_20 = fu.avg_stat_last_n(
+            team_index_league, self.home_team.id, self, 20, "home_possession", "away_possession", poss_norm
+        )
+        mf.away_avg_ball_possession_last_5 = fu.avg_stat_last_n(
+            team_index_league, self.away_team.id, self, 5, "home_possession", "away_possession", poss_norm
+        )
+        mf.away_avg_ball_possession_last_20 = fu.avg_stat_last_n(
+            team_index_league, self.away_team.id, self, 20, "home_possession", "away_possession", poss_norm
+        )
+
+        # fouls/attacks/dangerous attacks left as scaled by conservative caps (TODO: tune later)
+        mf.home_avg_fouls_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_fouls",
+            "away_fouls",
+            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+        )
+        mf.home_avg_fouls_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_fouls",
+            "away_fouls",
+            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+        )
+        mf.away_avg_fouls_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_fouls",
+            "away_fouls",
+            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+        )
+        mf.away_avg_fouls_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_fouls",
+            "away_fouls",
+            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+        )
+
+        mf.home_avg_attacks_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_attacks",
+            "away_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+        )
+        mf.home_avg_attacks_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_attacks",
+            "away_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+        )
+        mf.away_avg_attacks_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_attacks",
+            "away_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+        )
+        mf.away_avg_attacks_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_attacks",
+            "away_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+        )
+
+        mf.home_avg_dang_attacks_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            5,
+            "home_dangerous_attacks",
+            "away_dangerous_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+        )
+        mf.home_avg_dang_attacks_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.home_team.id,
+            self,
+            20,
+            "home_dangerous_attacks",
+            "away_dangerous_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+        )
+        mf.away_avg_dang_attacks_last_5 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            5,
+            "home_dangerous_attacks",
+            "away_dangerous_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+        )
+        mf.away_avg_dang_attacks_last_20 = fu.avg_stat_last_n(
+            team_index_league,
+            self.away_team.id,
+            self,
+            20,
+            "home_dangerous_attacks",
+            "away_dangerous_attacks",
+            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+        )
+
+        # ---- League table positions (assumes the earlier table init exists on cs)
+        if cs is not None and hasattr(cs, "get_team_position_before_match"):
+            mf.home_curr_position = cs.get_team_position_before_match(self.home_team.id, self)
+            mf.away_curr_position = cs.get_team_position_before_match(self.away_team.id, self)
+        else:
+            mf.home_curr_position = sett.ALMOST_ZERO
+            mf.away_curr_position = sett.ALMOST_ZERO
+
+        # ---- Home/away-only scored/conceded features (from your old class)
+        # These should be computed using only matches where team was home/away.
+        mf.home_avg_goals_scored_home_last_5, mf.home_avg_goals_conceded_home_last_5 = (
+            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.home_team.id, self, 5, "home")
+        )
+        mf.home_avg_goals_scored_home_last_20, mf.home_avg_goals_conceded_home_last_20 = (
+            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.home_team.id, self, 20, "home")
+        )
+
+        mf.away_avg_goals_scored_away_last_5, mf.away_avg_goals_conceded_away_last_5 = (
+            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.away_team.id, self, 5, "away")
+        )
+        mf.away_avg_goals_scored_away_last_20, mf.away_avg_goals_conceded_away_last_20 = (
+            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.away_team.id, self, 20, "away")
+        )
+
+        # ---- Team strength placeholders (requested)
+        mf.home_team_strength = []
+        mf.away_team_strength = []
+
+        return mf
+
+
+class FSMatchFeatures:
+    def __init__(
+        self,
+        comp_id,
+        season,
+        home_team_id,
+        away_team_id,
+        hours_sin,
+        hours_cos,
+        month_sin,
+        month_cos,
+    ):
+        self.comp_id = comp_id
+        self.season = season
+
+        self.home_team_id = home_team_id
+        self.away_team_id = away_team_id
+
+        self.hours_sin = hours_sin
+        self.hours_cos = hours_cos
+        self.month_sin = month_sin
+        self.month_cos = month_cos
+
+        self.home_elo = None
+        self.away_elo = None
+
+        self.match_position_in_season = None
+
+        self.home_avg_xg_last_5 = None
+        self.home_avg_xg_last_20 = None
+        self.away_avg_xg_last_5 = None
+        self.away_avg_xg_last_20 = None
+
+        self.home_avg_xg_total_last_5 = None
+        self.home_avg_xg_total_last_20 = None
+        self.away_avg_xg_total_last_5 = None
+        self.away_avg_xg_total_last_20 = None
+
+        self.home_avg_pre_match_xg_last_5 = None
+        self.home_avg_pre_match_xg_last_20 = None
+        self.away_avg_pre_match_xg_last_5 = None
+        self.away_avg_pre_match_xg_last_20 = None
+
+        self.home_avg_pre_match_xg_total_last_5 = None
+        self.home_avg_pre_match_xg_total_last_20 = None
+        self.away_avg_pre_match_xg_total_last_5 = None
+        self.away_avg_pre_match_xg_total_last_20 = None
+
+        self.home_match_load_per_day_last_10_days = None
+        self.home_match_load_per_day_last_25_days = None
+        self.away_match_load_per_day_last_10_days = None
+        self.away_match_load_per_day_last_25_days = None
+
+        self.home_avg_points_last_5 = None
+        self.home_avg_points_last_20 = None
+        self.away_avg_points_last_5 = None
+        self.away_avg_points_last_20 = None
+
+        self.home_avg_goals_last_5 = None
+        self.home_avg_goals_last_20 = None
+        self.away_avg_goals_last_5 = None
+        self.away_avg_goals_last_20 = None
+
+        self.home_avg_shots_on_target_last_5 = None
+        self.home_avg_shots_on_target_last_20 = None
+        self.away_avg_shots_on_target_last_5 = None
+        self.away_avg_shots_on_target_last_20 = None
+
+        self.home_avg_shots_off_target_last_5 = None
+        self.home_avg_shots_off_target_last_20 = None
+        self.away_avg_shots_off_target_last_5 = None
+        self.away_avg_shots_off_target_last_20 = None
+
+        self.home_avg_total_shots_last_5 = None
+        self.home_avg_total_shots_last_20 = None
+        self.away_avg_total_shots_last_5 = None
+        self.away_avg_total_shots_last_20 = None
+
+        self.home_avg_corner_kicks_last_5 = None
+        self.home_avg_corner_kicks_last_20 = None
+        self.away_avg_corner_kicks_last_5 = None
+        self.away_avg_corner_kicks_last_20 = None
+
+        self.home_avg_ball_possession_last_5 = None
+        self.home_avg_ball_possession_last_20 = None
+        self.away_avg_ball_possession_last_5 = None
+        self.away_avg_ball_possession_last_20 = None
+
+        self.home_avg_fouls_last_5 = None
+        self.home_avg_fouls_last_20 = None
+        self.away_avg_fouls_last_5 = None
+        self.away_avg_fouls_last_20 = None
+
+        self.home_avg_attacks_last_5 = None
+        self.home_avg_attacks_last_20 = None
+        self.away_avg_attacks_last_5 = None
+        self.away_avg_attacks_last_20 = None
+
+        self.home_avg_dang_attacks_last_5 = None
+        self.home_avg_dang_attacks_last_20 = None
+        self.away_avg_dang_attacks_last_5 = None
+        self.away_avg_dang_attacks_last_20 = None
+
+        self.home_curr_position = None
+        self.away_curr_position = None
+
+        self.home_avg_goals_scored_home_last_5 = 0
+        self.home_avg_goals_scored_home_last_20 = 0
+        self.away_avg_goals_scored_away_last_5 = 0
+        self.away_avg_goals_scored_away_last_20 = 0
+
+        self.home_avg_goals_conceded_home_last_5 = 0
+        self.home_avg_goals_conceded_home_last_20 = 0
+        self.away_avg_goals_conceded_away_last_5 = 0
+        self.away_avg_goals_conceded_away_last_20 = 0
+
+        self.home_team_strength = None
+        self.away_team_strength = None
+
+    @staticmethod
+    def match_features_to_vector(match_features):
+        # Convert the match_features object to a dictionary
+        features_dict = vars(match_features)
+
+        features = []
+        for key, value in features_dict.items():
+            # TODO: Pre-define list of categorical feature names
+            if key not in [
+                "home_team_id",
+                "away_team_id",
+                "comp_id",
+                "home_team_strength",
+                "away_team_strength",
+            ]:
+                features.append(value)
+
+        features = np.array(features)
+
+        # Append team strength vectors
+        # features = np.append(features, features_dict["home_team_strength"])
+        # features = np.append(features, features_dict["away_team_strength"])
+
+        return features

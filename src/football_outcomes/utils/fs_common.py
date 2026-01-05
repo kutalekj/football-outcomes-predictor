@@ -174,3 +174,33 @@ def initialize_league_tables(precompute_positions: bool = True, force_rebuild: b
             cs.build_pre_match_positions_cache()
 
     print("[tables] Done.")
+
+
+def link_matches_to_comp_seasons() -> None:
+    """Ensure each FSMatch has comp_season_id / comp_name / country set.
+
+    Works purely from already-loaded Global objects (snapshot), no API calls needed.
+    """
+    from football_outcomes.config.fs_globals import Global
+
+    g = Global.get_instance()
+
+    # Build match_id -> comp season
+    match_to_cs = {}
+    for cs in g.all_comp_seasons.values():
+        for m in cs.matches:
+            match_to_cs[m.id] = cs
+
+    missing = 0
+    for m in g.all_matches:
+        cs = match_to_cs.get(m.id)
+        if cs is None:
+            missing += 1
+            continue
+        m.comp_season_id = cs.id
+        m.comp_name = cs.name
+        m.country = cs.country
+
+    print(f"[link] Linked {len(g.all_matches) - missing}/{len(g.all_matches)} matches to comp seasons.")
+    if missing:
+        print(f"[link] Warning: {missing} matches not found in any comp season.")

@@ -9,19 +9,41 @@ BASE_SRC_DIR = Path(__file__).resolve().parents[1]  # .../src/football_outcomes
 DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-03_v2.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-03_v3.pkl"
+LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-03_v3.pkl"
+SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-03_v4.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
-ALL_GET_NEW = True
-ALL_STORE = True
+ALL_GET_NEW = False
+ALL_STORE = False
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
 
 SOFIFA_CSV_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase6\\full"
 SOFIFA_FILENAME_DATE_FORMAT = "%Y-%m-%d"  # e.g. 2024-01-15.csv
+
+ALMOST_ZERO = 1e-6
+ALMOST_ONE = 1.0 - 1e-6
+
+INIT_ELO = 1500.0
+ELO_K = 32.0
+ELO_SEASON_REGRESSION = 0.75
+MIN_ELO_MATCHES = 5  # min number of matches in dataset for opponent's ELO being reliable
+ELO_NON_LEAGUE_WEIGHT = 0.25  # down-weight domestic and European cups
+WINNER_TEAM_ID_CODE_FOR_DRAW = -1
+
+SOG_NORM_COEFFICIENT = 12.5
+GOALS_NORM_COEFFICIENT = 5.19
+MATCH_LOAD_NORM_COEFFICIENT = 0.246
+TOTAL_SHOTS_NORM_COEFFICIENT = 28.0
+SHOTS_IN_BOX_NORM_COEFFICIENT = 19.5
+CORNER_KICKS_NORM_COEFFICIENT = 13.5
+
+TEAM_XG_NORM_COEFFICIENT = 3.25
+TOTAL_XG_NORM_COEFFICIENT = 5.25
+TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
+TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 
 COUNTRIES = [
     "Belgium",
