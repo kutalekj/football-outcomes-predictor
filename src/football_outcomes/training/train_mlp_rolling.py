@@ -71,7 +71,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     x_c = Input((1,), dtype="int32", name="comp_id")
     x_s = Input((2, 11, 34), name="strength")
 
-    team_emb = Embedding(num_teams, cfg.team_emb_dim)
+    team_emb = Embedding(num_teams, cfg.team_emb_dim)  # TODO: Check if normalized to (0,1)
     home_e = Flatten()(team_emb(x_h))
     away_e = Flatten()(team_emb(x_a))
     comp_e = Flatten()(Embedding(num_comps, cfg.comp_emb_dim)(x_c))

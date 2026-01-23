@@ -14,7 +14,7 @@ from football_outcomes.utils import fs_feature_utils as fu
 
 
 def log_feature_error(msg: str) -> None:
-    os.makedirs("logs", exist_ok=True)
+    os.makedirs(sett.LOG_DIR, exist_ok=True)
     path = os.path.join("logs", "feature_errors.log")
     with open(path, "a", encoding="utf-8") as f:
         f.write(msg.rstrip("\n") + "\n")

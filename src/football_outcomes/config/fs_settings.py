@@ -8,19 +8,20 @@ BASE_SRC_DIR = Path(__file__).resolve().parents[1]  # .../src/football_outcomes
 
 DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
+LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
 LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-05.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-05.pkl"
+SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
-ALL_GET_NEW = False
-ALL_STORE = False
+ALL_GET_NEW = True
+ALL_STORE = True
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
 
-SOFIFA_CSV_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase6\\full"
+SOFIFA_CSV_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase7\\full"
 SOFIFA_FILENAME_DATE_FORMAT = "%Y-%m-%d"  # e.g. 2024-01-15.csv
 
 ALMOST_ZERO = 1e-6

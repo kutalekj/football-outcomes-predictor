@@ -29,7 +29,8 @@ def _get_team_strength_log_path() -> str:
         return _debug_log_path
 
     # Try to create a local logs/ directory relative to current working dir
-    logs_dir = os.path.join(os.getcwd(), "logs")
+    # logs_dir = os.path.join(os.getcwd(), "logs")
+    logs_dir = sett.LOG_DIR
     os.makedirs(logs_dir, exist_ok=True)
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
