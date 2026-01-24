@@ -111,14 +111,38 @@ def _match_fs_to_sofifa(
     elif similarity > HIGHER: OK
     else: NOT_OK
 
-    Additionally returns 2nd best similarity to detect ambiguity.
+    Additionally, returns 2nd best similarity to detect ambiguity.
     """
     g = Global.get_instance()
 
     cached = g.fs_to_sofifa_cache.get(fs_player.id)
-    if cached is not None:
+
+    use_cache = getattr(sett, "USE_FS_TO_SOFIFA_CACHE", True)
+    if use_cache and cached is not None:
         sofifa_id, best, second, used_dob_gate, reason = cached
-        return MatchResult(sofifa_id, best, second, used_dob_gate, f"cache:{reason}")
+
+        # Decide whether to trust cache or retry matching
+        retry_failed = getattr(sett, "FS_TO_SOFIFA_CACHE_RETRY_FAILED", True)
+        retry_ambig = getattr(sett, "FS_TO_SOFIFA_CACHE_RETRY_AMBIGUOUS", True)
+        min_margin = float(getattr(sett, "FS_TO_SOFIFA_CACHE_MIN_MARGIN", 0.0))
+        trust_reasons = set(
+            getattr(sett, "FS_TO_SOFIFA_CACHE_ONLY_TRUST_REASONS", {"dob_gate_pass", "high_threshold_pass"})
+        )
+
+        margin = float(best) - float(second) if (best is not None and second is not None) else 999.0
+        is_success = sofifa_id is not None and reason in trust_reasons
+        is_failed = sofifa_id is None
+        is_ambiguous = (sofifa_id is not None) and (margin < min_margin)
+
+        # 1) successful + not ambiguous => trust cache
+        if is_success and not (retry_ambig and is_ambiguous):
+            return MatchResult(sofifa_id, float(best), float(second), bool(used_dob_gate), f"cache:{reason}")
+
+        # 2) failed => retry if enabled
+        if is_failed and not retry_failed:
+            return MatchResult(None, float(best), float(second), bool(used_dob_gate), f"cache:{reason}")
+
+        # Otherwise: fall through and recompute, and we will overwrite cache below.
 
     fs_name = _norm_name(_player_display_name(fs_player))
     fs_full = _norm_name(fs_player.full_name)

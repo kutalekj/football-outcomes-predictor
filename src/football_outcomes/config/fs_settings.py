@@ -10,13 +10,13 @@ DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-05.pkl"
+LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22.pkl"
 SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
-ALL_GET_NEW = True
-ALL_STORE = True
+ALL_GET_NEW = False
+ALL_STORE = False
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
@@ -38,6 +38,16 @@ SF_MATCH_LOWER_THRESHOLD = 55  # names matching (when DOB matches)
 SF_MATCH_HIGHER_THRESHOLD = 85  # names matching (when DOB doesn't match)
 SF_MAX_TIMEDELTA_DAYS = 120  # snapshot search (within +/- N days of match date)
 SF_MAX_SNAPSHOTS_TO_SCAN = 6  # num of snapshots to search (past+future ordered)
+
+# FS -> SOFIFA cache behavior
+USE_FS_TO_SOFIFA_CACHE = True
+FS_TO_SOFIFA_CACHE_RETRY_FAILED = True  # retry if cached sofifa_id is None
+FS_TO_SOFIFA_CACHE_RETRY_AMBIGUOUS = True  # retry if margin too small
+FS_TO_SOFIFA_CACHE_MIN_MARGIN = 8.0
+FS_TO_SOFIFA_CACHE_ONLY_TRUST_REASONS = {
+    "dob_gate_pass",
+    "high_threshold_pass",
+}
 
 TEAM_STRENGTH_NUM_PLAYERS = 11
 TEAM_STRENGTH_NUM_SKILLS = 34  # should equal to len(PLAYER_SKILLS)
