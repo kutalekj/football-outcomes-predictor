@@ -10,8 +10,8 @@ DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22.pkl"
+LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22_v2.pkl"
+SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22_v2.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True

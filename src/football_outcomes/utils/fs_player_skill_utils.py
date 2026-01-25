@@ -88,6 +88,7 @@ class MatchResult:
     score_second: float
     used_dob_gate: bool
     reason: str  # for debugging
+    sofifa_best_name: Optional[str] = None  # default keeps backward compatibility
 
 
 def _similarity(fs_name: str, fs_full: str, sf_name: str, sf_full: str) -> float:
@@ -119,7 +120,13 @@ def _match_fs_to_sofifa(
 
     use_cache = getattr(sett, "USE_FS_TO_SOFIFA_CACHE", True)
     if use_cache and cached is not None:
-        sofifa_id, best, second, used_dob_gate, reason = cached
+        if len(cached) == 5:
+            sofifa_id, best, second, used_dob_gate, reason = cached
+            sofifa_best_name = None
+        elif len(cached) == 6:
+            sofifa_id, best, second, used_dob_gate, reason, sofifa_best_name = cached
+        else:
+            cached = None  # Bad/corrupt cache entry -> ignore and recompute
 
         # Decide whether to trust cache or retry matching
         retry_failed = getattr(sett, "FS_TO_SOFIFA_CACHE_RETRY_FAILED", True)
@@ -136,13 +143,27 @@ def _match_fs_to_sofifa(
 
         # 1) successful + not ambiguous => trust cache
         if is_success and not (retry_ambig and is_ambiguous):
-            return MatchResult(sofifa_id, float(best), float(second), bool(used_dob_gate), f"cache:{reason}")
+            return MatchResult(
+                sofifa_id,
+                float(best),
+                float(second),
+                bool(used_dob_gate),
+                f"cache:{reason}",
+                sofifa_best_name=sofifa_best_name,
+            )
 
         # 2) failed => retry if enabled
         if is_failed and not retry_failed:
-            return MatchResult(None, float(best), float(second), bool(used_dob_gate), f"cache:{reason}")
+            return MatchResult(
+                None,
+                float(best),
+                float(second),
+                bool(used_dob_gate),
+                f"cache:{reason}",
+                sofifa_best_name=sofifa_best_name,
+            )
 
-        # Otherwise: fall through and recompute, and we will overwrite cache below.
+        # Otherwise: fall through and recompute, and overwrite cache below.
 
     fs_name = _norm_name(_player_display_name(fs_player))
     fs_full = _norm_name(fs_player.full_name)
@@ -183,7 +204,7 @@ def _match_fs_to_sofifa(
             candidates.append((sofifa_id, sf_name, sf_full, None))
 
     # Evaluate
-    for sofifa_id, sf_name, sf_full, dob in candidates:
+    for sofifa_id, sf_name, sf_full, _ in candidates:
         score = _similarity(fs_name, fs_full, _norm_name(sf_name), _norm_name(sf_full))
         if best is None or score > best.score:
             if best is not None:
@@ -192,23 +213,33 @@ def _match_fs_to_sofifa(
         else:
             second_score = max(second_score, score)
 
+    best_name: Optional[str] = None
+    if best is not None:
+        best_name = best.name
+
     if not candidates:
-        res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_candidates")
+        res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_candidates", sofifa_best_name=None)
     elif best is None:
-        res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_best")
+        res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_best", sofifa_best_name=None)
     else:
         # Apply your rule
         if used_dob_gate:
             if best.score >= sett.SF_MATCH_LOWER_THRESHOLD:
-                res = MatchResult(best.sofifa_id, best.score, second_score, True, "dob_gate_pass")
+                res = MatchResult(
+                    best.sofifa_id, best.score, second_score, True, "dob_gate_pass", sofifa_best_name=best_name
+                )
             else:
-                res = MatchResult(None, best.score, second_score, True, "dob_gate_fail")
+                res = MatchResult(None, best.score, second_score, True, "dob_gate_fail", sofifa_best_name=best_name)
         else:
             # No DOB gate: require higher threshold
             if best.score >= sett.SF_MATCH_HIGHER_THRESHOLD:
-                res = MatchResult(best.sofifa_id, best.score, second_score, False, "high_threshold_pass")
+                res = MatchResult(
+                    best.sofifa_id, best.score, second_score, False, "high_threshold_pass", sofifa_best_name=best_name
+                )
             else:
-                res = MatchResult(None, best.score, second_score, False, "high_threshold_fail")
+                res = MatchResult(
+                    None, best.score, second_score, False, "high_threshold_fail", sofifa_best_name=best_name
+                )
 
     # Cache write
     g.fs_to_sofifa_cache[fs_player.id] = (
@@ -217,6 +248,7 @@ def _match_fs_to_sofifa(
         res.score_second,
         res.used_dob_gate,
         res.reason,
+        res.sofifa_best_name,
     )
     return res
 
@@ -428,7 +460,7 @@ def calculate_team_strength(curr_match: "FSMatch", team_id: int) -> list[list[fl
             if getattr(sett, "DEBUG_TEAM_STRENGTH", False):
                 _dbg(
                     f"[team_strength] UNMATCHED fs='{_player_display_name(p)}' "
-                    f"dob={getattr(p, 'birthday', None)} score={mr.score_best:.1f} "
+                    f"dob={getattr(p, 'birthday', None)} sf_name={mr.sofifa_best_name} score={mr.score_best:.1f} "
                     f"reason={mr.reason}"
                 )
         else:
