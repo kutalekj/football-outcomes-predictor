@@ -33,11 +33,16 @@ class FSDataBundle:
 
     fs_to_sofifa_cache: Dict[int, Tuple[Optional[int], float, float, bool, str]] = field(default_factory=dict)
 
+    sofifa_team_meta: Dict[int, Dict[str, Any]] = field(default_factory=dict)
+    sofifa_players_by_team: Dict[int, List[Tuple[int, str, str, Optional[date]]]] = field(default_factory=dict)
+    sofifa_teams_by_league: Any = field(default_factory=dict)
+    fs_team_to_sofifa_team: Dict[int, int] = field(default_factory=dict)
+
     def __setstate__(self, state: dict) -> None:
         # Backward compatible load: populate missing keys with defaults
         self.__dict__.update(state)
 
-        # Ensure new fields exist even for older pickles
+        # Ensure new fields exist even older pickles
         if "sofifa_snapshots" not in self.__dict__:
             self.sofifa_snapshots = []
         if "sofifa_player_occurrences" not in self.__dict__:
@@ -46,6 +51,14 @@ class FSDataBundle:
             self.sofifa_players_by_dob = {}
         if "fs_to_sofifa_cache" not in self.__dict__:
             self.fs_to_sofifa_cache = {}
+        if "sofifa_team_meta" not in self.__dict__:
+            self.sofifa_team_meta = {}
+        if "sofifa_players_by_team" not in self.__dict__:
+            self.sofifa_players_by_team = {}
+        if "sofifa_teams_by_league" not in self.__dict__:
+            self.sofifa_teams_by_league = {}
+        if "fs_team_to_sofifa_team" not in self.__dict__:
+            self.fs_team_to_sofifa_team = {}
 
 
 class FSCompSeason:

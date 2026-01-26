@@ -1,0 +1,47 @@
+[team_map] FS 'Racing White Daring Molenbeek 47' (Belgium/Belgium Pro League) best=40.0 -> 670 top=[(40.0, 670, 'Sporting Charleroi')]: 'RWD Molenbeek', 8001
+[team_map] FS 'FC Verbroedering Dender Eendracht Hekelgem' (Belgium/Belgium Pro League) best=33.3 -> 670 top=[(33.333333333333336, 670, 'Sporting Charleroi')]: 'FCV Dender EH', 537
+
+[team_map][AUTO] FS 'OGC Nice Côte d'Azur' (France/France Ligue 1) best=38.1 -> 219 top=[(38.095238095238095, 219, 'Olympique de Marseille')]: 'Nice', 72
+[team_map] FS 'Stade Rennais FC' (France/France Ligue 1) best=66.7 -> 378 top=[(66.66666666666667, 378, 'Stade Brestois 29')]: 'Stade Rennais FC', 74
+[team_map] FS 'Racing Club de Lens' (France/France Ligue 1) best=42.4 -> 379 top=[(42.42424242424242, 379, 'Stade de Reims')]: 'RC Lens', 64
+[team_map] FS 'Espérance Sportive Troyes Aube Champagne' (France/France Ligue 2) best=37.5 -> 111376 top=[(37.5, 111376, "US Boulogne Cote d'Opale")]: 'ESTAC Troyes', 294
+[team_map] FS 'Association Jeunesse Auxerroise' (France/France Ligue 1) best=40.0 -> 73 top=[(40.0, 73, 'Paris Saint Germain')]: 'AJ Auxerre', 57
+[team_map] FS 'Stade Malherbe Caen' (France/France Ligue 2) best=54.5 -> 379 top=[(54.54545454545454, 379, 'Stade de Reims')]: 'Stade Malherbe Caen', 210
+[team_map] FS 'Rodez Aveyron Football' (France/France Ligue 2) best=42.1 -> 1805 top=[(42.10526315789473, 1805, 'Grenoble Foot 38')]: 'Rodez Aveyron Football', 111659
+[team_map] FS 'AS Nancy-Lorraine' (France/France Ligue 2) best=46.7 -> 1819 top=[(46.666666666666664, 1819, 'Saint-Étienne')]: 'AS Nancy Lorraine', 1823
+[team_map] FS 'Chamois Niortais FC' (France/France Ligue 2) best=50.0 -> 1816 top=[(50.0, 1816, 'Amiens SC')]: 'Chamois Niortais FC', 1813
+[team_map] FS 'Stade Lavallois Mayenne FC' (France/France Ligue 2) best=44.4 -> 1739 top=[(44.44444444444444, 1739, 'Le Mans FC')]: 'Stade Lavallois Mayenne FC', 1814
+
+[team_map] FS 'PSV Eindhoven' (Netherlands/Netherlands Eredivisie) best=53.8 -> 1913 top=[(53.84615384615385, 1913, 'SC Heerenveen')]: 'PSV', 247
+[team_map] FS 'Nijmegen Eendracht Combinatie' (Netherlands/Netherlands Eredivisie) best=35.0 -> 111380 top=[(35.0, 111380, 'Almere City')]: 'NEC Nijmegen', 1910
+
+[team_map] FS 'Altay Spor Kulübü' (Turkey/Turkey Süper Lig) best=61.5 -> 101028 top=[(61.53846153846154, 101028, 'Hatayspor')]: 'Altay', 101006
+
+[team_map] FS 'SSV Ulm 1846' (Germany/Germany 2. Bundesliga) best=59.3 -> 160 top=[(59.25925925925925, 160, 'VfL Bochum 1848')]: 'SSV Ulm 1846', 110176
+
+[team_map] FS 'Al Feiha' (Saudi Arabia/Saudi Arabia Professional League) best=75.0 -> 112390 top=[(75.0, 112390, 'Al Fateh')]: 'Al Fayha', 113057
+[team_map] FS 'Al Ittifaq FC Dammam' (Saudi Arabia/Saudi Arabia Professional League) best=60.0 -> 607 top=[(60.0, 607, 'Al Ittihad')]: 'Al Ettifaq', 112096
+[team_map] FS 'Al Hilal FC Riyadh' (Saudi Arabia/Saudi Arabia Professional League) best=66.7 -> 113037 top=[(66.66666666666667, 113037, 'Al Riyadh')]: 'Al Hilal', 605
+
+[team_map] FS 'WSG Swarovski Wattens' (Austria/Austria Bundesliga) best=42.4 -> 256 top=[(42.42424242424242, 256, 'Austria Wien')]: 'WSG Tirol', 15040
+[team_map] FS 'FC Admira Wacker Mödling' (Austria/Austria Bundesliga) best=42.1 -> 110720 top=[(42.10526315789473, 110720, 'Blau-Weiß Linz')]: 'Admira Wacker', 111821
+
+[team_map] FS 'Getafe Club de Fútbol' (Spain/Spain La Liga) best=47.1 -> 450 top=[(47.05882352941176, 450, 'Celta de Vigo')]: 'Getafe CF', 1860
+[team_map] FS 'Reial Club Deportiu Espanyol' (Spain/Spain La Liga) best=52.6 -> 449 top=[(52.63157894736843, 449, 'Real Betis')]: 'RCD Espanyol', 452
+[team_map] FS 'Real Club Deportivo Mallorca' (Spain/Spain La Liga) best=59.1 -> 463 top=[(59.09090909090908, 463, 'Deportivo Alavés')]: 'RCD Mallorca', 453
+
+[team_map] FS 'FC Internazionale Milano' (Italy/Italy Serie A) best=41.2 -> 110374 top=[(41.17647058823529, 110374, 'Fiorentina')]: 'Inter', 44
+[team_map] FS 'US Alessandria Calcio 1912' (Italy/Italy Serie B) best=43.2 -> 110373 top=[(43.24324324324324, 110373, 'Salernitana')]: '', -1
+[team_map] FS 'Società Polisportiva Ars et Labor 2013' (Italy/Italy Serie B) best=34.6 -> 113147 top=[(34.61538461538461, 113147, 'Virtus Entella')]: 'SPAL', 112791
+[team_map] FS 'Pordenone Calcio' (Italy/Italy Serie B) best=45.5 -> 1744 top=[(45.45454545454546, 1744, 'Modena')]: '', -1
+[team_map] FS 'Calcio Lecco 1912' (Italy/Italy Serie B) best=53.3 -> 110912 top=[(53.333333333333336, 110912, 'Calcio Padova')]: 'Lecco', 1846
+[team_map] FS 'Vicenza Calcio' (Italy/Italy Serie B) best=47.6 -> 205 top=[(47.61904761904761, 205, 'Venezia')]: ''. -1
+
+[team_map] FS 'Heart of Midlothian FC' (Scotland/Scotland Premiership) best=43.9 -> 184 top=[(43.90243902439024, 184, 'Hamilton Academical')]: 'Hearts', 80
+
+[team_map] FS 'Sporting Clube de Portugal' (Portugal/Portugal Liga NOS) best=65.0 -> 1896 top=[(65.0, 1896, 'Sporting Braga')]: 'Sporting CP', 237
+[team_map] FS 'AVS Futebol' (Portugal/Portugal Liga NOS) best=44.4 -> 10020 top=[(44.44444444444444, 10020, 'Estoril')]: 'AVS Futebol SAD', 131463
+
+[team_map] FS 'Odense BK' (Denmark/Denmark Superliga) best=50.0 -> 1446 top=[(50.0, 1446, 'Horsens')]: 'Odense Boldklub', 272
+[team_map] FS 'Aalborg BK' (Denmark/Denmark Superliga) best=52.6 -> 270 top=[(52.63157894736843, 270, 'Silkeborg')]: 'Aalborg Boldspilklub', 820
+[team_map] FS 'Aarhus Gymnastikforening' (Denmark/Denmark Superliga) best=36.4 -> 270 top=[(36.36363636363637, 270, 'Silkeborg')]: 'Aarhus Gymnastikforening', 271

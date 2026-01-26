@@ -11,6 +11,7 @@ from football_outcomes.training.fs_training_utils import build_categorical_maps
 from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
+from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
 
 
 def log_feature_error(msg: str) -> None:
@@ -36,9 +37,14 @@ if sett.ALL_GET_NEW:
     ut.ensure_comp_season_dates(force=True)
     ut.initialize_league_tables(precompute_positions=True, force_rebuild=True)
 
-load_sofifa_players()
+# Only rebuild from CSV when explicitly requested (one-time migration / new data)
+load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False))
+print("[sofifa] snapshots:", len(global_instance.sofifa_snapshots))
 
 ut.link_matches_to_comp_seasons()
+
+# Match FS league teams to SOFIFA teams (one-time per run)
+match_fs_teams_to_sofifa_teams(force=False)
 
 # Relevant matches only (league comps)
 all_matches_sorted = sorted(global_instance.all_matches, key=fu.match_sort_key)
@@ -111,5 +117,9 @@ if sett.ALL_STORE:
             sofifa_player_occurrences=getattr(global_instance, "sofifa_player_occurrences", {}),
             sofifa_players_by_dob=getattr(global_instance, "sofifa_players_by_dob", {}),
             fs_to_sofifa_cache=getattr(global_instance, "fs_to_sofifa_cache", {}),
+            sofifa_team_meta=getattr(global_instance, "sofifa_team_meta", {}),
+            sofifa_players_by_team=getattr(global_instance, "sofifa_players_by_team", {}),
+            sofifa_teams_by_league=getattr(global_instance, "sofifa_teams_by_league", {}),
+            fs_team_to_sofifa_team=getattr(global_instance, "fs_team_to_sofifa_team", {}),
         )
     )

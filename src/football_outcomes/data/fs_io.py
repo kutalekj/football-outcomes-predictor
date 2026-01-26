@@ -95,7 +95,7 @@ def _list_csv_snapshots(csv_dir: Path) -> List[Tuple[date, Path]]:
     return out
 
 
-def load_sofifa_players() -> None:
+def load_sofifa_players(*, rebuild: bool = False) -> None:
     """
     Loads SOFIFA player snapshots from CSV files.
 
@@ -111,6 +111,25 @@ def load_sofifa_players() -> None:
       - sofifa_id, name, full_name, dob, skills[list[float]]
     """
     g = Global.get_instance()
+
+    # ---- Guard / rebuild semantics ----
+    if rebuild:
+        # hard reset sofifa-related globals (so we don't accumulate duplicates)
+        g.sofifa_snapshots = []
+        g.sofifa_player_occurrences = {}
+        g.sofifa_players_by_dob = {}
+
+        # indexes/mappings derived from snapshots
+        g.sofifa_team_meta = {}
+        g.sofifa_players_by_team = {}
+        g.sofifa_teams_by_league = {}
+        g.fs_team_to_sofifa_team = {}
+    else:
+        # If sofifa_snapshots already exists (e.g., loaded from snapshot), do NOT append again.
+        if getattr(g, "sofifa_snapshots", None):
+            if len(g.sofifa_snapshots) > 0:
+                print(f"[sofifa] Using {len(g.sofifa_snapshots)} snapshots from cache; not reloading CSV.")
+                return
 
     snapshots = _list_csv_snapshots(Path(sett.SOFIFA_CSV_DIR))
     if not snapshots:
@@ -146,6 +165,10 @@ def load_sofifa_players() -> None:
                 name = (row.get("name", "") or "").strip()
                 full_name = (row.get("full_name", "") or "").strip()
                 dob = _parse_date_flexible(row.get("dob", ""))
+                club_id = int(row["club_id"]) if row["club_id"] else None
+                club_name = row["club_name"] or None
+                club_league_id = int(row["club_league_id"]) if row["club_league_id"] else None
+                club_league_name = row["club_league_name"] or None
 
                 # Minimal required data for later matching
                 if not sofifa_id_raw or not name or not full_name or dob is None:
@@ -181,6 +204,10 @@ def load_sofifa_players() -> None:
                     "dob": dob,
                     "skills": skills,  # length == len(sett.PLAYER_SKILLS)
                     "snapshot_date": snap_date,
+                    "club_id": club_id,
+                    "club_name": club_name,
+                    "club_league_id": club_league_id,
+                    "club_league_name": club_league_name,
                 }
 
                 players_by_id[sofifa_id] = record

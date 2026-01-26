@@ -29,6 +29,19 @@ class Global:
 
             # fs_player_id -> (sofifa_id/None, best_score, second_score, used_dob_gate, reason)
             cls._instance.fs_to_sofifa_cache = {}
+
+            # sofifa_team_id -> {"name": str, "country": str|None, "league": str|None}
+            cls._instance.sofifa_team_meta = {}
+
+            # sofifa_team_id -> list[(sofifa_player_id, name, full_name, dob_date|None)]
+            cls._instance.sofifa_players_by_team = {}
+
+            # (country_norm, league_norm) -> list[(sofifa_team_id, team_name)]
+            cls._instance.sofifa_teams_by_league = {}
+
+            # fs_team_id -> sofifa_team_id
+            cls._instance.fs_team_to_sofifa_team = {}
+
         return cls._instance
 
     @classmethod

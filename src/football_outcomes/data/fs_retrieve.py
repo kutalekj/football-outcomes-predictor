@@ -35,10 +35,14 @@ def fill_globals_with_cache(cache: FSDataBundle, update_leagues_list: bool = Fal
     else:
         global_instance.leagues_list = cache.leagues_list
 
-    global_instance.sofifa_snapshots = getattr(cache, "sofifa_snapshots", [])
-    global_instance.sofifa_player_occurrences = getattr(cache, "sofifa_player_occurrences", {})
-    global_instance.sofifa_players_by_dob = getattr(cache, "sofifa_players_by_dob", {})
-    global_instance.fs_to_sofifa_cache = getattr(cache, "fs_to_sofifa_cache", {})
+    global_instance.sofifa_snapshots = getattr(cache, "sofifa_snapshots", None) or []
+    global_instance.sofifa_player_occurrences = getattr(cache, "sofifa_player_occurrences", None) or {}
+    global_instance.sofifa_players_by_dob = getattr(cache, "sofifa_players_by_dob", None) or {}
+    global_instance.fs_to_sofifa_cache = getattr(cache, "fs_to_sofifa_cache", None) or {}
+    global_instance.sofifa_teams_by_league = getattr(cache, "sofifa_teams_by_league", None) or {}
+    global_instance.sofifa_team_meta = getattr(cache, "sofifa_team_meta", None) or {}
+    global_instance.sofifa_players_by_team = getattr(cache, "sofifa_players_by_team", None) or {}
+    global_instance.fs_team_to_sofifa_team = getattr(cache, "fs_team_to_sofifa_team", None) or {}
 
     print(f"{len(global_instance.sofifa_snapshots)} sofifa snapshots loaded from snapshot.")
     print(f"{len(global_instance.fs_to_sofifa_cache)} fs->sofifa cached matches loaded from snapshot.")
