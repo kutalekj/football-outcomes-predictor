@@ -1,0 +1,44 @@
+[team_strength] UNMATCHED fs='Emanuele Torrasi' dob=1999-03-16 00:00:00+00:00 sf_name=Madyen El Jaouhari score=52.9 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Roberto Zammarini' dob=1996-07-05 00:00:00+00:00 sf_name=Rodri Tarín score=50.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Christian Celesia' dob=2002-01-22 00:00:00+00:00 sf_name=Ruslan Neshcheret score=47.1 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Tommaso Mancini' dob=2004-07-23 00:00:00+00:00 sf_name=Luca Marianucci score=46.7 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Andrea Palazzi' dob=1996-02-24 00:00:00+00:00 sf_name=Yassin Ben Balla score=46.7 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Alessandro Lovisa' dob=2001-08-22 00:00:00+00:00 sf_name=Carlos Eduardo Rodas Ozuna score=46.5 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Jacopo Pellegrini' dob=2000-09-12 00:00:00+00:00 sf_name=Jacob John Greaves score=45.7 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Loris Zonta' dob=1997-05-22 00:00:00+00:00 sf_name=Brice Oggad score=45.5 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Mirko Gori' dob=1993-02-04 00:00:00+00:00 sf_name=Emiliano Ariel Rigoni score=45.2 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Anthony Michel Taugourdeau' dob=1989-06-03 00:00:00+00:00 sf_name=Juan Daniel Galeano score=44.4 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Thomas Sandon' dob=2003-07-11 00:00:00+00:00 sf_name=Christian Siciliano score=43.8 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Jean Freddi Pascal Greco' dob=2001-02-12 00:00:00+00:00 sf_name=Carlo Adriano score=43.1 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Marco Pinato' dob=1995-01-09 00:00:00+00:00 sf_name=Barış-Fahri Atik score=42.9 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Alessio Sabbione' dob=1991-12-12 00:00:00+00:00 sf_name=Aleksandar Šćekić score=42.4 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Gaetano Fasolino' dob=2000-06-21 00:00:00+00:00 sf_name=Valentin André Stanislas Gendrey score=41.7 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Daniel Cappelletti' dob=1991-10-09 00:00:00+00:00 sf_name=Andy Delort score=41.4 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Simone Pasa' dob=1994-01-21 00:00:00+00:00 sf_name=Cimo Patric Röcker score=41.4 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Matteo Di Gennaro' dob=1994-06-02 00:00:00+00:00 sf_name=Mohamed Mezghrani score=41.2 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Federico Casarini' dob=1989-09-07 00:00:00+00:00 sf_name=Francesco Bombagi score=41.2 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Matteo Bruscagin' dob=1989-08-03 00:00:00+00:00 sf_name=Samuel Edward Hutchinson score=40.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Andrea Arrighini' dob=1990-06-06 00:00:00+00:00 sf_name=Pape N'Diaye Souaré score=40.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Nicola Pasini' dob=1991-04-10 00:00:00+00:00 sf_name=Tim Coremans score=40.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Diego Fabbrini' dob=1990-07-31 00:00:00+00:00 sf_name=Virgil Andrei Drăghia score=40.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Gianvito Misuraca' dob=1990-04-02 00:00:00+00:00 sf_name=Eddie Fernando Guevara Chávez score=39.1 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Federico Valietti' dob=1999-01-25 00:00:00+00:00 sf_name=Darko Nejašmić score=38.7 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Federico Secli' dob=2002-05-14 00:00:00+00:00 sf_name=Tom Hendriks score=38.5 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Luca Crecco' dob=1995-09-06 00:00:00+00:00 sf_name=Matúš Bero score=38.1 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Stefano Giacomelli' dob=1990-04-30 00:00:00+00:00 sf_name=Kristoffer Pallesen score=37.8 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Armando Anastasio' dob=1996-07-24 00:00:00+00:00 sf_name=Aaron Joseph McGowan score=37.8 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Marco Calderoni' dob=1989-02-18 00:00:00+00:00 sf_name=James Lewis Jones score=37.5 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Samuele Longo' dob=1992-01-12 00:00:00+00:00 sf_name=Ishak Belfodil score=37.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Simone Corazza' dob=1991-03-22 00:00:00+00:00 sf_name=Joakim Lindner score=35.7 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Dejan Vokič' dob=1996-06-12 00:00:00+00:00 sf_name=James Edward Lea Siliki score=35.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Matteo Perri' dob=1998-09-06 00:00:00+00:00 sf_name=Cameron McJannett score=34.5 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Emanuele Padella' dob=1988-09-24 00:00:00+00:00 sf_name=Thomas Malcolm Rowe score=34.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Alessandro Bassoli' dob=1990-06-19 00:00:00+00:00 sf_name=Heber Edgar Leaños score=33.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Riccardo Meggiorini' dob=1985-09-04 00:00:00+00:00 sf_name=Raúl Albiol score=33.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Luca Coccolo' dob=1998-02-23 00:00:00+00:00 sf_name=Juan Camilo Becerra Maya score=33.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Simone Benedetti' dob=1992-04-03 00:00:00+00:00 sf_name=Felipe Silva score=32.4 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Aristidi Kolaj' dob=1999-09-04 00:00:00+00:00 sf_name=Frank Mario Magri score=32.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Simone Palombi' dob=1996-04-23 00:00:00+00:00 sf_name=Kim Ju Kong score=32.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Youssouph Cheikh Sylla' dob=1998-02-20 00:00:00+00:00 sf_name=Luizão score=32.0 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Davide Lanzafame' dob=1987-02-09 00:00:00+00:00 sf_name=Isaías score=27.3 reason=dob_gate_fail
+[team_strength] UNMATCHED fs='Giacomo Bindi' dob=1987-01-02 00:00:00+00:00 sf_name=Robert Steven Milsom score=24.2 reason=dob_gate_fail

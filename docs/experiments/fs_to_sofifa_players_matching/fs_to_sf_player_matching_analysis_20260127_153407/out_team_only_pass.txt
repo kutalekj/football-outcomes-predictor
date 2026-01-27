@@ -1,0 +1,113 @@
+[team_strength] MATCH fs='Muthu Irulandi' -> sf_id=73091 score=70.0 (2nd=48.0) (sf_name=Muthu Irulandi Mayakkannan) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Asher Agbinone' -> sf_id=73893 score=70.0 (2nd=53.8) (sf_name=Asher Chris Ofega Agbinone) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ben Winterburn' -> sf_id=75839 score=70.0 (2nd=42.4) (sf_name=Benjamin George Winterburn) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdulaziz Noor' -> sf_id=270460 score=70.0 (2nd=62.5) (sf_name=Abdulaziz Noor Sheikh Noor) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Alex Woodyard' -> sf_id=202422 score=70.3 (2nd=58.3) (sf_name=Alexander James Woodyard) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Cameron Pring' -> sf_id=234941 score=70.3 (2nd=51.9) (sf_name=Cameron Lewis Moir-Pring) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Cristiano Lombardi' -> sf_id=270786 score=70.3 (2nd=56.2) (sf_name=Alessandro Lombardi) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdullah Abdalbaset' -> sf_id=255560 score=70.3 (2nd=68.2) (sf_name=Abdullah Al-Samtai) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Marvin Kaleta' -> sf_id=73524 score=70.3 (2nd=50.0) (sf_name=Marvin Marvellous Kaleta) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Mason Burstow' -> sf_id=265777 score=70.3 (2nd=48.0) (sf_name=Mason Paul James Burstow) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Marvin Kaleta' -> sf_id=73524 score=70.3 (2nd=54.5) (sf_name=Marvin Marvellous Kaleta) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jordy Makengo' -> sf_id=262668 score=70.3 (2nd=51.9) (sf_name=Jordy Makengo Basambundu) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Masood Bekheet' -> sf_id=245521 score=70.6 (2nd=43.2) (sf_name=Masoud Hamad Bakheet) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Fally Mayulu' -> sf_id=275641 score=70.6 (2nd=41.7) (sf_name=Fally N'Dofunsu Mayulu) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ibrahim Sa’id' -> sf_id=262539 score=70.6 (2nd=61.5) (sf_name=Ibrahim Muhammad Said) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Owen Goodman' -> sf_id=276806 score=70.6 (2nd=52.2) (sf_name=Owen Olamidayo Goodman) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Lenni Cirino' -> sf_id=259228 score=70.6 (2nd=46.7) (sf_name=Lenni Rae Rowan Cirino) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jovon Makama' -> sf_id=263115 score=70.6 (2nd=59.3) (sf_name=Jovon Willesley Makama) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Fally Mayulu' -> sf_id=275641 score=70.6 (2nd=52.2) (sf_name=Fally N'Dofunsu Mayulu) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Rudy Matondo' -> sf_id=78070 score=70.6 (2nd=50.0) (sf_name=Rudy Nzingoula Matondo) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Nolan Gillot' -> sf_id=78348 score=70.6 (2nd=45.5) (sf_name=Nolan Erwan Noa Gillot) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Cheikh Bamba Dieng' -> sf_id=261084 score=70.6 (2nd=51.6) (sf_name=Cheikh Ahmadou Bamba Mbacké Dieng) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Fahad Mustafa Aljayzani' -> sf_id=226181 score=70.8 (2nd=55.3) (sf_name=Hamad Sulaiman Al Jayzani) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdulmalik Ghazzi Al Harbi' -> sf_id=235500 score=70.8 (2nd=70.3) (sf_name=Abdulmalek Al Shammari) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Arkelle Jude-Boyd' -> sf_id=72809 score=70.8 (2nd=54.1) (sf_name=Arkell Nicholas Cecil Jude-Boyd) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jed Wallace' -> sf_id=205970 score=71.0 (2nd=64.0) (sf_name=Jed Fearnley Wallace) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ethan Laird' -> sf_id=246159 score=71.0 (2nd=50.0) (sf_name=Ethan Benjamin Laird) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Adam Senior' -> sf_id=252596 score=71.0 (2nd=53.3) (sf_name=Adam Nicholas Senior) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Drey Wright' -> sf_id=208999 score=71.0 (2nd=46.2) (sf_name=Drey Jermaine Wright) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Teden Mengi' -> sf_id=253465 score=71.0 (2nd=50.0) (sf_name=Teden Mambuene Mengi) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jed Wallace' -> sf_id=205970 score=71.0 (2nd=66.7) (sf_name=Jed Fearnley Wallace) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Kwadwo Baah' -> sf_id=254807 score=71.0 (2nd=53.8) (sf_name=Kwadwo Kyeremeh Baah) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Luis Vásquez' -> sf_id=251651 score=71.0 (2nd=50.0) (sf_name=Luis Ismael Vázquez) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Luke Hutchinson' -> sf_id=245893 score=71.0 (2nd=60.6) (sf_name=Isaac Hutchinson) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Adam Senior' -> sf_id=252596 score=71.0 (2nd=38.1) (sf_name=Adam Nicholas Senior) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Rico Browne' -> sf_id=75149 score=71.0 (2nd=54.5) (sf_name=Rico Franklin Browne) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Kwadwo Baah' -> sf_id=254807 score=71.0 (2nd=48.0) (sf_name=Kwadwo Kyeremeh Baah) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Joseph Samb' -> sf_id=81789 score=71.0 (2nd=45.0) (sf_name=Joseph Layousse Samb) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdullah Al-Jawaey' -> sf_id=264332 score=71.4 (2nd=68.6) (sf_name=Salem Abdullah Al Toiawy) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Lewis Richards' -> sf_id=251590 score=71.8 (2nd=69.2) (sf_name=Lewis Paul Jimmy Richards) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Lewis Richards' -> sf_id=251590 score=71.8 (2nd=66.7) (sf_name=Lewis Paul Jimmy Richards) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Simone Icardi' -> sf_id=260088 score=72.0 (2nd=69.2) (sf_name=Simone Rabbi) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Alex Mitchell' -> sf_id=263686 score=72.2 (2nd=57.1) (sf_name=Alexander Paul Mitchell) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Federico Furlan' -> sf_id=274560 score=72.7 (2nd=71.0) (sf_name=Federico Mazzarani) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Joe Bauress' -> sf_id=231033 score=72.7 (2nd=66.7) (sf_name=Joe Maguire) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Trey Ogunsugi' -> sf_id=75095 score=72.7 (2nd=41.7) (sf_name=Trey Samuel-Ogunsuyi) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Tom Taylor' -> sf_id=270811 score=72.7 (2nd=71.4) (sf_name=James Taylor) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ahmad Al Mhemaid' -> sf_id=264013 score=73.3 (2nd=72.7) (sf_name=Fahad Al-Obaid) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Hamad Al Yami' -> sf_id=71832 score=73.3 (2nd=69.0) (sf_name=Hammam Al Hammami) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Hamad Al Yami' -> sf_id=71832 score=73.3 (2nd=69.0) (sf_name=Hammam Al Hammami) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jack Smith' -> sf_id=253168 score=74.1 (2nd=70.0) (sf_name=Jack Justin Smith) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Salem Al Najdi' -> sf_id=240518 score=75.9 (2nd=65.1) (sf_name=Saleh Al Nashmi) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ryan Howley' -> sf_id=262044 score=75.9 (2nd=64.0) (sf_name=Ryan Oliver Howley) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Josh Powell' -> sf_id=80412 score=75.9 (2nd=43.2) (sf_name=Joshua Alan Powell) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Bobby Clark' -> sf_id=271974 score=75.9 (2nd=69.6) (sf_name=Bobby-Lamont Clark) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Bobby Clark' -> sf_id=271974 score=75.9 (2nd=69.6) (sf_name=Bobby-Lamont Clark) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jonas Therkelsen' -> sf_id=271993 score=76.2 (2nd=69.0) (sf_name=Jonas Torrissen Therkelsen) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Francis Okoronkko' -> sf_id=74635 score=76.2 (2nd=46.2) (sf_name=Francis Okereke Okoronkwo) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jonas Therkelsen' -> sf_id=271993 score=76.2 (2nd=69.0) (sf_name=Jonas Torrissen Therkelsen) missing=1/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Dajaune Brown' -> sf_id=277463 score=76.5 (2nd=72.0) (sf_name=Dajaune Anthony Brown) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ibrahim Osman' -> sf_id=244513 score=76.9 (2nd=52.9) (sf_name=Ibrahim Sadiq) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Joe Thomas' -> sf_id=72939 score=76.9 (2nd=76.2) (sf_name=Joe Ethan Thomas) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdulelah Alshamary' -> sf_id=220023 score=77.3 (2nd=72.3) (sf_name=Abdullah Haif Al-Shammari) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Khaled Al Barakah' -> sf_id=231120 score=77.3 (2nd=71.8) (sf_name=Khaled Abdulaziz Al-Barakah) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jake Garrett' -> sf_id=256358 score=77.4 (2nd=72.7) (sf_name=Jake Joseph Garrett) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jake Garrett' -> sf_id=256358 score=77.4 (2nd=58.3) (sf_name=Jake Joseph Garrett) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Mohammed Alsubaie' -> sf_id=252421 score=77.8 (2nd=73.9) (sf_name=Mohammed Al-Dawsari) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Harry Pell' -> sf_id=74126 score=78.3 (2nd=60.6) (sf_name=Harry Sidwell) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Eiram Cashin' -> sf_id=263914 score=78.6 (2nd=50.0) (sf_name=Eiran Joe Cashin) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Chibuike Nwaiwu' -> sf_id=74981 score=78.9 (2nd=48.3) (sf_name=Chibuike Godfrey Nwaiwu) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Mohammed Al Majhad' -> sf_id=240463 score=80.0 (2nd=74.3) (sf_name=Mohammed Abdullah Al-Majhad) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Mohammed Maran' -> sf_id=255369 score=80.0 (2nd=77.8) (sf_name=Mohammed Khalil Maran) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Damion Downs' -> sf_id=274944 score=80.0 (2nd=58.3) (sf_name=Damion Lamar Downs) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdulelah Alshamary' -> sf_id=255560 score=81.1 (2nd=72.3) (sf_name=Abdullah Al-Samtai) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Nawaf Alaqidi' -> sf_id=263220 score=81.5 (2nd=78.6) (sf_name=Nawaf Al-Arifi) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Oliver Crankshaw' -> sf_id=251273 score=82.1 (2nd=55.6) (sf_name=Oliver Samuel Crankshaw) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Alessandro Minelli' -> sf_id=224977 score=82.4 (2nd=81.2) (sf_name=Alessandro Micai) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Mohammed Maran' -> sf_id=243854 score=82.8 (2nd=80.0) (sf_name=Mohamed Simakan) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Faisal Al-Ghamdi' -> sf_id=278748 score=83.9 (2nd=65.0) (sf_name=Fares Al Ghamdi) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdurahman Al Shammeri' -> sf_id=276776 score=84.0 (2nd=82.9) (sf_name=Abdulrahman Hadl Al Shammari) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jayden Seurier' -> sf_id=264581 score=85.7 (2nd=64.0) (sf_name=Jayden Fevrier) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdullah Al Qahtani' -> sf_id=255560 score=86.5 (2nd=82.6) (sf_name=Abdullah Al-Samtai) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Abdullah Al Qahtani' -> sf_id=255560 score=86.5 (2nd=82.6) (sf_name=Abdullah Al-Samtai) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Francesco Deli' -> sf_id=274197 score=89.7 (2nd=80.0) (sf_name=Francesco Gelli) missing=34/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Makan Aiko' -> sf_id=72891 score=90.0 (2nd=52.2) (sf_name=Makan Aïko) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Emile Acauah' -> sf_id=248126 score=91.7 (2nd=43.5) (sf_name=Emile Acquah) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Marc Domenech' -> sf_id=74583 score=92.3 (2nd=64.0) (sf_name=Marc Domènech) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Joe Ralls' -> sf_id=204464 score=100.0 (2nd=50.0) (sf_name=Joe Ralls) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Harry Cornick' -> sf_id=216155 score=100.0 (2nd=51.9) (sf_name=Harry Cornick) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Joe Ward' -> sf_id=228894 score=100.0 (2nd=61.5) (sf_name=Joe Ward) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Josh Emmanuel' -> sf_id=229912 score=100.0 (2nd=63.6) (sf_name=Josh Emmanuel) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Connor Shields' -> sf_id=242809 score=100.0 (2nd=53.3) (sf_name=Connor Shields) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Leonardo Sernicola' -> sf_id=233968 score=100.0 (2nd=51.4) (sf_name=Leonardo Sernicola) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Tom Eaves' -> sf_id=198011 score=100.0 (2nd=51.9) (sf_name=Tom Eaves) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Konsham Chinglensana Singh' -> sf_id=234508 score=100.0 (2nd=65.2) (sf_name=Konsham Chinglensana Singh) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jerry Lalrinzuala' -> sf_id=245169 score=100.0 (2nd=52.6) (sf_name=Jerry Lalrinzuala) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Brahima Diarra' -> sf_id=258374 score=100.0 (2nd=45.7) (sf_name=Brahima Diarra) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Bali Mumba' -> sf_id=243353 score=100.0 (2nd=48.0) (sf_name=Bali Mumba) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Tyler Burey' -> sf_id=253996 score=100.0 (2nd=55.2) (sf_name=Tyler Burey) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Rarmani Edmonds-Green' -> sf_id=234039 score=100.0 (2nd=48.5) (sf_name=Rarmani Edmonds-Green) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Luke Robinson' -> sf_id=259389 score=100.0 (2nd=56.0) (sf_name=Luke Robinson) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Bryan Zaragoza' -> sf_id=271916 score=100.0 (2nd=61.2) (sf_name=Bryan) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Lucas Ness' -> sf_id=272672 score=100.0 (2nd=50.0) (sf_name=Lucas Ness) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Ali Al-Salem' -> sf_id=253001 score=100.0 (2nd=58.1) (sf_name=Ali Al-Salem) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Silvère Ganvoula M'boussy' -> sf_id=235513 score=100.0 (2nd=40.0) (sf_name=Silvère Ganvoula M'boussy) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Scott Tiffoney' -> sf_id=245404 score=100.0 (2nd=52.9) (sf_name=Scott Tiffoney) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jason Sraha' -> sf_id=264255 score=100.0 (2nd=53.8) (sf_name=Jason Sraha) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Joe Walsh' -> sf_id=250804 score=100.0 (2nd=50.0) (sf_name=Joe Walsh) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Tommi O Reilly' -> sf_id=267849 score=100.0 (2nd=46.2) (sf_name=Tommi O'Reilly) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Jay Bird' -> sf_id=252549 score=100.0 (2nd=57.1) (sf_name=Jay Bird) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='George Evans' -> sf_id=211595 score=100.0 (2nd=100.0) (sf_name=George Evans) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Kane Thompson-Sommers' -> sf_id=251284 score=100.0 (2nd=54.5) (sf_name=Kane Thompson-Sommers) missing=0/34 gate=high reason=team_only_pass
+[team_strength] MATCH fs='Silvi Clua Oya' -> sf_id=278126 score=100.0 (2nd=50.0) (sf_name=Selvi) missing=0/34 gate=high reason=team_only_pass

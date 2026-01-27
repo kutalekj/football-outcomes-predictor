@@ -1,0 +1,668 @@
+[team_strength] UNMATCHED fs='Faisal Al Sibyani' dob=1970-01-01 00:00:00+00:00 sf_name=Faisal Ismail S. Al Subiani score=69.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jonathan Ngock Italen' dob=2001-08-11 00:00:00+00:00 sf_name=Jonathan Italeng Ngock score=69.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='João Batxi' dob=1998-05-01 00:00:00+00:00 sf_name=João Teixeira score=69.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Pedro Serra' dob=2002-03-21 00:00:00+00:00 sf_name=Pedro Alemañ score=69.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sandro Cesar' dob=1970-01-01 00:00:00+00:00 sf_name=Sandro Lima score=69.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Toby Adeyemo' dob=2005-03-14 00:00:00+00:00 sf_name=Ade Adeyemo score=69.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Fabrice Sambu Mansoni' dob=1995-01-08 00:00:00+00:00 sf_name=Junior Marsoni Sambu Mansoni score=69.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kelvin Ehibhaimha' dob=1970-01-01 00:00:00+00:00 sf_name=Kelvin Osemudiamen Ehibhatiomhan score=69.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luca Paganini' dob=1993-06-08 00:00:00+00:00 sf_name=Luca Valzania score=69.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joshua Kayode' dob=2000-12-14 00:00:00+00:00 sf_name=Joshua Bailey score=69.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Matt Blair' dob=1987-11-30 00:00:00+00:00 sf_name=Matthew James Blair score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mohamed Diamé' dob=1987-06-14 00:00:00+00:00 sf_name=Mohamed Bouldini score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Agustin Anello' dob=2002-05-22 00:00:00+00:00 sf_name=Augustin Drakpe score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joseph Taylor' dob=1970-01-01 00:00:00+00:00 sf_name=Joseph David Low score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hussain Qasim' dob=1970-01-01 00:00:00+00:00 sf_name=Hussain Al-Zarie score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zac Johnson' dob=1970-01-01 00:00:00+00:00 sf_name=Zak Robert Johnson score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh March' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua Thomas March score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gibson Yah' dob=1970-01-01 00:00:00+00:00 sf_name=Gibson Osahumen Yah score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lucas Ness' dob=1970-01-01 00:00:00+00:00 sf_name=Lucas Benjamin Ness score=69.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Edoardo Bovolon' dob=1998-06-05 00:00:00+00:00 sf_name=Edoardo Goldaniga score=68.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nelson Abby' dob=1970-01-01 00:00:00+00:00 sf_name=Nelson Ighodaro Abbey score=68.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Odel Offiah' dob=1970-01-01 00:00:00+00:00 sf_name=Odeluga Joshua Offiah score=68.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Azzam Al Salman' dob=1970-01-01 00:00:00+00:00 sf_name=Ahmed Al Shamrani score=68.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Charlie Kelman' dob=2001-01-17 00:00:00+00:00 sf_name=Charlie Mel Barker score=68.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tom Flanagan' dob=1992-01-17 00:00:00+00:00 sf_name=Thomas Michael Flanagan score=68.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sander Berge' dob=1998-02-14 00:00:00+00:00 sf_name=Sander Gard Bolin Berge score=68.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alessandro Crescenzi' dob=1991-09-25 00:00:00+00:00 sf_name=Alessandro Tuia score=68.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yasir Gharsan Al Shahrani' dob=1992-10-10 00:00:00+00:00 sf_name=Yasser Gharsan Saeed Al Mohammadi Al Shahrani score=68.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hussain Qasim' dob=1970-01-01 00:00:00+00:00 sf_name=Hussain Saleh Qasim Salem score=68.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Florian Danho' dob=1970-01-01 00:00:00+00:00 sf_name=Florian Thomas Danho Séké score=68.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Leo Bengtsson' dob=1998-02-17 00:00:00+00:00 sf_name=Erik Martin Leo Bengtsson score=68.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Chris Marco Hoffmann' dob=1995-05-21 00:00:00+00:00 sf_name=Marco Philip Hoffmann score=68.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Abdulraouf Al Abdelnabi' dob=1970-01-01 00:00:00+00:00 sf_name=Ali Abdulraouf score=68.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdulelah Abdulelah' dob=2001-06-02 00:00:00+00:00 sf_name=Saud Abdullah Abdul Hamid score=68.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Saeed Al Rubaie' dob=1993-09-01 00:00:00+00:00 sf_name=Saeed Awadh Al-Rubaie Al-Yami score=68.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Offrande Zanzala' dob=1997-12-13 00:00:00+00:00 sf_name=Offrande Jolynold Serge Zanzala score=68.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Meshari Al Nemer' dob=1970-01-01 00:00:00+00:00 sf_name=Meshari Fahad Mohammed Al Nemer score=68.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Vicente Alonso Fernández Baez' dob=2004-03-13 00:00:00+00:00 sf_name=Vicente Felipe Fernández Godoy score=67.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rarmani Edmonds-Green' dob=1994-01-14 00:00:00+00:00 sf_name=Rarmani River Miguel Joseph Edmonds-Green score=67.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Bent Sørmo' dob=1996-06-22 00:00:00+00:00 sf_name=Bent Langåssve Sørmo score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tom Hopper' dob=1994-10-01 00:00:00+00:00 sf_name=Thomas Edward Hopper score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Wes McDonald' dob=1970-01-01 00:00:00+00:00 sf_name=Wesley Nurettin McDonald score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jack Whatmough' dob=1996-06-24 00:00:00+00:00 sf_name=Jack David Vincent Whatmough score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luca Coccolo' dob=1998-02-23 00:00:00+00:00 sf_name=Luca Moro score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tyrese Omotoye' dob=1970-01-01 00:00:00+00:00 sf_name=Tyrese Demola Huxley Omotoye score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sam Ashford' dob=1970-01-01 00:00:00+00:00 sf_name=Samuel Kenneth Ashford score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Pape Diop' dob=1997-08-08 00:00:00+00:00 sf_name=Papa Kouly Diop score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hamad Al Yami' dob=1970-01-01 00:00:00+00:00 sf_name=Mohammed Al-Owais score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luca Bittante' dob=1993-08-14 00:00:00+00:00 sf_name=Luca Garritano score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Will Aimson' dob=1995-12-09 00:00:00+00:00 sf_name=William Stewart Aimson score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Modibo Diakité' dob=1987-03-02 00:00:00+00:00 sf_name=Salim Diakité score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rahul Kumar Paswan' dob=1998-04-19 00:00:00+00:00 sf_name=Nishu Kumar Tashni score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Murphy Mahoney' dob=1970-01-01 00:00:00+00:00 sf_name=Murphy Joseph Mahoney Cooper score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zech Obiero' dob=2005-06-18 00:00:00+00:00 sf_name=Zechariah Nahum Obiero score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdulaziz Al Faraj' dob=2003-06-23 00:00:00+00:00 sf_name=Abdulaziz Abdullah Al-Alawi score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tommy Conway' dob=1970-01-01 00:00:00+00:00 sf_name=Tommy Daniel John Conway score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Narender Narender' dob=1970-01-01 00:00:00+00:00 sf_name=Narendra Naik score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Callum Harriott' dob=1994-03-04 00:00:00+00:00 sf_name=Callum Slattery score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Michael Mellon' dob=1970-01-01 00:00:00+00:00 sf_name=Michael Jordan Donald Mellon score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Al-Hamadi' dob=1970-01-01 00:00:00+00:00 sf_name=Paul Kalambayi score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joseph Taylor' dob=1970-01-01 00:00:00+00:00 sf_name=Joseph William John Taylor score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Emirhan Zaman' dob=2003-05-19 00:00:00+00:00 sf_name=Serkan Asan score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Theo Gece' dob=1970-01-01 00:00:00+00:00 sf_name=Théo Gécé score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdulelah Abdulelah' dob=2001-06-02 00:00:00+00:00 sf_name=Abdullah Al Harbi score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jermie Sivi' dob=1970-01-01 00:00:00+00:00 sf_name=Jeremy Kilongo Sivi score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kelvin Abretti' dob=1970-01-01 00:00:00+00:00 sf_name=Kelvin Opoku Abrefa score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Baran Alp Vardar' dob=2005-06-02 00:00:00+00:00 sf_name=Alp Arda score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Oscar Wallin' dob=1970-01-01 00:00:00+00:00 sf_name=Björn Oscar Tiger Wallin score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Callum Tripp' dob=1970-01-01 00:00:00+00:00 sf_name=Callum Maximillian Tripp score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tyler Obling' dob=1970-01-01 00:00:00+00:00 sf_name=Tyler-Jay Robert Dibling score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sydie Peck' dob=1970-01-01 00:00:00+00:00 sf_name=Sydie Frederick Peck score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joe Westley' dob=1970-01-01 00:00:00+00:00 sf_name=Joseph Anthony Westley score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Will Alves' dob=1970-01-01 00:00:00+00:00 sf_name=William Thomas Alves score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kadan Young' dob=1970-01-01 00:00:00+00:00 sf_name=Kadan Christophe Young score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joe Gardner' dob=1970-01-01 00:00:00+00:00 sf_name=Joseph Charles Gardner score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Makaya Ibrahima Diaby' dob=1970-01-01 00:00:00+00:00 sf_name=Ibrahima Makaya Diaby score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jakob Jessen' dob=2004-03-03 00:00:00+00:00 sf_name=Jakob Vestergaard Jessen score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jayden Wareham' dob=1970-01-01 00:00:00+00:00 sf_name=Jayden Darren George Wareham score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tobias Brenan' dob=1970-01-01 00:00:00+00:00 sf_name=Tobias Toumai Moses Brenan score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kyrell Lisbie' dob=1970-01-01 00:00:00+00:00 sf_name=Kyrece Joshua Lisbie score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='David Ozoh' dob=1970-01-01 00:00:00+00:00 sf_name=David Ikechukwu Ozoh score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joshua Duffus' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua James Leslie Duffus score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kami Doyle' dob=1970-01-01 00:00:00+00:00 sf_name=Kamari Olivier Doyle score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Max Alleyne' dob=1970-01-01 00:00:00+00:00 sf_name=Max Lewis Rowe Alleyne score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdulelah Abdulelah' dob=2001-06-02 00:00:00+00:00 sf_name=Tareq Abdullah score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Daniel Imray' dob=1970-01-01 00:00:00+00:00 sf_name=Daniel Sassi score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Banhie Zoukrou' dob=1970-01-01 00:00:00+00:00 sf_name=Tanguy Xavier Banhie Zoukrou score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lee Ndlovu' dob=1970-01-01 00:00:00+00:00 sf_name=Lindokuhle Ndlovu score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nawaf Al-Hawsawi' dob=1970-01-01 00:00:00+00:00 sf_name=Nawaf Al Reshoodi score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Reyes Cleary' dob=1970-01-01 00:00:00+00:00 sf_name=Reyes Demar Uriah Cleary score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jabon Warner' dob=1970-01-01 00:00:00+00:00 sf_name=Jacob Carney score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jeyland Mitchell' dob=1970-01-01 00:00:00+00:00 sf_name=Jeyland Yahir Mitchell Baltodano score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zech Obiero' dob=1970-01-01 00:00:00+00:00 sf_name=Zechariah Nahum Obiero score=66.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdullah Al-Jawaey' dob=1996-03-09 00:00:00+00:00 sf_name=Abdulelah Malwah Al-Shammeri score=65.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Oscar James Moncrieff Priestman' dob=2003-12-10 00:00:00+00:00 sf_name=Oscar Priestman score=65.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdullah Ibrahim Murshid Hazazi' dob=1995-05-31 00:00:00+00:00 sf_name=Abdullah Hazazi score=65.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdulrahman Oumar' dob=1970-01-01 00:00:00+00:00 sf_name=Abdulrahman Ahmed Al-Obaid score=65.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Firas Al-Ghamdi' dob=1970-01-01 00:00:00+00:00 sf_name=Feras Siraj Farhan Al Ghamdi score=65.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tommi O'Reilly' dob=1970-01-01 00:00:00+00:00 sf_name=Tommi Dylan Brooklyn O'Reilly score=65.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sammy Braybroke' dob=1970-01-01 00:00:00+00:00 sf_name=Samuel Charles Braybrooke score=65.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Raghed Najjar' dob=1996-07-01 00:00:00+00:00 sf_name=Raghid Alaa Mohammed Najjar score=65.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Faisal Al-Ghamdi' dob=1970-01-01 00:00:00+00:00 sf_name=Hamed Abdullah Al Ghamdi score=65.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Daniel Imray' dob=1970-01-01 00:00:00+00:00 sf_name=Daniel Edward Peter Imray score=64.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Val Adedokun' dob=1970-01-01 00:00:00+00:00 sf_name=Valintino Mayowa Adedokun score=64.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Dom Jeffries' dob=1970-01-01 00:00:00+00:00 sf_name=Dominic William Jefferies score=64.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nadjib Cisse' dob=1970-01-01 00:00:00+00:00 sf_name=Nadjib Vassiriki Cissé score=64.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Andriy Dombrovskiy' dob=1995-08-12 00:00:00+00:00 sf_name=Thiago Dombroski score=64.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jason Sraha' dob=1970-01-01 00:00:00+00:00 sf_name=Jason Robert Sraha Osei score=64.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Fin Conchie' dob=2003-01-10 00:00:00+00:00 sf_name=Fin Ngahina Roa Conchie score=64.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdoul Bamo Meité' dob=1970-01-01 00:00:00+00:00 sf_name=Bamo Abdoul Meïté score=64.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joe Hugill' dob=1970-01-01 00:00:00+00:00 sf_name=Joseph Brennen Hugill score=64.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ji-Soo Park' dob=1994-06-13 00:00:00+00:00 sf_name=Park Ji Soo score=64.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Alawjami' dob=1996-04-25 00:00:00+00:00 sf_name=Salem Al-Dawsari score=64.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Perry Ng' dob=1996-04-27 00:00:00+00:00 sf_name=Perry Ng Tian-Hee score=64.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Marco Pinato' dob=1995-01-09 00:00:00+00:00 sf_name=Marco Mancosu score=64.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luca Calapai' dob=1993-05-20 00:00:00+00:00 sf_name=Luca Cigarini score=64.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Chris Sze' dob=1970-01-01 00:00:00+00:00 sf_name=Christian Saydee score=64.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Harley Hunt' dob=1970-01-01 00:00:00+00:00 sf_name=Charles Austin score=64.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Moudja Sie Ouattara' dob=2002-02-20 00:00:00+00:00 sf_name=Sié Milama-Moudjatovic Ouattara score=64.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdulaziz Al-Suwailem' dob=1970-01-01 00:00:00+00:00 sf_name=Abdul Aziz Khalid Al Fawaz score=63.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mads Greve' dob=1989-09-12 00:00:00+00:00 sf_name=Mads Enggård score=63.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Noah Solheid' dob=1970-01-01 00:00:00+00:00 sf_name=Noah Serwy score=63.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Junior Gontie Diomande' dob=1970-01-01 00:00:00+00:00 sf_name=Gontie Junior Diomandé score=63.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Max Dunne' dob=2000-10-01 00:00:00+00:00 sf_name=Max Melbourne score=63.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='George Hall' dob=1970-01-01 00:00:00+00:00 sf_name=Connor Hall score=63.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Brian Brobbey' dob=2002-02-02 00:00:00+00:00 sf_name=Brian Ebenezer Adjei Brobbey score=63.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Justin Obikwu' dob=1970-01-01 00:00:00+00:00 sf_name=Justin Patrick Nnamdi Obikwu score=63.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Damián Damián' dob=1970-01-01 00:00:00+00:00 sf_name=Damián score=63.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Teo Allix' dob=2004-07-05 00:00:00+00:00 sf_name=Théo Valls score=63.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Alawjami' dob=1996-04-25 00:00:00+00:00 sf_name=Ali Mohammed Ali Lajami score=62.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ben Garrity' dob=1970-01-01 00:00:00+00:00 sf_name=Benjamin Matthew Garrity score=62.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tyler Smith' dob=1970-01-01 00:00:00+00:00 sf_name=Tyler Gavin Junior Smith score=62.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Khalid Hamdi' dob=1991-08-17 00:00:00+00:00 sf_name=Khaled Nasser Al-Hamdhi score=62.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Femi Seriki' dob=1970-01-01 00:00:00+00:00 sf_name=Oluwafemi Ibrahim Seriki score=62.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yael Mouanga' dob=1970-01-01 00:00:00+00:00 sf_name=Yaël Mouanga Boudzoumou score=62.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Femi Azeez' dob=1970-01-01 00:00:00+00:00 sf_name=Oluwafemi Javier Azeez score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joshua Kayode' dob=2000-12-14 00:00:00+00:00 sf_name=Joshua George Ayres score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Narender Narender' dob=1970-01-01 00:00:00+00:00 sf_name=Narender Gahlot score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Drew Baker' dob=2003-03-06 00:00:00+00:00 sf_name=Andrew Macdonald Baker score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ebube Duru' dob=1970-01-01 00:00:00+00:00 sf_name=Chidiebube Gideon Duru score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Turki Tawfiq H. Al Madani' dob=2007-11-05 00:00:00+00:00 sf_name=Turki Hafiz Al Baaljawsh score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zach Booth' dob=1970-01-01 00:00:00+00:00 sf_name=Chadwick Zachary Booth score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kan Guy Arsu00e8ne Kouassi' dob=1970-01-01 00:00:00+00:00 sf_name=Arsène Kan Guy Kouassi score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Glenn McConnell' dob=1970-01-01 00:00:00+00:00 sf_name=Felipe Glenn Nascimento McConnell score=62.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nawaf Alaqidi' dob=1970-01-01 00:00:00+00:00 sf_name=Nawaf Al Boushal score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nikolas Špalek' dob=1997-02-12 00:00:00+00:00 sf_name=Nicolas Galazzi score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Masheal Al Hamdan' dob=2003-05-14 00:00:00+00:00 sf_name=Ali Al Zaqan score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Stefano Minelli' dob=1994-03-05 00:00:00+00:00 sf_name=Stefano Turati score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Artem Polyarus' dob=1992-07-05 00:00:00+00:00 sf_name=Artem Putivtsev score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Bram van Driel' dob=2005-05-28 00:00:00+00:00 sf_name=Billy van Duijl score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Brad Tapp' dob=1970-01-01 00:00:00+00:00 sf_name=Bradley Anthony Tapp score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Everson Everson' dob=1970-01-01 00:00:00+00:00 sf_name=Everson Junior score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Levi Lang' dob=1970-01-01 00:00:00+00:00 sf_name=Levi Alexander Laing score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Eddie Beech' dob=1970-01-01 00:00:00+00:00 sf_name=Edward James Beach score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jid Okeke' dob=1970-01-01 00:00:00+00:00 sf_name=Favour Jidechi Okeke score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Samuel Krasniqi' dob=2005-01-03 00:00:00+00:00 sf_name=Samuel Marques score=62.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hassan Al-Ali' dob=1970-01-01 00:00:00+00:00 sf_name=Hassan Hashim Mohammed Al Ali score=61.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alhwsawi Sanousi Mohammed' dob=1998-10-08 00:00:00+00:00 sf_name=Sanousi Mohammed Al Hawsawi score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Erick Pulgar' dob=1989-04-18 00:00:00+00:00 sf_name=Erick Antonio Pulgar Farfán score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yasir Gharsan Al Shahrani' dob=1992-10-10 00:00:00+00:00 sf_name=Yasser bin Gharsan bin Saeed Al-Mohammadi Al-Shahrani score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh Davison' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua Edwards score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Iker Gil López' dob=2005-03-15 00:00:00+00:00 sf_name=Sergio Gómez score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nawaf Alaqidi' dob=1970-01-01 00:00:00+00:00 sf_name=Nawaf Boushal score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ed Turns' dob=1970-01-01 00:00:00+00:00 sf_name=Edward James Turns score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Edwar Cedeño' dob=1970-01-01 00:00:00+00:00 sf_name=Edward Edier Cedeño Guerrel score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Martial Godo' dob=1970-01-01 00:00:00+00:00 sf_name=Becket Fabrice-Martial Godo score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ryan Merlen' dob=2002-05-11 00:00:00+00:00 sf_name=Rein Van Helden score=61.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Al Abdulmonam Malek' dob=1970-01-01 00:00:00+00:00 sf_name=Abdullah Abdulkarim Al Shamekh score=61.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Abdullah Abdalbaset' dob=2000-12-12 00:00:00+00:00 sf_name=Abdullah Ahmed Musa Al Hawsawi score=61.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ibrahima Tandia' dob=1993-07-12 00:00:00+00:00 sf_name=Ibrahim Zaid Al-Malki score=61.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh Umerah' dob=1998-04-01 00:00:00+00:00 sf_name=Joshua Chukwudinma Umerah score=61.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Efe Ugiagbe Aghama' dob=1970-01-01 00:00:00+00:00 sf_name=Efe Aghama Ugiagbe score=61.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nils Froling' dob=1970-01-01 00:00:00+00:00 sf_name=Jannis Lang score=60.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mo Faal' dob=1970-01-01 00:00:00+00:00 sf_name=Modou Lamin Faal score=60.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yılmaz Aktaş' dob=2003-05-12 00:00:00+00:00 sf_name=Aksel Aktaş score=60.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh Davison' dob=1970-01-01 00:00:00+00:00 sf_name=Josh Hawkes score=60.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Karoy Anderson' dob=1970-01-01 00:00:00+00:00 sf_name=Karoy Zidane Lovebourne Anderson score=60.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Ahmed' dob=2000-10-10 00:00:00+00:00 sf_name=Daniel Adshead score=60.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Harry Pell' dob=1990-10-21 00:00:00+00:00 sf_name=Harry David Balraj Pell score=60.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Daniel Avramovski' dob=1995-02-20 00:00:00+00:00 sf_name=Mario Gavranović score=60.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Charles Clayden' dob=2000-11-16 00:00:00+00:00 sf_name=Charlie Mel Barker score=60.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tarık Buğra Kalpaklı' dob=2009-04-06 00:00:00+00:00 sf_name=Burak Kapacak score=60.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jeffrey Rodriguez' dob=1970-01-01 00:00:00+00:00 sf_name=Afonso Rodrigues score=60.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Karam Barnawi' dob=1970-01-01 00:00:00+00:00 sf_name=Karam Ibrahim Mohammed Barnawi score=60.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Meshal Alaeli' dob=1970-01-01 00:00:00+00:00 sf_name=Mishal Youssef Eshaq Al Alaeli score=60.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Al-Hamadi' dob=1970-01-01 00:00:00+00:00 sf_name=Ali Ibrahim Karim Ali AlHamadi score=60.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Olabade Aluko' dob=1970-01-01 00:00:00+00:00 sf_name=Olabade Olatomiwo Samuel Aluko score=60.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tyreece Anthony Tupac Shakur Campbell' dob=1970-01-01 00:00:00+00:00 sf_name=Tyreece Campbell score=60.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Naif Mohammed Marwai Al Fulaytah Asiri' dob=2001-02-17 00:00:00+00:00 sf_name=Saif Mohammed Saleh Qawan Balhareth score=60.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Elliot Ward' dob=1970-01-01 00:00:00+00:00 sf_name=Elliot William Watt score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Qasim Alawjami' dob=1996-04-25 00:00:00+00:00 sf_name=Basil Al Bahrani score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nicolò Bianchi' dob=1992-02-24 00:00:00+00:00 sf_name=Niccolò Pierozzi score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Anderson Carvalho' dob=1990-05-20 00:00:00+00:00 sf_name=Pedro Bicalho score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Stephen Wourne' dob=1970-01-01 00:00:00+00:00 sf_name=Stephen Christopher Wearne score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Pierre Ekwah' dob=1970-01-01 00:00:00+00:00 sf_name=Pierre-Emmanuel Ekwah Elimby score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lorenzo Carfora' dob=2006-01-11 00:00:00+00:00 sf_name=Lorenzo Montipò score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joshua Kayode' dob=2000-12-14 00:00:00+00:00 sf_name=Joshua James Vela score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gideon Kadua' dob=1970-01-01 00:00:00+00:00 sf_name=Gideon Nana Kwame Fosu Kodua score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Oskar Koprowski' dob=1999-03-18 00:00:00+00:00 sf_name=Kamil Dankowski score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Oskar Boesen' dob=1970-01-01 00:00:00+00:00 sf_name=Oskar Adam Rudkjøbing Boesen score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Arda Yildiz' dob=2007-04-16 00:00:00+00:00 sf_name=Kadir Karayiğit score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aron Sasu' dob=1970-01-01 00:00:00+00:00 sf_name=Aron Kwame Jolle Sasu score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Cameron Humphreys' dob=1970-01-01 00:00:00+00:00 sf_name=Cameron Ashia score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Vegard Erlien' dob=1998-06-24 00:00:00+00:00 sf_name=Garriel score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Saud Mohammed Haroun' dob=2005-07-19 00:00:00+00:00 sf_name=Mohammed Al Khaibari score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yassine Khalifi' dob=2005-08-09 00:00:00+00:00 sf_name=Yassine Mohammed Titraoui score=60.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ânderson Miguel da Silva' dob=1983-07-28 00:00:00+00:00 sf_name=Luís Silva score=59.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Michael Schjonning-Larsen' dob=2001-02-02 00:00:00+00:00 sf_name=Michael Issac Williams score=59.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Omar Bugiel' dob=1996-11-28 00:00:00+00:00 sf_name=Omar Khalid Chaaban Bugiel score=59.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Barry Crowe-Baggley' dob=2002-02-11 00:00:00+00:00 sf_name=Barry Thomas Crowe score=59.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Omar Bugiel' dob=1996-11-28 00:00:00+00:00 sf_name=Omar Khaled Chaaban Bugiel score=59.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nils Froling' dob=1970-01-01 00:00:00+00:00 sf_name=Nils Gustav Georg Fröling score=59.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Matija Boben' dob=1994-02-26 00:00:00+00:00 sf_name=Mattia Proietti score=59.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Marco Tumminello' dob=1998-11-06 00:00:00+00:00 sf_name=Mario Šitum score=59.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jack Moore-Billam' dob=2004-03-05 00:00:00+00:00 sf_name=Jake Balme score=59.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mashel Ali' dob=1970-01-01 00:00:00+00:00 sf_name=Ismael score=59.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Julien Megier' dob=2000-02-16 00:00:00+00:00 sf_name=Julien Ponceau score=59.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Guy Christian Zock Abep' dob=1994-05-06 00:00:00+00:00 sf_name=Cristian Souza España score=59.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Scott Pollock' dob=1970-01-01 00:00:00+00:00 sf_name=Scott Alexander Gladman Pollock score=59.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Joshua Kayode' dob=2000-12-14 00:00:00+00:00 sf_name=Joshua Akinola Ogunfaolu-Kayode score=59.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Al-Hamadi' dob=1970-01-01 00:00:00+00:00 sf_name=Ali Ibrahim Karim Ali Al-Hamadi score=59.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Cássio Albuquerque dos Anjos' dob=1980-08-12 00:00:00+00:00 sf_name=Iago score=58.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hallur Hansson' dob=1992-07-08 00:00:00+00:00 sf_name=Lucas Hägg Johansson score=58.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yusuf Buğra Demirkıran' dob=2006-03-22 00:00:00+00:00 sf_name=Yusuf Barası score=58.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sorba Thomas' dob=1999-08-22 00:00:00+00:00 sf_name=Benjamin Sorba William Thomas score=58.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='George Pratt' dob=1970-01-01 00:00:00+00:00 sf_name=George Christopher John Pratt score=58.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tyler Burey' dob=1970-01-01 00:00:00+00:00 sf_name=Peter Hartley score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zoran Kvržić' dob=1988-08-07 00:00:00+00:00 sf_name=Onurcan Piri score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aidan Coyne' dob=2003-11-16 00:00:00+00:00 sf_name=Daniel Stynes score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nigel Thomas' dob=2001-02-01 00:00:00+00:00 sf_name=Bastien Toma score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jack Hinchy' dob=1970-01-01 00:00:00+00:00 sf_name=Jack Loughran score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nigel Thomas' dob=2001-02-01 00:00:00+00:00 sf_name=Daniel Penha score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yusuf İnci' dob=2005-02-01 00:00:00+00:00 sf_name=Yusuf Erdoğan score=58.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Amedeo Benedetti' dob=1991-10-25 00:00:00+00:00 sf_name=Giacomo Beretta score=58.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Manuel De Luca' dob=1998-07-17 00:00:00+00:00 sf_name=Samuel Di Carmine score=58.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh Davison' dob=1970-01-01 00:00:00+00:00 sf_name=George David Dobson score=58.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gianfilippo Felicioli' dob=1997-09-30 00:00:00+00:00 sf_name=Filippo Palazzino score=57.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jack Hinchy' dob=1970-01-01 00:00:00+00:00 sf_name=Jack Samuel Lawrence Hinchy score=57.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sacha Bastien' dob=1994-01-22 00:00:00+00:00 sf_name=Sacha Charles Julian Guy Bastien score=57.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kevin Arriaga' dob=1970-01-01 00:00:00+00:00 sf_name=Kervin Fabián Arriaga Villanueva score=57.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Max Dunne' dob=2000-10-01 00:00:00+00:00 sf_name=Matthew Done score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Shaun MacDonald' dob=1988-06-17 00:00:00+00:00 sf_name=Rodney Troy McDonald score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Paulinho' dob=1988-07-25 00:00:00+00:00 sf_name=Galeno score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Diego Peralta' dob=1996-12-27 00:00:00+00:00 sf_name=Pietro Rovaglia score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Davide Bertoncini' dob=1991-05-09 00:00:00+00:00 sf_name=Diego Ronco score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sedat Şahintürk' dob=1996-02-07 00:00:00+00:00 sf_name=Vedat Karakuş score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Dauda Mohammed' dob=1996-10-23 00:00:00+00:00 sf_name=Mohammed Dauda score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rodrigo Palacio' dob=1982-02-05 00:00:00+00:00 sf_name=Federico Pace score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Brad Young' dob=1970-01-01 00:00:00+00:00 sf_name=Bradley Jamie Ethan Young score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mirko Gori' dob=1993-02-04 00:00:00+00:00 sf_name=Miloš Bočić score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Anas Nanah' dob=2003-03-12 00:00:00+00:00 sf_name=Silas Gnaka score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh Davison' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua Michael Blainey Davison score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Chris Donnell' dob=1970-01-01 00:00:00+00:00 sf_name=Brandon O'Neill score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Berat Yaman' dob=2002-10-20 00:00:00+00:00 sf_name=Murat Akça score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Víctor Olmo Durán' dob=2001-06-17 00:00:00+00:00 sf_name=Víctor Gómez score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rúben André Fernandes Marques' dob=2002-09-20 00:00:00+00:00 sf_name=Rúben Macedo score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alhwsawi Sanousi Mohammed' dob=1998-10-08 00:00:00+00:00 sf_name=Abdulaziz Ali Mohammed Al Bishi score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zack Nelson' dob=2004-09-24 00:00:00+00:00 sf_name=Jack James Walton score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zack Nelson' dob=1970-01-01 00:00:00+00:00 sf_name=Jack James Walton score=57.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Douglas Willian da Silva Souza' dob=1993-10-27 00:00:00+00:00 sf_name=Lucas Silva score=56.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Brian Djomeni Madjo' dob=2009-01-12 00:00:00+00:00 sf_name=Lima Joseph Mangondo score=56.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Dario Toninelli' dob=1993-01-23 00:00:00+00:00 sf_name=Federico Chinetti score=56.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lorenzo Peli' dob=2000-01-24 00:00:00+00:00 sf_name=Alberto Moreno score=56.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Manuel Nicoletti' dob=1998-12-09 00:00:00+00:00 sf_name=Emmanuel Rivière score=56.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jonathan Russell' dob=2004-09-19 00:00:00+00:00 sf_name=Roshan Greensall score=56.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Diego Fabbrini' dob=1990-07-31 00:00:00+00:00 sf_name=Dario Šarić score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Saeed Baattia' dob=2001-02-01 00:00:00+00:00 sf_name=Mourad Batna score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mashel Ali' dob=1970-01-01 00:00:00+00:00 sf_name=Hassan Al Salis score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Elia Meschack' dob=1996-08-06 00:00:00+00:00 sf_name=Lamine Diack score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jeremy Monga' dob=1970-01-01 00:00:00+00:00 sf_name=Wesley Fofana score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Saeed Baattia' dob=1970-01-01 00:00:00+00:00 sf_name=Mourad Batna score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kamari Grant' dob=1970-01-01 00:00:00+00:00 sf_name=Cameron Antwi score=56.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alysson Cristian Oliveira Silva' dob=2002-09-26 00:00:00+00:00 sf_name=Ricardo Silva score=55.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aziz Outtara Mohammed' dob=1970-01-01 00:00:00+00:00 sf_name=Mohammed Aziz Ouattara score=55.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aboubacar Ali Abdallah' dob=2006-04-02 00:00:00+00:00 sf_name=Abakar Loubadhe Sylla score=55.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Qasim Alawjami' dob=1996-04-25 00:00:00+00:00 sf_name=Qasem Mohammed bin Ali Lajami score=55.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aloyayari Abdulmalik' dob=2003-11-10 00:00:00+00:00 sf_name=Ali Abdulhadi Al Nakhli score=55.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Camillo Tavernelli' dob=1999-07-10 00:00:00+00:00 sf_name=Filippo Pittarello score=55.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aloyayari Abdulmalik' dob=2003-11-10 00:00:00+00:00 sf_name=Eyad Loay Madani score=55.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yaw Moses' dob=1999-01-07 00:00:00+00:00 sf_name=Moses Yaw score=55.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Chanse Headman' dob=2005-06-03 00:00:00+00:00 sf_name=Thomas Michael Eastman score=55.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aniello Salzano' dob=1991-07-20 00:00:00+00:00 sf_name=Gabriel Brazão score=55.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Fabian Cavadias' dob=2001-09-04 00:00:00+00:00 sf_name=Fabijan Buntić score=55.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alessio Tribuzzi' dob=1998-11-19 00:00:00+00:00 sf_name=Massimo Zilli score=55.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Martin Lecolier' dob=2003-06-24 00:00:00+00:00 sf_name=Adrien Delphis score=55.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mohamed Soumah' dob=2003-03-15 00:00:00+00:00 sf_name=Ahmed Abdullahi score=55.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aodhan Doherty' dob=2006-05-03 00:00:00+00:00 sf_name=Jacob Davenport score=55.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jay Bagueloc'rich' dob=1970-01-01 00:00:00+00:00 sf_name=Jay Noah Rich-Baghuelou score=55.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kylian Kouassi' dob=1970-01-01 00:00:00+00:00 sf_name=Kylian Prince-Emmanuel Tresor Kouassi score=54.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Roberto Pirrello' dob=1996-05-30 00:00:00+00:00 sf_name=Vittorio Alberto Agostinelli score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Eli Sabia Filho' dob=1988-08-31 00:00:00+00:00 sf_name=Elsinho score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Furkan Kütük' dob=2002-12-07 00:00:00+00:00 sf_name=Okan Kocuk score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Metin Caner Akbayrak' dob=2004-01-11 00:00:00+00:00 sf_name=Mert Han Kurt score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Pascal Fallmann' dob=2003-11-07 00:00:00+00:00 sf_name=Maximilian Ullmann score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ângelo Neto' dob=1991-09-02 00:00:00+00:00 sf_name=Diogo Pinto score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alex Daho' dob=1970-01-01 00:00:00+00:00 sf_name=Daylam Meddah score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Igmane Hamza' dob=1970-01-01 00:00:00+00:00 sf_name=Ianis Hagi score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Douglas Costa' dob=1990-09-14 00:00:00+00:00 sf_name=Léo Sena score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Besian Kutleshi' dob=1970-01-01 00:00:00+00:00 sf_name=Sebastian Esposito score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kai Wagner' dob=1997-02-15 00:00:00+00:00 sf_name=Gary Gardner score=54.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Wadhah Basheer Alotaibi' dob=2003-03-02 00:00:00+00:00 sf_name=Abdullah Fareed Al Hafith score=54.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gianmaria Zanandrea' dob=1999-05-26 00:00:00+00:00 sf_name=Gianluca Di Chiara score=54.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kaspar Lopata' dob=1970-01-01 00:00:00+00:00 sf_name=Kacper Mieczysław Łopata score=54.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lirak Hasani' dob=2002-06-25 00:00:00+00:00 sf_name=Liam Ravenhill score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ahmed Mandefu' dob=2001-01-24 00:00:00+00:00 sf_name=Amine Chabane score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Efe Can Saçıkara' dob=2004-03-29 00:00:00+00:00 sf_name=Aytaç Kara score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luderic Etonde' dob=2000-08-30 00:00:00+00:00 sf_name=Alec Georgen score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rory Whittaker' dob=2007-08-10 00:00:00+00:00 sf_name=Murray Aiken score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josh Key' dob=1999-11-01 00:00:00+00:00 sf_name=Joshua Lewis Tymon score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Karim Dermane' dob=1970-01-01 00:00:00+00:00 sf_name=Dermane Karim score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Fynn Schenten' dob=2007-09-14 00:00:00+00:00 sf_name=Benno Schmitz score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Brandon Powell' dob=2005-10-17 00:00:00+00:00 sf_name=Joe Rothwell score=53.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Renne Rivas' dob=1970-01-01 00:00:00+00:00 sf_name=Renne Alejandro Rivas Alezones score=53.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Adrián Guerrero Mouriz' dob=2006-02-15 00:00:00+00:00 sf_name=Germán Parreño score=53.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ramón Martinez Gil' dob=1970-01-01 00:00:00+00:00 sf_name=Monchu score=53.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Matías Emanuel Segovia Torales' dob=2003-01-04 00:00:00+00:00 sf_name=Luis Geovanny Segovia Vega score=53.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Welinton Souza Silva' dob=1989-04-10 00:00:00+00:00 sf_name=Jota Silva score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Edinaldo Gomes Pereira' dob=1988-08-25 00:00:00+00:00 sf_name=Fredy score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Alberto Gerbo' dob=1989-11-09 00:00:00+00:00 sf_name=Alessandro Arioli score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Harvey Cribb' dob=1970-01-01 00:00:00+00:00 sf_name=Harry Charles Bunn score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Finley Shrimpton' dob=2002-08-24 00:00:00+00:00 sf_name=Lewis Thompson score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Moussa Konaté' dob=1993-04-03 00:00:00+00:00 sf_name=Mustapha Yatabaré score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ashley Famiwuya' dob=1970-01-01 00:00:00+00:00 sf_name=Ashley Phillips score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nigel Thomas' dob=2001-02-01 00:00:00+00:00 sf_name=Ichnygel Gerzjomir Minguel Thomas score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Matties Volckaert' dob=2002-10-12 00:00:00+00:00 sf_name=Dante Vanzeir score=53.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ben Radcliffe' dob=2004-07-11 00:00:00+00:00 sf_name=William Benjamin Callister Radcliffe score=53.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ben Radcliffe' dob=1970-01-01 00:00:00+00:00 sf_name=William Benjamin Callister Radcliffe score=53.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Endrick Felipe Moreira de Sousa' dob=2006-07-21 00:00:00+00:00 sf_name=Jeffinho score=53.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Damiano Franco' dob=2002-02-22 00:00:00+00:00 sf_name=Thiago Cionek score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jackson Manuel' dob=1970-01-01 00:00:00+00:00 sf_name=Jack Carleton Duncan score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kerem Altunışık' dob=2004-07-09 00:00:00+00:00 sf_name=Mert Miraç Altıntaş score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gabin Blancquart' dob=2004-02-28 00:00:00+00:00 sf_name=Gautier Larsonneur score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jacopo Tarantino' dob=2005-02-15 00:00:00+00:00 sf_name=Marcello Falzerano score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gabriel Felipe Arrocha' dob=2002-01-15 00:00:00+00:00 sf_name=Pablo Larrea score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ibrahim Osman' dob=1999-07-19 00:00:00+00:00 sf_name=Osman Ibrahim Abrahim score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rodolfo Lippo' dob=1970-01-01 00:00:00+00:00 sf_name=Rodrigo Pollero López score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Louie George Copley' dob=2006-07-20 00:00:00+00:00 sf_name=George Francomb score=52.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kwame Poku' dob=1970-01-01 00:00:00+00:00 sf_name=Kwame Afriyie Adubofour Poku score=52.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jon Rowe' dob=1970-01-01 00:00:00+00:00 sf_name=Jorès Rahou score=52.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Toby Collier' dob=1970-01-01 00:00:00+00:00 sf_name=Tobias Christopher Collyer score=52.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Dario Sits' dob=2004-02-04 00:00:00+00:00 sf_name=Edoardo Corvi score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jacob Jones' dob=1970-01-01 00:00:00+00:00 sf_name=Jamie Robson score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Asiri Haitham' dob=1970-01-01 00:00:00+00:00 sf_name=Faris Abdi score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jordi Altena' dob=2003-12-04 00:00:00+00:00 sf_name=Jorge Grant score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ajak Riak' dob=2000-12-12 00:00:00+00:00 sf_name=Jake Najdovski score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Romain Esse' dob=1970-01-01 00:00:00+00:00 sf_name=Harrison Nee score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Arda Yavuz' dob=2006-05-20 00:00:00+00:00 sf_name=Jankat Yılmaz score=52.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mateo Cassierra' dob=1997-04-13 00:00:00+00:00 sf_name=Tomás Castro score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Vladimir Golemić' dob=1991-06-28 00:00:00+00:00 sf_name=Mirko Marić score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Karim Laribi' dob=1991-04-20 00:00:00+00:00 sf_name=Dario Del Fabro score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nikolay Zolotov' dob=1994-11-11 00:00:00+00:00 sf_name=Noah Zilliox score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kevin Lenini' dob=1997-01-27 00:00:00+00:00 sf_name=Kelechi Nwakali score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jack Taylor' dob=2005-09-08 00:00:00+00:00 sf_name=Jack Joseph Rose score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Fahri Kerem Ay' dob=2005-01-01 00:00:00+00:00 sf_name=Kerem Kalafat score=51.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Elia Meschack' dob=1996-08-06 00:00:00+00:00 sf_name=Meschack Elia Lina score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Marvin Gakpa' dob=1993-11-01 00:00:00+00:00 sf_name=Mario-Jason Kikonda score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Davide Di Quinzio' dob=1989-04-28 00:00:00+00:00 sf_name=Davide Marsura score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Dan Pike' dob=1970-01-01 00:00:00+00:00 sf_name=Daniel Christopher Pike score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Eamonn McCarron' dob=1970-01-01 00:00:00+00:00 sf_name=Sam Harry Sutton score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Cedric Hatenboer' dob=2005-03-19 00:00:00+00:00 sf_name=Patrick Brouwer score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='El Hadj Koné' dob=2006-05-04 00:00:00+00:00 sf_name=Cheick Oumar Konaté score=51.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='João Roberto Rota Neto' dob=2003-05-21 00:00:00+00:00 sf_name=Heriberto Tavares score=51.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sid Nelson' dob=1995-01-01 00:00:00+00:00 sf_name=Sidney Raymond Kenneth Nelson score=51.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mattia Alborghetti' dob=1998-10-01 00:00:00+00:00 sf_name=Marco Emilio Nichetti score=51.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Adriel Vasconcelos Ramos' dob=2001-01-14 00:00:00+00:00 sf_name=Aderllan Santos score=51.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Edinaldo Gomes Pereira' dob=1988-08-25 00:00:00+00:00 sf_name=Pumar score=51.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josef de Souza Dias' dob=1989-02-11 00:00:00+00:00 sf_name=Júnior Caiçara score=51.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ângelo Neto' dob=1991-09-02 00:00:00+00:00 sf_name=Alex Pinto score=51.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Roni' dob=1999-04-15 00:00:00+00:00 sf_name=Gerson Rodrigues score=51.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Elierce Barbosa de Souza' dob=1988-03-08 00:00:00+00:00 sf_name=Josen David Escobar del Duca score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Karim Laribi' dob=1991-04-20 00:00:00+00:00 sf_name=Andrey Galabinov score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ismail H'Maidat' dob=1995-06-16 00:00:00+00:00 sf_name=Moutir Chajia score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Anastasios Avlonitis' dob=1990-01-01 00:00:00+00:00 sf_name=Francesco Donati score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sanasi Sy' dob=1999-04-04 00:00:00+00:00 sf_name=Marco Nasti score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gianluigi Sueva' dob=2001-01-01 00:00:00+00:00 sf_name=Luigi Canotto score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Asiri Haitham' dob=1970-01-01 00:00:00+00:00 sf_name=Gabri Veiga score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Vasco Regini' dob=1990-09-09 00:00:00+00:00 sf_name=Tommaso Aglietti score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jonathas' dob=1989-03-06 00:00:00+00:00 sf_name=Omar Thakura score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Álvaro Raul Sofrimento Ramalho' dob=1999-01-20 00:00:00+00:00 sf_name=Rafael Camacho score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Craig Moore' dob=2005-09-21 00:00:00+00:00 sf_name=Craig Sibbald score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Umut Taniş' dob=2004-02-10 00:00:00+00:00 sf_name=Murat Akça score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yassin Fortune' dob=1999-01-30 00:00:00+00:00 sf_name=Ilyas Chouaref score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yunus Emre Mertoğlu' dob=2001-04-20 00:00:00+00:00 sf_name=Metehan Mimaroğlu score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rico Ricukus' dob=1970-01-01 00:00:00+00:00 sf_name=Rico Dean Scott Richards score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Thomas Colléaux' dob=2005-04-18 00:00:00+00:00 sf_name=Massiré Sylla score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mathys Angély' dob=2007-04-21 00:00:00+00:00 sf_name=M'Baye Hamady Niang score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Seydou Fini' dob=2006-06-02 00:00:00+00:00 sf_name=Soufiane Benjdida score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Beres Owusu' dob=2003-09-19 00:00:00+00:00 sf_name=Pierre Cornud score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Rico Ricukus' dob=1970-01-01 00:00:00+00:00 sf_name=Ronan Curtis score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Andres Gomez' dob=2002-09-22 00:00:00+00:00 sf_name=Warmed Omari score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Levy Nene' dob=1970-01-01 00:00:00+00:00 sf_name=Bi Youan Levy Zacharia Nene score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Robin Verhaeghe' dob=2004-02-02 00:00:00+00:00 sf_name=Romain Thomas score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gökdeniz Tunç' dob=2006-08-07 00:00:00+00:00 sf_name=Gökhan Töre score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Zak Brunt' dob=2001-11-17 00:00:00+00:00 sf_name=Jack Blower score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jonny Stuttle' dob=2005-09-29 00:00:00+00:00 sf_name=Joe Foulkes score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Louis Flower' dob=1970-01-01 00:00:00+00:00 sf_name=Louis Christopher Chukwuemeka Flower score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lucas Mbamba-Muanda' dob=2006-08-12 00:00:00+00:00 sf_name=Lucas Mineiro score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Brooklyn Kabongolo' dob=1970-01-01 00:00:00+00:00 sf_name=Ivan Konovalov score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Francesco Coppola' dob=2005-04-11 00:00:00+00:00 sf_name=Ernesto Torregrossa score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Max Alleyne' dob=1970-01-01 00:00:00+00:00 sf_name=Thomas Glyn Doyle score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Francisco Javier Hernandez Coarasa' dob=1970-01-01 00:00:00+00:00 sf_name=Jofre Cherta score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yunus Emre Konak' dob=2006-01-10 00:00:00+00:00 sf_name=Ateef Konaté score=50.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='António Luís Cavaco Silva Sá Montez' dob=2001-09-29 00:00:00+00:00 sf_name=João Monteiro score=49.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Diego Silva Nascimento Santos' dob=1970-01-01 00:00:00+00:00 sf_name=Dani Quintana score=49.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Naël Mamadou Lamine Kane' dob=2006-04-12 00:00:00+00:00 sf_name=Mamoudou Karamoko score=48.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Will Osula' dob=1970-01-01 00:00:00+00:00 sf_name=William Idamudia Daugaard Osula score=48.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Henrique Ribeiro Pires' dob=2002-04-08 00:00:00+00:00 sf_name=Danny Henriques score=48.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Emilien Grillot' dob=2003-06-18 00:00:00+00:00 sf_name=Malcolm Lucien Viltard score=48.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kennet Eichhorn' dob=1970-01-01 00:00:00+00:00 sf_name=Janne Eckehardt Berner score=48.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ronaldo Pompeu da Silva' dob=1990-04-08 00:00:00+00:00 sf_name=Gonzalo Pastor score=48.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Benoit De Jaegere' dob=1970-01-01 00:00:00+00:00 sf_name=Bent Langåssve Sørmo score=48.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Adriano Montalto' dob=1988-04-06 00:00:00+00:00 sf_name=Riccardo Gagliolo score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Valentin Vanbaleghem' dob=1996-10-09 00:00:00+00:00 sf_name=Kalifa Manneh score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ethan Kai Young' dob=2004-01-13 00:00:00+00:00 sf_name=Thomas Edward Pugh score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Oliver Lobley' dob=1970-01-01 00:00:00+00:00 sf_name=Mason Lewis O'Malley score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tommy McDermott' dob=2005-06-01 00:00:00+00:00 sf_name=Thomas George Pett score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jon Rowe' dob=1970-01-01 00:00:00+00:00 sf_name=Jonathan David Henry Rowe score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jean Eric Moursou' dob=2004-12-31 00:00:00+00:00 sf_name=Jason Berthomier score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Erik Ahlstrand' dob=2001-10-14 00:00:00+00:00 sf_name=Jeff Reine-Adélaïde score=48.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='André Filipe Sousa Dias Pedro Lopes' dob=2001-11-02 00:00:00+00:00 sf_name=Miguel Cardoso score=48.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Teddy Chevalier' dob=1987-06-28 00:00:00+00:00 sf_name=Ante Palaversa score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Gustavo Campanharo' dob=1992-04-04 00:00:00+00:00 sf_name=Karlo Muhar score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Davide Facchin' dob=1987-04-29 00:00:00+00:00 sf_name=Daniele Baselli score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Patryk Czerech' dob=2001-04-06 00:00:00+00:00 sf_name=Andrzej Trubeha score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Lars Montegnies' dob=1970-01-01 00:00:00+00:00 sf_name=Lucas Rougeaux score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Vladan Vidaković' dob=1999-03-14 00:00:00+00:00 sf_name=Ahmedin Avdic score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jeremiah Streng' dob=2001-11-08 00:00:00+00:00 sf_name=Eric Botteghin score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Leo Dury' dob=1970-01-01 00:00:00+00:00 sf_name=Leonard Chibueze Duru score=48.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Reda Boultam' dob=1998-03-03 00:00:00+00:00 sf_name=Davide Merola score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Leonel Miguel' dob=2001-03-24 00:00:00+00:00 sf_name=Joel Jiménez score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Burak Çoban' dob=1994-11-07 00:00:00+00:00 sf_name=Gabriel Obekpa score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sam Inwood' dob=1970-01-01 00:00:00+00:00 sf_name=Ibrahim Cissoko score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Christian Sussi' dob=1970-01-01 00:00:00+00:00 sf_name=Adrián Rus score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Igmane Hamza' dob=1970-01-01 00:00:00+00:00 sf_name=Hamza Igamane score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Everton Pereira' dob=2007-04-12 00:00:00+00:00 sf_name=Rony Lopes score=48.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Matheus Machado Ferreira' dob=2003-03-13 00:00:00+00:00 sf_name=Cristian Tello score=47.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Kareem Tunde Ruiz' dob=2005-08-19 00:00:00+00:00 sf_name=De La Fuente score=47.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Germán Gustavo Denis' dob=1981-09-10 00:00:00+00:00 sf_name=Hernani score=47.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Marc Paget' dob=1970-01-01 00:00:00+00:00 sf_name=Pablo Pagis score=47.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Douglas Silva Bacelar' dob=1990-04-04 00:00:00+00:00 sf_name=Hayrullah Bilazer score=47.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luke Epolo Matthieu' dob=1970-01-01 00:00:00+00:00 sf_name=Matthieu Luka Epolo score=47.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Edson Joelder Lobo Mucuana' dob=2003-12-12 00:00:00+00:00 sf_name=Gerson Rodrigues score=47.3 reason=team_only_fail
+[team_strength] UNMATCHED fs='Vlastimir Jovanovic' dob=1985-04-03 00:00:00+00:00 sf_name=Muris Mešanović score=47.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aleksandr Pavlovets' dob=1996-08-13 00:00:00+00:00 sf_name=Aleks Ławniczak score=47.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hasan Yakub İlçin' dob=2009-03-24 00:00:00+00:00 sf_name=Thalisson Kelven score=47.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hasan Yakub İlçin' dob=1970-01-01 00:00:00+00:00 sf_name=Thalisson Kelven score=47.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hernani Azevedo Júnior' dob=1994-03-27 00:00:00+00:00 sf_name=Armando Izzo score=47.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ivan Lakićević' dob=1993-07-27 00:00:00+00:00 sf_name=Andrey Galabinov score=46.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ali Koiki' dob=2000-08-22 00:00:00+00:00 sf_name=Samuel Tobias Hoskins score=46.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Batuhan Arıcı' dob=2003-01-20 00:00:00+00:00 sf_name=Metehan Mimaroğlu score=46.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ajay Matthews' dob=2006-06-11 00:00:00+00:00 sf_name=Ethan Jay Coleman score=46.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Frank Fielding' dob=1988-04-04 00:00:00+00:00 sf_name=Jack Jenkins score=46.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ferhat Yazgan' dob=1992-10-20 00:00:00+00:00 sf_name=Eren Arda Şan score=46.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Recep Yemişçi' dob=1999-01-01 00:00:00+00:00 sf_name=Emre Taşdemir score=46.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Clayton Sampaio Pereira' dob=2000-04-04 00:00:00+00:00 sf_name=Jorge Teixeira score=46.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Muath Muath' dob=1970-01-01 00:00:00+00:00 sf_name=Muath Abdulaziz Ahmad Fagihy score=46.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Nunzio Engwanda-Ongena' dob=2007-12-01 00:00:00+00:00 sf_name=Zoumana Keita score=45.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Olivier Mambwa' dob=2008-12-05 00:00:00+00:00 sf_name=Felix Khonde Mambimbi score=45.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='David Mokwa Ntusu' dob=1970-01-01 00:00:00+00:00 sf_name=David Elias Kercek score=45.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Diego Maurício Machado de Brito' dob=1991-06-25 00:00:00+00:00 sf_name=Dori score=45.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ivan Kontek' dob=1997-01-29 00:00:00+00:00 sf_name=Jan Żuberek score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Hamza Sbaï' dob=2000-02-24 00:00:00+00:00 sf_name=Lamine Fomba score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jonathan Alexis Ferrante' dob=1995-06-27 00:00:00+00:00 sf_name=Christian Dalle Mura score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Aboubacar Sangaré Traoré' dob=2007-08-06 00:00:00+00:00 sf_name=Coke score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Luccas Claro dos Santos' dob=1991-10-02 00:00:00+00:00 sf_name=Calegari score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Isaac Olaofe' dob=1970-01-01 00:00:00+00:00 sf_name=Jack Payne score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Henry Gray' dob=2005-03-29 00:00:00+00:00 sf_name=Harvey Giles score=45.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Derick Osei Yaw' dob=1998-09-10 00:00:00+00:00 sf_name=Lewis Moore Ward score=45.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Mark Kitching' dob=1995-09-04 00:00:00+00:00 sf_name=Jack Kirk Stretton score=45.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Josef de Souza Dias' dob=1989-02-11 00:00:00+00:00 sf_name=Joseph Adrian Worrall score=45.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Edinaldo Gomes Pereira' dob=1988-08-25 00:00:00+00:00 sf_name=Ali Saleh Mohammed Al-Nemer score=44.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jacob Blyth' dob=1992-08-14 00:00:00+00:00 sf_name=Jayson Leutwiler score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Dankler Luis de Jesus Pereira' dob=1992-01-24 00:00:00+00:00 sf_name=Lucas Lima score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Perparim Hetemaj' dob=1986-12-12 00:00:00+00:00 sf_name=Mario Šitum score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Player 1' dob=1970-01-01 00:00:00+00:00 sf_name=Pedro Nuno score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Player 2' dob=1970-01-01 00:00:00+00:00 sf_name=Pedro Nuno score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Keenan Gough' dob=2006-02-28 00:00:00+00:00 sf_name=Benjamin Watson score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sam Curtis' dob=2005-12-01 00:00:00+00:00 sf_name=Jamie Neil Grimes score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Sammy Braybroke' dob=1970-01-01 00:00:00+00:00 sf_name=Jack Sparkes score=44.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Georgios Tzavellas' dob=1987-11-26 00:00:00+00:00 sf_name=Leandro Deyrinio Kappel score=43.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Owen Moffat' dob=2002-01-06 00:00:00+00:00 sf_name=Daizen Maeda score=43.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Barış Gün' dob=2004-04-26 00:00:00+00:00 sf_name=Faruk Can Genç score=43.5 reason=team_only_fail
+[team_strength] UNMATCHED fs='Efe Ugiagbe Aghama' dob=1970-01-01 00:00:00+00:00 sf_name=Samuel Obeng Gyabaa score=43.2 reason=team_only_fail
+[team_strength] UNMATCHED fs='Diego Maurício Machado de Brito' dob=1991-06-25 00:00:00+00:00 sf_name=Angulo score=43.1 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yassine Ejjaki' dob=1999-05-15 00:00:00+00:00 sf_name=Simone Colombi score=42.9 reason=team_only_fail
+[team_strength] UNMATCHED fs='Blessing Chibukie Eleke' dob=1996-03-05 00:00:00+00:00 sf_name=Femi Seriki score=42.6 reason=team_only_fail
+[team_strength] UNMATCHED fs='Anıl Yiğit Çınar' dob=2003-07-10 00:00:00+00:00 sf_name=Murat Cem Akpınar score=42.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Deniz Donmezer' dob=2008-09-21 00:00:00+00:00 sf_name=Erhun Aksel Öztümer score=42.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Thierry Ricky Everton Latty-Fairweather' dob=2002-12-05 00:00:00+00:00 sf_name=Rumarn Kameron-Scott Burrell score=41.8 reason=team_only_fail
+[team_strength] UNMATCHED fs='Owen Jacob Anthony Foster' dob=2005-01-07 00:00:00+00:00 sf_name=Ryan George Henson Loft score=41.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Yiğit Ulaş' dob=2004-06-19 00:00:00+00:00 sf_name=Afriyie Acquah score=41.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tokmac Nguen' dob=1993-10-20 00:00:00+00:00 sf_name=Koray Günter score=41.7 reason=team_only_fail
+[team_strength] UNMATCHED fs='Pierre Kanstrup' dob=1989-02-21 00:00:00+00:00 sf_name=Emil Berggreen score=41.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='David Heidenreich' dob=2000-06-24 00:00:00+00:00 sf_name=Luca Ranieri score=41.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Tyler Vecchio' dob=2003-01-15 00:00:00+00:00 sf_name=Jarrod Carluccio score=41.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Riley Bidois' dob=1970-01-01 00:00:00+00:00 sf_name=Luke Brooke-Smith score=41.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='Theophilus Awua' dob=1998-04-24 00:00:00+00:00 sf_name=Eduardo Henrique score=40.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Welinton Souza Silva' dob=1989-04-10 00:00:00+00:00 sf_name=Papa Alioune N'Diaye score=40.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Jakub Vojtuš' dob=1993-10-22 00:00:00+00:00 sf_name=Halen Nongtdu score=40.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Theodoros Tsirigotis' dob=2000-06-23 00:00:00+00:00 sf_name=Roberto Massimo score=40.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Ovie Ejeheim' dob=1970-01-01 00:00:00+00:00 sf_name=Etienne Green score=40.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='Denys Bunchukov' dob=2003-06-20 00:00:00+00:00 sf_name=Benjamin Boulenger score=36.4 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Hidemasa Morita score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Mousa Mohammad Mousa Sulaiman Al-Tamari score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Christopher Maurice Wooh score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Till Cissokho score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Néstor Fernando Muslera Micol score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Semih Güler score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Valentin Gheorghe score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Abdülkerim Bardakcı score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Uğurcan Çakır score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Aka Wilfried Julien Kanga score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Fayçal Fajr score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Haris Hajradinović score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Davidson score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Fabio Borini score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Georges-Kévin Nkoudou Mbida score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Joseph Martin Paintsil score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Edin Višća score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=David Jensen score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Mehmet Umut Nayir score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ferdi Erenay Kadıoğlu score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Serdar Gürler score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Oier Luengo score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Guido Rodríguez score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Maxim De Cuyper score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Emil Alfons Holm score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ivan Brkić score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Grzegorz Tomasiewicz score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Adrian Dawid Benedyczak score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jesús Jiménez score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Morgan Guilavogui score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jassim Mohammed Abdulrahman Al Ashban score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua Jeffery Nisbet score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Apostolos Stamatelopoulos score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Craig Alexander Goodwin score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Kosta Barbarouses score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Keanu Baccus score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Alessandro Bellemo score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Denis Genreau score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jean Butez score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Bruno Fornaroli Mezza score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Tobias Bech Kristensen score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Bruno Fernandes score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Lucas Pérez score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Edgar score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Arkadiusz Jędrych score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Hugo Ekitiké score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jesús Imaz score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Gernot Trauner score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Sead Kolašinac score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Samuel Joseph Szmodics score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Alan Forrest score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Reece James score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua Myles Abraham Key score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Samuel Tobias Hoskins score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Fred Onyedinma score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Connor Stuart Ogilvie score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jodi Jones score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Kwame Afriyie Adubofour Poku score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Solomon Brandon Michael Clarke Thomas-Asante score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Dejan Joveljić score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Lawrence Ati Zigi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Edon Zhegrova score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Marvin Ducksch score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Lawrence Shankland score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Filip Ugrinić score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jason Steven Cummings score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jamie McGrath score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Deniz Undav score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Lewis Ferguson score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ian Ethan Maatsen score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ilias Chair score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jarrad Paul Branthwaite score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Rasmus Schmidt Nicolaisen score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Pedro Mendes score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Samuel Lino score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Orkun Kökçü score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Carel Willem Hendrik Eiting score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Moïse Orell Dion Sahi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Téji Tedy Savanier score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Mateus Quaresma score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Teun Koopmeiners score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Manuel Ugarte Ribeiro score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Luis Fernando Díaz Marulanda score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jota score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Harrison Thomas Clarke score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Matěj Kovář score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Brennan Price Johnson score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Daniel George Ballard score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Harry Edward Kane score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Vítor Ferreira score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Juan Soriano score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Gayà score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Yangel Clemente Herrera Ravelo score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Antonio Rüdiger score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Costinha score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Mohamed Simakan score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Dani Vivian score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Diego Conde score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Manu Fuster score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Robin Hack score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ilan Kais Kebbal score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Michael Gregoritsch score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Hector Matthew Kyprianou score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Michael Cheek score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Morten Blom Due Hjulmand score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Iacopo Lipani score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Andrea Cambiaso score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Saki Calliste Emmanuel Kouassi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=James Henry Tavernier score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Eberechi Oluchi Eze score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Luis Ezequiel Ávila score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Pasquale Mazzocchi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Joshua Orobosa Zirkzee score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Stefano Turati score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Roberto Insigne score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Federico Dimarco score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Rominigue Kouamé N'Guessan score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Julien Le Cardinal score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Matteo Emilio Di Giusto score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ivan Provedel score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Sandi Lovrić score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jackson Alexander Irvine score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Davide Frattesi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Ryan Wintle score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Cheikh Tidiane Sabaly score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Diogo Martins score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=João Pedro score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Emil Audero Mulyadi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Gerard Moreno score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jayden Quinn Oosterwolde score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Yousef Mohammed Omar score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Daniel Neil score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Kialonda Gaspar score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Joselu score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Elvis Kabashi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Emiliano Buendía Stati score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Thomas Keith Naylor score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=David Simão score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=James O'Shea score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Marco Rojas score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Harry Wilson score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Benson Manuel Hedilazio score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Oliver Christensen score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Couhaib Driouech score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Cucurella score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Cameron Peter Devlin score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jerome Osei Opoku score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Dušan Vlahović score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Lorenzo Berardi score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Rob Schoofs score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Francés score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Jérémy Damien Blasco score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Julien Ponceau score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Lucas Buadés score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Samu Sáiz score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Amahl William D'Vaz Pellegrino score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Pietro Beruatto score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=José Gragera score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Andreas Schjølberg Hanche-Olsen score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Córdoba score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Viktor Einar Gyökeres score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Stefan Ortega Moreno score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Chiedozie Somkelechukwu Ogbene score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=James Alexander David Tilley score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Éver Maximiliano David Banega score=0.0 reason=team_only_fail
+[team_strength] UNMATCHED fs='' dob=1970-01-01 00:00:00+00:00 sf_name=Fahad Mohammed Al Harbi score=0.0 reason=team_only_fail

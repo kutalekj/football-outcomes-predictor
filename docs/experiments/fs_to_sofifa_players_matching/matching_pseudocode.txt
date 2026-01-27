@@ -1,0 +1,47 @@
+candidates = []
+
+# 1. TEAM + DOB
+if fs_dob and team_roster:
+    candidates = SOFIFA_players_from_same_team_of_same_DOB
+
+# 2. TEAM only
+if len(candidates) == 0 and team_roster:
+    candidates = SOFIFA_players_from_same_team
+
+# 3. DOB only
+if len(candidates) == 0 and fs_dob:
+    candidates = SOFIFA_players_of_same_DOB
+
+best_candidate = None
+best_score = -inf
+
+for candidate in candidates:
+    score = string_similarity(fs_name, fs_full, candidate.names)
+
+    if score > best_score:
+        best_candidate = candidate
+        best_score = score
+
+if len(candidates) == 0:
+    result = MatchResult(None, ...)
+
+elif stage == "TEAM + DOB":
+    if best_score >= LOW_THRESHOLD:  # 40.0
+        result = MatchResult(best_candidate.id, ...)
+    else:
+        result = MatchResult(None, ...)
+
+elif stage == "TEAM only":
+    if best_score >= MODERATE_THRESHOLD:  # 60.0
+        result = MatchResult(best_candidate.id, ...)
+    else:
+        result = MatchResult(None, ...)
+
+elif stage == "DOB only":
+    if best_score >= HIGH_THRESHOLD:  # 69.9
+        result = MatchResult(best_candidate.id, ...)
+    else:
+        result = MatchResult(None, ...)
+
+cache[fs_player.id] = result
+return result

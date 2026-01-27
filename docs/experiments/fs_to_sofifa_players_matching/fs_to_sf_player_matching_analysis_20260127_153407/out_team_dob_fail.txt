@@ -1,0 +1,19 @@
+[team_strength] UNMATCHED fs='Javier Guerra' dob=2003-01-01 00:00:00+00:00 sf_name=Diego Aznar score=38.7 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Isaias Del Pupo' dob=2001-03-31 00:00:00+00:00 sf_name=Alessandro Russo score=38.7 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Ludovico D'Orazio' dob=2000-02-19 00:00:00+00:00 sf_name=Riccardo Spaltro score=36.4 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Dylan Smith' dob=2006-01-01 00:00:00+00:00 sf_name=Jayden Reid score=36.4 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Manny Adebowale' dob=1997-09-19 00:00:00+00:00 sf_name=Jordan Luke Maguire-Drew score=35.9 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Marko Lešković' dob=1991-04-27 00:00:00+00:00 sf_name=Álvaro Vázquez score=35.7 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Josh Maja' dob=1998-12-27 00:00:00+00:00 sf_name=Joshua Erowoli Orisunmihare Oluwaseun Maja score=35.3 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Felix Agu' dob=1999-01-01 00:00:00+00:00 sf_name=Benjamin Goller score=33.3 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Luke Robinson' dob=2001-11-20 00:00:00+00:00 sf_name=Bobby Jones score=33.3 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Torai Sihao' dob=2000-06-06 00:00:00+00:00 sf_name=Saikou Touray score=33.3 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Elijah Adebayo' dob=1998-01-07 00:00:00+00:00 sf_name=Elijah Anuoluwapo Oluwaferanmi Oluwatomi Oluwalana Ayomikulehin Adebayo score=32.9 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Yusuf Saitoğlu' dob=2003-01-01 00:00:00+00:00 sf_name=Fatih Yiğit Şanlıtürk score=28.6 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Abdelmounaim Boutouil' dob=1998-09-01 00:00:00+00:00 sf_name=Sultan Mohammed Saleh Tanker score=28.6 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Ali Loune' dob=2002-03-17 00:00:00+00:00 sf_name=Adam Markhiev score=27.3 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Riyad Idrissi' dob=2003-03-31 00:00:00+00:00 sf_name=Isaías Omar Delpupo score=25.0 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Marco Carraro' dob=1998-01-09 00:00:00+00:00 sf_name=Rodney Nkele Kongolo score=24.2 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Adrian Stephen Vlastelica' dob=1995-01-16 00:00:00+00:00 sf_name=Max Barry Burgess score=23.8 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Severin Sabri Guendouz' dob=2000-02-09 00:00:00+00:00 sf_name=Logan Ndenbe score=23.5 reason=team_dob_fail
+[team_strength] UNMATCHED fs='Rory Brown' dob=2000-05-25 00:00:00+00:00 sf_name=Jubril Adedeji score=16.7 reason=team_dob_fail

@@ -1,0 +1,131 @@
+[team_strength] MATCH fs='Danny Lloyd' -> sf_id=239880 score=45.0 (2nd=-1.0) (sf_name=Daniel James Lloyd-McGoldrick) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Sam Morsy' -> sf_id=197975 score=48.6 (2nd=-1.0) (sf_name=Samy Sayed Mekawy Said Morsy) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Silla Wamangituka' -> sf_id=245940 score=54.1 (2nd=-1.0) (sf_name=Silas Katompa-Mvumpa) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ismael Koné' -> sf_id=264207 score=54.1 (2nd=-1.0) (sf_name=Ismaël Kenneth Jordan Koné) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Josh Cogley' -> sf_id=229073 score=59.5 (2nd=-1.0) (sf_name=Joshua Jacob Dacres-Cogley) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Millenic Alli' -> sf_id=71215 score=60.5 (2nd=-1.0) (sf_name=Millenic Oluwole Sulaiman Alli) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Scott Arfield' -> sf_id=178287 score=61.9 (2nd=-1.0) (sf_name=Scott Harry Nathaniel Arfield) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Murphy Cooper' -> sf_id=268544 score=63.4 (2nd=-1.0) (sf_name=Murphy Joseph Mahoney Cooper) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Saleh Mohammed Al Jamaan' -> sf_id=223629 score=63.8 (2nd=-1.0) (sf_name=Saleh Al-Jamaan Al-Amri) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ben Wiles' -> sf_id=239023 score=64.3 (2nd=-1.0) (sf_name=Benjamin Jack Wiles) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Joe Lumley' -> sf_id=217096 score=64.5 (2nd=-1.0) (sf_name=Joseph Patrick Lumley) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Norman Bassette' -> sf_id=264621 score=65.2 (2nd=-1.0) (sf_name=Norman Jaquy Bassette Van Acker) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Lenny Pintor' -> sf_id=240941 score=66.7 (2nd=-1.0) (sf_name=Lenny Jean-Pierre Pintor) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ryan Teague' -> sf_id=246007 score=66.7 (2nd=-1.0) (sf_name=Ryan Graham Pun Teague) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Kenneth Taylor' -> sf_id=255009 score=68.3 (2nd=22.9) (sf_name=Kenneth Ina Dorothea Taylor) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Mohammed Jaseem' -> sf_id=254792 score=68.6 (2nd=-1.0) (sf_name=Mohammed Al Mahasneh) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Sil Swinkels' -> sf_id=264411 score=68.6 (2nd=-1.0) (sf_name=Sil Laurentius Swinkels) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Martín Satriano' -> sf_id=264325 score=69.8 (2nd=-1.0) (sf_name=Martín Adrián Satriano Costa) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Kyle Jameson' -> sf_id=238073 score=70.6 (2nd=-1.0) (sf_name=Kyle Alexander Jameson) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Emanuele Adamo' -> sf_id=72850 score=71.8 (2nd=-1.0) (sf_name=Emanuele Manolo Pio Adamo) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ebou Adams' -> sf_id=232412 score=72.7 (2nd=-1.0) (sf_name=Ebrima Adams) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Jack Bonham' -> sf_id=202125 score=73.3 (2nd=-1.0) (sf_name=Jack Elliott Bonham) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Julian Araujo' -> sf_id=247678 score=73.5 (2nd=-1.0) (sf_name=Julián Vicente Araujo Zúñiga) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Sultan Abdullah Al Ghanam' -> sf_id=232477 score=76.9 (2nd=73.5) (sf_name=Sultan bin Abdullah bin Salem Al-Ghannam) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Sultan Abdullah Al Ghanam' -> sf_id=232477 score=76.9 (2nd=73.5) (sf_name=Sultan bin Abdullah bin Salem Al-Ghannam) missing=1/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='George Nurse' -> sf_id=241397 score=77.4 (2nd=-1.0) (sf_name=George Damien Nurse) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Rémy Cabella' -> sf_id=193476 score=77.4 (2nd=-1.0) (sf_name=Rémy Joseph Cabella) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Matteo Guendouzi' -> sf_id=236496 score=77.8 (2nd=-1.0) (sf_name=Mattéo Elias Kenzo Guendouzi Olié) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Nicholas Freeman' -> sf_id=235397 score=78.6 (2nd=34.3) (sf_name=Nick Freeman) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Neraysho Kasanwirjo' -> sf_id=261652 score=79.2 (2nd=-1.0) (sf_name=Neraysho Meritchio Kasanwirjo) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ian Lawlor' -> sf_id=209750 score=80.0 (2nd=-1.0) (sf_name=Ian John Lawlor) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Naouirou Ahamada' -> sf_id=259205 score=80.0 (2nd=-1.0) (sf_name=Naouirou Mohamed Ahamada) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Umut Tohumcu' -> sf_id=269084 score=80.0 (2nd=-1.0) (sf_name=Umut Deger Tohumcu) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Gonzalo Petit Abad' -> sf_id=70333 score=80.0 (2nd=-1.0) (sf_name=Gonzalo Ezequiel Petit Abad) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Harrison Clarke' -> sf_id=245729 score=81.1 (2nd=-1.0) (sf_name=Harrison Thomas Clarke) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Antoine Semenyo' -> sf_id=241236 score=81.1 (2nd=-1.0) (sf_name=Antoine Serlom Semenyo) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Taylor Richards' -> sf_id=243393 score=81.1 (2nd=-1.0) (sf_name=Taylor Jerome Richards) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ismajl Beka' -> sf_id=271638 score=81.5 (2nd=-1.0) (sf_name=Ismajl Isak Beka) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Myles Peart-Harris' -> sf_id=263582 score=81.8 (2nd=-1.0) (sf_name=Myles Spencer Peart-Harris) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Yannik Lührs' -> sf_id=272896 score=82.8 (2nd=-1.0) (sf_name=Yannik Luka Lührs) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='William Forrester' -> sf_id=254522 score=82.9 (2nd=-1.0) (sf_name=William Samuel Forrester) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Anthony Oyono Omva Torque' -> sf_id=270502 score=83.3 (2nd=77.6) (sf_name=Anthony Henri Zué Oyono Omva Torque) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Anthony Oyono Omva Torque' -> sf_id=270502 score=83.3 (2nd=77.6) (sf_name=Anthony Henri Zué Oyono Omva Torque) missing=1/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ryan James De Havilland' -> sf_id=276332 score=85.0 (2nd=-1.0) (sf_name=Ryan De Havilland) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Trevis Dago' -> sf_id=276324 score=90.9 (2nd=-1.0) (sf_name=Trévis Dago) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Britt Curtis Assombalonga' -> sf_id=203304 score=92.3 (2nd=-1.0) (sf_name=Britoli Curtis Assombalonga) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Phillip Tietz' -> sf_id=233216 score=100.0 (2nd=-1.0) (sf_name=Phillip Tietz) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Thomas Leon Keller' -> sf_id=251289 score=100.0 (2nd=-1.0) (sf_name=Thomas Leon Keller) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Marco Burch' -> sf_id=252527 score=100.0 (2nd=-1.0) (sf_name=Marco Burch) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Niclas Füllkrug' -> sf_id=205431 score=100.0 (2nd=-1.0) (sf_name=Niclas Füllkrug) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Valentin Jacob' -> sf_id=225168 score=100.0 (2nd=-1.0) (sf_name=Valentin Jacob) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Zander Clark' -> sf_id=204269 score=100.0 (2nd=-1.0) (sf_name=Zander Clark) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Adilson Malanda' -> sf_id=262597 score=100.0 (2nd=-1.0) (sf_name=Adilson Malanda) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Hannes Delcroix' -> sf_id=237440 score=100.0 (2nd=-1.0) (sf_name=Hannes Delcroix) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Alexander Antony Pattison' -> sf_id=230812 score=100.0 (2nd=-1.0) (sf_name=Alexander Antony Pattison) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ronan Curtis' -> sf_id=228111 score=100.0 (2nd=-1.0) (sf_name=Ronan Curtis) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Curtis Nelson' -> sf_id=200840 score=100.0 (2nd=-1.0) (sf_name=Curtis Nelson) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Gauthier Gallon' -> sf_id=214680 score=100.0 (2nd=-1.0) (sf_name=Gauthier Gallon) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Raúl Michel Melo da Silva' -> sf_id=221540 score=100.0 (2nd=-1.0) (sf_name=Raúl) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Wout Faes' -> sf_id=235036 score=100.0 (2nd=-1.0) (sf_name=Wout Felix Lina Faes) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ibrahima Sissoko' -> sf_id=231089 score=100.0 (2nd=-1.0) (sf_name=Ibrahima Sissoko) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Brennan Johnson' -> sf_id=251421 score=100.0 (2nd=-1.0) (sf_name=Brennan Price Johnson) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Elye Wahi' -> sf_id=260407 score=100.0 (2nd=-1.0) (sf_name=Sepe Elye Wahi) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Bas Edo Kuipers' -> sf_id=217585 score=100.0 (2nd=-1.0) (sf_name=Bas Edo Kuipers) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Pablo Marí' -> sf_id=206654 score=100.0 (2nd=-1.0) (sf_name=Pablo Marí) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Kerem Demirbay' -> sf_id=211748 score=100.0 (2nd=-1.0) (sf_name=Kerem Demirbay) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Yannik Keitel' -> sf_id=256118 score=100.0 (2nd=-1.0) (sf_name=Yannik Keitel) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Eoghan O'Connell' -> sf_id=221322 score=100.0 (2nd=-1.0) (sf_name=Eoghan O'Connell) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Gavin Bazunu' -> sf_id=243585 score=100.0 (2nd=-1.0) (sf_name=Gavin Okeroghene Bazunu) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ki-Jana Hoever' -> sf_id=246763 score=100.0 (2nd=-1.0) (sf_name=Ki-Jana Delano Hoever) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Brian Oliván' -> sf_id=228326 score=100.0 (2nd=-1.0) (sf_name=Brian Oliván) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Marcelo dos Santos Ferreira' -> sf_id=205340 score=100.0 (2nd=-1.0) (sf_name=Marcelo) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Emil Hansson' -> sf_id=222165 score=100.0 (2nd=-1.0) (sf_name=Emil Hansson) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Javi Galán' -> sf_id=231591 score=100.0 (2nd=-1.0) (sf_name=Javi Galán) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Santi Mina' -> sf_id=212623 score=100.0 (2nd=-1.0) (sf_name=Santi Mina) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='İrfan Kahveci' -> sf_id=225403 score=100.0 (2nd=-1.0) (sf_name=İrfan Can Kahveci) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Javier Sánchez de Felipe' -> sf_id=245238 score=100.0 (2nd=-1.0) (sf_name=Javi Sánchez) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='James Belshaw' -> sf_id=257862 score=100.0 (2nd=-1.0) (sf_name=James Michael Belshaw) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Akinwale Joseph Odimayo' -> sf_id=244126 score=100.0 (2nd=-1.0) (sf_name=Akinwale Joseph Odimayo) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Pablo' -> sf_id=264290 score=100.0 (2nd=-1.0) (sf_name=Pablo Felipe) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Donyell Malen' -> sf_id=231447 score=100.0 (2nd=-1.0) (sf_name=Donyell Malen) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Conor Gallagher' -> sf_id=238216 score=100.0 (2nd=-1.0) (sf_name=Conor Gallagher) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Alireza Jahanbakhsh' -> sf_id=215871 score=100.0 (2nd=-1.0) (sf_name=Alireza Jahanbakhsh) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Deniz Türüç' -> sf_id=215531 score=100.0 (2nd=-1.0) (sf_name=Deniz Türüç) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Andrea Cistana' -> sf_id=226260 score=100.0 (2nd=-1.0) (sf_name=Andrea Cistana) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Salvatore Esposito' -> sf_id=252290 score=100.0 (2nd=-1.0) (sf_name=Salvatore Esposito) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Marco Sala' -> sf_id=252704 score=100.0 (2nd=-1.0) (sf_name=Marco Sala) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Boris Radunović' -> sf_id=231073 score=100.0 (2nd=-1.0) (sf_name=Boris Radunović) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ramzi Aya' -> sf_id=198903 score=100.0 (2nd=-1.0) (sf_name=Ramzi Aya) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Yohann Demoncy' -> sf_id=234799 score=100.0 (2nd=-1.0) (sf_name=Yohan Demoncy) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Thiago Silva' -> sf_id=164240 score=100.0 (2nd=-1.0) (sf_name=Thiago Silva) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Pol Lirola' -> sf_id=235875 score=100.0 (2nd=-1.0) (sf_name=Pol Lirola) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Arnaud Kalimuendo' -> sf_id=253444 score=100.0 (2nd=-1.0) (sf_name=Arnaud Kalimuendo Muinga) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Mattia Valoti' -> sf_id=205089 score=100.0 (2nd=-1.0) (sf_name=Mattia Valoti) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Oğulcan Çağlayan' -> sf_id=223212 score=100.0 (2nd=-1.0) (sf_name=Oğulcan Çağlayan) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Yalçın Kayan' -> sf_id=252917 score=100.0 (2nd=-1.0) (sf_name=Yalçın Kayan) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Anthony Musaba' -> sf_id=258165 score=100.0 (2nd=-1.0) (sf_name=Anthony Tite Musaba) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Jérôme Onguéné' -> sf_id=221323 score=100.0 (2nd=-1.0) (sf_name=Jérôme Junior Onguéné) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Faride Alidou' -> sf_id=264409 score=100.0 (2nd=-1.0) (sf_name=Faride Alidou) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Rodrigo Conceição' -> sf_id=263566 score=100.0 (2nd=-1.0) (sf_name=Rodrigo Conceição) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Adryan Oliveira Tavares' -> sf_id=205008 score=100.0 (2nd=-1.0) (sf_name=Adryan) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Theo Vassell' -> sf_id=231481 score=100.0 (2nd=-1.0) (sf_name=Theo Vassell) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Sander Svendsen' -> sf_id=215195 score=100.0 (2nd=-1.0) (sf_name=Sander Svendsen) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Jason Ceka' -> sf_id=262898 score=100.0 (2nd=-1.0) (sf_name=Jason Ceka) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Riley Harbottle' -> sf_id=241699 score=100.0 (2nd=-1.0) (sf_name=Riley-Jay Harbottle) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Nihad Mujakić' -> sf_id=251168 score=100.0 (2nd=-1.0) (sf_name=Nihad Mujakić) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Matteo Brunori Sandri' -> sf_id=253019 score=100.0 (2nd=-1.0) (sf_name=Matteo Luigi Brunori) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Valentín Castellanos' -> sf_id=237712 score=100.0 (2nd=-1.0) (sf_name=Valentín Mariano José Castellanos Giménez) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Adrià Altimira' -> sf_id=269228 score=100.0 (2nd=-1.0) (sf_name=Altimira) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Lequincio Zeefuik' -> sf_id=269259 score=100.0 (2nd=-1.0) (sf_name=Lequincio Zeefuik) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Noah Weißhaupt' -> sf_id=262672 score=100.0 (2nd=-1.0) (sf_name=Noah Raphael Weißhaupt) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Petar Ratkov' -> sf_id=275978 score=100.0 (2nd=-1.0) (sf_name=Petar Ratkov) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Robert Wagner' -> sf_id=263076 score=100.0 (2nd=-1.0) (sf_name=Robert Wagner) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Ryan Graydon' -> sf_id=246094 score=100.0 (2nd=-1.0) (sf_name=Ryan Graydon) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Chris Kablan' -> sf_id=239425 score=100.0 (2nd=-1.0) (sf_name=Chris Kablan) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Lance Duijvestijn' -> sf_id=275858 score=100.0 (2nd=-1.0) (sf_name=Lance Duijvestijn) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Manuel De Luca' -> sf_id=237391 score=100.0 (2nd=-1.0) (sf_name=Manuel De Luca) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Omri Gandelman' -> sf_id=277840 score=100.0 (2nd=-1.0) (sf_name=Omri Gandelman) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Damián Rodríguez Sousa' -> sf_id=279112 score=100.0 (2nd=-1.0) (sf_name=Damián) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Mathias Jörgensen' -> sf_id=243371 score=100.0 (2nd=-1.0) (sf_name=Mathias Jörgensen) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='David Toshevski' -> sf_id=71062 score=100.0 (2nd=-1.0) (sf_name=David Toshevski) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Oliver Lavale' -> sf_id=278882 score=100.0 (2nd=-1.0) (sf_name=Oliver Lavale) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Daniel Peretz' -> sf_id=277823 score=100.0 (2nd=-1.0) (sf_name=Daniel Peretz) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Jorge Cabello Trujillo' -> sf_id=71388 score=100.0 (2nd=31.6) (sf_name=Cabello) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Younes Ebnoutalib' -> sf_id=76282 score=100.0 (2nd=-1.0) (sf_name=Younes Ebnoutalib) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Pape Demba Diop' -> sf_id=271721 score=100.0 (2nd=-1.0) (sf_name=Pape Demba Diop) missing=1/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Yeray Cabanzón de Arriba' -> sf_id=273022 score=100.0 (2nd=-1.0) (sf_name=Yeray) missing=1/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Jaden Fernando Slory' -> sf_id=72071 score=100.0 (2nd=-1.0) (sf_name=Jaden Fernando Slory) missing=1/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Kevin Zeroli' -> sf_id=278351 score=100.0 (2nd=-1.0) (sf_name=Kevin Zeroli) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Jahmai Simpson-Pusey' -> sf_id=75577 score=100.0 (2nd=-1.0) (sf_name=Jahmai Simpson-Pusey) missing=0/34 gate=dob reason=team_dob_pass
+[team_strength] MATCH fs='Luis Guilherme Lira dos Santos' -> sf_id=72754 score=100.0 (2nd=-1.0) (sf_name=Luis Guilherme) missing=0/34 gate=dob reason=team_dob_pass
