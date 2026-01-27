@@ -560,8 +560,7 @@ def _match_fs_to_sofifa(
     else:
         # -------- Apply thresholds depending on stage --------
         if stage == "team+dob":
-            thr = float(getattr(sett, "SF_MATCH_TEAM_DOB_THRESHOLD", sett.SF_MATCH_LOWER_THRESHOLD))
-            if best.score >= thr:
+            if best.score >= sett.SF_MATCH_LOW_THRESHOLD:
                 res = MatchResult(
                     best.sofifa_id, best.score, second_score, True, "team_dob_pass", sofifa_best_name=best_name
                 )
@@ -569,8 +568,7 @@ def _match_fs_to_sofifa(
                 res = MatchResult(None, best.score, second_score, True, "team_dob_fail", sofifa_best_name=best_name)
 
         elif stage == "team_only":
-            thr = float(getattr(sett, "SF_MATCH_TEAM_ONLY_THRESHOLD", sett.SF_MATCH_HIGHER_THRESHOLD))
-            if best.score >= thr:
+            if best.score >= sett.SF_MATCH_HIGH_THRESHOLD:
                 res = MatchResult(
                     best.sofifa_id, best.score, second_score, False, "team_only_pass", sofifa_best_name=best_name
                 )
@@ -579,7 +577,7 @@ def _match_fs_to_sofifa(
 
         elif stage == "dob_only":
             # your original DOB gate rule
-            if best.score >= sett.SF_MATCH_LOWER_THRESHOLD:
+            if best.score >= sett.SF_MATCH_MODERATE_THRESHOLD:
                 res = MatchResult(
                     best.sofifa_id, best.score, second_score, True, "dob_gate_pass", sofifa_best_name=best_name
                 )
@@ -588,7 +586,7 @@ def _match_fs_to_sofifa(
 
         elif stage == "name_bucket":
             # name-only requires high threshold
-            if best.score >= sett.SF_MATCH_HIGHER_THRESHOLD:
+            if best.score >= sett.SF_MATCH_HIGH_THRESHOLD:
                 res = MatchResult(
                     best.sofifa_id, best.score, second_score, False, "name_bucket_pass", sofifa_best_name=best_name
                 )
@@ -829,7 +827,8 @@ def calculate_team_strength(curr_match: "FSMatch", team_id: int) -> list[list[fl
                     f"[team_strength] MATCH fs='{_player_display_name(p)}' -> sf_id={mr.sofifa_id} "
                     f"score={mr.score_best:.1f} (2nd={mr.score_second:.1f}) "
                     f"(sf_name={mr.sofifa_best_name}) "
-                    f"missing={missing_cells}/{len(skills)} gate={'dob' if mr.used_dob_gate else 'high'}"
+                    f"missing={missing_cells}/{len(skills)} gate={'dob' if mr.used_dob_gate else 'high'} "
+                    f"reason={mr.reason}"
                 )
 
         rows.append((p, skills))

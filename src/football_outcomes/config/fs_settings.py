@@ -10,8 +10,8 @@ DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22_fix_snap_v3.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-22_fix_snap_v3.pkl"
+LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_v3.pkl"
+SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_v3.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
@@ -35,8 +35,9 @@ MIN_ELO_MATCHES = 5  # min number of matches in dataset for opponent's ELO being
 ELO_NON_LEAGUE_WEIGHT = 0.25  # down-weight domestic and European cups
 WINNER_TEAM_ID_CODE_FOR_DRAW = -1
 
-SF_MATCH_LOWER_THRESHOLD = 55  # names matching (when DOB matches)
-SF_MATCH_HIGHER_THRESHOLD = 85  # names matching (when DOB doesn't match)
+SF_MATCH_LOW_THRESHOLD = 40  # names matching (when both team and DOB match)
+SF_MATCH_HIGH_THRESHOLD = 69.9  # names matching (when team matches but DOB doesn't)
+SF_MATCH_MODERATE_THRESHOLD = 60  # names matching (when DOB matches but team doesn't)
 SF_MAX_TIMEDELTA_DAYS = 120  # snapshot search (within +/- N days of match date)
 SF_MAX_SNAPSHOTS_TO_SCAN = 6  # num of snapshots to search (past+future ordered)
 
@@ -125,10 +126,6 @@ SF_TEAM_MATCH_MAX_CANDIDATES = 3  # keep top-N candidates for debug
 
 # --- Name-only fallback bucket limit ---
 SF_NAME_BUCKET_MAX = 200
-
-# --- Optional thresholds for team-based matching steps ---
-SF_MATCH_TEAM_DOB_THRESHOLD = 50  # slightly easier than LOWER (DOB+same-team should be strong)
-SF_MATCH_TEAM_ONLY_THRESHOLD = 80  # lower than HIGHER, but still strict
 
 TEAM_STRENGTH_NUM_PLAYERS = 11
 TEAM_STRENGTH_NUM_SKILLS = 34  # should equal to len(PLAYER_SKILLS)
