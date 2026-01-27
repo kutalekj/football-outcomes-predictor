@@ -558,7 +558,6 @@ def _match_fs_to_sofifa(
     elif best is None:
         res = MatchResult(None, 0.0, 0.0, used_dob_gate, "no_best", sofifa_best_name=None)
     else:
-        # -------- Apply thresholds depending on stage --------
         if stage == "team+dob":
             if best.score >= sett.SF_MATCH_LOW_THRESHOLD:
                 res = MatchResult(
@@ -645,45 +644,57 @@ def _ordered_snapshot_candidates(occurrences: List[Tuple[int, date]], match_date
 def _merge_skills_from_snapshots(
     sofifa_id: int,
     match_dt: datetime,
-) -> List[float]:
+) -> Tuple[List[float], int, int]:
     """
-    Get a 34-length skills vector for sofifa_id by:
-      - selecting snapshot candidates around match date (past-first, then future)
-      - starting with closest snapshot’s skills
-      - filling missing skill cells (-1) by scanning next snapshots in order
-    No imputation beyond using another snapshot; if still missing => -1 remains.
+    Returns:
+      - skills: 34-length vector
+      - snapshots_used: number of snapshots that contributed ≥1 value
+      - closest_delta_days: (match_date - snapshot_date) of first contributing snapshot
     """
     g = Global.get_instance()
 
     match_date = match_dt.date()
     occ = g.sofifa_player_occurrences.get(sofifa_id, [])
     if not occ:
-        return [-1.0] * len(sett.PLAYER_SKILLS)
+        return [-1.0] * len(sett.PLAYER_SKILLS), 0, 0
 
     candidates = _ordered_snapshot_candidates(occ, match_date)
     if not candidates:
-        return [-1.0] * len(sett.PLAYER_SKILLS)
+        return [-1.0] * len(sett.PLAYER_SKILLS), 0, 0
 
     out = [-1.0] * len(sett.PLAYER_SKILLS)
+
+    snapshots_used = 0
+    closest_delta_days = None
 
     for snap_idx, snap_date in candidates:
         snap_players = g.sofifa_snapshots[snap_idx][1]  # (date, dict)
         rec = snap_players.get(sofifa_id)
         if rec is None:
             continue
+
         skills = rec.get("skills")
         if not skills or len(skills) != len(sett.PLAYER_SKILLS):
             continue
 
-        # Fill missing cells only
+        contributed = False
         for i, v in enumerate(skills):
             if out[i] == -1.0 and v is not None:
                 out[i] = float(v)
+                contributed = True
+
+        if contributed:
+            snapshots_used += 1
+            if closest_delta_days is None:
+                closest_delta_days = (match_date - snap_date).days
 
         if -1.0 not in out:
             break
 
-    return out
+    if closest_delta_days is None:
+        closest_delta_days = 0
+
+    return out, snapshots_used, closest_delta_days
 
 
 # ---------- helpers: lineup handling ----------
@@ -820,14 +831,18 @@ def calculate_team_strength(curr_match: "FSMatch", team_id: int) -> list[list[fl
                     f"reason={mr.reason}"
                 )
         else:
-            skills = _merge_skills_from_snapshots(mr.sofifa_id, curr_match.datetime)
+            skills, snapshots_used, delta_days = _merge_skills_from_snapshots(mr.sofifa_id, curr_match.datetime)
             if getattr(sett, "DEBUG_TEAM_STRENGTH", False):
                 missing_cells = sum(1 for x in skills if x == -1.0)
                 _dbg(
                     f"[team_strength] MATCH fs='{_player_display_name(p)}' -> sf_id={mr.sofifa_id} "
                     f"score={mr.score_best:.1f} (2nd={mr.score_second:.1f}) "
                     f"(sf_name={mr.sofifa_best_name}) "
-                    f"missing={missing_cells}/{len(skills)} gate={'dob' if mr.used_dob_gate else 'high'} "
+                    f"league={curr_match.comp_name.replace(' ', '_')} "
+                    f"match_dt={curr_match.datetime.isoformat()} "
+                    f"missing={missing_cells}/{len(skills)} "
+                    f"snapshots_used={snapshots_used} "
+                    f"delta_days={delta_days} "
                     f"reason={mr.reason}"
                 )
 
