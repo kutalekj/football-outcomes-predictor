@@ -20,6 +20,7 @@ from tensorflow.keras.layers import (
     Input,
     Reshape,
 )
+from tensorflow.keras.metrics import AUC
 from tensorflow.keras.models import Model
 
 from football_outcomes.config import fs_settings as sett
@@ -34,7 +35,7 @@ from football_outcomes.training.fs_training_utils import (
 
 @dataclass
 class TrainConfig:
-    mode: str = "binary_u25"  # or "goals_dist"
+    mode: str = "binary_u25"  # "binary_u25" | "goals_dist" | "goals_reg"
     window_rounds: int = 25
     epochs_per_step: int = 5
     batch_size: int = 64
@@ -91,11 +92,32 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     if cfg.mode == "binary_u25":
         y = Dense(1, activation="sigmoid")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
-        model.compile("adam", "binary_crossentropy", metrics=["accuracy"])
-    else:
+        model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["accuracy"],
+        )
+
+    elif cfg.mode == "goals_dist":
         y = Dense(cfg.max_goals_class + 1, activation="softmax")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
-        model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
+        model.compile(
+            optimizer="adam",
+            loss="sparse_categorical_crossentropy",
+            metrics=["accuracy"],
+        )
+
+    elif cfg.mode == "goals_reg":
+        y = Dense(1, activation="linear")(z)
+        model = Model([x_num, x_h, x_a, x_c, x_s], y)
+        model.compile(
+            optimizer="adam",
+            loss="mae",
+            metrics=["mae"],
+        )
+
+    else:
+        raise ValueError(f"Unknown mode: {cfg.mode}")
 
     return model
 
@@ -137,6 +159,9 @@ def train_rolling(
     )
     print(f"[tensorboard] logging to {log_dir}")
 
+    # Extra per-round metrics: show in TensorBoard one point per rolling round
+    tb_writer = tf.summary.create_file_writer(log_dir)
+
     for i in range(cfg.window_rounds, len(rounds) - 1):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
@@ -156,12 +181,60 @@ def train_rolling(
             verbose=1,
         )
 
-        val_loss, val_acc = model.evaluate(V[:-1], V[-1], verbose=0)
-        print(f"[round {i + 1}] val_loss={val_loss:.4f} val_acc={val_acc:.4f}")  # binary mode
+        val_metrics = model.evaluate(V[:-1], V[-1], verbose=0)
+        round_step = int(i + 1)  # 1-based round index for readability in TensorBoard
 
-        probs = model.predict(V[:-1], verbose=0)
-        expected = (probs * np.arange(cfg.max_goals_class + 1)).sum(axis=1)
-        mae = np.mean(np.abs(expected - V[-1]))
-        print(f"[round {i + 1}] expected_goals_MAE={mae:.3f}")  # total goals regression
+        if cfg.mode == "binary_u25":  # binary classification
+            val_loss, val_acc = val_metrics
+            print(f"[round {i + 1}] val_loss={val_loss:.4f} val_acc={val_acc:.4f}")
+
+        elif cfg.mode == "goals_dist":  # multi-class classification
+            val_loss, val_acc = val_metrics
+            print(f"[round {i + 1}] val_loss={val_loss:.4f} val_acc={val_acc:.4f}")
+
+            probabilities = model.predict(V[:-1], verbose=0)
+            expected = (probabilities * np.arange(cfg.max_goals_class + 1)).sum(axis=1)
+            mae = np.mean(np.abs(expected - V[-1]))
+            print(f"[round {i + 1}] expected_goals_MAE={mae:.3f}")
+
+            # Derived Under 2.5 metrics from distribution (p_under25 = p0 + p1 + p2)
+            p_under25 = probabilities[:, :3].sum(axis=1).astype(np.float32)
+            y_under25 = (V[-1] <= 2).astype(np.float32)
+
+            derived_under25_acc = float(np.mean((p_under25 >= 0.5) == (y_under25 >= 0.5)))
+            brier = float(np.mean((p_under25 - y_under25) ** 2))
+
+            auc_metric = AUC(curve="ROC")
+            auc_metric.update_state(y_under25, p_under25)
+            derived_under25_auc = float(auc_metric.result().numpy())
+
+            print(
+                f"[round {i + 1}] derived_under25_acc(p0+p1+p2)={derived_under25_acc:.3f} "
+                f"auc={derived_under25_auc:.3f} brier={brier:.4f}"
+            )
+
+            # Manual TensorBoard scalars (one point per round)
+            with tb_writer.as_default():
+                tf.summary.scalar("round/val_loss", float(val_loss), step=round_step)
+                tf.summary.scalar("round/val_accuracy", float(val_acc), step=round_step)
+                tf.summary.scalar("round/expected_goals_mae", float(mae), step=round_step)
+                tf.summary.scalar("round/derived_under25_accuracy", derived_under25_acc, step=round_step)
+                tf.summary.scalar("round/derived_under25_auc", derived_under25_auc, step=round_step)
+                tf.summary.scalar("round/derived_under25_brier", brier, step=round_step)
+                tb_writer.flush()
+
+        elif cfg.mode == "goals_reg":  # regression
+            val_loss, val_mae = val_metrics
+            print(f"[round {i + 1}] val_MAE={val_mae:.3f}")
+
+            predictions = model.predict(V[:-1], verbose=0).ravel()
+            under25_acc = np.mean((predictions < 2.5) == (V[-1] < 2.5))
+            print(f"[round {i + 1}] derived_under25_acc={under25_acc:.3f}")
+
+            # Manual TensorBoard scalars (one point per round)
+            with tb_writer.as_default():
+                tf.summary.scalar("round/val_mae", float(val_mae), step=round_step)
+                tf.summary.scalar("round/derived_under25_accuracy", float(under25_acc), step=round_step)
+                tb_writer.flush()
 
     return model

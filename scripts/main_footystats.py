@@ -99,7 +99,7 @@ print(f"[features] usable matches for training: {len(league_matches_sorted)}")
 
 cat_maps = build_categorical_maps(league_matches_sorted)
 
-cfg = TrainConfig(mode="binary_u25", window_rounds=25, epochs_per_step=5, batch_size=64, seed=42)  # or "goals_dist"
+cfg = TrainConfig(mode="binary_u25", window_rounds=25, epochs_per_step=5, batch_size=64, seed=42)
 
 model = train_rolling(league_matches_sorted, cat_maps, cfg)
 model.save("mlp_first_run.keras")

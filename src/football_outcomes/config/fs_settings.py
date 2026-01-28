@@ -133,7 +133,7 @@ GK_SKILL_START_INDEX = 29
 GK_SKILL_END_INDEX = 34  # Python slice end
 FORCE_EXACTLY_ONE_GK_ROW = True
 GK_ROLE_SCORE_MIN_GAP = 0.5  # minimal separation to treat as GK-like (TODO: tune)
-DEBUG_TEAM_STRENGTH = True  # optional log
+DEBUG_TEAM_STRENGTH = False  # optional log
 
 SOG_NORM_COEFFICIENT = 12.5
 GOALS_NORM_COEFFICIENT = 5.19

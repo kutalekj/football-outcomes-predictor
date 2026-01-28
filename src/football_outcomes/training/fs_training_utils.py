@@ -30,7 +30,7 @@ def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
     team_ids = set()
     comp_ids = set()
 
-    # Build comp_name -> comp_id mapping from settings
+    # Build comp_name -> comp_id mapping (FootyStats uses comp_season IDs, not comp ID)
     comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
 
     for m in league_matches_sorted:
@@ -160,27 +160,34 @@ def build_arrays_for_matches(
 
     X_num, X_h, X_a, X_c, X_s, y = [], [], [], [], [], []
 
+    comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
+
     for m in matches:
         f = getattr(m, "features_before_match", None)
         if f is None:
             raise ValueError(f"Match {m.id} has no features")
 
-        X_num.append(extract_numerical_features(f))
-        X_h.append(cat_maps.team_id_map[m.home_team.id])
-        X_a.append(cat_maps.team_id_map[m.away_team.id])
+        X_num.append(extract_numerical_features(f))  # numerical
+        X_h.append(cat_maps.team_id_map[m.home_team.id])  # home team
+        X_a.append(cat_maps.team_id_map[m.away_team.id])  # away team
 
-        comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
-        X_c.append(comp_name_to_id[m.comp_name])
+        X_c.append(comp_name_to_id[m.comp_name])  # comp
 
         hs = _strength_to_np(f.home_team_strength)
         aw = _strength_to_np(f.away_team_strength)
-        X_s.append(np.stack([hs, aw], axis=0))
+        X_s.append(np.stack([hs, aw], axis=0))  # team strength
 
         total_goals = (m.home_goals or 0) + (m.away_goals or 0)
         if mode == "binary_u25":
-            y.append(1 if total_goals <= 2 else 0)
+            y.append(1.0 if total_goals <= 2 else 0.0)
+        elif mode == "goals_dist":
+            y.append(int(min(total_goals, max_goals_class)))
+        elif mode == "goals_reg":
+            y.append(float(total_goals))
         else:
-            y.append(min(total_goals, max_goals_class))
+            raise ValueError(f"Unknown mode: {mode}")
+
+    y_dtype = np.float32 if mode in ("binary_u25", "goals_reg") else np.int32
 
     return (
         np.asarray(X_num, np.float32),
@@ -188,5 +195,5 @@ def build_arrays_for_matches(
         np.asarray(X_a, np.int32)[:, None],
         np.asarray(X_c, np.int32)[:, None],
         np.asarray(X_s, np.float32),
-        np.asarray(y, np.int32 if mode != "binary_u25" else np.float32),
+        np.asarray(y, y_dtype),
     )
