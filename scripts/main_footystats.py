@@ -77,8 +77,8 @@ for match in league_matches_sorted:
             team_index_all=team_index_all,
         )
 
-        # if match.home_team.name == "KRC Genk" or match.away_team.name == "KRC Genk":
-        #     fu.debug_print_match_and_features(match)  # DEBUG
+        if match.home_team.name == "KRC Genk" or match.away_team.name == "KRC Genk":
+            fu.debug_print_match_and_features(match)  # DEBUG
 
     except ValueError as e:
         skipped_matches += 1
@@ -92,6 +92,7 @@ for match in league_matches_sorted:
 
 print(f"[features] Done. Skipped matches: {skipped_matches}")
 
+# TODO: Filter out matches from 2025/2026
 league_matches_sorted = [
     m for m in league_matches_sorted if hasattr(m, "features_before_match") and m.features_before_match is not None
 ]

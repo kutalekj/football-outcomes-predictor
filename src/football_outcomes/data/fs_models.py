@@ -656,7 +656,7 @@ class FSMatch:
             5,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_sog,
+            fu.normalize_soffg,
         )
         mf.home_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -665,7 +665,7 @@ class FSMatch:
             20,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_sog,
+            fu.normalize_soffg,
         )
         mf.away_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
             team_index_league,
@@ -674,7 +674,7 @@ class FSMatch:
             5,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_sog,
+            fu.normalize_soffg,
         )
         mf.away_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -683,7 +683,7 @@ class FSMatch:
             20,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_sog,
+            fu.normalize_soffg,
         )
 
         mf.home_avg_total_shots_last_5 = fu.avg_stat_last_n(
@@ -764,7 +764,7 @@ class FSMatch:
             5,
             "home_fouls",
             "away_fouls",
-            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+            fu.normalize_fouls,
         )
         mf.home_avg_fouls_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -773,7 +773,7 @@ class FSMatch:
             20,
             "home_fouls",
             "away_fouls",
-            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+            fu.normalize_fouls,
         )
         mf.away_avg_fouls_last_5 = fu.avg_stat_last_n(
             team_index_league,
@@ -782,7 +782,7 @@ class FSMatch:
             5,
             "home_fouls",
             "away_fouls",
-            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+            fu.normalize_fouls,
         )
         mf.away_avg_fouls_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -791,7 +791,7 @@ class FSMatch:
             20,
             "home_fouls",
             "away_fouls",
-            lambda x: fu.min_max_scaling_with_clipping(x, 30.0),
+            fu.normalize_fouls,
         )
 
         mf.home_avg_attacks_last_5 = fu.avg_stat_last_n(
@@ -801,7 +801,7 @@ class FSMatch:
             5,
             "home_attacks",
             "away_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+            fu.normalize_attacks,
         )
         mf.home_avg_attacks_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -810,7 +810,7 @@ class FSMatch:
             20,
             "home_attacks",
             "away_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+            fu.normalize_attacks,
         )
         mf.away_avg_attacks_last_5 = fu.avg_stat_last_n(
             team_index_league,
@@ -819,7 +819,7 @@ class FSMatch:
             5,
             "home_attacks",
             "away_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+            fu.normalize_attacks,
         )
         mf.away_avg_attacks_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -828,7 +828,7 @@ class FSMatch:
             20,
             "home_attacks",
             "away_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 200.0),
+            fu.normalize_attacks,
         )
 
         mf.home_avg_dang_attacks_last_5 = fu.avg_stat_last_n(
@@ -838,7 +838,7 @@ class FSMatch:
             5,
             "home_dangerous_attacks",
             "away_dangerous_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+            fu.normalize_dang_attacks,
         )
         mf.home_avg_dang_attacks_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -847,7 +847,7 @@ class FSMatch:
             20,
             "home_dangerous_attacks",
             "away_dangerous_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+            fu.normalize_dang_attacks,
         )
         mf.away_avg_dang_attacks_last_5 = fu.avg_stat_last_n(
             team_index_league,
@@ -856,7 +856,7 @@ class FSMatch:
             5,
             "home_dangerous_attacks",
             "away_dangerous_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+            fu.normalize_dang_attacks,
         )
         mf.away_avg_dang_attacks_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -865,7 +865,7 @@ class FSMatch:
             20,
             "home_dangerous_attacks",
             "away_dangerous_attacks",
-            lambda x: fu.min_max_scaling_with_clipping(x, 150.0),
+            fu.normalize_dang_attacks,
         )
 
         # ---- League table positions (assumes the earlier table init exists on cs)

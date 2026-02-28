@@ -42,16 +42,28 @@ def normalize_sog(v: float) -> float:
     return min_max_scaling_with_clipping(v, sett.SOG_NORM_COEFFICIENT)
 
 
+def normalize_soffg(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.SOFFG_NORM_COEFFICIENT)
+
+
 def normalize_total_shots(v: float) -> float:
     return min_max_scaling_with_clipping(v, sett.TOTAL_SHOTS_NORM_COEFFICIENT)
 
 
-def normalize_shots_in_box(v: float) -> float:
-    return min_max_scaling_with_clipping(v, sett.SHOTS_IN_BOX_NORM_COEFFICIENT)
-
-
 def normalize_corners(v: float) -> float:
     return min_max_scaling_with_clipping(v, sett.CORNER_KICKS_NORM_COEFFICIENT)
+
+
+def normalize_fouls(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.FOULS_NORM_COEFFICIENT)
+
+
+def normalize_attacks(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.ATTACKS_NORM_COEFFICIENT)
+
+
+def normalize_dang_attacks(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.DANG_ATTACKS_NORM_COEFFICIENT)
 
 
 def normalize_match_load(v: float) -> float:
@@ -316,6 +328,10 @@ def calculate_elo_for_match(
     if curr_match.home_team is None or curr_match.away_team is None:
         return sett.ALMOST_ZERO, sett.ALMOST_ZERO
 
+    # TODO: Remove this debug print
+    if curr_match.home_team.name == "KRC Genk" or curr_match.away_team.name == "KRC Genk":
+        pass
+
     home_id = curr_match.home_team.id
     away_id = curr_match.away_team.id
 
@@ -389,6 +405,7 @@ def calculate_elo_for_match(
     if is_league:
         update_weight = 1.0
     else:
+        print("WARNING !!!: THIS SHOULD NEVER HAPPEN (features calculated only for league matches")
         # Only use non-league matches if both teams are sufficiently "known"
         if home_reliable and away_reliable:
             update_weight = float(getattr(sett, "ELO_NON_LEAGUE_WEIGHT", 0.0))
@@ -436,63 +453,291 @@ def debug_print_match_and_features(match):
         print("No features computed.")
         return
 
-    # --- MATCH STATISTICS (what you used to print)
+    def denorm(x, coeff):
+        # assumes normalize: x_norm = raw / coeff
+        if x is None:
+            return None
+        return x * coeff
+
+    def fmt(x, digits=3):
+        if x is None:
+            return "None"
+        try:
+            return f"{x:.{digits}f}"
+        except Exception:
+            return str(x)
+
+    def fmt_denorm(x, coeff, digits=3):
+        d = denorm(x, coeff)
+        if d is None:
+            return "None"
+        return f"{d:.{digits}f}"
+
+    # -------------------------
+    # FEATURES BEFORE MATCH (Genk-side only)
+    # -------------------------
+    print("\n\tFEATURES_BEFORE_MATCH:")
+    TARGET_TEAM = "KRC Genk"
+
+    home_name = getattr(match.home_team, "name", "") or ""
+    away_name = getattr(match.away_team, "name", "") or ""
+
+    # simple, robust match (substring, case-insensitive)
+    genk_is_home = TARGET_TEAM.lower() in home_name.lower()
+    genk_is_away = TARGET_TEAM.lower() in away_name.lower()
+
+    if not (genk_is_home or genk_is_away):
+        print(
+            f"\t[WARN] Target team '{TARGET_TEAM}' not found in match: home='{home_name}', away='{away_name}'. "
+            f"Defaulting to home-side prints."
+        )
+        genk_is_home = True
+
+    side = "home" if genk_is_home else "away"
+    side_team_name = home_name if genk_is_home else away_name
+
+    def pick(home_val, away_val):
+        return home_val if genk_is_home else away_val
+
+    def pick_attr(home_attr: str, away_attr: str):
+        return getattr(f, home_attr) if genk_is_home else getattr(f, away_attr)
+
+    def print_pair(
+        label: str,
+        home_attr_5: str,
+        home_attr_20: str,
+        away_attr_5: str,
+        away_attr_20: str,
+        coeff=None,
+        indent_tabs: int = 0,
+    ):
+        v5 = pick_attr(home_attr_5, away_attr_5)
+        v20 = pick_attr(home_attr_20, away_attr_20)
+        prefix = "\t" * indent_tabs
+        if coeff is None:
+            print(f"{label}  {prefix}{side}({side_team_name})={fmt(v5)}/{fmt(v20)}")
+        else:
+            print(
+                f"{label}  {prefix}{side}({side_team_name})={fmt(v5)}/{fmt(v20)} "
+                f"(denorm={fmt_denorm(v5, coeff)}/{fmt_denorm(v20, coeff)})"
+            )
+
+    # ELO (single values)
+    elo_val = pick(f.home_elo, f.away_elo)
+    elo_raw = pick(match.home_elo_after_match_raw, match.away_elo_after_match_raw)
+    print(f"ELO {side}({side_team_name})={fmt(elo_val)} " f"(raw after match={elo_raw:.1f})")
+
+    # --- xG features (TEAM & TOTAL, prematch & in-match)
+    print_pair(
+        "Avg xG (TEAM) last 5/20",
+        "home_avg_xg_last_5",
+        "home_avg_xg_last_20",
+        "away_avg_xg_last_5",
+        "away_avg_xg_last_20",
+        coeff=sett.TEAM_XG_NORM_COEFFICIENT,
+        indent_tabs=9,
+    )
+
+    print_pair(
+        "Avg xG (TOTAL) last 5/20",
+        "home_avg_xg_total_last_5",
+        "home_avg_xg_total_last_20",
+        "away_avg_xg_total_last_5",
+        "away_avg_xg_total_last_20",
+        coeff=sett.TOTAL_XG_NORM_COEFFICIENT,
+        indent_tabs=9,
+    )
+
+    print_pair(
+        "Avg pre-match xG (TEAM) last 5/20",
+        "home_avg_pre_match_xg_last_5",
+        "home_avg_pre_match_xg_last_20",
+        "away_avg_pre_match_xg_last_5",
+        "away_avg_pre_match_xg_last_20",
+        coeff=sett.TEAM_PRE_MATCH_XG_NORM_COEFFICIENT,
+        indent_tabs=5,
+    )
+
+    print_pair(
+        "Avg pre-match xG (TOTAL) last 5/20",
+        "home_avg_pre_match_xg_total_last_5",
+        "home_avg_pre_match_xg_total_last_20",
+        "away_avg_pre_match_xg_total_last_5",
+        "away_avg_pre_match_xg_total_last_20",
+        coeff=sett.TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT,
+        indent_tabs=5,
+    )
+
+    # --- match load (10/25 days) (single line, two values)
+    ml10 = pick(f.home_match_load_per_day_last_10_days, f.away_match_load_per_day_last_10_days)
+    ml25 = pick(f.home_match_load_per_day_last_25_days, f.away_match_load_per_day_last_25_days)
+    print(
+        f"Avg match load per day last 10/25 days  "
+        f"{side}({side_team_name})={fmt(ml10)}/{fmt(ml25)} "
+        f"(denorm={fmt_denorm(ml10, sett.MATCH_LOAD_NORM_COEFFICIENT)}/"
+        f"{fmt_denorm(ml25, sett.MATCH_LOAD_NORM_COEFFICIENT)})"
+    )
+
+    # --- points
+    print_pair(
+        "Avg points last 5/20",
+        "home_avg_points_last_5",
+        "home_avg_points_last_20",
+        "away_avg_points_last_5",
+        "away_avg_points_last_20",
+        coeff=None,
+        indent_tabs=10,
+    )
+
+    # --- goals
+    print_pair(
+        "Avg goals last 5/20",
+        "home_avg_goals_last_5",
+        "home_avg_goals_last_20",
+        "away_avg_goals_last_5",
+        "away_avg_goals_last_20",
+        coeff=sett.GOALS_NORM_COEFFICIENT,
+        indent_tabs=9,
+    )
+
+    # --- shots on target
+    print_pair(
+        "Avg SOT last 5/20",
+        "home_avg_shots_on_target_last_5",
+        "home_avg_shots_on_target_last_20",
+        "away_avg_shots_on_target_last_5",
+        "away_avg_shots_on_target_last_20",
+        coeff=sett.SOG_NORM_COEFFICIENT,
+        indent_tabs=12,
+    )
+
+    # --- shots off target
+    print_pair(
+        "Avg shots OFF target last 5/20",
+        "home_avg_shots_off_target_last_5",
+        "home_avg_shots_off_target_last_20",
+        "away_avg_shots_off_target_last_5",
+        "away_avg_shots_off_target_last_20",
+        coeff=sett.SOFFG_NORM_COEFFICIENT,
+        indent_tabs=4,
+    )
+
+    # --- total shots
+    print_pair(
+        "Avg total shots last 5/20",
+        "home_avg_total_shots_last_5",
+        "home_avg_total_shots_last_20",
+        "away_avg_total_shots_last_5",
+        "away_avg_total_shots_last_20",
+        coeff=sett.TOTAL_SHOTS_NORM_COEFFICIENT,
+        indent_tabs=8,
+    )
+
+    # --- corners
+    print_pair(
+        "Avg corner kicks last 5/20",
+        "home_avg_corner_kicks_last_5",
+        "home_avg_corner_kicks_last_20",
+        "away_avg_corner_kicks_last_5",
+        "away_avg_corner_kicks_last_20",
+        coeff=sett.CORNER_KICKS_NORM_COEFFICIENT,
+        indent_tabs=6,
+    )
+
+    # --- possession (no coeff provided)
+    print_pair(
+        "Avg possession last 5/20",
+        "home_avg_ball_possession_last_5",
+        "home_avg_ball_possession_last_20",
+        "away_avg_ball_possession_last_5",
+        "away_avg_ball_possession_last_20",
+        coeff=None,
+        indent_tabs=8,
+    )
+
+    # --- fouls
+    print_pair(
+        "Avg fouls last 5/20",
+        "home_avg_fouls_last_5",
+        "home_avg_fouls_last_20",
+        "away_avg_fouls_last_5",
+        "away_avg_fouls_last_20",
+        coeff=sett.FOULS_NORM_COEFFICIENT,
+        indent_tabs=9,
+    )
+
+    # --- attacks
+    print_pair(
+        "Avg attacks last 5/20",
+        "home_avg_attacks_last_5",
+        "home_avg_attacks_last_20",
+        "away_avg_attacks_last_5",
+        "away_avg_attacks_last_20",
+        coeff=sett.ATTACKS_NORM_COEFFICIENT,
+        indent_tabs=10,
+    )
+
+    # --- dangerous attacks
+    print_pair(
+        "Avg dangerous attacks last 5/20",
+        "home_avg_dang_attacks_last_5",
+        "home_avg_dang_attacks_last_20",
+        "away_avg_dang_attacks_last_5",
+        "away_avg_dang_attacks_last_20",
+        coeff=sett.DANG_ATTACKS_NORM_COEFFICIENT,
+        indent_tabs=4,
+    )
+
+    # --- home/away split goals scored/conceded (still depends on home/away context!)
+    # If Genk is home: use home_scored_home / home_conceded_home
+    # If Genk is away: use away_scored_away / away_conceded_away
+    scored5 = pick(f.home_avg_goals_scored_home_last_5, f.away_avg_goals_scored_away_last_5)
+    scored20 = pick(f.home_avg_goals_scored_home_last_20, f.away_avg_goals_scored_away_last_20)
+    conc5 = pick(f.home_avg_goals_conceded_home_last_5, f.away_avg_goals_conceded_away_last_5)
+    conc20 = pick(f.home_avg_goals_conceded_home_last_20, f.away_avg_goals_conceded_away_last_20)
+
+    print(
+        f"Avg goals scored ({side} split) last 5/20  "
+        f"{side}({side_team_name})={fmt(scored5)}/{fmt(scored20)} "
+        f"(denorm={fmt_denorm(scored5, sett.GOALS_NORM_COEFFICIENT)}/"
+        f"{fmt_denorm(scored20, sett.GOALS_NORM_COEFFICIENT)})"
+    )
+    print(
+        f"Avg goals conceded ({side} split) last 5/20  "
+        f"{side}({side_team_name})={fmt(conc5)}/{fmt(conc20)} "
+        f"(denorm={fmt_denorm(conc5, sett.GOALS_NORM_COEFFICIENT)}/"
+        f"{fmt_denorm(conc20, sett.GOALS_NORM_COEFFICIENT)})"
+    )
+
+    # --- table position
+    pos = pick(f.home_curr_position, f.away_curr_position)
+    print(f"Table position {side}({side_team_name})={fmt(pos)}")
+
+    # -------------------------
+    # MATCH STATISTICS
+    # -------------------------
     print("\n\tMATCH_STATISTICS:")
     print(f"{match.datetime} h={match.hour_utc}: {match.comp_name}, {match.season}, round_id={match.round_id}")
 
-    hsot = match.stats.get("home_shots_on_target", -1)
-    asot = match.stats.get("away_shots_on_target", -1)
-    hts = match.stats.get("home_total_shots", -1)
-    ats = match.stats.get("away_total_shots", -1)
-    hc = match.stats.get("home_corners", -1)
-    ac = match.stats.get("away_corners", -1)
-    hp = match.stats.get("home_possession", -1)
-    ap = match.stats.get("away_possession", -1)
-    hxg = match.stats.get("home_xg", -1)
-    axg = match.stats.get("away_xg", -1)
-    hpxg = match.stats.get("home_prematch_xg", -1)
-    apxg = match.stats.get("away_prematch_xg", -1)
+    s = match.stats or {}
+    hsot = s.get("home_shots_on_target", -1)
+    asot = s.get("away_shots_on_target", -1)
+    hsoff = s.get("home_shots_off_target", -1)
+    asoff = s.get("away_shots_off_target", -1)
+    hts = s.get("home_total_shots", -1)
+    ats = s.get("away_total_shots", -1)
+    hc = s.get("home_corners", -1)
+    ac = s.get("away_corners", -1)
+    hp = s.get("home_possession", -1)
+    ap = s.get("away_possession", -1)
+    hxg = s.get("home_xg", -1)
+    axg = s.get("away_xg", -1)
+    hpxg = s.get("home_prematch_xg", -1)
+    apxg = s.get("away_prematch_xg", -1)
 
     print(
         f"{match.home_team.name} {match.home_goals} "
-        f"(sot={hsot}, shots={hts}, corners={hc}, poss={hp}, xg={hxg}, prem_xg={hpxg})  -  "
+        f"(sot={hsot}, soff={hsoff}, shots={hts}, corners={hc}, poss={hp}, xg={hxg}, prem_xg={hpxg})  -  "
         f"{match.away_team.name} {match.away_goals} "
-        f"(sot={asot}, shots={ats}, corners={ac}, poss={ap}, xg={axg}, prem_xg={apxg})"
+        f"(sot={asot}, soff={asoff}, shots={ats}, corners={ac}, poss={ap}, xg={axg}, prem_xg={apxg})"
     )
-
-    # --- FEATURES BEFORE MATCH (with denorm like you used to)
-    print("\n\tFEATURES_BEFORE_MATCH:")
-
-    print(
-        f"ELO home/away={f.home_elo:.3f}/{f.away_elo:.3f} "
-        f"(raw stored on match={match.home_elo_after_match_raw:.1f}/{match.away_elo_after_match_raw:.1f})"
-    )
-
-    def denorm(x, coeff):  # assumes your normalize is x = raw/coeff
-        return x * coeff
-
-    print(
-        f"Avg xG last5/20 home={f.home_avg_xg_last_5:.3f}/{f.home_avg_xg_last_20:.3f} "
-        f"(denorm={denorm(f.home_avg_xg_last_5, sett.TEAM_XG_NORM_COEFFICIENT):.3f}/"
-        f"{denorm(f.home_avg_xg_last_20, sett.TEAM_XG_NORM_COEFFICIENT):.3f})"
-    )
-    print(
-        f"Avg xG last5/20 away={f.away_avg_xg_last_5:.3f}/{f.away_avg_xg_last_20:.3f} "
-        f"(denorm={denorm(f.away_avg_xg_last_5, sett.TEAM_XG_NORM_COEFFICIENT):.3f}/"
-        f"{denorm(f.away_avg_xg_last_20, sett.TEAM_XG_NORM_COEFFICIENT):.3f})"
-    )
-
-    print(
-        f"Match load last10/25 days home={f.home_match_load_per_day_last_10_days:.3f}/"
-        f"{f.home_match_load_per_day_last_25_days:.3f} "
-        f"(denorm={(f.home_match_load_per_day_last_10_days * sett.MATCH_LOAD_NORM_COEFFICIENT):.3f}/"
-        f"{(f.home_match_load_per_day_last_25_days * sett.MATCH_LOAD_NORM_COEFFICIENT):.3f})"
-    )
-    print(
-        f"Match load last10/25 days away={f.away_match_load_per_day_last_10_days:.3f}/"
-        f"{f.away_match_load_per_day_last_25_days:.3f} "
-        f"(denorm={(f.away_match_load_per_day_last_10_days * sett.MATCH_LOAD_NORM_COEFFICIENT):.3f}/"
-        f"{(f.away_match_load_per_day_last_25_days * sett.MATCH_LOAD_NORM_COEFFICIENT):.3f})"
-    )
-
-    print(f"Table position home/away={f.home_curr_position:.3f}/{f.away_curr_position:.3f}")
