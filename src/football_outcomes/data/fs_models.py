@@ -490,7 +490,6 @@ class FSMatch:
         # ---- ELO (pre-match, computed from previous matches only, then stored on the match for next matches)
         mf.home_elo, mf.away_elo = fu.calculate_elo_for_match(
             team_index_league=team_index_league,
-            team_index_all=team_index_all,
             curr_match=self,
         )
 

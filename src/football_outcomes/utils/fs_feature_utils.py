@@ -294,9 +294,7 @@ def total_pre_match_xg(m: FSMatch) -> Optional[float]:
     return float(hxg) + float(axg)
 
 
-def calculate_elo_for_match(
-    team_index_league: TeamMatchIndex, team_index_all: TeamMatchIndex, curr_match: FSMatch
-) -> Tuple[float, float]:
+def calculate_elo_for_match(team_index_league: TeamMatchIndex, curr_match: FSMatch) -> Tuple[float, float]:
     """
     Weighted ELO update.
 
@@ -380,7 +378,7 @@ def calculate_elo_for_match(
         return float(mu + alpha * (elo - mu))
 
     def _prev_elo_pre_match(team_id: int) -> float:
-        pm = get_previous_match(team_index_all, team_id, curr_match)
+        pm = get_previous_match(team_index_league, team_id, curr_match)
         if pm is None:
             return sett.INIT_ELO
         elo_after_prev = _read_team_elo_after_match_raw(pm, team_id)
@@ -393,29 +391,6 @@ def calculate_elo_for_match(
     home_pre_norm = normalize_elo(rh)
     away_pre_norm = normalize_elo(ra)
 
-    # --- Decide update weight
-    is_league = getattr(curr_match, "comp_name", None) in sett.COMPS_LEAGUE
-
-    min_hist = getattr(sett, "MIN_ELO_MATCHES", 0)
-    home_hist = len(team_index_league.matches_by_team.get(home_id, []))
-    away_hist = len(team_index_league.matches_by_team.get(away_id, []))
-    home_reliable = home_hist >= min_hist
-    away_reliable = away_hist >= min_hist
-
-    if is_league:
-        update_weight = 1.0
-    else:
-        print("WARNING !!!: THIS SHOULD NEVER HAPPEN (features calculated only for league matches")
-        # Only use non-league matches if both teams are sufficiently "known"
-        if home_reliable and away_reliable:
-            update_weight = float(getattr(sett, "ELO_NON_LEAGUE_WEIGHT", 0.0))
-        else:
-            update_weight = 0.0
-
-    # If we don't have a result, we cannot update.
-    if curr_match.home_goals is None or curr_match.away_goals is None:
-        update_weight = 0.0
-
     # --- Expected score
     c = 10.0
     d = 400.0
@@ -423,21 +398,18 @@ def calculate_elo_for_match(
     exp_away = 1.0 - exp_home
 
     # --- Actual outcome
-    if update_weight > 0.0:
-        hg = float(curr_match.home_goals)
-        ag = float(curr_match.away_goals)
-        if hg > ag:
-            ah, aa = 1.0, 0.0
-        elif hg < ag:
-            ah, aa = 0.0, 1.0
-        else:
-            ah, aa = 0.5, 0.5
-
-        k = float(sett.ELO_K) * update_weight
-        rh_new = rh + k * (ah - exp_home)
-        ra_new = ra + k * (aa - exp_away)
+    hg = float(curr_match.home_goals)
+    ag = float(curr_match.away_goals)
+    if hg > ag:
+        ah, aa = 1.0, 0.0
+    elif hg < ag:
+        ah, aa = 0.0, 1.0
     else:
-        rh_new, ra_new = rh, ra
+        ah, aa = 0.5, 0.5
+
+    k = float(sett.ELO_K)
+    rh_new = rh + k * (ah - exp_home)
+    ra_new = ra + k * (aa - exp_away)
 
     # --- Store post-match ELO for propagation
     # (Even if you haven't declared these attributes yet, Python will set them.)
@@ -730,6 +702,12 @@ def debug_print_match_and_features(match):
     ac = s.get("away_corners", -1)
     hp = s.get("home_possession", -1)
     ap = s.get("away_possession", -1)
+    hf = s.get("home_fouls", -1)
+    af = s.get("away_fouls", -1)
+    hat = s.get("home_attacks", -1)
+    aat = s.get("away_attacks", -1)
+    hdat = s.get("home_dangerous_attacks", -1)
+    adat = s.get("away_dangerous_attacks", -1)
     hxg = s.get("home_xg", -1)
     axg = s.get("away_xg", -1)
     hpxg = s.get("home_prematch_xg", -1)
@@ -737,7 +715,9 @@ def debug_print_match_and_features(match):
 
     print(
         f"{match.home_team.name} {match.home_goals} "
-        f"(sot={hsot}, soff={hsoff}, shots={hts}, corners={hc}, poss={hp}, xg={hxg}, prem_xg={hpxg})  -  "
+        f"(sot={hsot}, soff={hsoff}, shots={hts}, corners={hc}, poss={hp}, fouls={hf}, att={hat}, "
+        f"dangatt={hdat}, xg={hxg}, prem_xg={hpxg})  -  "
         f"{match.away_team.name} {match.away_goals} "
-        f"(sot={asot}, soff={asoff}, shots={ats}, corners={ac}, poss={ap}, xg={axg}, prem_xg={apxg})"
+        f"(sot={asot}, soff={asoff}, shots={ats}, corners={ac}, poss={ap}, fouls={af}, att={aat}, "
+        f"dangatt={adat}, xg={axg}, prem_xg={apxg})"
     )
