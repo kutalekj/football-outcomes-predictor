@@ -198,6 +198,33 @@ COMPS_LEAGUE = [
     "Switzerland Super League",
 ]
 
+COMPS_LEAGUE_COLORS = {
+    "Belgium Pro League": "aquamarine",
+    "England Premier League": "blue",
+    "England Championship": "royalblue",
+    "England EFL League One": "cornflowerblue",
+    "England EFL League Two": "dodgerblue",
+    "France Ligue 1": "blueviolet",
+    "France Ligue 2": "mediumorchid",
+    "Netherlands Eredivisie": "orange",
+    "Turkey Süper Lig": "rosybrown",
+    "Germany Bundesliga": "gold",
+    "Germany 2. Bundesliga": "goldenrod",
+    "Saudi Arabia Professional League": "darkseagreen",
+    "India Indian Super League": "darkkhaki",
+    "Australia A-League": "silver",
+    "Austria Bundesliga": "lavenderblush",
+    "Spain La Liga": "red",
+    "Spain Segunda División": "tomato",
+    "Italy Serie A": "limegreen",
+    "Italy Serie B": "lightgreen",
+    "Scotland Premiership": "lavender",
+    "Poland Ekstraklasa": "lightpink",
+    "Denmark Superliga": "thistle",
+    "Portugal Liga NOS": "honeydew",
+    "Switzerland Super League": "paleturquoise",
+}
+
 COMPS_EUROPE = ["Europe UEFA Champions League", "Europe UEFA Europa League", "Europe UEFA Europa Conference League"]
 
 COMPS_CUP = [
