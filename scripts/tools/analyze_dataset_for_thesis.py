@@ -9,6 +9,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from matplotlib.axes import Axes
+from matplotlib.colors import PowerNorm
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -28,18 +31,26 @@ ZERO_AS_MISSING_STATS = {
     "away_prematch_xg",
 }
 
-
+# Shared percentage-plot configuration.
+# Keep the semantic range at 0–100, but use nonlinear normalization so sparse percentages remain distinguishable.
 PCT_MIN = 0.0
 PCT_MAX = 100.0
-TOP_TEAM_MONTH_SLICES = 40
-MIN_MATCHES_PER_TEAM_MONTH_SLICE = 4
+HEATMAP_GAMMA = 0.40
+PCT_CMAP = "viridis"
+PCT_BAR_YMAX = 100.0
 
 
 def _get_comp_colors() -> Dict[str, str]:
     cfg_colors = getattr(sett, "COMPS_LEAGUE_COLORS", None)
     if not isinstance(cfg_colors, dict):
         raise ValueError("No colors definition for league competitions was found.")
-    return {comp: color for comp, color in cfg_colors.items()}
+    # allow typo correction in config
+    fixed = {}
+    for comp, color in cfg_colors.items():
+        if color == "bluevioldet":
+            color = "blueviolet"
+        fixed[comp] = color
+    return fixed
 
 
 def load_data_into_globals() -> List[FSMatch]:
@@ -47,18 +58,17 @@ def load_data_into_globals() -> List[FSMatch]:
     fill_globals_with_cache(bundle, update_leagues_list=False)
     g = Global.get_instance()
 
+    league_matches = [m for m in g.all_matches if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE]
     league_matches = [
         m
-        for m in g.all_matches
-        if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE
-        and getattr(m, "season", None) is not None
-        and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
+        for m in league_matches
+        if getattr(m, "season", None) is not None and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
     ]
     league_matches.sort(key=lambda m: ((getattr(m, "datetime", None) or 0), getattr(m, "hour_utc", -1), m.id))
 
     print(
         f"Loaded {len(league_matches)} league matches across {len(sett.COMPS_LEAGUE)} league competitions "
-        f"for seasons {sett.FIRST_SEASON}/{sett.FIRST_SEASON + 1} .. {sett.LAST_SEASON - 1}/{sett.LAST_SEASON}."
+        f"for seasons {sett.FIRST_SEASON}..{sett.LAST_SEASON - 1}."
     )
     return league_matches
 
@@ -76,7 +86,10 @@ def plot_match_counts_per_comp(league_matches: List[FSMatch], out_dir: Path) -> 
     x = np.arange(len(df))
     bars = ax.bar(x, df["n_matches"], color=bar_colors, edgecolor="black", linewidth=0.7)
 
-    ax.set_title("Number of league matches per competition (2021/2022-2024/2025)")
+    ax.set_title(
+        f"Number of league matches per competition ({sett.FIRST_SEASON}/{sett.FIRST_SEASON + 1}–"
+        f"{sett.LAST_SEASON - 1}/{sett.LAST_SEASON})"
+    )
     ax.set_xlabel("Competition")
     ax.set_ylabel("Number of matches")
     ax.set_xticks(x)
@@ -121,7 +134,14 @@ def _is_missing_match_stat(stat: str, value) -> bool:
 
 
 def _is_missing_skill_value(value) -> bool:
-    return value is None or value == -1.0 or (isinstance(value, float) and math.isnan(value))
+    if value is None:
+        return True
+    try:
+        if float(value) == -1.0:
+            return True
+    except Exception:
+        pass
+    return isinstance(value, float) and math.isnan(value)
 
 
 def build_match_stats_missingness(league_matches: List[FSMatch]) -> pd.DataFrame:
@@ -179,13 +199,13 @@ def build_match_stats_missingness(league_matches: List[FSMatch]) -> pd.DataFrame
 
 
 def _snapshot_date_to_season_year(snapshot_date) -> int:
-    # Mirrors European season convention in your project: dates from Jul onward belong to season YYYY/YY+1.
+    # Dates from July onward belong to the season YYYY/YYYY+1.
     if snapshot_date.month >= 7:
         return snapshot_date.year
     return snapshot_date.year - 1
 
 
-def _iter_sofifa_records(include_all_snapshot_seasons: bool = False):
+def _iter_sofifa_records():
     g = Global.get_instance()
 
     # Invert mapping: SOFIFA league_id -> FS league name
@@ -193,11 +213,14 @@ def _iter_sofifa_records(include_all_snapshot_seasons: bool = False):
         int(sofifa_id): fs_name for fs_name, sofifa_id in sett.FS_LEAGUE_TO_SOFIFA_LEAGUE_ID.items()
     }
 
-    ordered_snapshots = sorted(g.sofifa_snapshots, key=lambda x: x[0])
-    for snapshot_date, players_by_id in ordered_snapshots:
+    # Keep full snapshot timeline available for neighboring-snapshot logic.
+    snapshots_sorted = sorted(g.sofifa_snapshots, key=lambda x: x[0])
+
+    for snap_idx, (snapshot_date, players_by_id) in enumerate(snapshots_sorted):
         season = _snapshot_date_to_season_year(snapshot_date)
 
-        if (not include_all_snapshot_seasons) and not (sett.FIRST_SEASON <= season < sett.LAST_SEASON):
+        # Report only thesis seasons: 2021/2022 .. 2024/2025
+        if not (sett.FIRST_SEASON <= season < sett.LAST_SEASON):
             continue
 
         for sofifa_id, rec in players_by_id.items():
@@ -221,7 +244,14 @@ def _iter_sofifa_records(include_all_snapshot_seasons: bool = False):
             if not isinstance(skills, list):
                 continue
 
-            yield snapshot_date, season, league_name, int(sofifa_id), skills
+            yield {
+                "snap_idx": snap_idx,
+                "snapshot_date": snapshot_date,
+                "season": season,
+                "league_name": league_name,
+                "sofifa_id": int(sofifa_id),
+                "skills": skills,
+            }
 
 
 def build_player_skill_missingness_from_raw_sofifa() -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -234,9 +264,12 @@ def build_player_skill_missingness_from_raw_sofifa() -> Tuple[pd.DataFrame, pd.D
     total_records = 0
     total_missing_cells = 0
 
-    for snapshot_date, season, league_name, _sofifa_id, skills in _iter_sofifa_records(
-        include_all_snapshot_seasons=False
-    ):
+    for rec in _iter_sofifa_records():
+        snapshot_date = rec["snapshot_date"]
+        season = rec["season"]
+        league_name = rec["league_name"]
+        skills = rec["skills"]
+
         player_row_counts[(league_name, season)] += 1
         snapshot_sets[(league_name, season)].add(snapshot_date)
         total_records += 1
@@ -291,93 +324,61 @@ def build_player_skill_missingness_from_raw_sofifa() -> Tuple[pd.DataFrame, pd.D
     return df, snapshot_df
 
 
-def _neighbor_skill_has_valid_value(
-    players_by_id: Optional[dict],
-    sofifa_id: int,
-    skill_idx: int,
-) -> bool:
-    if players_by_id is None:
-        return False
-    rec = players_by_id.get(sofifa_id)
-    if not isinstance(rec, dict):
-        return False
-    skills = rec.get("skills")
-    if not isinstance(skills, list):
-        return False
-    v = skills[skill_idx] if skill_idx < len(skills) else -1.0
-    return not _is_missing_skill_value(v)
-
-
-def build_player_skill_persistent_missingness_from_raw_sofifa() -> Tuple[pd.DataFrame, pd.DataFrame]:
+def build_player_skill_missingness_from_raw_sofifa_persistent() -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
-    Count a skill cell as seriously / persistently missing only when:
-      - it is missing in the current snapshot for that player, and
-      - neither adjacent snapshot (previous / next two-month CSV) offers a valid value for that player+skill.
-
-    This approximates the part of missingness that cannot be harmlessly imputed from surrounding snapshots.
+    A skill cell is counted as persistently missing only if:
+    - it is missing in the current snapshot row, and
+    - neither the previous nor next global SOFIFA snapshot provides a valid value for that player+skill.
     """
     g = Global.get_instance()
-    ordered_snapshots = sorted(g.sofifa_snapshots, key=lambda x: x[0])
     skill_names = list(sett.PLAYER_SKILLS)
-
-    sofifa_league_id_to_fs_name = {
-        int(sofifa_id): fs_name for fs_name, sofifa_id in sett.FS_LEAGUE_TO_SOFIFA_LEAGUE_ID.items()
-    }
+    snapshots_sorted = sorted(g.sofifa_snapshots, key=lambda x: x[0])
 
     totals: Dict[Tuple[str, int, str], int] = defaultdict(int)
     persistent_missing: Dict[Tuple[str, int, str], int] = defaultdict(int)
     player_row_counts: Dict[Tuple[str, int], int] = defaultdict(int)
     snapshot_sets: Dict[Tuple[str, int], set] = defaultdict(set)
 
+    # reuse filtered reporting rows, but neighbors can come from full timeline
+    iter_rows = list(_iter_sofifa_records())
     total_records = 0
-    total_persistent_missing_cells = 0
+    total_persistent_cells = 0
 
-    for snap_idx, (snapshot_date, players_by_id) in enumerate(ordered_snapshots):
-        season = _snapshot_date_to_season_year(snapshot_date)
-        if not (sett.FIRST_SEASON <= season < sett.LAST_SEASON):
-            continue
+    for rec in iter_rows:
+        snap_idx = rec["snap_idx"]
+        snapshot_date = rec["snapshot_date"]
+        season = rec["season"]
+        league_name = rec["league_name"]
+        sofifa_id = rec["sofifa_id"]
+        skills = rec["skills"]
 
-        prev_players = ordered_snapshots[snap_idx - 1][1] if snap_idx > 0 else None
-        next_players = ordered_snapshots[snap_idx + 1][1] if snap_idx + 1 < len(ordered_snapshots) else None
+        player_row_counts[(league_name, season)] += 1
+        snapshot_sets[(league_name, season)].add(snapshot_date)
+        total_records += 1
 
-        for sofifa_id, rec in players_by_id.items():
-            if not isinstance(rec, dict):
+        prev_players = snapshots_sorted[snap_idx - 1][1] if snap_idx - 1 >= 0 else None
+        next_players = snapshots_sorted[snap_idx + 1][1] if snap_idx + 1 < len(snapshots_sorted) else None
+
+        prev_rec = prev_players.get(sofifa_id) if isinstance(prev_players, dict) else None
+        next_rec = next_players.get(sofifa_id) if isinstance(next_players, dict) else None
+
+        prev_skills = prev_rec.get("skills") if isinstance(prev_rec, dict) else None
+        next_skills = next_rec.get("skills") if isinstance(next_rec, dict) else None
+
+        for idx, skill in enumerate(skill_names):
+            key = (league_name, season, skill)
+            totals[key] += 1
+
+            curr_v = skills[idx] if idx < len(skills) else -1.0
+            if not _is_missing_skill_value(curr_v):
                 continue
 
-            league_id = rec.get("club_league_id")
-            try:
-                league_id = int(league_id) if league_id is not None else None
-            except (TypeError, ValueError):
-                league_id = None
-            if league_id is None:
-                continue
+            prev_v = prev_skills[idx] if isinstance(prev_skills, list) and idx < len(prev_skills) else -1.0
+            next_v = next_skills[idx] if isinstance(next_skills, list) and idx < len(next_skills) else -1.0
 
-            league_name = sofifa_league_id_to_fs_name.get(league_id)
-            if league_name is None:
-                continue
-
-            skills = rec.get("skills")
-            if not isinstance(skills, list):
-                continue
-
-            player_row_counts[(league_name, season)] += 1
-            snapshot_sets[(league_name, season)].add(snapshot_date)
-            total_records += 1
-
-            for skill_idx, skill_name in enumerate(skill_names):
-                key = (league_name, season, skill_name)
-                totals[key] += 1
-
-                curr_v = skills[skill_idx] if skill_idx < len(skills) else -1.0
-                curr_missing = _is_missing_skill_value(curr_v)
-                if not curr_missing:
-                    continue
-
-                prev_has_value = _neighbor_skill_has_valid_value(prev_players, int(sofifa_id), skill_idx)
-                next_has_value = _neighbor_skill_has_valid_value(next_players, int(sofifa_id), skill_idx)
-                if not prev_has_value and not next_has_value:
-                    persistent_missing[key] += 1
-                    total_persistent_missing_cells += 1
+            if _is_missing_skill_value(prev_v) and _is_missing_skill_value(next_v):
+                persistent_missing[key] += 1
+                total_persistent_cells += 1
 
     rows = []
     for key, n_total in totals.items():
@@ -402,8 +403,8 @@ def build_player_skill_persistent_missingness_from_raw_sofifa() -> Tuple[pd.Data
     if total_records > 0:
         total_cells = total_records * len(skill_names)
         print(
-            f"Raw SOFIFA persistently missing skill cells: {total_persistent_missing_cells}/{total_cells} "
-            f"({total_persistent_missing_cells / total_cells:.2%})"
+            f"Persistent raw SOFIFA missing skill cells: {total_persistent_cells}/{total_cells} "
+            f"({total_persistent_cells / total_cells:.2%})"
         )
 
     snapshot_rows = []
@@ -418,179 +419,6 @@ def build_player_skill_persistent_missingness_from_raw_sofifa() -> Tuple[pd.Data
         )
     snapshot_df = pd.DataFrame(snapshot_rows)
     return df, snapshot_df
-
-
-def build_match_stats_team_month_missingness(
-    league_matches: List[FSMatch],
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """
-    Build a more diagnostic view of missing match statistics localized by team and month.
-
-    Returns:
-      - detailed by (competition, season, team, month, stat)
-      - overall by (competition, season, team, month)
-      - comp-season summary with localization metrics
-    """
-    if not league_matches:
-        empty_detail = pd.DataFrame(
-            columns=[
-                "competition",
-                "season",
-                "team_id",
-                "team_name",
-                "month",
-                "stat",
-                "n_missing",
-                "n_total",
-                "n_matches",
-                "missing_pct",
-            ]
-        )
-        empty_overall = pd.DataFrame(
-            columns=[
-                "competition",
-                "season",
-                "team_id",
-                "team_name",
-                "month",
-                "n_missing",
-                "n_total",
-                "n_matches",
-                "missing_pct",
-            ]
-        )
-        empty_summary = pd.DataFrame(
-            columns=[
-                "competition",
-                "season",
-                "overall_missing_pct",
-                "max_team_month_missing_pct",
-                "median_team_month_missing_pct",
-                "n_team_month_slices",
-                "n_problematic_team_month_slices",
-                "problematic_team_month_share_pct",
-            ]
-        )
-        return empty_detail, empty_overall, empty_summary
-
-    stat_keys = list(league_matches[0].stats.keys())
-    totals: Dict[Tuple[str, int, int, str, str, str], int] = defaultdict(int)
-    missing: Dict[Tuple[str, int, int, str, str, str], int] = defaultdict(int)
-    match_ids_by_slice: Dict[Tuple[str, int, int, str, str], set] = defaultdict(set)
-
-    for m in league_matches:
-        comp = getattr(m, "comp_name", None)
-        season = getattr(m, "season", None)
-        dt = getattr(m, "datetime", None)
-        if comp is None or season is None or dt is None:
-            continue
-
-        month_label = f"{dt.year:04d}-{dt.month:02d}"
-        participants = [getattr(m, "home_team", None), getattr(m, "away_team", None)]
-
-        for team in participants:
-            if team is None:
-                continue
-            team_slice = (comp, season, int(team.id), str(team.name), month_label)
-            match_ids_by_slice[team_slice].add(int(m.id))
-
-            for stat in stat_keys:
-                key = team_slice + (stat,)
-                totals[key] += 1
-                v = m.stats.get(stat, -1)
-                if _is_missing_match_stat(stat, v):
-                    missing[key] += 1
-
-    rows = []
-    for key, n_total in totals.items():
-        comp, season, team_id, team_name, month_label, stat = key
-        team_slice = (comp, season, team_id, team_name, month_label)
-        n_missing = missing.get(key, 0)
-        rows.append(
-            {
-                "competition": comp,
-                "season": season,
-                "team_id": team_id,
-                "team_name": team_name,
-                "month": month_label,
-                "stat": stat,
-                "n_missing": n_missing,
-                "n_total": n_total,
-                "n_matches": len(match_ids_by_slice[team_slice]),
-                "missing_pct": 100.0 * n_missing / n_total if n_total else math.nan,
-            }
-        )
-
-    df_detail = pd.DataFrame(rows)
-    if not df_detail.empty:
-        df_detail = df_detail.sort_values(["competition", "season", "team_name", "month", "stat"]).reset_index(
-            drop=True
-        )
-
-    if df_detail.empty:
-        df_overall = pd.DataFrame(
-            columns=[
-                "competition",
-                "season",
-                "team_id",
-                "team_name",
-                "month",
-                "n_missing",
-                "n_total",
-                "n_matches",
-                "missing_pct",
-            ]
-        )
-        df_summary = pd.DataFrame(
-            columns=[
-                "competition",
-                "season",
-                "overall_missing_pct",
-                "max_team_month_missing_pct",
-                "median_team_month_missing_pct",
-                "n_team_month_slices",
-                "n_problematic_team_month_slices",
-                "problematic_team_month_share_pct",
-            ]
-        )
-        return df_detail, df_overall, df_summary
-
-    df_overall = (
-        df_detail.groupby(["competition", "season", "team_id", "team_name", "month"], as_index=False)
-        .agg(n_missing=("n_missing", "sum"), n_total=("n_total", "sum"), n_matches=("n_matches", "max"))
-        .assign(missing_pct=lambda x: 100.0 * x["n_missing"] / x["n_total"])
-        .sort_values(
-            ["competition", "season", "missing_pct", "team_name", "month"], ascending=[True, True, False, True, True]
-        )
-        .reset_index(drop=True)
-    )
-
-    comp_season_overall = (
-        df_detail.groupby(["competition", "season"], as_index=False)
-        .agg(n_missing=("n_missing", "sum"), n_total=("n_total", "sum"))
-        .assign(overall_missing_pct=lambda x: 100.0 * x["n_missing"] / x["n_total"])
-    )
-
-    comp_season_local = (
-        df_overall.groupby(["competition", "season"], as_index=False)
-        .agg(
-            max_team_month_missing_pct=("missing_pct", "max"),
-            median_team_month_missing_pct=("missing_pct", "median"),
-            n_team_month_slices=("missing_pct", "size"),
-            n_problematic_team_month_slices=("missing_pct", lambda s: int((s >= 10.0).sum())),
-        )
-        .assign(
-            problematic_team_month_share_pct=lambda x: 100.0
-            * x["n_problematic_team_month_slices"]
-            / x["n_team_month_slices"]
-        )
-    )
-
-    df_summary = comp_season_overall.merge(comp_season_local, on=["competition", "season"], how="left").sort_values(
-        ["competition", "season"]
-    )
-
-    return df_detail, df_overall, df_summary
 
 
 def save_missingness_tables(df: pd.DataFrame, out_dir: Path, stem: str, value_col: str) -> None:
@@ -642,6 +470,56 @@ def save_missingness_tables(df: pd.DataFrame, out_dir: Path, stem: str, value_co
     print(f"Saved: {comp_season_summary_path}")
 
 
+def plot_pct_heatmap(
+    pivot_df: pd.DataFrame,
+    ax: Axes,
+    *,
+    title: str,
+    cbar_label: str,
+    cmap: str = PCT_CMAP,
+    x_label: Optional[str] = None,
+    y_label: Optional[str] = None,
+    x_rotation: float = 45.0,
+    y_rotation: float = 0.0,
+) -> None:
+    data = pivot_df.astype(float)
+    norm = PowerNorm(gamma=HEATMAP_GAMMA, vmin=PCT_MIN, vmax=PCT_MAX)
+
+    sns.heatmap(
+        data,
+        ax=ax,
+        cmap=cmap,
+        vmin=PCT_MIN,
+        vmax=PCT_MAX,
+        norm=norm,
+        linewidths=0.5,
+        linecolor="white",
+        cbar=True,
+        cbar_kws={"label": cbar_label},
+    )
+
+    ax.set_title(title)
+    if x_label is not None:
+        ax.set_xlabel(x_label)
+    if y_label is not None:
+        ax.set_ylabel(y_label)
+    ax.tick_params(axis="x", rotation=x_rotation)
+    ax.tick_params(axis="y", rotation=y_rotation)
+
+    ax.set_xticklabels(
+        ax.get_xticklabels(),
+        rotation=45,
+        ha="right",
+        rotation_mode="anchor",
+        fontsize=9,
+    )
+    ax.set_yticklabels(
+        ax.get_yticklabels(),
+        rotation=0,
+        fontsize=10,
+    )
+
+
 def plot_missingness_heatmap(
     df: pd.DataFrame,
     *,
@@ -652,31 +530,29 @@ def plot_missingness_heatmap(
     title: str,
     value_field: str = "missing_pct",
     cbar_label: str = "Missing values [%]",
-    vmin: float = PCT_MIN,
-    vmax: float = PCT_MAX,
 ) -> None:
     pivot = df.pivot_table(index=row_cols, columns=col_name, values=value_field, aggfunc="mean")
     pivot = pivot.sort_index()
 
+    if pivot.empty:
+        print(f"Skipping empty heatmap: {stem}")
+        return
+
     row_labels = [" | ".join(map(str, idx if isinstance(idx, tuple) else (idx,))) for idx in pivot.index]
-    col_labels = list(pivot.columns)
-    arr = pivot.to_numpy(dtype=float)
+    pivot = pivot.copy()
+    pivot.index = row_labels
 
-    fig_w = max(12, 0.35 * len(col_labels) + 6)
-    fig_h = max(8, 0.28 * len(row_labels) + 2.5)
+    fig_w = max(12, 0.35 * len(pivot.columns) + 6)
+    fig_h = max(8, 0.28 * len(pivot.index) + 2.5)
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
-    im = ax.imshow(arr, aspect="auto", interpolation="nearest", vmin=vmin, vmax=vmax)
-
-    ax.set_title(title)
-    ax.set_xlabel(col_name.replace("_", " ").title())
-    ax.set_ylabel(" / ".join(x.replace("_", " ") for x in row_cols).title())
-    ax.set_xticks(np.arange(len(col_labels)))
-    ax.set_xticklabels(col_labels, rotation=45, ha="right")
-    ax.set_yticks(np.arange(len(row_labels)))
-    ax.set_yticklabels(row_labels)
-
-    cbar = fig.colorbar(im, ax=ax)
-    cbar.set_label(cbar_label)
+    plot_pct_heatmap(
+        pivot,
+        ax,
+        title=title,
+        cbar_label=cbar_label,
+        x_label=col_name.replace("_", " ").title(),
+        y_label=" / ".join(x.replace("_", " ") for x in row_cols).title(),
+    )
 
     fig.tight_layout()
     png_path = out_dir / f"{stem}.png"
@@ -688,51 +564,183 @@ def plot_missingness_heatmap(
     print(f"Saved: {pdf_path}")
 
 
-def plot_top_problematic_team_month_slices(df_overall: pd.DataFrame, out_dir: Path) -> None:
-    if df_overall.empty:
-        return
+def build_match_stats_team_month_missingness(
+    league_matches: List[FSMatch],
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """
+    Localize missingness by (competition, season, team, month, stat) to reveal whether a problematic comp-season
+    cell is driven by a few specific teams and/or time periods.
+    """
+    if not league_matches:
+        empty_cols_detail = [
+            "competition",
+            "season",
+            "team_id",
+            "team_name",
+            "month",
+            "stat",
+            "n_missing",
+            "n_total",
+            "n_matches",
+            "missing_pct",
+        ]
+        empty_cols_overall = [
+            "competition",
+            "season",
+            "team_id",
+            "team_name",
+            "month",
+            "n_missing",
+            "n_total",
+            "n_matches",
+            "missing_pct",
+        ]
+        empty_cols_summary = [
+            "competition",
+            "season",
+            "n_team_month_slices",
+            "mean_slice_missing_pct",
+            "median_slice_missing_pct",
+            "worst_slice_missing_pct",
+            "worst_team_name",
+            "worst_month",
+            "worst_n_matches",
+        ]
+        return (
+            pd.DataFrame(columns=empty_cols_detail),
+            pd.DataFrame(columns=empty_cols_overall),
+            pd.DataFrame(columns=empty_cols_summary),
+        )
 
-    plot_df = df_overall[df_overall["n_matches"] >= MIN_MATCHES_PER_TEAM_MONTH_SLICE].copy()
-    if plot_df.empty:
-        plot_df = df_overall.copy()
+    stat_keys = list(league_matches[0].stats.keys())
+    totals: Dict[Tuple[str, int, int, str, int, str], int] = defaultdict(int)
+    missing: Dict[Tuple[str, int, int, str, int, str], int] = defaultdict(int)
+    match_ids: Dict[Tuple[str, int, int, str, int], set] = defaultdict(set)
 
-    plot_df = plot_df.sort_values(
-        ["missing_pct", "n_matches", "competition", "season"], ascending=[False, False, True, True]
+    for m in league_matches:
+        month = getattr(m, "month", None)
+        if month is None and getattr(m, "datetime", None) is not None:
+            month = m.datetime.month
+        if month is None:
+            continue
+
+        team_pairs = []
+        if getattr(m, "home_team", None) is not None:
+            team_pairs.append((m.home_team.id, m.home_team.name))
+        if getattr(m, "away_team", None) is not None:
+            team_pairs.append((m.away_team.id, m.away_team.name))
+
+        for team_id, team_name in team_pairs:
+            overall_key = (m.comp_name, m.season, team_id, team_name, int(month))
+            match_ids[overall_key].add(m.id)
+
+            for stat in stat_keys:
+                key = (m.comp_name, m.season, team_id, team_name, int(month), stat)
+                totals[key] += 1
+                v = m.stats.get(stat, -1)
+                if _is_missing_match_stat(stat, v):
+                    missing[key] += 1
+
+    detail_rows = []
+    for key, n_total in totals.items():
+        comp, season, team_id, team_name, month, stat = key
+        n_missing = missing.get(key, 0)
+        overall_key = (comp, season, team_id, team_name, month)
+        detail_rows.append(
+            {
+                "competition": comp,
+                "season": season,
+                "team_id": team_id,
+                "team_name": team_name,
+                "month": month,
+                "stat": stat,
+                "n_missing": n_missing,
+                "n_total": n_total,
+                "n_matches": len(match_ids[overall_key]),
+                "missing_pct": 100.0 * n_missing / n_total if n_total else math.nan,
+            }
+        )
+
+    detail_df = (
+        pd.DataFrame(detail_rows)
+        .sort_values(["competition", "season", "team_name", "month", "stat"])
+        .reset_index(drop=True)
     )
-    plot_df = plot_df.head(TOP_TEAM_MONTH_SLICES).copy()
-    if plot_df.empty:
+
+    overall_df = (
+        detail_df.groupby(["competition", "season", "team_id", "team_name", "month"], as_index=False)
+        .agg(n_missing=("n_missing", "sum"), n_total=("n_total", "sum"), n_matches=("n_matches", "max"))
+        .assign(missing_pct=lambda x: 100.0 * x["n_missing"] / x["n_total"])
+        .sort_values(["competition", "season", "missing_pct"], ascending=[True, True, False])
+        .reset_index(drop=True)
+    )
+
+    summary_rows = []
+    for (comp, season), gdf in overall_df.groupby(["competition", "season"], sort=True):
+        worst = gdf.sort_values(["missing_pct", "n_matches"], ascending=[False, False]).iloc[0]
+        summary_rows.append(
+            {
+                "competition": comp,
+                "season": season,
+                "n_team_month_slices": len(gdf),
+                "mean_slice_missing_pct": gdf["missing_pct"].mean(),
+                "median_slice_missing_pct": gdf["missing_pct"].median(),
+                "worst_slice_missing_pct": worst["missing_pct"],
+                "worst_team_name": worst["team_name"],
+                "worst_month": int(worst["month"]),
+                "worst_n_matches": int(worst["n_matches"]),
+            }
+        )
+
+    summary_df = pd.DataFrame(summary_rows).sort_values(["competition", "season"]).reset_index(drop=True)
+    return detail_df, overall_df, summary_df
+
+
+def _competition_from_label(label: str) -> str:
+    # Example label:
+    # "Hatay Spor Kulübü | Turkey Süper Lig 2022 | m04"
+
+    middle = label.split(" | ")[1]  # "Turkey Süper Lig 2022"
+    competition = middle.rsplit(" ", 1)[0]  # remove trailing season
+    return competition
+
+
+def plot_top_team_month_slices(overall_df: pd.DataFrame, out_dir: Path, top_n: int = 30) -> None:
+    if overall_df.empty:
+        print("Skipping team-month bar chart because the dataframe is empty.")
         return
 
-    plot_df["label"] = plot_df.apply(
-        lambda r: f"{r['competition']} {r['season']}/{r['season'] + 1} | {r['month']} | "
-        f"{r['team_name']} (n={int(r['n_matches'])})",
+    # Prefer slices with enough matches so one-match artifacts do not dominate.
+    filtered = overall_df[overall_df["n_matches"] >= 4].copy()
+    if filtered.empty:
+        filtered = overall_df.copy()
+
+    top = filtered.sort_values(["missing_pct", "n_matches"], ascending=[False, False]).head(top_n).copy()
+    top["label"] = top.apply(
+        lambda r: f"{r['team_name']} | {r['competition']} {int(r['season'])} | m{int(r['month']):02d}",
         axis=1,
     )
-    plot_df = plot_df.sort_values("missing_pct", ascending=True)
 
-    comp_colors = _get_comp_colors()
-    colors = [comp_colors.get(comp, "lightgray") for comp in plot_df["competition"]]
+    bar_colors = [sett.COMPS_LEAGUE_COLORS.get(_competition_from_label(lbl), "steelblue") for lbl in top["label"]]
 
-    fig_h = max(8.5, 0.27 * len(plot_df) + 2.5)
-    fig, ax = plt.subplots(figsize=(15.5, fig_h))
-    y = np.arange(len(plot_df))
-    bars = ax.barh(y, plot_df["missing_pct"], color=colors, edgecolor="black", linewidth=0.6)
+    fig_h = max(8, 0.34 * len(top) + 2.5)
+    fig, ax = plt.subplots(figsize=(15, fig_h))
+    y = np.arange(len(top))
+    bars = ax.barh(y, top["missing_pct"], color=bar_colors, edgecolor="black", linewidth=0.6)
 
-    ax.set_title(
-        "Most problematic team-month slices for match-stat missingness\n"
-        f"(minimum {MIN_MATCHES_PER_TEAM_MONTH_SLICE} matches per slice when available)"
-    )
-    ax.set_xlabel("Missing match-stat values [%]")
-    ax.set_ylabel("Competition | Season | Month | Team")
     ax.set_yticks(y)
-    ax.set_yticklabels(plot_df["label"])
-    ax.set_xlim(PCT_MIN, PCT_MAX)
+    ax.set_yticklabels(top["label"])
+    ax.invert_yaxis()
+    ax.set_xlim(PCT_MIN, PCT_BAR_YMAX)
+    ax.set_xlabel("Missing values (%)")
+    ax.set_ylabel("Team / competition-season / month")
+    ax.set_title("Most problematic team-month slices for match-stat missingness")
     ax.grid(axis="x", linestyle="--", alpha=0.35)
     ax.set_axisbelow(True)
 
-    for bar, pct in zip(bars, plot_df["missing_pct"]):
+    for bar, pct in zip(bars, top["missing_pct"]):
         ax.text(
-            min(float(pct) + 1.0, PCT_MAX - 1.0),
+            min(bar.get_width() + 1.0, PCT_BAR_YMAX - 1.5),
             bar.get_y() + bar.get_height() / 2,
             f"{pct:.1f}%",
             va="center",
@@ -770,7 +778,7 @@ def main() -> None:
         stem="match_stats_missingness_heatmap_comp_season",
         title="Missing match statistics by competition and season",
         value_field="missing_pct",
-        cbar_label="Missing or zero-as-missing values [%]",
+        cbar_label="Missing or zero-as-missing values (%)",
     )
 
     # Useful extra heatmap: literal zeros only for the selected ambiguous stats.
@@ -784,68 +792,69 @@ def main() -> None:
             stem="match_stats_zero_values_heatmap_comp_season",
             title="Zero values in selected match statistics by competition and season",
             value_field="zero_pct",
-            cbar_label="Zero values [%]",
+            cbar_label="Zero values (%)",
         )
 
-        # 2a-extra) Localize missingness in time and team slices.
-        df_match_team_month_detail, df_match_team_month_overall, df_match_team_month_summary = (
-            build_match_stats_team_month_missingness(league_matches)
+    # 2a-extra) Localization of match-stat missingness by team and month within seasons.
+    df_team_month_detail, df_team_month_overall, df_team_month_summary = build_match_stats_team_month_missingness(
+        league_matches
+    )
+    if not df_team_month_detail.empty:
+        path = out_dir / "match_stats_missingness_team_month_detail.csv"
+        df_team_month_detail.to_csv(path, index=False)
+        print(f"Saved: {path}")
+    if not df_team_month_overall.empty:
+        path = out_dir / "match_stats_missingness_team_month_overall.csv"
+        df_team_month_overall.to_csv(path, index=False)
+        print(f"Saved: {path}")
+        plot_top_team_month_slices(df_team_month_overall, out_dir)
+    if not df_team_month_summary.empty:
+        path = out_dir / "match_stats_missingness_team_month_comp_season_summary.csv"
+        df_team_month_summary.to_csv(path, index=False)
+        print(f"Saved: {path}")
+
+    # 2b) Detailed player-skill missingness from raw SOFIFA CSV snapshots.
+    df_skill, df_skill_rows = build_player_skill_missingness_from_raw_sofifa()
+    save_missingness_tables(df_skill, out_dir, "player_skill_missingness_raw_sofifa", "skill")
+    if not df_skill.empty:
+        plot_missingness_heatmap(
+            df_skill,
+            out_dir=out_dir,
+            row_cols=["competition", "season"],
+            col_name="skill",
+            stem="player_skill_missingness_raw_sofifa_heatmap_comp_season",
+            title="Missing raw SOFIFA player-skill values by competition and season",
+            cbar_label="Missing values (%)",
         )
-        if not df_match_team_month_detail.empty:
-            detail_path = out_dir / "match_stats_missingness_team_month_detail.csv"
-            df_match_team_month_detail.to_csv(detail_path, index=False)
-            print(f"Saved: {detail_path}")
-        if not df_match_team_month_overall.empty:
-            overall_path = out_dir / "match_stats_missingness_team_month_overall.csv"
-            df_match_team_month_overall.to_csv(overall_path, index=False)
-            print(f"Saved: {overall_path}")
-            plot_top_problematic_team_month_slices(df_match_team_month_overall, out_dir)
-        if not df_match_team_month_summary.empty:
-            summary_path = out_dir / "match_stats_missingness_team_month_comp_season_summary.csv"
-            df_match_team_month_summary.to_csv(summary_path, index=False)
-            print(f"Saved: {summary_path}")
+    if not df_skill_rows.empty:
+        skill_rows_path = out_dir / "player_skill_missingness_raw_sofifa_snapshot_rows.csv"
+        df_skill_rows.to_csv(skill_rows_path, index=False)
+        print(f"Saved: {skill_rows_path}")
 
-        # 2b) Detailed player-skill missingness from raw SOFIFA CSV snapshots.
-        df_skill, df_skill_rows = build_player_skill_missingness_from_raw_sofifa()
-        save_missingness_tables(df_skill, out_dir, "player_skill_missingness_raw_sofifa", "skill")
-        if not df_skill.empty:
-            plot_missingness_heatmap(
-                df_skill,
-                out_dir=out_dir,
-                row_cols=["competition", "season"],
-                col_name="skill",
-                stem="player_skill_missingness_raw_sofifa_heatmap_comp_season",
-                title="Missing raw SOFIFA player-skill values by competition and season",
-            )
-        if not df_skill_rows.empty:
-            skill_rows_path = out_dir / "player_skill_missingness_raw_sofifa_snapshot_rows.csv"
-            df_skill_rows.to_csv(skill_rows_path, index=False)
-            print(f"Saved: {skill_rows_path}")
-
-        # 2b-extra) Missing player skills that cannot be trivially imputed from adjacent snapshots.
-        df_skill_persistent, df_skill_persistent_rows = build_player_skill_persistent_missingness_from_raw_sofifa()
-        save_missingness_tables(
+    # 2c) Persistent-missing raw SOFIFA player skills (missing also in adjacent snapshots).
+    df_skill_persistent, df_skill_persistent_rows = build_player_skill_missingness_from_raw_sofifa_persistent()
+    save_missingness_tables(
+        df_skill_persistent,
+        out_dir,
+        "player_skill_missingness_raw_sofifa_persistent",
+        "skill",
+    )
+    if not df_skill_persistent.empty:
+        plot_missingness_heatmap(
             df_skill_persistent,
-            out_dir,
-            "player_skill_missingness_raw_sofifa_persistent",
-            "skill",
+            out_dir=out_dir,
+            row_cols=["competition", "season"],
+            col_name="skill",
+            stem="player_skill_missingness_raw_sofifa_persistent_heatmap_comp_season",
+            title="Persistently missing raw SOFIFA player-skill values by competition and season",
+            cbar_label="Persistently missing values (%)",
         )
-        if not df_skill_persistent.empty:
-            plot_missingness_heatmap(
-                df_skill_persistent,
-                out_dir=out_dir,
-                row_cols=["competition", "season"],
-                col_name="skill",
-                stem="player_skill_missingness_raw_sofifa_persistent_heatmap_comp_season",
-                title="Persistently missing raw SOFIFA player-skill values by competition and season",
-                cbar_label="Persistently missing values [%]",
-            )
-        if not df_skill_persistent_rows.empty:
-            skill_rows_path = out_dir / "player_skill_missingness_raw_sofifa_persistent_snapshot_rows.csv"
-            df_skill_persistent_rows.to_csv(skill_rows_path, index=False)
-            print(f"Saved: {skill_rows_path}")
+    if not df_skill_persistent_rows.empty:
+        skill_rows_path = out_dir / "player_skill_missingness_raw_sofifa_persistent_snapshot_rows.csv"
+        df_skill_persistent_rows.to_csv(skill_rows_path, index=False)
+        print(f"Saved: {skill_rows_path}")
 
-        print(f"All outputs saved into: {out_dir}")
+    print(f"All outputs saved into: {out_dir}")
 
 
 if __name__ == "__main__":

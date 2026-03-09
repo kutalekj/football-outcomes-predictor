@@ -1,0 +1,3265 @@
+competition,season,skill,n_missing,n_total,missing_pct
+Australia A-League,2021,acceleration,0,1902,0.0
+Australia A-League,2021,aggression,0,1902,0.0
+Australia A-League,2021,agility,0,1902,0.0
+Australia A-League,2021,balance,0,1902,0.0
+Australia A-League,2021,ball_control,0,1902,0.0
+Australia A-League,2021,composure,0,1902,0.0
+Australia A-League,2021,crossing,0,1902,0.0
+Australia A-League,2021,curve,0,1902,0.0
+Australia A-League,2021,defensive_awareness,0,1902,0.0
+Australia A-League,2021,dribbling,0,1902,0.0
+Australia A-League,2021,finishing,0,1902,0.0
+Australia A-League,2021,fk_accuracy,0,1902,0.0
+Australia A-League,2021,gk_diving,0,1902,0.0
+Australia A-League,2021,gk_handling,0,1902,0.0
+Australia A-League,2021,gk_kicking,0,1902,0.0
+Australia A-League,2021,gk_positioning,0,1902,0.0
+Australia A-League,2021,gk_reflexes,0,1902,0.0
+Australia A-League,2021,heading_accuracy,0,1902,0.0
+Australia A-League,2021,interceptions,0,1902,0.0
+Australia A-League,2021,jumping,0,1902,0.0
+Australia A-League,2021,long_passing,0,1902,0.0
+Australia A-League,2021,long_shots,0,1902,0.0
+Australia A-League,2021,penalties,0,1902,0.0
+Australia A-League,2021,positioning,0,1902,0.0
+Australia A-League,2021,reactions,0,1902,0.0
+Australia A-League,2021,short_passing,0,1902,0.0
+Australia A-League,2021,shot_power,0,1902,0.0
+Australia A-League,2021,sliding_tackle,0,1902,0.0
+Australia A-League,2021,sprint_speed,0,1902,0.0
+Australia A-League,2021,stamina,0,1902,0.0
+Australia A-League,2021,standing_tackle,0,1902,0.0
+Australia A-League,2021,strength,0,1902,0.0
+Australia A-League,2021,vision,0,1902,0.0
+Australia A-League,2021,volleys,0,1902,0.0
+Australia A-League,2022,acceleration,1,2366,0.042265426880811495
+Australia A-League,2022,aggression,1,2366,0.042265426880811495
+Australia A-League,2022,agility,0,2366,0.0
+Australia A-League,2022,balance,6,2366,0.25359256128486896
+Australia A-League,2022,ball_control,4,2366,0.16906170752324598
+Australia A-League,2022,composure,5,2366,0.21132713440405748
+Australia A-League,2022,crossing,0,2366,0.0
+Australia A-League,2022,curve,1,2366,0.042265426880811495
+Australia A-League,2022,defensive_awareness,2,2366,0.08453085376162299
+Australia A-League,2022,dribbling,8,2366,0.33812341504649196
+Australia A-League,2022,finishing,3,2366,0.12679628064243448
+Australia A-League,2022,fk_accuracy,2,2366,0.08453085376162299
+Australia A-League,2022,gk_diving,0,2366,0.0
+Australia A-League,2022,gk_handling,0,2366,0.0
+Australia A-League,2022,gk_kicking,0,2366,0.0
+Australia A-League,2022,gk_positioning,0,2366,0.0
+Australia A-League,2022,gk_reflexes,0,2366,0.0
+Australia A-League,2022,heading_accuracy,3,2366,0.12679628064243448
+Australia A-League,2022,interceptions,4,2366,0.16906170752324598
+Australia A-League,2022,jumping,2,2366,0.08453085376162299
+Australia A-League,2022,long_passing,6,2366,0.25359256128486896
+Australia A-League,2022,long_shots,0,2366,0.0
+Australia A-League,2022,penalties,0,2366,0.0
+Australia A-League,2022,positioning,2,2366,0.08453085376162299
+Australia A-League,2022,reactions,5,2366,0.21132713440405748
+Australia A-League,2022,short_passing,6,2366,0.25359256128486896
+Australia A-League,2022,shot_power,2,2366,0.08453085376162299
+Australia A-League,2022,sliding_tackle,2,2366,0.08453085376162299
+Australia A-League,2022,sprint_speed,4,2366,0.16906170752324598
+Australia A-League,2022,stamina,10,2366,0.42265426880811496
+Australia A-League,2022,standing_tackle,2,2366,0.08453085376162299
+Australia A-League,2022,strength,6,2366,0.25359256128486896
+Australia A-League,2022,vision,3,2366,0.12679628064243448
+Australia A-League,2022,volleys,0,2366,0.0
+Australia A-League,2023,acceleration,6,2796,0.2145922746781116
+Australia A-League,2023,aggression,6,2796,0.2145922746781116
+Australia A-League,2023,agility,0,2796,0.0
+Australia A-League,2023,balance,6,2796,0.2145922746781116
+Australia A-League,2023,ball_control,12,2796,0.4291845493562232
+Australia A-League,2023,composure,18,2796,0.6437768240343348
+Australia A-League,2023,crossing,0,2796,0.0
+Australia A-League,2023,curve,6,2796,0.2145922746781116
+Australia A-League,2023,defensive_awareness,6,2796,0.2145922746781116
+Australia A-League,2023,dribbling,18,2796,0.6437768240343348
+Australia A-League,2023,finishing,12,2796,0.4291845493562232
+Australia A-League,2023,fk_accuracy,6,2796,0.2145922746781116
+Australia A-League,2023,gk_diving,0,2796,0.0
+Australia A-League,2023,gk_handling,0,2796,0.0
+Australia A-League,2023,gk_kicking,0,2796,0.0
+Australia A-League,2023,gk_positioning,0,2796,0.0
+Australia A-League,2023,gk_reflexes,0,2796,0.0
+Australia A-League,2023,heading_accuracy,12,2796,0.4291845493562232
+Australia A-League,2023,interceptions,6,2796,0.2145922746781116
+Australia A-League,2023,jumping,0,2796,0.0
+Australia A-League,2023,long_passing,18,2796,0.6437768240343348
+Australia A-League,2023,long_shots,0,2796,0.0
+Australia A-League,2023,penalties,0,2796,0.0
+Australia A-League,2023,positioning,6,2796,0.2145922746781116
+Australia A-League,2023,reactions,18,2796,0.6437768240343348
+Australia A-League,2023,short_passing,18,2796,0.6437768240343348
+Australia A-League,2023,shot_power,6,2796,0.2145922746781116
+Australia A-League,2023,sliding_tackle,6,2796,0.2145922746781116
+Australia A-League,2023,sprint_speed,6,2796,0.2145922746781116
+Australia A-League,2023,stamina,18,2796,0.6437768240343348
+Australia A-League,2023,standing_tackle,6,2796,0.2145922746781116
+Australia A-League,2023,strength,6,2796,0.2145922746781116
+Australia A-League,2023,vision,12,2796,0.4291845493562232
+Australia A-League,2023,volleys,0,2796,0.0
+Australia A-League,2024,acceleration,3,2773,0.10818608005769924
+Australia A-League,2024,aggression,3,2773,0.10818608005769924
+Australia A-League,2024,agility,0,2773,0.0
+Australia A-League,2024,balance,3,2773,0.10818608005769924
+Australia A-League,2024,ball_control,7,2773,0.25243418680129825
+Australia A-League,2024,composure,11,2773,0.3966822935448972
+Australia A-League,2024,crossing,0,2773,0.0
+Australia A-League,2024,curve,3,2773,0.10818608005769924
+Australia A-League,2024,defensive_awareness,4,2773,0.144248106743599
+Australia A-League,2024,dribbling,11,2773,0.3966822935448972
+Australia A-League,2024,finishing,7,2773,0.25243418680129825
+Australia A-League,2024,fk_accuracy,4,2773,0.144248106743599
+Australia A-League,2024,gk_diving,0,2773,0.0
+Australia A-League,2024,gk_handling,0,2773,0.0
+Australia A-League,2024,gk_kicking,0,2773,0.0
+Australia A-League,2024,gk_positioning,0,2773,0.0
+Australia A-League,2024,gk_reflexes,0,2773,0.0
+Australia A-League,2024,heading_accuracy,7,2773,0.25243418680129825
+Australia A-League,2024,interceptions,3,2773,0.10818608005769924
+Australia A-League,2024,jumping,0,2773,0.0
+Australia A-League,2024,long_passing,11,2773,0.3966822935448972
+Australia A-League,2024,long_shots,0,2773,0.0
+Australia A-League,2024,penalties,0,2773,0.0
+Australia A-League,2024,positioning,4,2773,0.144248106743599
+Australia A-League,2024,reactions,11,2773,0.3966822935448972
+Australia A-League,2024,short_passing,11,2773,0.3966822935448972
+Australia A-League,2024,shot_power,4,2773,0.144248106743599
+Australia A-League,2024,sliding_tackle,4,2773,0.144248106743599
+Australia A-League,2024,sprint_speed,4,2773,0.144248106743599
+Australia A-League,2024,stamina,11,2773,0.3966822935448972
+Australia A-League,2024,standing_tackle,4,2773,0.144248106743599
+Australia A-League,2024,strength,3,2773,0.10818608005769924
+Australia A-League,2024,vision,7,2773,0.25243418680129825
+Australia A-League,2024,volleys,0,2773,0.0
+Austria Bundesliga,2021,acceleration,0,2116,0.0
+Austria Bundesliga,2021,aggression,0,2116,0.0
+Austria Bundesliga,2021,agility,0,2116,0.0
+Austria Bundesliga,2021,balance,0,2116,0.0
+Austria Bundesliga,2021,ball_control,0,2116,0.0
+Austria Bundesliga,2021,composure,0,2116,0.0
+Austria Bundesliga,2021,crossing,0,2116,0.0
+Austria Bundesliga,2021,curve,0,2116,0.0
+Austria Bundesliga,2021,defensive_awareness,0,2116,0.0
+Austria Bundesliga,2021,dribbling,0,2116,0.0
+Austria Bundesliga,2021,finishing,0,2116,0.0
+Austria Bundesliga,2021,fk_accuracy,0,2116,0.0
+Austria Bundesliga,2021,gk_diving,0,2116,0.0
+Austria Bundesliga,2021,gk_handling,0,2116,0.0
+Austria Bundesliga,2021,gk_kicking,0,2116,0.0
+Austria Bundesliga,2021,gk_positioning,0,2116,0.0
+Austria Bundesliga,2021,gk_reflexes,0,2116,0.0
+Austria Bundesliga,2021,heading_accuracy,0,2116,0.0
+Austria Bundesliga,2021,interceptions,0,2116,0.0
+Austria Bundesliga,2021,jumping,0,2116,0.0
+Austria Bundesliga,2021,long_passing,0,2116,0.0
+Austria Bundesliga,2021,long_shots,0,2116,0.0
+Austria Bundesliga,2021,penalties,0,2116,0.0
+Austria Bundesliga,2021,positioning,0,2116,0.0
+Austria Bundesliga,2021,reactions,0,2116,0.0
+Austria Bundesliga,2021,short_passing,0,2116,0.0
+Austria Bundesliga,2021,shot_power,0,2116,0.0
+Austria Bundesliga,2021,sliding_tackle,0,2116,0.0
+Austria Bundesliga,2021,sprint_speed,0,2116,0.0
+Austria Bundesliga,2021,stamina,0,2116,0.0
+Austria Bundesliga,2021,standing_tackle,0,2116,0.0
+Austria Bundesliga,2021,strength,0,2116,0.0
+Austria Bundesliga,2021,vision,0,2116,0.0
+Austria Bundesliga,2021,volleys,0,2116,0.0
+Austria Bundesliga,2022,acceleration,7,2706,0.2586844050258684
+Austria Bundesliga,2022,aggression,3,2706,0.11086474501108648
+Austria Bundesliga,2022,agility,7,2706,0.2586844050258684
+Austria Bundesliga,2022,balance,7,2706,0.2586844050258684
+Austria Bundesliga,2022,ball_control,6,2706,0.22172949002217296
+Austria Bundesliga,2022,composure,4,2706,0.14781966001478197
+Austria Bundesliga,2022,crossing,3,2706,0.11086474501108648
+Austria Bundesliga,2022,curve,4,2706,0.14781966001478197
+Austria Bundesliga,2022,defensive_awareness,1,2706,0.03695491500369549
+Austria Bundesliga,2022,dribbling,2,2706,0.07390983000739099
+Austria Bundesliga,2022,finishing,5,2706,0.18477457501847747
+Austria Bundesliga,2022,fk_accuracy,4,2706,0.14781966001478197
+Austria Bundesliga,2022,gk_diving,0,2706,0.0
+Austria Bundesliga,2022,gk_handling,0,2706,0.0
+Austria Bundesliga,2022,gk_kicking,0,2706,0.0
+Austria Bundesliga,2022,gk_positioning,0,2706,0.0
+Austria Bundesliga,2022,gk_reflexes,0,2706,0.0
+Austria Bundesliga,2022,heading_accuracy,3,2706,0.11086474501108648
+Austria Bundesliga,2022,interceptions,0,2706,0.0
+Austria Bundesliga,2022,jumping,14,2706,0.5173688100517368
+Austria Bundesliga,2022,long_passing,3,2706,0.11086474501108648
+Austria Bundesliga,2022,long_shots,4,2706,0.14781966001478197
+Austria Bundesliga,2022,penalties,4,2706,0.14781966001478197
+Austria Bundesliga,2022,positioning,2,2706,0.07390983000739099
+Austria Bundesliga,2022,reactions,3,2706,0.11086474501108648
+Austria Bundesliga,2022,short_passing,6,2706,0.22172949002217296
+Austria Bundesliga,2022,shot_power,4,2706,0.14781966001478197
+Austria Bundesliga,2022,sliding_tackle,3,2706,0.11086474501108648
+Austria Bundesliga,2022,sprint_speed,6,2706,0.22172949002217296
+Austria Bundesliga,2022,stamina,10,2706,0.36954915003695493
+Austria Bundesliga,2022,standing_tackle,2,2706,0.07390983000739099
+Austria Bundesliga,2022,strength,10,2706,0.36954915003695493
+Austria Bundesliga,2022,vision,4,2706,0.14781966001478197
+Austria Bundesliga,2022,volleys,4,2706,0.14781966001478197
+Austria Bundesliga,2023,acceleration,6,3150,0.19047619047619047
+Austria Bundesliga,2023,aggression,0,3150,0.0
+Austria Bundesliga,2023,agility,6,3150,0.19047619047619047
+Austria Bundesliga,2023,balance,6,3150,0.19047619047619047
+Austria Bundesliga,2023,ball_control,1,3150,0.031746031746031744
+Austria Bundesliga,2023,composure,0,3150,0.0
+Austria Bundesliga,2023,crossing,0,3150,0.0
+Austria Bundesliga,2023,curve,0,3150,0.0
+Austria Bundesliga,2023,defensive_awareness,0,3150,0.0
+Austria Bundesliga,2023,dribbling,0,3150,0.0
+Austria Bundesliga,2023,finishing,0,3150,0.0
+Austria Bundesliga,2023,fk_accuracy,0,3150,0.0
+Austria Bundesliga,2023,gk_diving,0,3150,0.0
+Austria Bundesliga,2023,gk_handling,0,3150,0.0
+Austria Bundesliga,2023,gk_kicking,0,3150,0.0
+Austria Bundesliga,2023,gk_positioning,0,3150,0.0
+Austria Bundesliga,2023,gk_reflexes,0,3150,0.0
+Austria Bundesliga,2023,heading_accuracy,0,3150,0.0
+Austria Bundesliga,2023,interceptions,0,3150,0.0
+Austria Bundesliga,2023,jumping,12,3150,0.38095238095238093
+Austria Bundesliga,2023,long_passing,0,3150,0.0
+Austria Bundesliga,2023,long_shots,0,3150,0.0
+Austria Bundesliga,2023,penalties,0,3150,0.0
+Austria Bundesliga,2023,positioning,0,3150,0.0
+Austria Bundesliga,2023,reactions,0,3150,0.0
+Austria Bundesliga,2023,short_passing,0,3150,0.0
+Austria Bundesliga,2023,shot_power,0,3150,0.0
+Austria Bundesliga,2023,sliding_tackle,0,3150,0.0
+Austria Bundesliga,2023,sprint_speed,6,3150,0.19047619047619047
+Austria Bundesliga,2023,stamina,6,3150,0.19047619047619047
+Austria Bundesliga,2023,standing_tackle,0,3150,0.0
+Austria Bundesliga,2023,strength,6,3150,0.19047619047619047
+Austria Bundesliga,2023,vision,0,3150,0.0
+Austria Bundesliga,2023,volleys,0,3150,0.0
+Austria Bundesliga,2024,acceleration,4,2984,0.13404825737265416
+Austria Bundesliga,2024,aggression,0,2984,0.0
+Austria Bundesliga,2024,agility,3,2984,0.10053619302949061
+Austria Bundesliga,2024,balance,3,2984,0.10053619302949061
+Austria Bundesliga,2024,ball_control,4,2984,0.13404825737265416
+Austria Bundesliga,2024,composure,0,2984,0.0
+Austria Bundesliga,2024,crossing,0,2984,0.0
+Austria Bundesliga,2024,curve,0,2984,0.0
+Austria Bundesliga,2024,defensive_awareness,0,2984,0.0
+Austria Bundesliga,2024,dribbling,0,2984,0.0
+Austria Bundesliga,2024,finishing,0,2984,0.0
+Austria Bundesliga,2024,fk_accuracy,0,2984,0.0
+Austria Bundesliga,2024,gk_diving,0,2984,0.0
+Austria Bundesliga,2024,gk_handling,0,2984,0.0
+Austria Bundesliga,2024,gk_kicking,0,2984,0.0
+Austria Bundesliga,2024,gk_positioning,0,2984,0.0
+Austria Bundesliga,2024,gk_reflexes,0,2984,0.0
+Austria Bundesliga,2024,heading_accuracy,0,2984,0.0
+Austria Bundesliga,2024,interceptions,0,2984,0.0
+Austria Bundesliga,2024,jumping,6,2984,0.20107238605898123
+Austria Bundesliga,2024,long_passing,0,2984,0.0
+Austria Bundesliga,2024,long_shots,0,2984,0.0
+Austria Bundesliga,2024,penalties,0,2984,0.0
+Austria Bundesliga,2024,positioning,0,2984,0.0
+Austria Bundesliga,2024,reactions,0,2984,0.0
+Austria Bundesliga,2024,short_passing,0,2984,0.0
+Austria Bundesliga,2024,shot_power,0,2984,0.0
+Austria Bundesliga,2024,sliding_tackle,0,2984,0.0
+Austria Bundesliga,2024,sprint_speed,3,2984,0.10053619302949061
+Austria Bundesliga,2024,stamina,3,2984,0.10053619302949061
+Austria Bundesliga,2024,standing_tackle,0,2984,0.0
+Austria Bundesliga,2024,strength,4,2984,0.13404825737265416
+Austria Bundesliga,2024,vision,0,2984,0.0
+Austria Bundesliga,2024,volleys,0,2984,0.0
+Belgium Pro League,2021,acceleration,0,3210,0.0
+Belgium Pro League,2021,aggression,0,3210,0.0
+Belgium Pro League,2021,agility,0,3210,0.0
+Belgium Pro League,2021,balance,0,3210,0.0
+Belgium Pro League,2021,ball_control,0,3210,0.0
+Belgium Pro League,2021,composure,0,3210,0.0
+Belgium Pro League,2021,crossing,0,3210,0.0
+Belgium Pro League,2021,curve,0,3210,0.0
+Belgium Pro League,2021,defensive_awareness,0,3210,0.0
+Belgium Pro League,2021,dribbling,0,3210,0.0
+Belgium Pro League,2021,finishing,0,3210,0.0
+Belgium Pro League,2021,fk_accuracy,0,3210,0.0
+Belgium Pro League,2021,gk_diving,0,3210,0.0
+Belgium Pro League,2021,gk_handling,0,3210,0.0
+Belgium Pro League,2021,gk_kicking,0,3210,0.0
+Belgium Pro League,2021,gk_positioning,0,3210,0.0
+Belgium Pro League,2021,gk_reflexes,0,3210,0.0
+Belgium Pro League,2021,heading_accuracy,0,3210,0.0
+Belgium Pro League,2021,interceptions,0,3210,0.0
+Belgium Pro League,2021,jumping,0,3210,0.0
+Belgium Pro League,2021,long_passing,0,3210,0.0
+Belgium Pro League,2021,long_shots,0,3210,0.0
+Belgium Pro League,2021,penalties,0,3210,0.0
+Belgium Pro League,2021,positioning,0,3210,0.0
+Belgium Pro League,2021,reactions,0,3210,0.0
+Belgium Pro League,2021,short_passing,0,3210,0.0
+Belgium Pro League,2021,shot_power,0,3210,0.0
+Belgium Pro League,2021,sliding_tackle,0,3210,0.0
+Belgium Pro League,2021,sprint_speed,0,3210,0.0
+Belgium Pro League,2021,stamina,0,3210,0.0
+Belgium Pro League,2021,standing_tackle,0,3210,0.0
+Belgium Pro League,2021,strength,0,3210,0.0
+Belgium Pro League,2021,vision,0,3210,0.0
+Belgium Pro League,2021,volleys,0,3210,0.0
+Belgium Pro League,2022,acceleration,34,3784,0.8985200845665962
+Belgium Pro League,2022,aggression,12,3784,0.3171247357293869
+Belgium Pro League,2022,agility,8,3784,0.21141649048625794
+Belgium Pro League,2022,balance,13,3784,0.34355179704016914
+Belgium Pro League,2022,ball_control,26,3784,0.6871035940803383
+Belgium Pro League,2022,composure,9,3784,0.23784355179704017
+Belgium Pro League,2022,crossing,17,3784,0.4492600422832981
+Belgium Pro League,2022,curve,4,3784,0.10570824524312897
+Belgium Pro League,2022,defensive_awareness,12,3784,0.3171247357293869
+Belgium Pro League,2022,dribbling,21,3784,0.554968287526427
+Belgium Pro League,2022,finishing,12,3784,0.3171247357293869
+Belgium Pro League,2022,fk_accuracy,8,3784,0.21141649048625794
+Belgium Pro League,2022,gk_diving,1,3784,0.026427061310782242
+Belgium Pro League,2022,gk_handling,1,3784,0.026427061310782242
+Belgium Pro League,2022,gk_kicking,0,3784,0.0
+Belgium Pro League,2022,gk_positioning,1,3784,0.026427061310782242
+Belgium Pro League,2022,gk_reflexes,2,3784,0.052854122621564484
+Belgium Pro League,2022,heading_accuracy,12,3784,0.3171247357293869
+Belgium Pro League,2022,interceptions,9,3784,0.23784355179704017
+Belgium Pro League,2022,jumping,17,3784,0.4492600422832981
+Belgium Pro League,2022,long_passing,21,3784,0.554968287526427
+Belgium Pro League,2022,long_shots,18,3784,0.47568710359408034
+Belgium Pro League,2022,penalties,4,3784,0.10570824524312897
+Belgium Pro League,2022,positioning,4,3784,0.10570824524312897
+Belgium Pro League,2022,reactions,18,3784,0.47568710359408034
+Belgium Pro League,2022,short_passing,19,3784,0.5021141649048626
+Belgium Pro League,2022,shot_power,8,3784,0.21141649048625794
+Belgium Pro League,2022,sliding_tackle,13,3784,0.34355179704016914
+Belgium Pro League,2022,sprint_speed,49,3784,1.2949260042283297
+Belgium Pro League,2022,stamina,17,3784,0.4492600422832981
+Belgium Pro League,2022,standing_tackle,9,3784,0.23784355179704017
+Belgium Pro League,2022,strength,6,3784,0.15856236786469344
+Belgium Pro League,2022,vision,12,3784,0.3171247357293869
+Belgium Pro League,2022,volleys,5,3784,0.1321353065539112
+Belgium Pro League,2023,acceleration,36,4162,0.8649687650168189
+Belgium Pro League,2023,aggression,12,4162,0.28832292167227297
+Belgium Pro League,2023,agility,6,4162,0.14416146083613648
+Belgium Pro League,2023,balance,18,4162,0.4324843825084094
+Belgium Pro League,2023,ball_control,30,4162,0.7208073041806824
+Belgium Pro League,2023,composure,12,4162,0.28832292167227297
+Belgium Pro League,2023,crossing,18,4162,0.4324843825084094
+Belgium Pro League,2023,curve,6,4162,0.14416146083613648
+Belgium Pro League,2023,defensive_awareness,18,4162,0.4324843825084094
+Belgium Pro League,2023,dribbling,30,4162,0.7208073041806824
+Belgium Pro League,2023,finishing,18,4162,0.4324843825084094
+Belgium Pro League,2023,fk_accuracy,12,4162,0.28832292167227297
+Belgium Pro League,2023,gk_diving,0,4162,0.0
+Belgium Pro League,2023,gk_handling,0,4162,0.0
+Belgium Pro League,2023,gk_kicking,0,4162,0.0
+Belgium Pro League,2023,gk_positioning,0,4162,0.0
+Belgium Pro League,2023,gk_reflexes,0,4162,0.0
+Belgium Pro League,2023,heading_accuracy,12,4162,0.28832292167227297
+Belgium Pro League,2023,interceptions,12,4162,0.28832292167227297
+Belgium Pro League,2023,jumping,16,4162,0.38443056222969724
+Belgium Pro League,2023,long_passing,24,4162,0.5766458433445459
+Belgium Pro League,2023,long_shots,18,4162,0.4324843825084094
+Belgium Pro League,2023,penalties,6,4162,0.14416146083613648
+Belgium Pro League,2023,positioning,6,4162,0.14416146083613648
+Belgium Pro League,2023,reactions,18,4162,0.4324843825084094
+Belgium Pro League,2023,short_passing,18,4162,0.4324843825084094
+Belgium Pro League,2023,shot_power,12,4162,0.28832292167227297
+Belgium Pro League,2023,sliding_tackle,6,4162,0.14416146083613648
+Belgium Pro League,2023,sprint_speed,54,4162,1.2974531475252282
+Belgium Pro League,2023,stamina,18,4162,0.4324843825084094
+Belgium Pro League,2023,standing_tackle,6,4162,0.14416146083613648
+Belgium Pro League,2023,strength,6,4162,0.14416146083613648
+Belgium Pro League,2023,vision,12,4162,0.28832292167227297
+Belgium Pro League,2023,volleys,6,4162,0.14416146083613648
+Belgium Pro League,2024,acceleration,18,3824,0.4707112970711297
+Belgium Pro League,2024,aggression,7,3824,0.18305439330543932
+Belgium Pro League,2024,agility,0,3824,0.0
+Belgium Pro League,2024,balance,8,3824,0.20920502092050208
+Belgium Pro League,2024,ball_control,11,3824,0.28765690376569036
+Belgium Pro League,2024,composure,3,3824,0.07845188284518828
+Belgium Pro League,2024,crossing,7,3824,0.18305439330543932
+Belgium Pro League,2024,curve,0,3824,0.0
+Belgium Pro League,2024,defensive_awareness,7,3824,0.18305439330543932
+Belgium Pro League,2024,dribbling,11,3824,0.28765690376569036
+Belgium Pro League,2024,finishing,3,3824,0.07845188284518828
+Belgium Pro League,2024,fk_accuracy,3,3824,0.07845188284518828
+Belgium Pro League,2024,gk_diving,0,3824,0.0
+Belgium Pro League,2024,gk_handling,0,3824,0.0
+Belgium Pro League,2024,gk_kicking,0,3824,0.0
+Belgium Pro League,2024,gk_positioning,0,3824,0.0
+Belgium Pro League,2024,gk_reflexes,0,3824,0.0
+Belgium Pro League,2024,heading_accuracy,7,3824,0.18305439330543932
+Belgium Pro League,2024,interceptions,4,3824,0.10460251046025104
+Belgium Pro League,2024,jumping,3,3824,0.07845188284518828
+Belgium Pro League,2024,long_passing,11,3824,0.28765690376569036
+Belgium Pro League,2024,long_shots,6,3824,0.15690376569037656
+Belgium Pro League,2024,penalties,0,3824,0.0
+Belgium Pro League,2024,positioning,0,3824,0.0
+Belgium Pro League,2024,reactions,4,3824,0.10460251046025104
+Belgium Pro League,2024,short_passing,4,3824,0.10460251046025104
+Belgium Pro League,2024,shot_power,3,3824,0.07845188284518828
+Belgium Pro League,2024,sliding_tackle,0,3824,0.0
+Belgium Pro League,2024,sprint_speed,31,3824,0.8106694560669456
+Belgium Pro League,2024,stamina,4,3824,0.10460251046025104
+Belgium Pro League,2024,standing_tackle,0,3824,0.0
+Belgium Pro League,2024,strength,4,3824,0.10460251046025104
+Belgium Pro League,2024,vision,3,3824,0.07845188284518828
+Belgium Pro League,2024,volleys,0,3824,0.0
+Denmark Superliga,2021,acceleration,6,2211,0.27137042062415195
+Denmark Superliga,2021,aggression,0,2211,0.0
+Denmark Superliga,2021,agility,3,2211,0.13568521031207598
+Denmark Superliga,2021,balance,3,2211,0.13568521031207598
+Denmark Superliga,2021,ball_control,3,2211,0.13568521031207598
+Denmark Superliga,2021,composure,3,2211,0.13568521031207598
+Denmark Superliga,2021,crossing,3,2211,0.13568521031207598
+Denmark Superliga,2021,curve,3,2211,0.13568521031207598
+Denmark Superliga,2021,defensive_awareness,7,2211,0.31659882406151063
+Denmark Superliga,2021,dribbling,4,2211,0.18091361374943465
+Denmark Superliga,2021,finishing,3,2211,0.13568521031207598
+Denmark Superliga,2021,fk_accuracy,3,2211,0.13568521031207598
+Denmark Superliga,2021,gk_diving,0,2211,0.0
+Denmark Superliga,2021,gk_handling,0,2211,0.0
+Denmark Superliga,2021,gk_kicking,3,2211,0.13568521031207598
+Denmark Superliga,2021,gk_positioning,0,2211,0.0
+Denmark Superliga,2021,gk_reflexes,0,2211,0.0
+Denmark Superliga,2021,heading_accuracy,0,2211,0.0
+Denmark Superliga,2021,interceptions,7,2211,0.31659882406151063
+Denmark Superliga,2021,jumping,3,2211,0.13568521031207598
+Denmark Superliga,2021,long_passing,3,2211,0.13568521031207598
+Denmark Superliga,2021,long_shots,0,2211,0.0
+Denmark Superliga,2021,penalties,3,2211,0.13568521031207598
+Denmark Superliga,2021,positioning,3,2211,0.13568521031207598
+Denmark Superliga,2021,reactions,7,2211,0.31659882406151063
+Denmark Superliga,2021,short_passing,4,2211,0.18091361374943465
+Denmark Superliga,2021,shot_power,3,2211,0.13568521031207598
+Denmark Superliga,2021,sliding_tackle,3,2211,0.13568521031207598
+Denmark Superliga,2021,sprint_speed,3,2211,0.13568521031207598
+Denmark Superliga,2021,stamina,3,2211,0.13568521031207598
+Denmark Superliga,2021,standing_tackle,6,2211,0.27137042062415195
+Denmark Superliga,2021,strength,3,2211,0.13568521031207598
+Denmark Superliga,2021,vision,4,2211,0.18091361374943465
+Denmark Superliga,2021,volleys,3,2211,0.13568521031207598
+Denmark Superliga,2022,acceleration,20,2694,0.7423904974016332
+Denmark Superliga,2022,aggression,16,2694,0.5939123979213066
+Denmark Superliga,2022,agility,10,2694,0.3711952487008166
+Denmark Superliga,2022,balance,6,2694,0.22271714922049
+Denmark Superliga,2022,ball_control,22,2694,0.8166295471417966
+Denmark Superliga,2022,composure,10,2694,0.3711952487008166
+Denmark Superliga,2022,crossing,6,2694,0.22271714922049
+Denmark Superliga,2022,curve,2,2694,0.07423904974016332
+Denmark Superliga,2022,defensive_awareness,22,2694,0.8166295471417966
+Denmark Superliga,2022,dribbling,16,2694,0.5939123979213066
+Denmark Superliga,2022,finishing,10,2694,0.3711952487008166
+Denmark Superliga,2022,fk_accuracy,6,2694,0.22271714922049
+Denmark Superliga,2022,gk_diving,4,2694,0.14847809948032664
+Denmark Superliga,2022,gk_handling,4,2694,0.14847809948032664
+Denmark Superliga,2022,gk_kicking,2,2694,0.07423904974016332
+Denmark Superliga,2022,gk_positioning,4,2694,0.14847809948032664
+Denmark Superliga,2022,gk_reflexes,4,2694,0.14847809948032664
+Denmark Superliga,2022,heading_accuracy,12,2694,0.44543429844098
+Denmark Superliga,2022,interceptions,22,2694,0.8166295471417966
+Denmark Superliga,2022,jumping,38,2694,1.4105419450631032
+Denmark Superliga,2022,long_passing,10,2694,0.3711952487008166
+Denmark Superliga,2022,long_shots,4,2694,0.14847809948032664
+Denmark Superliga,2022,penalties,6,2694,0.22271714922049
+Denmark Superliga,2022,positioning,10,2694,0.3711952487008166
+Denmark Superliga,2022,reactions,30,2694,1.1135857461024499
+Denmark Superliga,2022,short_passing,20,2694,0.7423904974016332
+Denmark Superliga,2022,shot_power,10,2694,0.3711952487008166
+Denmark Superliga,2022,sliding_tackle,14,2694,0.5196733481811433
+Denmark Superliga,2022,sprint_speed,26,2694,0.9651076466221232
+Denmark Superliga,2022,stamina,18,2694,0.6681514476614699
+Denmark Superliga,2022,standing_tackle,16,2694,0.5939123979213066
+Denmark Superliga,2022,strength,18,2694,0.6681514476614699
+Denmark Superliga,2022,vision,20,2694,0.7423904974016332
+Denmark Superliga,2022,volleys,6,2694,0.22271714922049
+Denmark Superliga,2023,acceleration,21,3082,0.6813757300454251
+Denmark Superliga,2023,aggression,18,3082,0.5840363400389358
+Denmark Superliga,2023,agility,9,3082,0.2920181700194679
+Denmark Superliga,2023,balance,6,3082,0.1946787800129786
+Denmark Superliga,2023,ball_control,18,3082,0.5840363400389358
+Denmark Superliga,2023,composure,9,3082,0.2920181700194679
+Denmark Superliga,2023,crossing,6,3082,0.1946787800129786
+Denmark Superliga,2023,curve,0,3082,0.0
+Denmark Superliga,2023,defensive_awareness,21,3082,0.6813757300454251
+Denmark Superliga,2023,dribbling,15,3082,0.48669695003244645
+Denmark Superliga,2023,finishing,9,3082,0.2920181700194679
+Denmark Superliga,2023,fk_accuracy,6,3082,0.1946787800129786
+Denmark Superliga,2023,gk_diving,6,3082,0.1946787800129786
+Denmark Superliga,2023,gk_handling,6,3082,0.1946787800129786
+Denmark Superliga,2023,gk_kicking,0,3082,0.0
+Denmark Superliga,2023,gk_positioning,6,3082,0.1946787800129786
+Denmark Superliga,2023,gk_reflexes,6,3082,0.1946787800129786
+Denmark Superliga,2023,heading_accuracy,15,3082,0.48669695003244645
+Denmark Superliga,2023,interceptions,21,3082,0.6813757300454251
+Denmark Superliga,2023,jumping,36,3082,1.1680726800778716
+Denmark Superliga,2023,long_passing,3,3082,0.0973393900064893
+Denmark Superliga,2023,long_shots,3,3082,0.0973393900064893
+Denmark Superliga,2023,penalties,3,3082,0.0973393900064893
+Denmark Superliga,2023,positioning,9,3082,0.2920181700194679
+Denmark Superliga,2023,reactions,33,3082,1.0707332900713822
+Denmark Superliga,2023,short_passing,15,3082,0.48669695003244645
+Denmark Superliga,2023,shot_power,9,3082,0.2920181700194679
+Denmark Superliga,2023,sliding_tackle,12,3082,0.3893575600259572
+Denmark Superliga,2023,sprint_speed,27,3082,0.8760545100584036
+Denmark Superliga,2023,stamina,18,3082,0.5840363400389358
+Denmark Superliga,2023,standing_tackle,12,3082,0.3893575600259572
+Denmark Superliga,2023,strength,15,3082,0.48669695003244645
+Denmark Superliga,2023,vision,22,3082,0.7138221933809215
+Denmark Superliga,2023,volleys,3,3082,0.0973393900064893
+Denmark Superliga,2024,acceleration,7,2813,0.24884464984002844
+Denmark Superliga,2024,aggression,7,2813,0.24884464984002844
+Denmark Superliga,2024,agility,3,2813,0.10664770707429791
+Denmark Superliga,2024,balance,4,2813,0.14219694276573053
+Denmark Superliga,2024,ball_control,7,2813,0.24884464984002844
+Denmark Superliga,2024,composure,3,2813,0.10664770707429791
+Denmark Superliga,2024,crossing,4,2813,0.14219694276573053
+Denmark Superliga,2024,curve,0,2813,0.0
+Denmark Superliga,2024,defensive_awareness,11,2813,0.391041592605759
+Denmark Superliga,2024,dribbling,7,2813,0.24884464984002844
+Denmark Superliga,2024,finishing,3,2813,0.10664770707429791
+Denmark Superliga,2024,fk_accuracy,4,2813,0.14219694276573053
+Denmark Superliga,2024,gk_diving,4,2813,0.14219694276573053
+Denmark Superliga,2024,gk_handling,4,2813,0.14219694276573053
+Denmark Superliga,2024,gk_kicking,0,2813,0.0
+Denmark Superliga,2024,gk_positioning,4,2813,0.14219694276573053
+Denmark Superliga,2024,gk_reflexes,4,2813,0.14219694276573053
+Denmark Superliga,2024,heading_accuracy,7,2813,0.24884464984002844
+Denmark Superliga,2024,interceptions,11,2813,0.391041592605759
+Denmark Superliga,2024,jumping,16,2813,0.5687877710629221
+Denmark Superliga,2024,long_passing,0,2813,0.0
+Denmark Superliga,2024,long_shots,0,2813,0.0
+Denmark Superliga,2024,penalties,0,2813,0.0
+Denmark Superliga,2024,positioning,3,2813,0.10664770707429791
+Denmark Superliga,2024,reactions,18,2813,0.6398862424457874
+Denmark Superliga,2024,short_passing,7,2813,0.24884464984002844
+Denmark Superliga,2024,shot_power,3,2813,0.10664770707429791
+Denmark Superliga,2024,sliding_tackle,3,2813,0.10664770707429791
+Denmark Superliga,2024,sprint_speed,12,2813,0.42659082829719164
+Denmark Superliga,2024,stamina,8,2813,0.28439388553146105
+Denmark Superliga,2024,standing_tackle,3,2813,0.10664770707429791
+Denmark Superliga,2024,strength,8,2813,0.28439388553146105
+Denmark Superliga,2024,vision,11,2813,0.391041592605759
+Denmark Superliga,2024,volleys,0,2813,0.0
+England Championship,2021,acceleration,0,4633,0.0
+England Championship,2021,aggression,0,4633,0.0
+England Championship,2021,agility,1,4633,0.021584286639326572
+England Championship,2021,balance,0,4633,0.0
+England Championship,2021,ball_control,1,4633,0.021584286639326572
+England Championship,2021,composure,0,4633,0.0
+England Championship,2021,crossing,0,4633,0.0
+England Championship,2021,curve,0,4633,0.0
+England Championship,2021,defensive_awareness,0,4633,0.0
+England Championship,2021,dribbling,1,4633,0.021584286639326572
+England Championship,2021,finishing,1,4633,0.021584286639326572
+England Championship,2021,fk_accuracy,0,4633,0.0
+England Championship,2021,gk_diving,0,4633,0.0
+England Championship,2021,gk_handling,0,4633,0.0
+England Championship,2021,gk_kicking,0,4633,0.0
+England Championship,2021,gk_positioning,0,4633,0.0
+England Championship,2021,gk_reflexes,0,4633,0.0
+England Championship,2021,heading_accuracy,0,4633,0.0
+England Championship,2021,interceptions,0,4633,0.0
+England Championship,2021,jumping,0,4633,0.0
+England Championship,2021,long_passing,0,4633,0.0
+England Championship,2021,long_shots,1,4633,0.021584286639326572
+England Championship,2021,penalties,0,4633,0.0
+England Championship,2021,positioning,1,4633,0.021584286639326572
+England Championship,2021,reactions,1,4633,0.021584286639326572
+England Championship,2021,short_passing,1,4633,0.021584286639326572
+England Championship,2021,shot_power,0,4633,0.0
+England Championship,2021,sliding_tackle,0,4633,0.0
+England Championship,2021,sprint_speed,0,4633,0.0
+England Championship,2021,stamina,0,4633,0.0
+England Championship,2021,standing_tackle,0,4633,0.0
+England Championship,2021,strength,0,4633,0.0
+England Championship,2021,vision,1,4633,0.021584286639326572
+England Championship,2021,volleys,0,4633,0.0
+England Championship,2022,acceleration,12,5157,0.2326934264107039
+England Championship,2022,aggression,4,5157,0.07756447547023464
+England Championship,2022,agility,3,5157,0.058173356602675974
+England Championship,2022,balance,2,5157,0.03878223773511732
+England Championship,2022,ball_control,4,5157,0.07756447547023464
+England Championship,2022,composure,1,5157,0.01939111886755866
+England Championship,2022,crossing,5,5157,0.09695559433779329
+England Championship,2022,curve,4,5157,0.07756447547023464
+England Championship,2022,defensive_awareness,6,5157,0.11634671320535195
+England Championship,2022,dribbling,6,5157,0.11634671320535195
+England Championship,2022,finishing,0,5157,0.0
+England Championship,2022,fk_accuracy,1,5157,0.01939111886755866
+England Championship,2022,gk_diving,0,5157,0.0
+England Championship,2022,gk_handling,1,5157,0.01939111886755866
+England Championship,2022,gk_kicking,1,5157,0.01939111886755866
+England Championship,2022,gk_positioning,1,5157,0.01939111886755866
+England Championship,2022,gk_reflexes,0,5157,0.0
+England Championship,2022,heading_accuracy,7,5157,0.1357378320729106
+England Championship,2022,interceptions,5,5157,0.09695559433779329
+England Championship,2022,jumping,10,5157,0.19391118867558657
+England Championship,2022,long_passing,1,5157,0.01939111886755866
+England Championship,2022,long_shots,1,5157,0.01939111886755866
+England Championship,2022,penalties,0,5157,0.0
+England Championship,2022,positioning,2,5157,0.03878223773511732
+England Championship,2022,reactions,11,5157,0.21330230754314525
+England Championship,2022,short_passing,3,5157,0.058173356602675974
+England Championship,2022,shot_power,2,5157,0.03878223773511732
+England Championship,2022,sliding_tackle,5,5157,0.09695559433779329
+England Championship,2022,sprint_speed,20,5157,0.38782237735117314
+England Championship,2022,stamina,11,5157,0.21330230754314525
+England Championship,2022,standing_tackle,10,5157,0.19391118867558657
+England Championship,2022,strength,7,5157,0.1357378320729106
+England Championship,2022,vision,1,5157,0.01939111886755866
+England Championship,2022,volleys,0,5157,0.0
+England Championship,2023,acceleration,6,5409,0.11092623405435385
+England Championship,2023,aggression,6,5409,0.11092623405435385
+England Championship,2023,agility,0,5409,0.0
+England Championship,2023,balance,0,5409,0.0
+England Championship,2023,ball_control,0,5409,0.0
+England Championship,2023,composure,0,5409,0.0
+England Championship,2023,crossing,6,5409,0.11092623405435385
+England Championship,2023,curve,6,5409,0.11092623405435385
+England Championship,2023,defensive_awareness,12,5409,0.2218524681087077
+England Championship,2023,dribbling,6,5409,0.11092623405435385
+England Championship,2023,finishing,0,5409,0.0
+England Championship,2023,fk_accuracy,0,5409,0.0
+England Championship,2023,gk_diving,1,5409,0.018487705675725642
+England Championship,2023,gk_handling,0,5409,0.0
+England Championship,2023,gk_kicking,0,5409,0.0
+England Championship,2023,gk_positioning,1,5409,0.018487705675725642
+England Championship,2023,gk_reflexes,1,5409,0.018487705675725642
+England Championship,2023,heading_accuracy,12,5409,0.2218524681087077
+England Championship,2023,interceptions,12,5409,0.2218524681087077
+England Championship,2023,jumping,6,5409,0.11092623405435385
+England Championship,2023,long_passing,0,5409,0.0
+England Championship,2023,long_shots,0,5409,0.0
+England Championship,2023,penalties,0,5409,0.0
+England Championship,2023,positioning,0,5409,0.0
+England Championship,2023,reactions,13,5409,0.24034017378443334
+England Championship,2023,short_passing,0,5409,0.0
+England Championship,2023,shot_power,0,5409,0.0
+England Championship,2023,sliding_tackle,6,5409,0.11092623405435385
+England Championship,2023,sprint_speed,12,5409,0.2218524681087077
+England Championship,2023,stamina,12,5409,0.2218524681087077
+England Championship,2023,standing_tackle,12,5409,0.2218524681087077
+England Championship,2023,strength,6,5409,0.11092623405435385
+England Championship,2023,vision,0,5409,0.0
+England Championship,2023,volleys,0,5409,0.0
+England Championship,2024,acceleration,4,5175,0.07729468599033816
+England Championship,2024,aggression,4,5175,0.07729468599033816
+England Championship,2024,agility,0,5175,0.0
+England Championship,2024,balance,0,5175,0.0
+England Championship,2024,ball_control,1,5175,0.01932367149758454
+England Championship,2024,composure,0,5175,0.0
+England Championship,2024,crossing,4,5175,0.07729468599033816
+England Championship,2024,curve,4,5175,0.07729468599033816
+England Championship,2024,defensive_awareness,8,5175,0.15458937198067632
+England Championship,2024,dribbling,4,5175,0.07729468599033816
+England Championship,2024,finishing,0,5175,0.0
+England Championship,2024,fk_accuracy,0,5175,0.0
+England Championship,2024,gk_diving,0,5175,0.0
+England Championship,2024,gk_handling,0,5175,0.0
+England Championship,2024,gk_kicking,0,5175,0.0
+England Championship,2024,gk_positioning,0,5175,0.0
+England Championship,2024,gk_reflexes,0,5175,0.0
+England Championship,2024,heading_accuracy,7,5175,0.13526570048309178
+England Championship,2024,interceptions,7,5175,0.13526570048309178
+England Championship,2024,jumping,4,5175,0.07729468599033816
+England Championship,2024,long_passing,2,5175,0.03864734299516908
+England Championship,2024,long_shots,0,5175,0.0
+England Championship,2024,penalties,0,5175,0.0
+England Championship,2024,positioning,0,5175,0.0
+England Championship,2024,reactions,9,5175,0.17391304347826086
+England Championship,2024,short_passing,2,5175,0.03864734299516908
+England Championship,2024,shot_power,0,5175,0.0
+England Championship,2024,sliding_tackle,5,5175,0.0966183574879227
+England Championship,2024,sprint_speed,7,5175,0.13526570048309178
+England Championship,2024,stamina,7,5175,0.13526570048309178
+England Championship,2024,standing_tackle,8,5175,0.15458937198067632
+England Championship,2024,strength,6,5175,0.11594202898550725
+England Championship,2024,vision,2,5175,0.03864734299516908
+England Championship,2024,volleys,0,5175,0.0
+England EFL League One,2021,acceleration,0,4140,0.0
+England EFL League One,2021,aggression,0,4140,0.0
+England EFL League One,2021,agility,0,4140,0.0
+England EFL League One,2021,balance,0,4140,0.0
+England EFL League One,2021,ball_control,0,4140,0.0
+England EFL League One,2021,composure,0,4140,0.0
+England EFL League One,2021,crossing,0,4140,0.0
+England EFL League One,2021,curve,0,4140,0.0
+England EFL League One,2021,defensive_awareness,0,4140,0.0
+England EFL League One,2021,dribbling,0,4140,0.0
+England EFL League One,2021,finishing,0,4140,0.0
+England EFL League One,2021,fk_accuracy,0,4140,0.0
+England EFL League One,2021,gk_diving,0,4140,0.0
+England EFL League One,2021,gk_handling,0,4140,0.0
+England EFL League One,2021,gk_kicking,0,4140,0.0
+England EFL League One,2021,gk_positioning,0,4140,0.0
+England EFL League One,2021,gk_reflexes,0,4140,0.0
+England EFL League One,2021,heading_accuracy,0,4140,0.0
+England EFL League One,2021,interceptions,0,4140,0.0
+England EFL League One,2021,jumping,0,4140,0.0
+England EFL League One,2021,long_passing,0,4140,0.0
+England EFL League One,2021,long_shots,0,4140,0.0
+England EFL League One,2021,penalties,0,4140,0.0
+England EFL League One,2021,positioning,0,4140,0.0
+England EFL League One,2021,reactions,0,4140,0.0
+England EFL League One,2021,short_passing,0,4140,0.0
+England EFL League One,2021,shot_power,0,4140,0.0
+England EFL League One,2021,sliding_tackle,0,4140,0.0
+England EFL League One,2021,sprint_speed,0,4140,0.0
+England EFL League One,2021,stamina,0,4140,0.0
+England EFL League One,2021,standing_tackle,0,4140,0.0
+England EFL League One,2021,strength,0,4140,0.0
+England EFL League One,2021,vision,0,4140,0.0
+England EFL League One,2021,volleys,0,4140,0.0
+England EFL League One,2022,acceleration,21,4710,0.445859872611465
+England EFL League One,2022,aggression,9,4710,0.1910828025477707
+England EFL League One,2022,agility,14,4710,0.29723991507430997
+England EFL League One,2022,balance,9,4710,0.1910828025477707
+England EFL League One,2022,ball_control,16,4710,0.33970276008492567
+England EFL League One,2022,composure,16,4710,0.33970276008492567
+England EFL League One,2022,crossing,6,4710,0.12738853503184713
+England EFL League One,2022,curve,4,4710,0.08492569002123142
+England EFL League One,2022,defensive_awareness,14,4710,0.29723991507430997
+England EFL League One,2022,dribbling,8,4710,0.16985138004246284
+England EFL League One,2022,finishing,15,4710,0.3184713375796178
+England EFL League One,2022,fk_accuracy,5,4710,0.10615711252653928
+England EFL League One,2022,gk_diving,6,4710,0.12738853503184713
+England EFL League One,2022,gk_handling,3,4710,0.06369426751592357
+England EFL League One,2022,gk_kicking,7,4710,0.14861995753715498
+England EFL League One,2022,gk_positioning,4,4710,0.08492569002123142
+England EFL League One,2022,gk_reflexes,5,4710,0.10615711252653928
+England EFL League One,2022,heading_accuracy,9,4710,0.1910828025477707
+England EFL League One,2022,interceptions,10,4710,0.21231422505307856
+England EFL League One,2022,jumping,5,4710,0.10615711252653928
+England EFL League One,2022,long_passing,14,4710,0.29723991507430997
+England EFL League One,2022,long_shots,13,4710,0.2760084925690021
+England EFL League One,2022,penalties,8,4710,0.16985138004246284
+England EFL League One,2022,positioning,12,4710,0.25477707006369427
+England EFL League One,2022,reactions,14,4710,0.29723991507430997
+England EFL League One,2022,short_passing,20,4710,0.42462845010615713
+England EFL League One,2022,shot_power,14,4710,0.29723991507430997
+England EFL League One,2022,sliding_tackle,12,4710,0.25477707006369427
+England EFL League One,2022,sprint_speed,11,4710,0.23354564755838642
+England EFL League One,2022,stamina,5,4710,0.10615711252653928
+England EFL League One,2022,standing_tackle,13,4710,0.2760084925690021
+England EFL League One,2022,strength,6,4710,0.12738853503184713
+England EFL League One,2022,vision,13,4710,0.2760084925690021
+England EFL League One,2022,volleys,4,4710,0.08492569002123142
+England EFL League One,2023,acceleration,24,5305,0.4524033930254477
+England EFL League One,2023,aggression,12,5305,0.22620169651272384
+England EFL League One,2023,agility,12,5305,0.22620169651272384
+England EFL League One,2023,balance,12,5305,0.22620169651272384
+England EFL League One,2023,ball_control,8,5305,0.15080113100848255
+England EFL League One,2023,composure,12,5305,0.22620169651272384
+England EFL League One,2023,crossing,0,5305,0.0
+England EFL League One,2023,curve,6,5305,0.11310084825636192
+England EFL League One,2023,defensive_awareness,12,5305,0.22620169651272384
+England EFL League One,2023,dribbling,1,5305,0.01885014137606032
+England EFL League One,2023,finishing,6,5305,0.11310084825636192
+England EFL League One,2023,fk_accuracy,6,5305,0.11310084825636192
+England EFL League One,2023,gk_diving,6,5305,0.11310084825636192
+England EFL League One,2023,gk_handling,0,5305,0.0
+England EFL League One,2023,gk_kicking,6,5305,0.11310084825636192
+England EFL League One,2023,gk_positioning,0,5305,0.0
+England EFL League One,2023,gk_reflexes,6,5305,0.11310084825636192
+England EFL League One,2023,heading_accuracy,6,5305,0.11310084825636192
+England EFL League One,2023,interceptions,13,5305,0.24505183788878418
+England EFL League One,2023,jumping,8,5305,0.15080113100848255
+England EFL League One,2023,long_passing,18,5305,0.3393025447690858
+England EFL League One,2023,long_shots,6,5305,0.11310084825636192
+England EFL League One,2023,penalties,6,5305,0.11310084825636192
+England EFL League One,2023,positioning,6,5305,0.11310084825636192
+England EFL League One,2023,reactions,7,5305,0.13195098963242224
+England EFL League One,2023,short_passing,12,5305,0.22620169651272384
+England EFL League One,2023,shot_power,6,5305,0.11310084825636192
+England EFL League One,2023,sliding_tackle,8,5305,0.15080113100848255
+England EFL League One,2023,sprint_speed,18,5305,0.3393025447690858
+England EFL League One,2023,stamina,6,5305,0.11310084825636192
+England EFL League One,2023,standing_tackle,6,5305,0.11310084825636192
+England EFL League One,2023,strength,8,5305,0.15080113100848255
+England EFL League One,2023,vision,18,5305,0.3393025447690858
+England EFL League One,2023,volleys,0,5305,0.0
+England EFL League One,2024,acceleration,17,5143,0.3305463737118413
+England EFL League One,2024,aggression,8,5143,0.15555123468792534
+England EFL League One,2024,agility,8,5143,0.15555123468792534
+England EFL League One,2024,balance,9,5143,0.174995139023916
+England EFL League One,2024,ball_control,5,5143,0.09721952167995333
+England EFL League One,2024,composure,8,5143,0.15555123468792534
+England EFL League One,2024,crossing,0,5143,0.0
+England EFL League One,2024,curve,4,5143,0.07777561734396267
+England EFL League One,2024,defensive_awareness,9,5143,0.174995139023916
+England EFL League One,2024,dribbling,0,5143,0.0
+England EFL League One,2024,finishing,4,5143,0.07777561734396267
+England EFL League One,2024,fk_accuracy,4,5143,0.07777561734396267
+England EFL League One,2024,gk_diving,4,5143,0.07777561734396267
+England EFL League One,2024,gk_handling,0,5143,0.0
+England EFL League One,2024,gk_kicking,4,5143,0.07777561734396267
+England EFL League One,2024,gk_positioning,0,5143,0.0
+England EFL League One,2024,gk_reflexes,4,5143,0.07777561734396267
+England EFL League One,2024,heading_accuracy,5,5143,0.09721952167995333
+England EFL League One,2024,interceptions,8,5143,0.15555123468792534
+England EFL League One,2024,jumping,5,5143,0.09721952167995333
+England EFL League One,2024,long_passing,11,5143,0.21388294769589733
+England EFL League One,2024,long_shots,4,5143,0.07777561734396267
+England EFL League One,2024,penalties,4,5143,0.07777561734396267
+England EFL League One,2024,positioning,4,5143,0.07777561734396267
+England EFL League One,2024,reactions,5,5143,0.09721952167995333
+England EFL League One,2024,short_passing,8,5143,0.15555123468792534
+England EFL League One,2024,shot_power,4,5143,0.07777561734396267
+England EFL League One,2024,sliding_tackle,4,5143,0.07777561734396267
+England EFL League One,2024,sprint_speed,13,5143,0.25277075636787866
+England EFL League One,2024,stamina,5,5143,0.09721952167995333
+England EFL League One,2024,standing_tackle,5,5143,0.09721952167995333
+England EFL League One,2024,strength,4,5143,0.07777561734396267
+England EFL League One,2024,vision,11,5143,0.21388294769589733
+England EFL League One,2024,volleys,0,5143,0.0
+England EFL League Two,2021,acceleration,0,4079,0.0
+England EFL League Two,2021,aggression,0,4079,0.0
+England EFL League Two,2021,agility,0,4079,0.0
+England EFL League Two,2021,balance,0,4079,0.0
+England EFL League Two,2021,ball_control,0,4079,0.0
+England EFL League Two,2021,composure,0,4079,0.0
+England EFL League Two,2021,crossing,0,4079,0.0
+England EFL League Two,2021,curve,0,4079,0.0
+England EFL League Two,2021,defensive_awareness,0,4079,0.0
+England EFL League Two,2021,dribbling,0,4079,0.0
+England EFL League Two,2021,finishing,0,4079,0.0
+England EFL League Two,2021,fk_accuracy,0,4079,0.0
+England EFL League Two,2021,gk_diving,0,4079,0.0
+England EFL League Two,2021,gk_handling,0,4079,0.0
+England EFL League Two,2021,gk_kicking,0,4079,0.0
+England EFL League Two,2021,gk_positioning,0,4079,0.0
+England EFL League Two,2021,gk_reflexes,0,4079,0.0
+England EFL League Two,2021,heading_accuracy,0,4079,0.0
+England EFL League Two,2021,interceptions,0,4079,0.0
+England EFL League Two,2021,jumping,3,4079,0.07354743809757293
+England EFL League Two,2021,long_passing,0,4079,0.0
+England EFL League Two,2021,long_shots,0,4079,0.0
+England EFL League Two,2021,penalties,0,4079,0.0
+England EFL League Two,2021,positioning,0,4079,0.0
+England EFL League Two,2021,reactions,0,4079,0.0
+England EFL League Two,2021,short_passing,0,4079,0.0
+England EFL League Two,2021,shot_power,0,4079,0.0
+England EFL League Two,2021,sliding_tackle,1,4079,0.024515812699190977
+England EFL League Two,2021,sprint_speed,0,4079,0.0
+England EFL League Two,2021,stamina,0,4079,0.0
+England EFL League Two,2021,standing_tackle,0,4079,0.0
+England EFL League Two,2021,strength,0,4079,0.0
+England EFL League Two,2021,vision,0,4079,0.0
+England EFL League Two,2021,volleys,0,4079,0.0
+England EFL League Two,2022,acceleration,16,5475,0.2922374429223744
+England EFL League Two,2022,aggression,7,5475,0.1278538812785388
+England EFL League Two,2022,agility,13,5475,0.2374429223744292
+England EFL League Two,2022,balance,8,5475,0.1461187214611872
+England EFL League Two,2022,ball_control,5,5475,0.091324200913242
+England EFL League Two,2022,composure,4,5475,0.0730593607305936
+England EFL League Two,2022,crossing,6,5475,0.1095890410958904
+England EFL League Two,2022,curve,2,5475,0.0365296803652968
+England EFL League Two,2022,defensive_awareness,7,5475,0.1278538812785388
+England EFL League Two,2022,dribbling,13,5475,0.2374429223744292
+England EFL League Two,2022,finishing,2,5475,0.0365296803652968
+England EFL League Two,2022,fk_accuracy,3,5475,0.0547945205479452
+England EFL League Two,2022,gk_diving,0,5475,0.0
+England EFL League Two,2022,gk_handling,1,5475,0.0182648401826484
+England EFL League Two,2022,gk_kicking,0,5475,0.0
+England EFL League Two,2022,gk_positioning,0,5475,0.0
+England EFL League Two,2022,gk_reflexes,0,5475,0.0
+England EFL League Two,2022,heading_accuracy,4,5475,0.0730593607305936
+England EFL League Two,2022,interceptions,4,5475,0.0730593607305936
+England EFL League Two,2022,jumping,16,5475,0.2922374429223744
+England EFL League Two,2022,long_passing,6,5475,0.1095890410958904
+England EFL League Two,2022,long_shots,4,5475,0.0730593607305936
+England EFL League Two,2022,penalties,0,5475,0.0
+England EFL League Two,2022,positioning,9,5475,0.1643835616438356
+England EFL League Two,2022,reactions,9,5475,0.1643835616438356
+England EFL League Two,2022,short_passing,16,5475,0.2922374429223744
+England EFL League Two,2022,shot_power,4,5475,0.0730593607305936
+England EFL League Two,2022,sliding_tackle,3,5475,0.0547945205479452
+England EFL League Two,2022,sprint_speed,13,5475,0.2374429223744292
+England EFL League Two,2022,stamina,5,5475,0.091324200913242
+England EFL League Two,2022,standing_tackle,2,5475,0.0365296803652968
+England EFL League Two,2022,strength,9,5475,0.1643835616438356
+England EFL League Two,2022,vision,1,5475,0.0182648401826484
+England EFL League Two,2022,volleys,0,5475,0.0
+England EFL League Two,2023,acceleration,18,6718,0.2679368859779696
+England EFL League Two,2023,aggression,6,6718,0.08931229532598987
+England EFL League Two,2023,agility,12,6718,0.17862459065197975
+England EFL League Two,2023,balance,6,6718,0.08931229532598987
+England EFL League Two,2023,ball_control,0,6718,0.0
+England EFL League Two,2023,composure,6,6718,0.08931229532598987
+England EFL League Two,2023,crossing,12,6718,0.17862459065197975
+England EFL League Two,2023,curve,6,6718,0.08931229532598987
+England EFL League Two,2023,defensive_awareness,6,6718,0.08931229532598987
+England EFL League Two,2023,dribbling,12,6718,0.17862459065197975
+England EFL League Two,2023,finishing,6,6718,0.08931229532598987
+England EFL League Two,2023,fk_accuracy,6,6718,0.08931229532598987
+England EFL League Two,2023,gk_diving,0,6718,0.0
+England EFL League Two,2023,gk_handling,6,6718,0.08931229532598987
+England EFL League Two,2023,gk_kicking,0,6718,0.0
+England EFL League Two,2023,gk_positioning,0,6718,0.0
+England EFL League Two,2023,gk_reflexes,0,6718,0.0
+England EFL League Two,2023,heading_accuracy,0,6718,0.0
+England EFL League Two,2023,interceptions,0,6718,0.0
+England EFL League Two,2023,jumping,18,6718,0.2679368859779696
+England EFL League Two,2023,long_passing,6,6718,0.08931229532598987
+England EFL League Two,2023,long_shots,6,6718,0.08931229532598987
+England EFL League Two,2023,penalties,0,6718,0.0
+England EFL League Two,2023,positioning,12,6718,0.17862459065197975
+England EFL League Two,2023,reactions,12,6718,0.17862459065197975
+England EFL League Two,2023,short_passing,18,6718,0.2679368859779696
+England EFL League Two,2023,shot_power,6,6718,0.08931229532598987
+England EFL League Two,2023,sliding_tackle,0,6718,0.0
+England EFL League Two,2023,sprint_speed,12,6718,0.17862459065197975
+England EFL League Two,2023,stamina,6,6718,0.08931229532598987
+England EFL League Two,2023,standing_tackle,0,6718,0.0
+England EFL League Two,2023,strength,6,6718,0.08931229532598987
+England EFL League Two,2023,vision,0,6718,0.0
+England EFL League Two,2023,volleys,0,6718,0.0
+England EFL League Two,2024,acceleration,11,6242,0.1762255687279718
+England EFL League Two,2024,aggression,4,6242,0.06408202499198974
+England EFL League Two,2024,agility,7,6242,0.11214354373598205
+England EFL League Two,2024,balance,3,6242,0.04806151874399231
+England EFL League Two,2024,ball_control,0,6242,0.0
+England EFL League Two,2024,composure,4,6242,0.06408202499198974
+England EFL League Two,2024,crossing,7,6242,0.11214354373598205
+England EFL League Two,2024,curve,4,6242,0.06408202499198974
+England EFL League Two,2024,defensive_awareness,4,6242,0.06408202499198974
+England EFL League Two,2024,dribbling,8,6242,0.12816404998397948
+England EFL League Two,2024,finishing,4,6242,0.06408202499198974
+England EFL League Two,2024,fk_accuracy,4,6242,0.06408202499198974
+England EFL League Two,2024,gk_diving,0,6242,0.0
+England EFL League Two,2024,gk_handling,4,6242,0.06408202499198974
+England EFL League Two,2024,gk_kicking,0,6242,0.0
+England EFL League Two,2024,gk_positioning,0,6242,0.0
+England EFL League Two,2024,gk_reflexes,0,6242,0.0
+England EFL League Two,2024,heading_accuracy,0,6242,0.0
+England EFL League Two,2024,interceptions,0,6242,0.0
+England EFL League Two,2024,jumping,11,6242,0.1762255687279718
+England EFL League Two,2024,long_passing,3,6242,0.04806151874399231
+England EFL League Two,2024,long_shots,4,6242,0.06408202499198974
+England EFL League Two,2024,penalties,0,6242,0.0
+England EFL League Two,2024,positioning,8,6242,0.12816404998397948
+England EFL League Two,2024,reactions,8,6242,0.12816404998397948
+England EFL League Two,2024,short_passing,11,6242,0.1762255687279718
+England EFL League Two,2024,shot_power,4,6242,0.06408202499198974
+England EFL League Two,2024,sliding_tackle,0,6242,0.0
+England EFL League Two,2024,sprint_speed,7,6242,0.11214354373598205
+England EFL League Two,2024,stamina,4,6242,0.06408202499198974
+England EFL League Two,2024,standing_tackle,0,6242,0.0
+England EFL League Two,2024,strength,4,6242,0.06408202499198974
+England EFL League Two,2024,vision,0,6242,0.0
+England EFL League Two,2024,volleys,0,6242,0.0
+England Premier League,2021,acceleration,0,4088,0.0
+England Premier League,2021,aggression,0,4088,0.0
+England Premier League,2021,agility,0,4088,0.0
+England Premier League,2021,balance,0,4088,0.0
+England Premier League,2021,ball_control,1,4088,0.02446183953033268
+England Premier League,2021,composure,0,4088,0.0
+England Premier League,2021,crossing,0,4088,0.0
+England Premier League,2021,curve,0,4088,0.0
+England Premier League,2021,defensive_awareness,0,4088,0.0
+England Premier League,2021,dribbling,0,4088,0.0
+England Premier League,2021,finishing,0,4088,0.0
+England Premier League,2021,fk_accuracy,0,4088,0.0
+England Premier League,2021,gk_diving,0,4088,0.0
+England Premier League,2021,gk_handling,0,4088,0.0
+England Premier League,2021,gk_kicking,0,4088,0.0
+England Premier League,2021,gk_positioning,0,4088,0.0
+England Premier League,2021,gk_reflexes,0,4088,0.0
+England Premier League,2021,heading_accuracy,0,4088,0.0
+England Premier League,2021,interceptions,0,4088,0.0
+England Premier League,2021,jumping,0,4088,0.0
+England Premier League,2021,long_passing,0,4088,0.0
+England Premier League,2021,long_shots,0,4088,0.0
+England Premier League,2021,penalties,1,4088,0.02446183953033268
+England Premier League,2021,positioning,0,4088,0.0
+England Premier League,2021,reactions,0,4088,0.0
+England Premier League,2021,short_passing,0,4088,0.0
+England Premier League,2021,shot_power,0,4088,0.0
+England Premier League,2021,sliding_tackle,0,4088,0.0
+England Premier League,2021,sprint_speed,0,4088,0.0
+England Premier League,2021,stamina,0,4088,0.0
+England Premier League,2021,standing_tackle,0,4088,0.0
+England Premier League,2021,strength,0,4088,0.0
+England Premier League,2021,vision,0,4088,0.0
+England Premier League,2021,volleys,0,4088,0.0
+England Premier League,2022,acceleration,26,4465,0.5823068309070548
+England Premier League,2022,aggression,0,4465,0.0
+England Premier League,2022,agility,18,4465,0.40313549832026874
+England Premier League,2022,balance,18,4465,0.40313549832026874
+England Premier League,2022,ball_control,15,4465,0.335946248600224
+England Premier League,2022,composure,10,4465,0.22396416573348266
+England Premier League,2022,crossing,2,4465,0.04479283314669653
+England Premier League,2022,curve,1,4465,0.022396416573348264
+England Premier League,2022,defensive_awareness,5,4465,0.11198208286674133
+England Premier League,2022,dribbling,2,4465,0.04479283314669653
+England Premier League,2022,finishing,0,4465,0.0
+England Premier League,2022,fk_accuracy,0,4465,0.0
+England Premier League,2022,gk_diving,4,4465,0.08958566629339305
+England Premier League,2022,gk_handling,4,4465,0.08958566629339305
+England Premier League,2022,gk_kicking,4,4465,0.08958566629339305
+England Premier League,2022,gk_positioning,4,4465,0.08958566629339305
+England Premier League,2022,gk_reflexes,0,4465,0.0
+England Premier League,2022,heading_accuracy,8,4465,0.1791713325867861
+England Premier League,2022,interceptions,9,4465,0.20156774916013437
+England Premier League,2022,jumping,17,4465,0.3807390817469205
+England Premier League,2022,long_passing,5,4465,0.11198208286674133
+England Premier League,2022,long_shots,5,4465,0.11198208286674133
+England Premier League,2022,penalties,6,4465,0.1343784994400896
+England Premier League,2022,positioning,9,4465,0.20156774916013437
+England Premier League,2022,reactions,5,4465,0.11198208286674133
+England Premier League,2022,short_passing,6,4465,0.1343784994400896
+England Premier League,2022,shot_power,1,4465,0.022396416573348264
+England Premier League,2022,sliding_tackle,4,4465,0.08958566629339305
+England Premier League,2022,sprint_speed,28,4465,0.6270996640537514
+England Premier League,2022,stamina,25,4465,0.5599104143337066
+England Premier League,2022,standing_tackle,8,4465,0.1791713325867861
+England Premier League,2022,strength,13,4465,0.2911534154535274
+England Premier League,2022,vision,6,4465,0.1343784994400896
+England Premier League,2022,volleys,1,4465,0.022396416573348264
+England Premier League,2023,acceleration,12,4530,0.26490066225165565
+England Premier League,2023,aggression,0,4530,0.0
+England Premier League,2023,agility,6,4530,0.13245033112582782
+England Premier League,2023,balance,7,4530,0.1545253863134658
+England Premier League,2023,ball_control,7,4530,0.1545253863134658
+England Premier League,2023,composure,6,4530,0.13245033112582782
+England Premier League,2023,crossing,0,4530,0.0
+England Premier League,2023,curve,0,4530,0.0
+England Premier League,2023,defensive_awareness,0,4530,0.0
+England Premier League,2023,dribbling,0,4530,0.0
+England Premier League,2023,finishing,0,4530,0.0
+England Premier League,2023,fk_accuracy,0,4530,0.0
+England Premier League,2023,gk_diving,0,4530,0.0
+England Premier League,2023,gk_handling,0,4530,0.0
+England Premier League,2023,gk_kicking,0,4530,0.0
+England Premier League,2023,gk_positioning,0,4530,0.0
+England Premier League,2023,gk_reflexes,0,4530,0.0
+England Premier League,2023,heading_accuracy,6,4530,0.13245033112582782
+England Premier League,2023,interceptions,6,4530,0.13245033112582782
+England Premier League,2023,jumping,18,4530,0.3973509933774834
+England Premier League,2023,long_passing,0,4530,0.0
+England Premier League,2023,long_shots,6,4530,0.13245033112582782
+England Premier League,2023,penalties,1,4530,0.02207505518763797
+England Premier League,2023,positioning,12,4530,0.26490066225165565
+England Premier League,2023,reactions,0,4530,0.0
+England Premier League,2023,short_passing,0,4530,0.0
+England Premier League,2023,shot_power,0,4530,0.0
+England Premier League,2023,sliding_tackle,0,4530,0.0
+England Premier League,2023,sprint_speed,19,4530,0.4194260485651214
+England Premier League,2023,stamina,13,4530,0.2869757174392936
+England Premier League,2023,standing_tackle,6,4530,0.13245033112582782
+England Premier League,2023,strength,6,4530,0.13245033112582782
+England Premier League,2023,vision,6,4530,0.13245033112582782
+England Premier League,2023,volleys,0,4530,0.0
+England Premier League,2024,acceleration,4,4053,0.09869232667160129
+England Premier League,2024,aggression,0,4053,0.0
+England Premier League,2024,agility,4,4053,0.09869232667160129
+England Premier League,2024,balance,4,4053,0.09869232667160129
+England Premier League,2024,ball_control,3,4053,0.07401924500370097
+England Premier League,2024,composure,4,4053,0.09869232667160129
+England Premier League,2024,crossing,0,4053,0.0
+England Premier League,2024,curve,0,4053,0.0
+England Premier League,2024,defensive_awareness,0,4053,0.0
+England Premier League,2024,dribbling,0,4053,0.0
+England Premier League,2024,finishing,0,4053,0.0
+England Premier League,2024,fk_accuracy,0,4053,0.0
+England Premier League,2024,gk_diving,0,4053,0.0
+England Premier League,2024,gk_handling,0,4053,0.0
+England Premier League,2024,gk_kicking,0,4053,0.0
+England Premier League,2024,gk_positioning,0,4053,0.0
+England Premier League,2024,gk_reflexes,0,4053,0.0
+England Premier League,2024,heading_accuracy,3,4053,0.07401924500370097
+England Premier League,2024,interceptions,3,4053,0.07401924500370097
+England Premier League,2024,jumping,8,4053,0.19738465334320257
+England Premier League,2024,long_passing,0,4053,0.0
+England Premier League,2024,long_shots,3,4053,0.07401924500370097
+England Premier League,2024,penalties,0,4053,0.0
+England Premier League,2024,positioning,7,4053,0.17271157167530224
+England Premier League,2024,reactions,0,4053,0.0
+England Premier League,2024,short_passing,0,4053,0.0
+England Premier League,2024,shot_power,0,4053,0.0
+England Premier League,2024,sliding_tackle,0,4053,0.0
+England Premier League,2024,sprint_speed,8,4053,0.19738465334320257
+England Premier League,2024,stamina,7,4053,0.17271157167530224
+England Premier League,2024,standing_tackle,3,4053,0.07401924500370097
+England Premier League,2024,strength,3,4053,0.07401924500370097
+England Premier League,2024,vision,3,4053,0.07401924500370097
+England Premier League,2024,volleys,0,4053,0.0
+France Ligue 1,2021,acceleration,0,3687,0.0
+France Ligue 1,2021,aggression,0,3687,0.0
+France Ligue 1,2021,agility,0,3687,0.0
+France Ligue 1,2021,balance,0,3687,0.0
+France Ligue 1,2021,ball_control,0,3687,0.0
+France Ligue 1,2021,composure,0,3687,0.0
+France Ligue 1,2021,crossing,0,3687,0.0
+France Ligue 1,2021,curve,3,3687,0.08136696501220504
+France Ligue 1,2021,defensive_awareness,0,3687,0.0
+France Ligue 1,2021,dribbling,0,3687,0.0
+France Ligue 1,2021,finishing,0,3687,0.0
+France Ligue 1,2021,fk_accuracy,0,3687,0.0
+France Ligue 1,2021,gk_diving,0,3687,0.0
+France Ligue 1,2021,gk_handling,0,3687,0.0
+France Ligue 1,2021,gk_kicking,0,3687,0.0
+France Ligue 1,2021,gk_positioning,0,3687,0.0
+France Ligue 1,2021,gk_reflexes,0,3687,0.0
+France Ligue 1,2021,heading_accuracy,3,3687,0.08136696501220504
+France Ligue 1,2021,interceptions,0,3687,0.0
+France Ligue 1,2021,jumping,0,3687,0.0
+France Ligue 1,2021,long_passing,0,3687,0.0
+France Ligue 1,2021,long_shots,0,3687,0.0
+France Ligue 1,2021,penalties,0,3687,0.0
+France Ligue 1,2021,positioning,0,3687,0.0
+France Ligue 1,2021,reactions,0,3687,0.0
+France Ligue 1,2021,short_passing,0,3687,0.0
+France Ligue 1,2021,shot_power,0,3687,0.0
+France Ligue 1,2021,sliding_tackle,0,3687,0.0
+France Ligue 1,2021,sprint_speed,0,3687,0.0
+France Ligue 1,2021,stamina,0,3687,0.0
+France Ligue 1,2021,standing_tackle,0,3687,0.0
+France Ligue 1,2021,strength,0,3687,0.0
+France Ligue 1,2021,vision,0,3687,0.0
+France Ligue 1,2021,volleys,3,3687,0.08136696501220504
+France Ligue 1,2022,acceleration,40,3930,1.0178117048346056
+France Ligue 1,2022,aggression,4,3930,0.10178117048346055
+France Ligue 1,2022,agility,36,3930,0.916030534351145
+France Ligue 1,2022,balance,28,3930,0.712468193384224
+France Ligue 1,2022,ball_control,17,3930,0.43256997455470736
+France Ligue 1,2022,composure,8,3930,0.2035623409669211
+France Ligue 1,2022,crossing,9,3930,0.22900763358778625
+France Ligue 1,2022,curve,8,3930,0.2035623409669211
+France Ligue 1,2022,defensive_awareness,12,3930,0.3053435114503817
+France Ligue 1,2022,dribbling,18,3930,0.4580152671755725
+France Ligue 1,2022,finishing,12,3930,0.3053435114503817
+France Ligue 1,2022,fk_accuracy,0,3930,0.0
+France Ligue 1,2022,gk_diving,1,3930,0.02544529262086514
+France Ligue 1,2022,gk_handling,1,3930,0.02544529262086514
+France Ligue 1,2022,gk_kicking,0,3930,0.0
+France Ligue 1,2022,gk_positioning,2,3930,0.05089058524173028
+France Ligue 1,2022,gk_reflexes,0,3930,0.0
+France Ligue 1,2022,heading_accuracy,1,3930,0.02544529262086514
+France Ligue 1,2022,interceptions,8,3930,0.2035623409669211
+France Ligue 1,2022,jumping,28,3930,0.712468193384224
+France Ligue 1,2022,long_passing,23,3930,0.5852417302798982
+France Ligue 1,2022,long_shots,9,3930,0.22900763358778625
+France Ligue 1,2022,penalties,1,3930,0.02544529262086514
+France Ligue 1,2022,positioning,9,3930,0.22900763358778625
+France Ligue 1,2022,reactions,9,3930,0.22900763358778625
+France Ligue 1,2022,short_passing,17,3930,0.43256997455470736
+France Ligue 1,2022,shot_power,9,3930,0.22900763358778625
+France Ligue 1,2022,sliding_tackle,16,3930,0.4071246819338422
+France Ligue 1,2022,sprint_speed,40,3930,1.0178117048346056
+France Ligue 1,2022,stamina,37,3930,0.9414758269720102
+France Ligue 1,2022,standing_tackle,13,3930,0.33078880407124683
+France Ligue 1,2022,strength,32,3930,0.8142493638676844
+France Ligue 1,2022,vision,13,3930,0.33078880407124683
+France Ligue 1,2022,volleys,0,3930,0.0
+France Ligue 1,2023,acceleration,30,3955,0.7585335018963337
+France Ligue 1,2023,aggression,0,3955,0.0
+France Ligue 1,2023,agility,24,3955,0.606826801517067
+France Ligue 1,2023,balance,18,3955,0.45512010113780027
+France Ligue 1,2023,ball_control,12,3955,0.3034134007585335
+France Ligue 1,2023,composure,6,3955,0.15170670037926676
+France Ligue 1,2023,crossing,12,3955,0.3034134007585335
+France Ligue 1,2023,curve,6,3955,0.15170670037926676
+France Ligue 1,2023,defensive_awareness,12,3955,0.3034134007585335
+France Ligue 1,2023,dribbling,24,3955,0.606826801517067
+France Ligue 1,2023,finishing,12,3955,0.3034134007585335
+France Ligue 1,2023,fk_accuracy,0,3955,0.0
+France Ligue 1,2023,gk_diving,0,3955,0.0
+France Ligue 1,2023,gk_handling,0,3955,0.0
+France Ligue 1,2023,gk_kicking,0,3955,0.0
+France Ligue 1,2023,gk_positioning,0,3955,0.0
+France Ligue 1,2023,gk_reflexes,0,3955,0.0
+France Ligue 1,2023,heading_accuracy,0,3955,0.0
+France Ligue 1,2023,interceptions,6,3955,0.15170670037926676
+France Ligue 1,2023,jumping,18,3955,0.45512010113780027
+France Ligue 1,2023,long_passing,24,3955,0.606826801517067
+France Ligue 1,2023,long_shots,0,3955,0.0
+France Ligue 1,2023,penalties,0,3955,0.0
+France Ligue 1,2023,positioning,6,3955,0.15170670037926676
+France Ligue 1,2023,reactions,12,3955,0.3034134007585335
+France Ligue 1,2023,short_passing,18,3955,0.45512010113780027
+France Ligue 1,2023,shot_power,6,3955,0.15170670037926676
+France Ligue 1,2023,sliding_tackle,18,3955,0.45512010113780027
+France Ligue 1,2023,sprint_speed,30,3955,0.7585335018963337
+France Ligue 1,2023,stamina,30,3955,0.7585335018963337
+France Ligue 1,2023,standing_tackle,12,3955,0.3034134007585335
+France Ligue 1,2023,strength,24,3955,0.606826801517067
+France Ligue 1,2023,vision,12,3955,0.3034134007585335
+France Ligue 1,2023,volleys,0,3955,0.0
+France Ligue 1,2024,acceleration,19,3697,0.513930213686773
+France Ligue 1,2024,aggression,0,3697,0.0
+France Ligue 1,2024,agility,15,3697,0.40573437922639977
+France Ligue 1,2024,balance,12,3697,0.3245875033811198
+France Ligue 1,2024,ball_control,8,3697,0.21639166892074654
+France Ligue 1,2024,composure,4,3697,0.10819583446037327
+France Ligue 1,2024,crossing,8,3697,0.21639166892074654
+France Ligue 1,2024,curve,4,3697,0.10819583446037327
+France Ligue 1,2024,defensive_awareness,8,3697,0.21639166892074654
+France Ligue 1,2024,dribbling,16,3697,0.4327833378414931
+France Ligue 1,2024,finishing,8,3697,0.21639166892074654
+France Ligue 1,2024,fk_accuracy,0,3697,0.0
+France Ligue 1,2024,gk_diving,0,3697,0.0
+France Ligue 1,2024,gk_handling,0,3697,0.0
+France Ligue 1,2024,gk_kicking,0,3697,0.0
+France Ligue 1,2024,gk_positioning,0,3697,0.0
+France Ligue 1,2024,gk_reflexes,0,3697,0.0
+France Ligue 1,2024,heading_accuracy,0,3697,0.0
+France Ligue 1,2024,interceptions,4,3697,0.10819583446037327
+France Ligue 1,2024,jumping,11,3697,0.2975385447660265
+France Ligue 1,2024,long_passing,16,3697,0.4327833378414931
+France Ligue 1,2024,long_shots,0,3697,0.0
+France Ligue 1,2024,penalties,0,3697,0.0
+France Ligue 1,2024,positioning,4,3697,0.10819583446037327
+France Ligue 1,2024,reactions,8,3697,0.21639166892074654
+France Ligue 1,2024,short_passing,12,3697,0.3245875033811198
+France Ligue 1,2024,shot_power,4,3697,0.10819583446037327
+France Ligue 1,2024,sliding_tackle,12,3697,0.3245875033811198
+France Ligue 1,2024,sprint_speed,19,3697,0.513930213686773
+France Ligue 1,2024,stamina,19,3697,0.513930213686773
+France Ligue 1,2024,standing_tackle,8,3697,0.21639166892074654
+France Ligue 1,2024,strength,16,3697,0.4327833378414931
+France Ligue 1,2024,vision,8,3697,0.21639166892074654
+France Ligue 1,2024,volleys,0,3697,0.0
+France Ligue 2,2021,acceleration,0,3520,0.0
+France Ligue 2,2021,aggression,0,3520,0.0
+France Ligue 2,2021,agility,0,3520,0.0
+France Ligue 2,2021,balance,0,3520,0.0
+France Ligue 2,2021,ball_control,0,3520,0.0
+France Ligue 2,2021,composure,0,3520,0.0
+France Ligue 2,2021,crossing,0,3520,0.0
+France Ligue 2,2021,curve,0,3520,0.0
+France Ligue 2,2021,defensive_awareness,0,3520,0.0
+France Ligue 2,2021,dribbling,0,3520,0.0
+France Ligue 2,2021,finishing,0,3520,0.0
+France Ligue 2,2021,fk_accuracy,0,3520,0.0
+France Ligue 2,2021,gk_diving,0,3520,0.0
+France Ligue 2,2021,gk_handling,0,3520,0.0
+France Ligue 2,2021,gk_kicking,0,3520,0.0
+France Ligue 2,2021,gk_positioning,0,3520,0.0
+France Ligue 2,2021,gk_reflexes,0,3520,0.0
+France Ligue 2,2021,heading_accuracy,0,3520,0.0
+France Ligue 2,2021,interceptions,0,3520,0.0
+France Ligue 2,2021,jumping,0,3520,0.0
+France Ligue 2,2021,long_passing,0,3520,0.0
+France Ligue 2,2021,long_shots,0,3520,0.0
+France Ligue 2,2021,penalties,0,3520,0.0
+France Ligue 2,2021,positioning,0,3520,0.0
+France Ligue 2,2021,reactions,0,3520,0.0
+France Ligue 2,2021,short_passing,0,3520,0.0
+France Ligue 2,2021,shot_power,0,3520,0.0
+France Ligue 2,2021,sliding_tackle,0,3520,0.0
+France Ligue 2,2021,sprint_speed,0,3520,0.0
+France Ligue 2,2021,stamina,0,3520,0.0
+France Ligue 2,2021,standing_tackle,0,3520,0.0
+France Ligue 2,2021,strength,0,3520,0.0
+France Ligue 2,2021,vision,0,3520,0.0
+France Ligue 2,2021,volleys,0,3520,0.0
+France Ligue 2,2022,acceleration,30,4442,0.6753714542998649
+France Ligue 2,2022,aggression,3,4442,0.0675371454299865
+France Ligue 2,2022,agility,36,4442,0.8104457451598379
+France Ligue 2,2022,balance,36,4442,0.8104457451598379
+France Ligue 2,2022,ball_control,22,4442,0.49527239981990095
+France Ligue 2,2022,composure,4,4442,0.090049527239982
+France Ligue 2,2022,crossing,13,4442,0.2926609635299415
+France Ligue 2,2022,curve,0,4442,0.0
+France Ligue 2,2022,defensive_awareness,8,4442,0.180099054479964
+France Ligue 2,2022,dribbling,16,4442,0.360198108959928
+France Ligue 2,2022,finishing,12,4442,0.270148581719946
+France Ligue 2,2022,fk_accuracy,0,4442,0.0
+France Ligue 2,2022,gk_diving,4,4442,0.090049527239982
+France Ligue 2,2022,gk_handling,0,4442,0.0
+France Ligue 2,2022,gk_kicking,0,4442,0.0
+France Ligue 2,2022,gk_positioning,4,4442,0.090049527239982
+France Ligue 2,2022,gk_reflexes,0,4442,0.0
+France Ligue 2,2022,heading_accuracy,14,4442,0.31517334533993696
+France Ligue 2,2022,interceptions,2,4442,0.045024763619991
+France Ligue 2,2022,jumping,28,4442,0.6303466906798739
+France Ligue 2,2022,long_passing,12,4442,0.270148581719946
+France Ligue 2,2022,long_shots,0,4442,0.0
+France Ligue 2,2022,penalties,0,4442,0.0
+France Ligue 2,2022,positioning,8,4442,0.180099054479964
+France Ligue 2,2022,reactions,8,4442,0.180099054479964
+France Ligue 2,2022,short_passing,17,4442,0.3827104907699235
+France Ligue 2,2022,shot_power,0,4442,0.0
+France Ligue 2,2022,sliding_tackle,17,4442,0.3827104907699235
+France Ligue 2,2022,sprint_speed,31,4442,0.6978838361098604
+France Ligue 2,2022,stamina,40,4442,0.9004952723998199
+France Ligue 2,2022,standing_tackle,17,4442,0.3827104907699235
+France Ligue 2,2022,strength,40,4442,0.9004952723998199
+France Ligue 2,2022,vision,4,4442,0.090049527239982
+France Ligue 2,2022,volleys,0,4442,0.0
+France Ligue 2,2023,acceleration,31,5314,0.5833646970267219
+France Ligue 2,2023,aggression,6,5314,0.11290929619872037
+France Ligue 2,2023,agility,30,5314,0.5645464809936018
+France Ligue 2,2023,balance,30,5314,0.5645464809936018
+France Ligue 2,2023,ball_control,25,5314,0.4704554008280015
+France Ligue 2,2023,composure,7,5314,0.13172751223184043
+France Ligue 2,2023,crossing,12,5314,0.22581859239744073
+France Ligue 2,2023,curve,0,5314,0.0
+France Ligue 2,2023,defensive_awareness,12,5314,0.22581859239744073
+France Ligue 2,2023,dribbling,13,5314,0.2446368084305608
+France Ligue 2,2023,finishing,7,5314,0.13172751223184043
+France Ligue 2,2023,fk_accuracy,0,5314,0.0
+France Ligue 2,2023,gk_diving,6,5314,0.11290929619872037
+France Ligue 2,2023,gk_handling,0,5314,0.0
+France Ligue 2,2023,gk_kicking,0,5314,0.0
+France Ligue 2,2023,gk_positioning,6,5314,0.11290929619872037
+France Ligue 2,2023,gk_reflexes,0,5314,0.0
+France Ligue 2,2023,heading_accuracy,19,5314,0.35754610462928116
+France Ligue 2,2023,interceptions,0,5314,0.0
+France Ligue 2,2023,jumping,19,5314,0.35754610462928116
+France Ligue 2,2023,long_passing,6,5314,0.11290929619872037
+France Ligue 2,2023,long_shots,0,5314,0.0
+France Ligue 2,2023,penalties,1,5314,0.01881821603312006
+France Ligue 2,2023,positioning,7,5314,0.13172751223184043
+France Ligue 2,2023,reactions,6,5314,0.11290929619872037
+France Ligue 2,2023,short_passing,12,5314,0.22581859239744073
+France Ligue 2,2023,shot_power,1,5314,0.01881821603312006
+France Ligue 2,2023,sliding_tackle,24,5314,0.45163718479488146
+France Ligue 2,2023,sprint_speed,25,5314,0.4704554008280015
+France Ligue 2,2023,stamina,36,5314,0.6774557771923222
+France Ligue 2,2023,standing_tackle,24,5314,0.45163718479488146
+France Ligue 2,2023,strength,37,5314,0.6962739932254423
+France Ligue 2,2023,vision,1,5314,0.01881821603312006
+France Ligue 2,2023,volleys,0,5314,0.0
+France Ligue 2,2024,acceleration,21,4731,0.4438807863031072
+France Ligue 2,2024,aggression,4,4731,0.08454872120059184
+France Ligue 2,2024,agility,17,4731,0.3593320651025153
+France Ligue 2,2024,balance,17,4731,0.3593320651025153
+France Ligue 2,2024,ball_control,17,4731,0.3593320651025153
+France Ligue 2,2024,composure,6,4731,0.12682308180088775
+France Ligue 2,2024,crossing,7,4731,0.14796026210103572
+France Ligue 2,2024,curve,0,4731,0.0
+France Ligue 2,2024,defensive_awareness,7,4731,0.14796026210103572
+France Ligue 2,2024,dribbling,10,4731,0.2113718030014796
+France Ligue 2,2024,finishing,6,4731,0.12682308180088775
+France Ligue 2,2024,fk_accuracy,0,4731,0.0
+France Ligue 2,2024,gk_diving,3,4731,0.06341154090044387
+France Ligue 2,2024,gk_handling,0,4731,0.0
+France Ligue 2,2024,gk_kicking,0,4731,0.0
+France Ligue 2,2024,gk_positioning,3,4731,0.06341154090044387
+France Ligue 2,2024,gk_reflexes,0,4731,0.0
+France Ligue 2,2024,heading_accuracy,14,4731,0.29592052420207143
+France Ligue 2,2024,interceptions,0,4731,0.0
+France Ligue 2,2024,jumping,14,4731,0.29592052420207143
+France Ligue 2,2024,long_passing,4,4731,0.08454872120059184
+France Ligue 2,2024,long_shots,0,4731,0.0
+France Ligue 2,2024,penalties,3,4731,0.06341154090044387
+France Ligue 2,2024,positioning,6,4731,0.12682308180088775
+France Ligue 2,2024,reactions,3,4731,0.06341154090044387
+France Ligue 2,2024,short_passing,7,4731,0.14796026210103572
+France Ligue 2,2024,shot_power,3,4731,0.06341154090044387
+France Ligue 2,2024,sliding_tackle,14,4731,0.29592052420207143
+France Ligue 2,2024,sprint_speed,16,4731,0.33819488480236737
+France Ligue 2,2024,stamina,21,4731,0.4438807863031072
+France Ligue 2,2024,standing_tackle,14,4731,0.29592052420207143
+France Ligue 2,2024,strength,24,4731,0.507292327203551
+France Ligue 2,2024,vision,3,4731,0.06341154090044387
+France Ligue 2,2024,volleys,0,4731,0.0
+Germany 2. Bundesliga,2021,acceleration,0,3228,0.0
+Germany 2. Bundesliga,2021,aggression,0,3228,0.0
+Germany 2. Bundesliga,2021,agility,0,3228,0.0
+Germany 2. Bundesliga,2021,balance,0,3228,0.0
+Germany 2. Bundesliga,2021,ball_control,0,3228,0.0
+Germany 2. Bundesliga,2021,composure,0,3228,0.0
+Germany 2. Bundesliga,2021,crossing,0,3228,0.0
+Germany 2. Bundesliga,2021,curve,0,3228,0.0
+Germany 2. Bundesliga,2021,defensive_awareness,0,3228,0.0
+Germany 2. Bundesliga,2021,dribbling,0,3228,0.0
+Germany 2. Bundesliga,2021,finishing,0,3228,0.0
+Germany 2. Bundesliga,2021,fk_accuracy,0,3228,0.0
+Germany 2. Bundesliga,2021,gk_diving,0,3228,0.0
+Germany 2. Bundesliga,2021,gk_handling,0,3228,0.0
+Germany 2. Bundesliga,2021,gk_kicking,0,3228,0.0
+Germany 2. Bundesliga,2021,gk_positioning,0,3228,0.0
+Germany 2. Bundesliga,2021,gk_reflexes,0,3228,0.0
+Germany 2. Bundesliga,2021,heading_accuracy,0,3228,0.0
+Germany 2. Bundesliga,2021,interceptions,0,3228,0.0
+Germany 2. Bundesliga,2021,jumping,0,3228,0.0
+Germany 2. Bundesliga,2021,long_passing,0,3228,0.0
+Germany 2. Bundesliga,2021,long_shots,0,3228,0.0
+Germany 2. Bundesliga,2021,penalties,0,3228,0.0
+Germany 2. Bundesliga,2021,positioning,0,3228,0.0
+Germany 2. Bundesliga,2021,reactions,0,3228,0.0
+Germany 2. Bundesliga,2021,short_passing,0,3228,0.0
+Germany 2. Bundesliga,2021,shot_power,0,3228,0.0
+Germany 2. Bundesliga,2021,sliding_tackle,0,3228,0.0
+Germany 2. Bundesliga,2021,sprint_speed,0,3228,0.0
+Germany 2. Bundesliga,2021,stamina,0,3228,0.0
+Germany 2. Bundesliga,2021,standing_tackle,0,3228,0.0
+Germany 2. Bundesliga,2021,strength,0,3228,0.0
+Germany 2. Bundesliga,2021,vision,0,3228,0.0
+Germany 2. Bundesliga,2021,volleys,0,3228,0.0
+Germany 2. Bundesliga,2022,acceleration,5,3781,0.1322401481089659
+Germany 2. Bundesliga,2022,aggression,0,3781,0.0
+Germany 2. Bundesliga,2022,agility,4,3781,0.10579211848717271
+Germany 2. Bundesliga,2022,balance,4,3781,0.10579211848717271
+Germany 2. Bundesliga,2022,ball_control,8,3781,0.21158423697434542
+Germany 2. Bundesliga,2022,composure,1,3781,0.026448029621793177
+Germany 2. Bundesliga,2022,crossing,7,3781,0.18513620735255223
+Germany 2. Bundesliga,2022,curve,0,3781,0.0
+Germany 2. Bundesliga,2022,defensive_awareness,9,3781,0.23803226659613858
+Germany 2. Bundesliga,2022,dribbling,7,3781,0.18513620735255223
+Germany 2. Bundesliga,2022,finishing,3,3781,0.07934408886537953
+Germany 2. Bundesliga,2022,fk_accuracy,4,3781,0.10579211848717271
+Germany 2. Bundesliga,2022,gk_diving,0,3781,0.0
+Germany 2. Bundesliga,2022,gk_handling,0,3781,0.0
+Germany 2. Bundesliga,2022,gk_kicking,0,3781,0.0
+Germany 2. Bundesliga,2022,gk_positioning,0,3781,0.0
+Germany 2. Bundesliga,2022,gk_reflexes,0,3781,0.0
+Germany 2. Bundesliga,2022,heading_accuracy,4,3781,0.10579211848717271
+Germany 2. Bundesliga,2022,interceptions,6,3781,0.15868817773075905
+Germany 2. Bundesliga,2022,jumping,4,3781,0.10579211848717271
+Germany 2. Bundesliga,2022,long_passing,2,3781,0.052896059243586355
+Germany 2. Bundesliga,2022,long_shots,0,3781,0.0
+Germany 2. Bundesliga,2022,penalties,0,3781,0.0
+Germany 2. Bundesliga,2022,positioning,1,3781,0.026448029621793177
+Germany 2. Bundesliga,2022,reactions,6,3781,0.15868817773075905
+Germany 2. Bundesliga,2022,short_passing,4,3781,0.10579211848717271
+Germany 2. Bundesliga,2022,shot_power,0,3781,0.0
+Germany 2. Bundesliga,2022,sliding_tackle,9,3781,0.23803226659613858
+Germany 2. Bundesliga,2022,sprint_speed,16,3781,0.42316847394869084
+Germany 2. Bundesliga,2022,stamina,5,3781,0.1322401481089659
+Germany 2. Bundesliga,2022,standing_tackle,8,3781,0.21158423697434542
+Germany 2. Bundesliga,2022,strength,12,3781,0.3173763554615181
+Germany 2. Bundesliga,2022,vision,0,3781,0.0
+Germany 2. Bundesliga,2022,volleys,0,3781,0.0
+Germany 2. Bundesliga,2023,acceleration,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,aggression,0,4161,0.0
+Germany 2. Bundesliga,2023,agility,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,balance,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,ball_control,8,4161,0.19226147560682527
+Germany 2. Bundesliga,2023,composure,0,4161,0.0
+Germany 2. Bundesliga,2023,crossing,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,curve,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,defensive_awareness,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,dribbling,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,finishing,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,fk_accuracy,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,gk_diving,0,4161,0.0
+Germany 2. Bundesliga,2023,gk_handling,0,4161,0.0
+Germany 2. Bundesliga,2023,gk_kicking,0,4161,0.0
+Germany 2. Bundesliga,2023,gk_positioning,0,4161,0.0
+Germany 2. Bundesliga,2023,gk_reflexes,0,4161,0.0
+Germany 2. Bundesliga,2023,heading_accuracy,0,4161,0.0
+Germany 2. Bundesliga,2023,interceptions,0,4161,0.0
+Germany 2. Bundesliga,2023,jumping,0,4161,0.0
+Germany 2. Bundesliga,2023,long_passing,0,4161,0.0
+Germany 2. Bundesliga,2023,long_shots,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,penalties,0,4161,0.0
+Germany 2. Bundesliga,2023,positioning,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,reactions,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,short_passing,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,shot_power,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,sliding_tackle,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,sprint_speed,18,4161,0.43258832011535686
+Germany 2. Bundesliga,2023,stamina,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,standing_tackle,6,4161,0.14419610670511895
+Germany 2. Bundesliga,2023,strength,18,4161,0.43258832011535686
+Germany 2. Bundesliga,2023,vision,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2023,volleys,2,4161,0.04806536890170632
+Germany 2. Bundesliga,2024,acceleration,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,aggression,0,4105,0.0
+Germany 2. Bundesliga,2024,agility,4,4105,0.09744214372716199
+Germany 2. Bundesliga,2024,balance,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,ball_control,7,4105,0.1705237515225335
+Germany 2. Bundesliga,2024,composure,0,4105,0.0
+Germany 2. Bundesliga,2024,crossing,4,4105,0.09744214372716199
+Germany 2. Bundesliga,2024,curve,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,defensive_awareness,4,4105,0.09744214372716199
+Germany 2. Bundesliga,2024,dribbling,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,finishing,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,fk_accuracy,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,gk_diving,0,4105,0.0
+Germany 2. Bundesliga,2024,gk_handling,0,4105,0.0
+Germany 2. Bundesliga,2024,gk_kicking,0,4105,0.0
+Germany 2. Bundesliga,2024,gk_positioning,0,4105,0.0
+Germany 2. Bundesliga,2024,gk_reflexes,0,4105,0.0
+Germany 2. Bundesliga,2024,heading_accuracy,0,4105,0.0
+Germany 2. Bundesliga,2024,interceptions,0,4105,0.0
+Germany 2. Bundesliga,2024,jumping,0,4105,0.0
+Germany 2. Bundesliga,2024,long_passing,0,4105,0.0
+Germany 2. Bundesliga,2024,long_shots,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,penalties,0,4105,0.0
+Germany 2. Bundesliga,2024,positioning,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,reactions,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,short_passing,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,shot_power,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,sliding_tackle,4,4105,0.09744214372716199
+Germany 2. Bundesliga,2024,sprint_speed,9,4105,0.2192448233861145
+Germany 2. Bundesliga,2024,stamina,4,4105,0.09744214372716199
+Germany 2. Bundesliga,2024,standing_tackle,4,4105,0.09744214372716199
+Germany 2. Bundesliga,2024,strength,9,4105,0.2192448233861145
+Germany 2. Bundesliga,2024,vision,3,4105,0.0730816077953715
+Germany 2. Bundesliga,2024,volleys,3,4105,0.0730816077953715
+Germany Bundesliga,2021,acceleration,0,3377,0.0
+Germany Bundesliga,2021,aggression,0,3377,0.0
+Germany Bundesliga,2021,agility,0,3377,0.0
+Germany Bundesliga,2021,balance,0,3377,0.0
+Germany Bundesliga,2021,ball_control,0,3377,0.0
+Germany Bundesliga,2021,composure,0,3377,0.0
+Germany Bundesliga,2021,crossing,0,3377,0.0
+Germany Bundesliga,2021,curve,0,3377,0.0
+Germany Bundesliga,2021,defensive_awareness,0,3377,0.0
+Germany Bundesliga,2021,dribbling,0,3377,0.0
+Germany Bundesliga,2021,finishing,0,3377,0.0
+Germany Bundesliga,2021,fk_accuracy,0,3377,0.0
+Germany Bundesliga,2021,gk_diving,0,3377,0.0
+Germany Bundesliga,2021,gk_handling,0,3377,0.0
+Germany Bundesliga,2021,gk_kicking,0,3377,0.0
+Germany Bundesliga,2021,gk_positioning,0,3377,0.0
+Germany Bundesliga,2021,gk_reflexes,0,3377,0.0
+Germany Bundesliga,2021,heading_accuracy,0,3377,0.0
+Germany Bundesliga,2021,interceptions,0,3377,0.0
+Germany Bundesliga,2021,jumping,0,3377,0.0
+Germany Bundesliga,2021,long_passing,0,3377,0.0
+Germany Bundesliga,2021,long_shots,0,3377,0.0
+Germany Bundesliga,2021,penalties,0,3377,0.0
+Germany Bundesliga,2021,positioning,0,3377,0.0
+Germany Bundesliga,2021,reactions,0,3377,0.0
+Germany Bundesliga,2021,short_passing,0,3377,0.0
+Germany Bundesliga,2021,shot_power,0,3377,0.0
+Germany Bundesliga,2021,sliding_tackle,0,3377,0.0
+Germany Bundesliga,2021,sprint_speed,0,3377,0.0
+Germany Bundesliga,2021,stamina,0,3377,0.0
+Germany Bundesliga,2021,standing_tackle,0,3377,0.0
+Germany Bundesliga,2021,strength,0,3377,0.0
+Germany Bundesliga,2021,vision,0,3377,0.0
+Germany Bundesliga,2021,volleys,0,3377,0.0
+Germany Bundesliga,2022,acceleration,4,3652,0.10952902519167579
+Germany Bundesliga,2022,aggression,0,3652,0.0
+Germany Bundesliga,2022,agility,4,3652,0.10952902519167579
+Germany Bundesliga,2022,balance,4,3652,0.10952902519167579
+Germany Bundesliga,2022,ball_control,2,3652,0.054764512595837894
+Germany Bundesliga,2022,composure,0,3652,0.0
+Germany Bundesliga,2022,crossing,0,3652,0.0
+Germany Bundesliga,2022,curve,0,3652,0.0
+Germany Bundesliga,2022,defensive_awareness,0,3652,0.0
+Germany Bundesliga,2022,dribbling,2,3652,0.054764512595837894
+Germany Bundesliga,2022,finishing,0,3652,0.0
+Germany Bundesliga,2022,fk_accuracy,0,3652,0.0
+Germany Bundesliga,2022,gk_diving,0,3652,0.0
+Germany Bundesliga,2022,gk_handling,0,3652,0.0
+Germany Bundesliga,2022,gk_kicking,0,3652,0.0
+Germany Bundesliga,2022,gk_positioning,0,3652,0.0
+Germany Bundesliga,2022,gk_reflexes,0,3652,0.0
+Germany Bundesliga,2022,heading_accuracy,0,3652,0.0
+Germany Bundesliga,2022,interceptions,0,3652,0.0
+Germany Bundesliga,2022,jumping,4,3652,0.10952902519167579
+Germany Bundesliga,2022,long_passing,2,3652,0.054764512595837894
+Germany Bundesliga,2022,long_shots,0,3652,0.0
+Germany Bundesliga,2022,penalties,1,3652,0.027382256297918947
+Germany Bundesliga,2022,positioning,0,3652,0.0
+Germany Bundesliga,2022,reactions,0,3652,0.0
+Germany Bundesliga,2022,short_passing,2,3652,0.054764512595837894
+Germany Bundesliga,2022,shot_power,2,3652,0.054764512595837894
+Germany Bundesliga,2022,sliding_tackle,0,3652,0.0
+Germany Bundesliga,2022,sprint_speed,8,3652,0.21905805038335158
+Germany Bundesliga,2022,stamina,0,3652,0.0
+Germany Bundesliga,2022,standing_tackle,0,3652,0.0
+Germany Bundesliga,2022,strength,8,3652,0.21905805038335158
+Germany Bundesliga,2022,vision,2,3652,0.054764512595837894
+Germany Bundesliga,2022,volleys,0,3652,0.0
+Germany Bundesliga,2023,acceleration,0,3829,0.0
+Germany Bundesliga,2023,aggression,0,3829,0.0
+Germany Bundesliga,2023,agility,0,3829,0.0
+Germany Bundesliga,2023,balance,0,3829,0.0
+Germany Bundesliga,2023,ball_control,6,3829,0.15669887699138157
+Germany Bundesliga,2023,composure,0,3829,0.0
+Germany Bundesliga,2023,crossing,0,3829,0.0
+Germany Bundesliga,2023,curve,0,3829,0.0
+Germany Bundesliga,2023,defensive_awareness,0,3829,0.0
+Germany Bundesliga,2023,dribbling,6,3829,0.15669887699138157
+Germany Bundesliga,2023,finishing,0,3829,0.0
+Germany Bundesliga,2023,fk_accuracy,0,3829,0.0
+Germany Bundesliga,2023,gk_diving,0,3829,0.0
+Germany Bundesliga,2023,gk_handling,0,3829,0.0
+Germany Bundesliga,2023,gk_kicking,0,3829,0.0
+Germany Bundesliga,2023,gk_positioning,0,3829,0.0
+Germany Bundesliga,2023,gk_reflexes,0,3829,0.0
+Germany Bundesliga,2023,heading_accuracy,0,3829,0.0
+Germany Bundesliga,2023,interceptions,0,3829,0.0
+Germany Bundesliga,2023,jumping,0,3829,0.0
+Germany Bundesliga,2023,long_passing,6,3829,0.15669887699138157
+Germany Bundesliga,2023,long_shots,0,3829,0.0
+Germany Bundesliga,2023,penalties,0,3829,0.0
+Germany Bundesliga,2023,positioning,0,3829,0.0
+Germany Bundesliga,2023,reactions,0,3829,0.0
+Germany Bundesliga,2023,short_passing,6,3829,0.15669887699138157
+Germany Bundesliga,2023,shot_power,6,3829,0.15669887699138157
+Germany Bundesliga,2023,sliding_tackle,0,3829,0.0
+Germany Bundesliga,2023,sprint_speed,0,3829,0.0
+Germany Bundesliga,2023,stamina,0,3829,0.0
+Germany Bundesliga,2023,standing_tackle,0,3829,0.0
+Germany Bundesliga,2023,strength,0,3829,0.0
+Germany Bundesliga,2023,vision,6,3829,0.15669887699138157
+Germany Bundesliga,2023,volleys,0,3829,0.0
+Germany Bundesliga,2024,acceleration,0,3621,0.0
+Germany Bundesliga,2024,aggression,0,3621,0.0
+Germany Bundesliga,2024,agility,0,3621,0.0
+Germany Bundesliga,2024,balance,0,3621,0.0
+Germany Bundesliga,2024,ball_control,3,3621,0.08285004142502071
+Germany Bundesliga,2024,composure,0,3621,0.0
+Germany Bundesliga,2024,crossing,0,3621,0.0
+Germany Bundesliga,2024,curve,0,3621,0.0
+Germany Bundesliga,2024,defensive_awareness,0,3621,0.0
+Germany Bundesliga,2024,dribbling,3,3621,0.08285004142502071
+Germany Bundesliga,2024,finishing,0,3621,0.0
+Germany Bundesliga,2024,fk_accuracy,0,3621,0.0
+Germany Bundesliga,2024,gk_diving,0,3621,0.0
+Germany Bundesliga,2024,gk_handling,0,3621,0.0
+Germany Bundesliga,2024,gk_kicking,0,3621,0.0
+Germany Bundesliga,2024,gk_positioning,0,3621,0.0
+Germany Bundesliga,2024,gk_reflexes,0,3621,0.0
+Germany Bundesliga,2024,heading_accuracy,0,3621,0.0
+Germany Bundesliga,2024,interceptions,0,3621,0.0
+Germany Bundesliga,2024,jumping,0,3621,0.0
+Germany Bundesliga,2024,long_passing,3,3621,0.08285004142502071
+Germany Bundesliga,2024,long_shots,0,3621,0.0
+Germany Bundesliga,2024,penalties,0,3621,0.0
+Germany Bundesliga,2024,positioning,0,3621,0.0
+Germany Bundesliga,2024,reactions,0,3621,0.0
+Germany Bundesliga,2024,short_passing,3,3621,0.08285004142502071
+Germany Bundesliga,2024,shot_power,3,3621,0.08285004142502071
+Germany Bundesliga,2024,sliding_tackle,0,3621,0.0
+Germany Bundesliga,2024,sprint_speed,0,3621,0.0
+Germany Bundesliga,2024,stamina,0,3621,0.0
+Germany Bundesliga,2024,standing_tackle,0,3621,0.0
+Germany Bundesliga,2024,strength,0,3621,0.0
+Germany Bundesliga,2024,vision,3,3621,0.08285004142502071
+Germany Bundesliga,2024,volleys,0,3621,0.0
+India Indian Super League,2021,acceleration,0,1506,0.0
+India Indian Super League,2021,aggression,0,1506,0.0
+India Indian Super League,2021,agility,0,1506,0.0
+India Indian Super League,2021,balance,0,1506,0.0
+India Indian Super League,2021,ball_control,0,1506,0.0
+India Indian Super League,2021,composure,0,1506,0.0
+India Indian Super League,2021,crossing,0,1506,0.0
+India Indian Super League,2021,curve,0,1506,0.0
+India Indian Super League,2021,defensive_awareness,0,1506,0.0
+India Indian Super League,2021,dribbling,0,1506,0.0
+India Indian Super League,2021,finishing,0,1506,0.0
+India Indian Super League,2021,fk_accuracy,0,1506,0.0
+India Indian Super League,2021,gk_diving,0,1506,0.0
+India Indian Super League,2021,gk_handling,0,1506,0.0
+India Indian Super League,2021,gk_kicking,0,1506,0.0
+India Indian Super League,2021,gk_positioning,0,1506,0.0
+India Indian Super League,2021,gk_reflexes,0,1506,0.0
+India Indian Super League,2021,heading_accuracy,0,1506,0.0
+India Indian Super League,2021,interceptions,0,1506,0.0
+India Indian Super League,2021,jumping,0,1506,0.0
+India Indian Super League,2021,long_passing,0,1506,0.0
+India Indian Super League,2021,long_shots,0,1506,0.0
+India Indian Super League,2021,penalties,0,1506,0.0
+India Indian Super League,2021,positioning,0,1506,0.0
+India Indian Super League,2021,reactions,0,1506,0.0
+India Indian Super League,2021,short_passing,0,1506,0.0
+India Indian Super League,2021,shot_power,0,1506,0.0
+India Indian Super League,2021,sliding_tackle,0,1506,0.0
+India Indian Super League,2021,sprint_speed,0,1506,0.0
+India Indian Super League,2021,stamina,0,1506,0.0
+India Indian Super League,2021,standing_tackle,0,1506,0.0
+India Indian Super League,2021,strength,0,1506,0.0
+India Indian Super League,2021,vision,0,1506,0.0
+India Indian Super League,2021,volleys,0,1506,0.0
+India Indian Super League,2022,acceleration,8,2339,0.3420265070542967
+India Indian Super League,2022,aggression,8,2339,0.3420265070542967
+India Indian Super League,2022,agility,8,2339,0.3420265070542967
+India Indian Super League,2022,balance,8,2339,0.3420265070542967
+India Indian Super League,2022,ball_control,4,2339,0.17101325352714836
+India Indian Super League,2022,composure,0,2339,0.0
+India Indian Super League,2022,crossing,0,2339,0.0
+India Indian Super League,2022,curve,0,2339,0.0
+India Indian Super League,2022,defensive_awareness,0,2339,0.0
+India Indian Super League,2022,dribbling,8,2339,0.3420265070542967
+India Indian Super League,2022,finishing,0,2339,0.0
+India Indian Super League,2022,fk_accuracy,0,2339,0.0
+India Indian Super League,2022,gk_diving,4,2339,0.17101325352714836
+India Indian Super League,2022,gk_handling,7,2339,0.2992731936725096
+India Indian Super League,2022,gk_kicking,7,2339,0.2992731936725096
+India Indian Super League,2022,gk_positioning,7,2339,0.2992731936725096
+India Indian Super League,2022,gk_reflexes,7,2339,0.2992731936725096
+India Indian Super League,2022,heading_accuracy,4,2339,0.17101325352714836
+India Indian Super League,2022,interceptions,0,2339,0.0
+India Indian Super League,2022,jumping,4,2339,0.17101325352714836
+India Indian Super League,2022,long_passing,0,2339,0.0
+India Indian Super League,2022,long_shots,0,2339,0.0
+India Indian Super League,2022,penalties,0,2339,0.0
+India Indian Super League,2022,positioning,4,2339,0.17101325352714836
+India Indian Super League,2022,reactions,8,2339,0.3420265070542967
+India Indian Super League,2022,short_passing,4,2339,0.17101325352714836
+India Indian Super League,2022,shot_power,7,2339,0.2992731936725096
+India Indian Super League,2022,sliding_tackle,0,2339,0.0
+India Indian Super League,2022,sprint_speed,12,2339,0.5130397605814451
+India Indian Super League,2022,stamina,16,2339,0.6840530141085934
+India Indian Super League,2022,standing_tackle,4,2339,0.17101325352714836
+India Indian Super League,2022,strength,0,2339,0.0
+India Indian Super League,2022,vision,0,2339,0.0
+India Indian Super League,2022,volleys,0,2339,0.0
+India Indian Super League,2023,acceleration,0,2978,0.0
+India Indian Super League,2023,aggression,0,2978,0.0
+India Indian Super League,2023,agility,6,2978,0.20147750167897918
+India Indian Super League,2023,balance,6,2978,0.20147750167897918
+India Indian Super League,2023,ball_control,0,2978,0.0
+India Indian Super League,2023,composure,0,2978,0.0
+India Indian Super League,2023,crossing,0,2978,0.0
+India Indian Super League,2023,curve,0,2978,0.0
+India Indian Super League,2023,defensive_awareness,0,2978,0.0
+India Indian Super League,2023,dribbling,0,2978,0.0
+India Indian Super League,2023,finishing,0,2978,0.0
+India Indian Super League,2023,fk_accuracy,0,2978,0.0
+India Indian Super League,2023,gk_diving,6,2978,0.20147750167897918
+India Indian Super League,2023,gk_handling,12,2978,0.40295500335795836
+India Indian Super League,2023,gk_kicking,12,2978,0.40295500335795836
+India Indian Super League,2023,gk_positioning,12,2978,0.40295500335795836
+India Indian Super League,2023,gk_reflexes,12,2978,0.40295500335795836
+India Indian Super League,2023,heading_accuracy,0,2978,0.0
+India Indian Super League,2023,interceptions,0,2978,0.0
+India Indian Super League,2023,jumping,0,2978,0.0
+India Indian Super League,2023,long_passing,0,2978,0.0
+India Indian Super League,2023,long_shots,0,2978,0.0
+India Indian Super League,2023,penalties,0,2978,0.0
+India Indian Super League,2023,positioning,0,2978,0.0
+India Indian Super League,2023,reactions,6,2978,0.20147750167897918
+India Indian Super League,2023,short_passing,0,2978,0.0
+India Indian Super League,2023,shot_power,12,2978,0.40295500335795836
+India Indian Super League,2023,sliding_tackle,0,2978,0.0
+India Indian Super League,2023,sprint_speed,6,2978,0.20147750167897918
+India Indian Super League,2023,stamina,6,2978,0.20147750167897918
+India Indian Super League,2023,standing_tackle,6,2978,0.20147750167897918
+India Indian Super League,2023,strength,0,2978,0.0
+India Indian Super League,2023,vision,0,2978,0.0
+India Indian Super League,2023,volleys,0,2978,0.0
+India Indian Super League,2024,acceleration,0,3097,0.0
+India Indian Super League,2024,aggression,0,3097,0.0
+India Indian Super League,2024,agility,0,3097,0.0
+India Indian Super League,2024,balance,0,3097,0.0
+India Indian Super League,2024,ball_control,0,3097,0.0
+India Indian Super League,2024,composure,0,3097,0.0
+India Indian Super League,2024,crossing,0,3097,0.0
+India Indian Super League,2024,curve,0,3097,0.0
+India Indian Super League,2024,defensive_awareness,0,3097,0.0
+India Indian Super League,2024,dribbling,0,3097,0.0
+India Indian Super League,2024,finishing,0,3097,0.0
+India Indian Super League,2024,fk_accuracy,0,3097,0.0
+India Indian Super League,2024,gk_diving,3,3097,0.09686793671294801
+India Indian Super League,2024,gk_handling,6,3097,0.19373587342589602
+India Indian Super League,2024,gk_kicking,6,3097,0.19373587342589602
+India Indian Super League,2024,gk_positioning,6,3097,0.19373587342589602
+India Indian Super League,2024,gk_reflexes,6,3097,0.19373587342589602
+India Indian Super League,2024,heading_accuracy,0,3097,0.0
+India Indian Super League,2024,interceptions,0,3097,0.0
+India Indian Super League,2024,jumping,0,3097,0.0
+India Indian Super League,2024,long_passing,0,3097,0.0
+India Indian Super League,2024,long_shots,0,3097,0.0
+India Indian Super League,2024,penalties,0,3097,0.0
+India Indian Super League,2024,positioning,0,3097,0.0
+India Indian Super League,2024,reactions,3,3097,0.09686793671294801
+India Indian Super League,2024,short_passing,0,3097,0.0
+India Indian Super League,2024,shot_power,6,3097,0.19373587342589602
+India Indian Super League,2024,sliding_tackle,0,3097,0.0
+India Indian Super League,2024,sprint_speed,0,3097,0.0
+India Indian Super League,2024,stamina,0,3097,0.0
+India Indian Super League,2024,standing_tackle,0,3097,0.0
+India Indian Super League,2024,strength,0,3097,0.0
+India Indian Super League,2024,vision,0,3097,0.0
+India Indian Super League,2024,volleys,0,3097,0.0
+Italy Serie A,2021,acceleration,0,3764,0.0
+Italy Serie A,2021,aggression,0,3764,0.0
+Italy Serie A,2021,agility,0,3764,0.0
+Italy Serie A,2021,balance,0,3764,0.0
+Italy Serie A,2021,ball_control,0,3764,0.0
+Italy Serie A,2021,composure,0,3764,0.0
+Italy Serie A,2021,crossing,0,3764,0.0
+Italy Serie A,2021,curve,0,3764,0.0
+Italy Serie A,2021,defensive_awareness,0,3764,0.0
+Italy Serie A,2021,dribbling,0,3764,0.0
+Italy Serie A,2021,finishing,0,3764,0.0
+Italy Serie A,2021,fk_accuracy,0,3764,0.0
+Italy Serie A,2021,gk_diving,0,3764,0.0
+Italy Serie A,2021,gk_handling,0,3764,0.0
+Italy Serie A,2021,gk_kicking,0,3764,0.0
+Italy Serie A,2021,gk_positioning,0,3764,0.0
+Italy Serie A,2021,gk_reflexes,0,3764,0.0
+Italy Serie A,2021,heading_accuracy,0,3764,0.0
+Italy Serie A,2021,interceptions,0,3764,0.0
+Italy Serie A,2021,jumping,0,3764,0.0
+Italy Serie A,2021,long_passing,0,3764,0.0
+Italy Serie A,2021,long_shots,0,3764,0.0
+Italy Serie A,2021,penalties,0,3764,0.0
+Italy Serie A,2021,positioning,0,3764,0.0
+Italy Serie A,2021,reactions,0,3764,0.0
+Italy Serie A,2021,short_passing,0,3764,0.0
+Italy Serie A,2021,shot_power,0,3764,0.0
+Italy Serie A,2021,sliding_tackle,0,3764,0.0
+Italy Serie A,2021,sprint_speed,0,3764,0.0
+Italy Serie A,2021,stamina,0,3764,0.0
+Italy Serie A,2021,standing_tackle,0,3764,0.0
+Italy Serie A,2021,strength,0,3764,0.0
+Italy Serie A,2021,vision,0,3764,0.0
+Italy Serie A,2021,volleys,0,3764,0.0
+Italy Serie A,2022,acceleration,21,3941,0.5328596802841918
+Italy Serie A,2022,aggression,4,3941,0.10149708195889368
+Italy Serie A,2022,agility,12,3941,0.304491245876681
+Italy Serie A,2022,balance,12,3941,0.304491245876681
+Italy Serie A,2022,ball_control,24,3941,0.608982491753362
+Italy Serie A,2022,composure,8,3941,0.20299416391778735
+Italy Serie A,2022,crossing,12,3941,0.304491245876681
+Italy Serie A,2022,curve,8,3941,0.20299416391778735
+Italy Serie A,2022,defensive_awareness,9,3941,0.22836843440751078
+Italy Serie A,2022,dribbling,20,3941,0.5074854097944684
+Italy Serie A,2022,finishing,12,3941,0.304491245876681
+Italy Serie A,2022,fk_accuracy,12,3941,0.304491245876681
+Italy Serie A,2022,gk_diving,0,3941,0.0
+Italy Serie A,2022,gk_handling,0,3941,0.0
+Italy Serie A,2022,gk_kicking,0,3941,0.0
+Italy Serie A,2022,gk_positioning,0,3941,0.0
+Italy Serie A,2022,gk_reflexes,0,3941,0.0
+Italy Serie A,2022,heading_accuracy,12,3941,0.304491245876681
+Italy Serie A,2022,interceptions,13,3941,0.3298655163664045
+Italy Serie A,2022,jumping,5,3941,0.1268713524486171
+Italy Serie A,2022,long_passing,8,3941,0.20299416391778735
+Italy Serie A,2022,long_shots,8,3941,0.20299416391778735
+Italy Serie A,2022,penalties,8,3941,0.20299416391778735
+Italy Serie A,2022,positioning,8,3941,0.20299416391778735
+Italy Serie A,2022,reactions,12,3941,0.304491245876681
+Italy Serie A,2022,short_passing,12,3941,0.304491245876681
+Italy Serie A,2022,shot_power,4,3941,0.10149708195889368
+Italy Serie A,2022,sliding_tackle,9,3941,0.22836843440751078
+Italy Serie A,2022,sprint_speed,34,3941,0.8627251966505963
+Italy Serie A,2022,stamina,30,3941,0.7612281146917026
+Italy Serie A,2022,standing_tackle,9,3941,0.22836843440751078
+Italy Serie A,2022,strength,13,3941,0.3298655163664045
+Italy Serie A,2022,vision,12,3941,0.304491245876681
+Italy Serie A,2022,volleys,4,3941,0.10149708195889368
+Italy Serie A,2023,acceleration,19,4101,0.46330163374786637
+Italy Serie A,2023,aggression,10,4101,0.24384296513045597
+Italy Serie A,2023,agility,13,4101,0.3169958546695928
+Italy Serie A,2023,balance,19,4101,0.46330163374786637
+Italy Serie A,2023,ball_control,31,4101,0.7559131919044135
+Italy Serie A,2023,composure,10,4101,0.24384296513045597
+Italy Serie A,2023,crossing,22,4101,0.5364545232870032
+Italy Serie A,2023,curve,13,4101,0.3169958546695928
+Italy Serie A,2023,defensive_awareness,16,4101,0.3901487442087296
+Italy Serie A,2023,dribbling,25,4101,0.60960741282614
+Italy Serie A,2023,finishing,16,4101,0.3901487442087296
+Italy Serie A,2023,fk_accuracy,22,4101,0.5364545232870032
+Italy Serie A,2023,gk_diving,1,4101,0.0243842965130456
+Italy Serie A,2023,gk_handling,0,4101,0.0
+Italy Serie A,2023,gk_kicking,1,4101,0.0243842965130456
+Italy Serie A,2023,gk_positioning,0,4101,0.0
+Italy Serie A,2023,gk_reflexes,1,4101,0.0243842965130456
+Italy Serie A,2023,heading_accuracy,22,4101,0.5364545232870032
+Italy Serie A,2023,interceptions,22,4101,0.5364545232870032
+Italy Serie A,2023,jumping,10,4101,0.24384296513045597
+Italy Serie A,2023,long_passing,13,4101,0.3169958546695928
+Italy Serie A,2023,long_shots,13,4101,0.3169958546695928
+Italy Serie A,2023,penalties,13,4101,0.3169958546695928
+Italy Serie A,2023,positioning,10,4101,0.24384296513045597
+Italy Serie A,2023,reactions,16,4101,0.3901487442087296
+Italy Serie A,2023,short_passing,19,4101,0.46330163374786637
+Italy Serie A,2023,shot_power,7,4101,0.17069007559131918
+Italy Serie A,2023,sliding_tackle,13,4101,0.3169958546695928
+Italy Serie A,2023,sprint_speed,37,4101,0.9022189709826871
+Italy Serie A,2023,stamina,37,4101,0.9022189709826871
+Italy Serie A,2023,standing_tackle,13,4101,0.3169958546695928
+Italy Serie A,2023,strength,19,4101,0.46330163374786637
+Italy Serie A,2023,vision,16,4101,0.3901487442087296
+Italy Serie A,2023,volleys,7,4101,0.17069007559131918
+Italy Serie A,2024,acceleration,6,3938,0.15236160487557135
+Italy Serie A,2024,aggression,5,3938,0.12696800406297612
+Italy Serie A,2024,agility,8,3938,0.2031488065007618
+Italy Serie A,2024,balance,11,3938,0.27932960893854747
+Italy Serie A,2024,ball_control,19,3938,0.4824784154393093
+Italy Serie A,2024,composure,5,3938,0.12696800406297612
+Italy Serie A,2024,crossing,10,3938,0.25393600812595224
+Italy Serie A,2024,curve,4,3938,0.1015744032503809
+Italy Serie A,2024,defensive_awareness,9,3938,0.22854240731335704
+Italy Serie A,2024,dribbling,13,3938,0.33011681056373793
+Italy Serie A,2024,finishing,9,3938,0.22854240731335704
+Italy Serie A,2024,fk_accuracy,12,3938,0.3047232097511427
+Italy Serie A,2024,gk_diving,1,3938,0.025393600812595226
+Italy Serie A,2024,gk_handling,0,3938,0.0
+Italy Serie A,2024,gk_kicking,1,3938,0.025393600812595226
+Italy Serie A,2024,gk_positioning,0,3938,0.0
+Italy Serie A,2024,gk_reflexes,1,3938,0.025393600812595226
+Italy Serie A,2024,heading_accuracy,13,3938,0.33011681056373793
+Italy Serie A,2024,interceptions,13,3938,0.33011681056373793
+Italy Serie A,2024,jumping,5,3938,0.12696800406297612
+Italy Serie A,2024,long_passing,5,3938,0.12696800406297612
+Italy Serie A,2024,long_shots,8,3938,0.2031488065007618
+Italy Serie A,2024,penalties,8,3938,0.2031488065007618
+Italy Serie A,2024,positioning,6,3938,0.15236160487557135
+Italy Serie A,2024,reactions,10,3938,0.25393600812595224
+Italy Serie A,2024,short_passing,12,3938,0.3047232097511427
+Italy Serie A,2024,shot_power,5,3938,0.12696800406297612
+Italy Serie A,2024,sliding_tackle,8,3938,0.2031488065007618
+Italy Serie A,2024,sprint_speed,16,3938,0.4062976130015236
+Italy Serie A,2024,stamina,16,3938,0.4062976130015236
+Italy Serie A,2024,standing_tackle,8,3938,0.2031488065007618
+Italy Serie A,2024,strength,11,3938,0.27932960893854747
+Italy Serie A,2024,vision,10,3938,0.25393600812595224
+Italy Serie A,2024,volleys,4,3938,0.1015744032503809
+Italy Serie B,2021,acceleration,0,1112,0.0
+Italy Serie B,2021,aggression,0,1112,0.0
+Italy Serie B,2021,agility,0,1112,0.0
+Italy Serie B,2021,balance,0,1112,0.0
+Italy Serie B,2021,ball_control,0,1112,0.0
+Italy Serie B,2021,composure,0,1112,0.0
+Italy Serie B,2021,crossing,0,1112,0.0
+Italy Serie B,2021,curve,0,1112,0.0
+Italy Serie B,2021,defensive_awareness,0,1112,0.0
+Italy Serie B,2021,dribbling,0,1112,0.0
+Italy Serie B,2021,finishing,0,1112,0.0
+Italy Serie B,2021,fk_accuracy,0,1112,0.0
+Italy Serie B,2021,gk_diving,0,1112,0.0
+Italy Serie B,2021,gk_handling,0,1112,0.0
+Italy Serie B,2021,gk_kicking,0,1112,0.0
+Italy Serie B,2021,gk_positioning,0,1112,0.0
+Italy Serie B,2021,gk_reflexes,0,1112,0.0
+Italy Serie B,2021,heading_accuracy,0,1112,0.0
+Italy Serie B,2021,interceptions,0,1112,0.0
+Italy Serie B,2021,jumping,0,1112,0.0
+Italy Serie B,2021,long_passing,0,1112,0.0
+Italy Serie B,2021,long_shots,0,1112,0.0
+Italy Serie B,2021,penalties,0,1112,0.0
+Italy Serie B,2021,positioning,0,1112,0.0
+Italy Serie B,2021,reactions,0,1112,0.0
+Italy Serie B,2021,short_passing,0,1112,0.0
+Italy Serie B,2021,shot_power,0,1112,0.0
+Italy Serie B,2021,sliding_tackle,0,1112,0.0
+Italy Serie B,2021,sprint_speed,0,1112,0.0
+Italy Serie B,2021,stamina,0,1112,0.0
+Italy Serie B,2021,standing_tackle,0,1112,0.0
+Italy Serie B,2021,strength,0,1112,0.0
+Italy Serie B,2021,vision,0,1112,0.0
+Italy Serie B,2021,volleys,0,1112,0.0
+Italy Serie B,2022,acceleration,1,3315,0.030165912518853696
+Italy Serie B,2022,aggression,4,3315,0.12066365007541478
+Italy Serie B,2022,agility,4,3315,0.12066365007541478
+Italy Serie B,2022,balance,8,3315,0.24132730015082957
+Italy Serie B,2022,ball_control,6,3315,0.18099547511312217
+Italy Serie B,2022,composure,1,3315,0.030165912518853696
+Italy Serie B,2022,crossing,1,3315,0.030165912518853696
+Italy Serie B,2022,curve,0,3315,0.0
+Italy Serie B,2022,defensive_awareness,5,3315,0.15082956259426847
+Italy Serie B,2022,dribbling,3,3315,0.09049773755656108
+Italy Serie B,2022,finishing,1,3315,0.030165912518853696
+Italy Serie B,2022,fk_accuracy,0,3315,0.0
+Italy Serie B,2022,gk_diving,0,3315,0.0
+Italy Serie B,2022,gk_handling,0,3315,0.0
+Italy Serie B,2022,gk_kicking,0,3315,0.0
+Italy Serie B,2022,gk_positioning,0,3315,0.0
+Italy Serie B,2022,gk_reflexes,0,3315,0.0
+Italy Serie B,2022,heading_accuracy,2,3315,0.06033182503770739
+Italy Serie B,2022,interceptions,6,3315,0.18099547511312217
+Italy Serie B,2022,jumping,9,3315,0.27149321266968324
+Italy Serie B,2022,long_passing,6,3315,0.18099547511312217
+Italy Serie B,2022,long_shots,5,3315,0.15082956259426847
+Italy Serie B,2022,penalties,0,3315,0.0
+Italy Serie B,2022,positioning,6,3315,0.18099547511312217
+Italy Serie B,2022,reactions,11,3315,0.33182503770739064
+Italy Serie B,2022,short_passing,3,3315,0.09049773755656108
+Italy Serie B,2022,shot_power,4,3315,0.12066365007541478
+Italy Serie B,2022,sliding_tackle,10,3315,0.30165912518853694
+Italy Serie B,2022,sprint_speed,9,3315,0.27149321266968324
+Italy Serie B,2022,stamina,9,3315,0.27149321266968324
+Italy Serie B,2022,standing_tackle,5,3315,0.15082956259426847
+Italy Serie B,2022,strength,5,3315,0.15082956259426847
+Italy Serie B,2022,vision,4,3315,0.12066365007541478
+Italy Serie B,2022,volleys,0,3315,0.0
+Italy Serie B,2023,acceleration,2,4664,0.04288164665523156
+Italy Serie B,2023,aggression,7,4664,0.15008576329331047
+Italy Serie B,2023,agility,7,4664,0.15008576329331047
+Italy Serie B,2023,balance,12,4664,0.25728987993138935
+Italy Serie B,2023,ball_control,8,4664,0.17152658662092624
+Italy Serie B,2023,composure,0,4664,0.0
+Italy Serie B,2023,crossing,3,4664,0.06432246998284734
+Italy Serie B,2023,curve,2,4664,0.04288164665523156
+Italy Serie B,2023,defensive_awareness,7,4664,0.15008576329331047
+Italy Serie B,2023,dribbling,2,4664,0.04288164665523156
+Italy Serie B,2023,finishing,2,4664,0.04288164665523156
+Italy Serie B,2023,fk_accuracy,0,4664,0.0
+Italy Serie B,2023,gk_diving,0,4664,0.0
+Italy Serie B,2023,gk_handling,0,4664,0.0
+Italy Serie B,2023,gk_kicking,0,4664,0.0
+Italy Serie B,2023,gk_positioning,0,4664,0.0
+Italy Serie B,2023,gk_reflexes,0,4664,0.0
+Italy Serie B,2023,heading_accuracy,1,4664,0.02144082332761578
+Italy Serie B,2023,interceptions,7,4664,0.15008576329331047
+Italy Serie B,2023,jumping,14,4664,0.30017152658662094
+Italy Serie B,2023,long_passing,7,4664,0.15008576329331047
+Italy Serie B,2023,long_shots,8,4664,0.17152658662092624
+Italy Serie B,2023,penalties,0,4664,0.0
+Italy Serie B,2023,positioning,7,4664,0.15008576329331047
+Italy Serie B,2023,reactions,13,4664,0.2787307032590051
+Italy Serie B,2023,short_passing,0,4664,0.0
+Italy Serie B,2023,shot_power,7,4664,0.15008576329331047
+Italy Serie B,2023,sliding_tackle,13,4664,0.2787307032590051
+Italy Serie B,2023,sprint_speed,15,4664,0.3216123499142367
+Italy Serie B,2023,stamina,13,4664,0.2787307032590051
+Italy Serie B,2023,standing_tackle,7,4664,0.15008576329331047
+Italy Serie B,2023,strength,6,4664,0.12864493996569468
+Italy Serie B,2023,vision,8,4664,0.17152658662092624
+Italy Serie B,2023,volleys,2,4664,0.04288164665523156
+Italy Serie B,2024,acceleration,8,4682,0.17086715079026057
+Italy Serie B,2024,aggression,8,4682,0.17086715079026057
+Italy Serie B,2024,agility,8,4682,0.17086715079026057
+Italy Serie B,2024,balance,8,4682,0.17086715079026057
+Italy Serie B,2024,ball_control,12,4682,0.25630072618539085
+Italy Serie B,2024,composure,0,4682,0.0
+Italy Serie B,2024,crossing,12,4682,0.25630072618539085
+Italy Serie B,2024,curve,8,4682,0.17086715079026057
+Italy Serie B,2024,defensive_awareness,8,4682,0.17086715079026057
+Italy Serie B,2024,dribbling,8,4682,0.17086715079026057
+Italy Serie B,2024,finishing,8,4682,0.17086715079026057
+Italy Serie B,2024,fk_accuracy,0,4682,0.0
+Italy Serie B,2024,gk_diving,0,4682,0.0
+Italy Serie B,2024,gk_handling,0,4682,0.0
+Italy Serie B,2024,gk_kicking,0,4682,0.0
+Italy Serie B,2024,gk_positioning,0,4682,0.0
+Italy Serie B,2024,gk_reflexes,0,4682,0.0
+Italy Serie B,2024,heading_accuracy,4,4682,0.08543357539513029
+Italy Serie B,2024,interceptions,8,4682,0.17086715079026057
+Italy Serie B,2024,jumping,16,4682,0.34173430158052115
+Italy Serie B,2024,long_passing,8,4682,0.17086715079026057
+Italy Serie B,2024,long_shots,12,4682,0.25630072618539085
+Italy Serie B,2024,penalties,0,4682,0.0
+Italy Serie B,2024,positioning,8,4682,0.17086715079026057
+Italy Serie B,2024,reactions,12,4682,0.25630072618539085
+Italy Serie B,2024,short_passing,0,4682,0.0
+Italy Serie B,2024,shot_power,8,4682,0.17086715079026057
+Italy Serie B,2024,sliding_tackle,12,4682,0.25630072618539085
+Italy Serie B,2024,sprint_speed,20,4682,0.42716787697565145
+Italy Serie B,2024,stamina,12,4682,0.25630072618539085
+Italy Serie B,2024,standing_tackle,8,4682,0.17086715079026057
+Italy Serie B,2024,strength,4,4682,0.08543357539513029
+Italy Serie B,2024,vision,12,4682,0.25630072618539085
+Italy Serie B,2024,volleys,8,4682,0.17086715079026057
+Netherlands Eredivisie,2021,acceleration,0,3371,0.0
+Netherlands Eredivisie,2021,aggression,0,3371,0.0
+Netherlands Eredivisie,2021,agility,0,3371,0.0
+Netherlands Eredivisie,2021,balance,0,3371,0.0
+Netherlands Eredivisie,2021,ball_control,0,3371,0.0
+Netherlands Eredivisie,2021,composure,0,3371,0.0
+Netherlands Eredivisie,2021,crossing,0,3371,0.0
+Netherlands Eredivisie,2021,curve,0,3371,0.0
+Netherlands Eredivisie,2021,defensive_awareness,0,3371,0.0
+Netherlands Eredivisie,2021,dribbling,0,3371,0.0
+Netherlands Eredivisie,2021,finishing,0,3371,0.0
+Netherlands Eredivisie,2021,fk_accuracy,0,3371,0.0
+Netherlands Eredivisie,2021,gk_diving,0,3371,0.0
+Netherlands Eredivisie,2021,gk_handling,0,3371,0.0
+Netherlands Eredivisie,2021,gk_kicking,0,3371,0.0
+Netherlands Eredivisie,2021,gk_positioning,0,3371,0.0
+Netherlands Eredivisie,2021,gk_reflexes,0,3371,0.0
+Netherlands Eredivisie,2021,heading_accuracy,0,3371,0.0
+Netherlands Eredivisie,2021,interceptions,0,3371,0.0
+Netherlands Eredivisie,2021,jumping,0,3371,0.0
+Netherlands Eredivisie,2021,long_passing,0,3371,0.0
+Netherlands Eredivisie,2021,long_shots,0,3371,0.0
+Netherlands Eredivisie,2021,penalties,0,3371,0.0
+Netherlands Eredivisie,2021,positioning,0,3371,0.0
+Netherlands Eredivisie,2021,reactions,0,3371,0.0
+Netherlands Eredivisie,2021,short_passing,0,3371,0.0
+Netherlands Eredivisie,2021,shot_power,0,3371,0.0
+Netherlands Eredivisie,2021,sliding_tackle,0,3371,0.0
+Netherlands Eredivisie,2021,sprint_speed,0,3371,0.0
+Netherlands Eredivisie,2021,stamina,0,3371,0.0
+Netherlands Eredivisie,2021,standing_tackle,0,3371,0.0
+Netherlands Eredivisie,2021,strength,0,3371,0.0
+Netherlands Eredivisie,2021,vision,0,3371,0.0
+Netherlands Eredivisie,2021,volleys,0,3371,0.0
+Netherlands Eredivisie,2022,acceleration,13,4241,0.3065314784248998
+Netherlands Eredivisie,2022,aggression,9,4241,0.21221410044800754
+Netherlands Eredivisie,2022,agility,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,balance,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,ball_control,4,4241,0.09431737797689224
+Netherlands Eredivisie,2022,composure,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,crossing,10,4241,0.23579344494223062
+Netherlands Eredivisie,2022,curve,9,4241,0.21221410044800754
+Netherlands Eredivisie,2022,defensive_awareness,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,dribbling,12,4241,0.28295213393067675
+Netherlands Eredivisie,2022,finishing,13,4241,0.3065314784248998
+Netherlands Eredivisie,2022,fk_accuracy,1,4241,0.02357934449422306
+Netherlands Eredivisie,2022,gk_diving,0,4241,0.0
+Netherlands Eredivisie,2022,gk_handling,0,4241,0.0
+Netherlands Eredivisie,2022,gk_kicking,1,4241,0.02357934449422306
+Netherlands Eredivisie,2022,gk_positioning,1,4241,0.02357934449422306
+Netherlands Eredivisie,2022,gk_reflexes,0,4241,0.0
+Netherlands Eredivisie,2022,heading_accuracy,4,4241,0.09431737797689224
+Netherlands Eredivisie,2022,interceptions,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,jumping,14,4241,0.33011082291912286
+Netherlands Eredivisie,2022,long_passing,1,4241,0.02357934449422306
+Netherlands Eredivisie,2022,long_shots,6,4241,0.14147606696533838
+Netherlands Eredivisie,2022,penalties,1,4241,0.02357934449422306
+Netherlands Eredivisie,2022,positioning,0,4241,0.0
+Netherlands Eredivisie,2022,reactions,4,4241,0.09431737797689224
+Netherlands Eredivisie,2022,short_passing,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,shot_power,6,4241,0.14147606696533838
+Netherlands Eredivisie,2022,sliding_tackle,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,sprint_speed,20,4241,0.47158688988446124
+Netherlands Eredivisie,2022,stamina,16,4241,0.37726951190756897
+Netherlands Eredivisie,2022,standing_tackle,8,4241,0.18863475595378448
+Netherlands Eredivisie,2022,strength,11,4241,0.25937278943645364
+Netherlands Eredivisie,2022,vision,5,4241,0.11789672247111531
+Netherlands Eredivisie,2022,volleys,1,4241,0.02357934449422306
+Netherlands Eredivisie,2023,acceleration,18,4842,0.37174721189591076
+Netherlands Eredivisie,2023,aggression,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,agility,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,balance,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,ball_control,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,composure,7,4842,0.14456836018174307
+Netherlands Eredivisie,2023,crossing,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,curve,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,defensive_awareness,0,4842,0.0
+Netherlands Eredivisie,2023,dribbling,18,4842,0.37174721189591076
+Netherlands Eredivisie,2023,finishing,7,4842,0.14456836018174307
+Netherlands Eredivisie,2023,fk_accuracy,0,4842,0.0
+Netherlands Eredivisie,2023,gk_diving,0,4842,0.0
+Netherlands Eredivisie,2023,gk_handling,0,4842,0.0
+Netherlands Eredivisie,2023,gk_kicking,0,4842,0.0
+Netherlands Eredivisie,2023,gk_positioning,0,4842,0.0
+Netherlands Eredivisie,2023,gk_reflexes,0,4842,0.0
+Netherlands Eredivisie,2023,heading_accuracy,1,4842,0.020652622883106153
+Netherlands Eredivisie,2023,interceptions,0,4842,0.0
+Netherlands Eredivisie,2023,jumping,13,4842,0.26848409748038
+Netherlands Eredivisie,2023,long_passing,0,4842,0.0
+Netherlands Eredivisie,2023,long_shots,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,penalties,0,4842,0.0
+Netherlands Eredivisie,2023,positioning,1,4842,0.020652622883106153
+Netherlands Eredivisie,2023,reactions,1,4842,0.020652622883106153
+Netherlands Eredivisie,2023,short_passing,7,4842,0.14456836018174307
+Netherlands Eredivisie,2023,shot_power,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,sliding_tackle,0,4842,0.0
+Netherlands Eredivisie,2023,sprint_speed,13,4842,0.26848409748038
+Netherlands Eredivisie,2023,stamina,12,4842,0.24783147459727387
+Netherlands Eredivisie,2023,standing_tackle,0,4842,0.0
+Netherlands Eredivisie,2023,strength,6,4842,0.12391573729863693
+Netherlands Eredivisie,2023,vision,7,4842,0.14456836018174307
+Netherlands Eredivisie,2023,volleys,0,4842,0.0
+Netherlands Eredivisie,2024,acceleration,7,4532,0.15445719329214475
+Netherlands Eredivisie,2024,aggression,4,4532,0.088261253309797
+Netherlands Eredivisie,2024,agility,4,4532,0.088261253309797
+Netherlands Eredivisie,2024,balance,4,4532,0.088261253309797
+Netherlands Eredivisie,2024,ball_control,4,4532,0.088261253309797
+Netherlands Eredivisie,2024,composure,0,4532,0.0
+Netherlands Eredivisie,2024,crossing,0,4532,0.0
+Netherlands Eredivisie,2024,curve,0,4532,0.0
+Netherlands Eredivisie,2024,defensive_awareness,0,4532,0.0
+Netherlands Eredivisie,2024,dribbling,8,4532,0.176522506619594
+Netherlands Eredivisie,2024,finishing,0,4532,0.0
+Netherlands Eredivisie,2024,fk_accuracy,0,4532,0.0
+Netherlands Eredivisie,2024,gk_diving,0,4532,0.0
+Netherlands Eredivisie,2024,gk_handling,0,4532,0.0
+Netherlands Eredivisie,2024,gk_kicking,0,4532,0.0
+Netherlands Eredivisie,2024,gk_positioning,0,4532,0.0
+Netherlands Eredivisie,2024,gk_reflexes,0,4532,0.0
+Netherlands Eredivisie,2024,heading_accuracy,3,4532,0.06619593998234775
+Netherlands Eredivisie,2024,interceptions,0,4532,0.0
+Netherlands Eredivisie,2024,jumping,10,4532,0.22065313327449249
+Netherlands Eredivisie,2024,long_passing,0,4532,0.0
+Netherlands Eredivisie,2024,long_shots,0,4532,0.0
+Netherlands Eredivisie,2024,penalties,0,4532,0.0
+Netherlands Eredivisie,2024,positioning,0,4532,0.0
+Netherlands Eredivisie,2024,reactions,0,4532,0.0
+Netherlands Eredivisie,2024,short_passing,0,4532,0.0
+Netherlands Eredivisie,2024,shot_power,0,4532,0.0
+Netherlands Eredivisie,2024,sliding_tackle,0,4532,0.0
+Netherlands Eredivisie,2024,sprint_speed,4,4532,0.088261253309797
+Netherlands Eredivisie,2024,stamina,6,4532,0.1323918799646955
+Netherlands Eredivisie,2024,standing_tackle,0,4532,0.0
+Netherlands Eredivisie,2024,strength,3,4532,0.06619593998234775
+Netherlands Eredivisie,2024,vision,3,4532,0.06619593998234775
+Netherlands Eredivisie,2024,volleys,0,4532,0.0
+Poland Ekstraklasa,2021,acceleration,0,3221,0.0
+Poland Ekstraklasa,2021,aggression,0,3221,0.0
+Poland Ekstraklasa,2021,agility,0,3221,0.0
+Poland Ekstraklasa,2021,balance,0,3221,0.0
+Poland Ekstraklasa,2021,ball_control,0,3221,0.0
+Poland Ekstraklasa,2021,composure,0,3221,0.0
+Poland Ekstraklasa,2021,crossing,0,3221,0.0
+Poland Ekstraklasa,2021,curve,0,3221,0.0
+Poland Ekstraklasa,2021,defensive_awareness,0,3221,0.0
+Poland Ekstraklasa,2021,dribbling,0,3221,0.0
+Poland Ekstraklasa,2021,finishing,0,3221,0.0
+Poland Ekstraklasa,2021,fk_accuracy,0,3221,0.0
+Poland Ekstraklasa,2021,gk_diving,0,3221,0.0
+Poland Ekstraklasa,2021,gk_handling,0,3221,0.0
+Poland Ekstraklasa,2021,gk_kicking,0,3221,0.0
+Poland Ekstraklasa,2021,gk_positioning,0,3221,0.0
+Poland Ekstraklasa,2021,gk_reflexes,0,3221,0.0
+Poland Ekstraklasa,2021,heading_accuracy,0,3221,0.0
+Poland Ekstraklasa,2021,interceptions,0,3221,0.0
+Poland Ekstraklasa,2021,jumping,0,3221,0.0
+Poland Ekstraklasa,2021,long_passing,0,3221,0.0
+Poland Ekstraklasa,2021,long_shots,0,3221,0.0
+Poland Ekstraklasa,2021,penalties,0,3221,0.0
+Poland Ekstraklasa,2021,positioning,0,3221,0.0
+Poland Ekstraklasa,2021,reactions,0,3221,0.0
+Poland Ekstraklasa,2021,short_passing,0,3221,0.0
+Poland Ekstraklasa,2021,shot_power,0,3221,0.0
+Poland Ekstraklasa,2021,sliding_tackle,0,3221,0.0
+Poland Ekstraklasa,2021,sprint_speed,0,3221,0.0
+Poland Ekstraklasa,2021,stamina,0,3221,0.0
+Poland Ekstraklasa,2021,standing_tackle,0,3221,0.0
+Poland Ekstraklasa,2021,strength,0,3221,0.0
+Poland Ekstraklasa,2021,vision,0,3221,0.0
+Poland Ekstraklasa,2021,volleys,0,3221,0.0
+Poland Ekstraklasa,2022,acceleration,5,4401,0.11361054305839582
+Poland Ekstraklasa,2022,aggression,3,4401,0.0681663258350375
+Poland Ekstraklasa,2022,agility,8,4401,0.1817768688934333
+Poland Ekstraklasa,2022,balance,2,4401,0.04544421722335833
+Poland Ekstraklasa,2022,ball_control,13,4401,0.2953874119518291
+Poland Ekstraklasa,2022,composure,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,crossing,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,curve,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,defensive_awareness,2,4401,0.04544421722335833
+Poland Ekstraklasa,2022,dribbling,8,4401,0.1817768688934333
+Poland Ekstraklasa,2022,finishing,0,4401,0.0
+Poland Ekstraklasa,2022,fk_accuracy,0,4401,0.0
+Poland Ekstraklasa,2022,gk_diving,1,4401,0.022722108611679163
+Poland Ekstraklasa,2022,gk_handling,1,4401,0.022722108611679163
+Poland Ekstraklasa,2022,gk_kicking,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,gk_positioning,0,4401,0.0
+Poland Ekstraklasa,2022,gk_reflexes,5,4401,0.11361054305839582
+Poland Ekstraklasa,2022,heading_accuracy,0,4401,0.0
+Poland Ekstraklasa,2022,interceptions,1,4401,0.022722108611679163
+Poland Ekstraklasa,2022,jumping,1,4401,0.022722108611679163
+Poland Ekstraklasa,2022,long_passing,0,4401,0.0
+Poland Ekstraklasa,2022,long_shots,0,4401,0.0
+Poland Ekstraklasa,2022,penalties,0,4401,0.0
+Poland Ekstraklasa,2022,positioning,0,4401,0.0
+Poland Ekstraklasa,2022,reactions,10,4401,0.22722108611679165
+Poland Ekstraklasa,2022,short_passing,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,shot_power,8,4401,0.1817768688934333
+Poland Ekstraklasa,2022,sliding_tackle,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,sprint_speed,5,4401,0.11361054305839582
+Poland Ekstraklasa,2022,stamina,9,4401,0.20449897750511248
+Poland Ekstraklasa,2022,standing_tackle,7,4401,0.15905476028175414
+Poland Ekstraklasa,2022,strength,4,4401,0.09088843444671665
+Poland Ekstraklasa,2022,vision,1,4401,0.022722108611679163
+Poland Ekstraklasa,2022,volleys,0,4401,0.0
+Poland Ekstraklasa,2023,acceleration,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,aggression,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,agility,18,5351,0.33638572229489816
+Poland Ekstraklasa,2023,balance,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,ball_control,24,5351,0.4485142963931975
+Poland Ekstraklasa,2023,composure,0,5351,0.0
+Poland Ekstraklasa,2023,crossing,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,curve,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,defensive_awareness,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,dribbling,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,finishing,0,5351,0.0
+Poland Ekstraklasa,2023,fk_accuracy,0,5351,0.0
+Poland Ekstraklasa,2023,gk_diving,0,5351,0.0
+Poland Ekstraklasa,2023,gk_handling,0,5351,0.0
+Poland Ekstraklasa,2023,gk_kicking,0,5351,0.0
+Poland Ekstraklasa,2023,gk_positioning,0,5351,0.0
+Poland Ekstraklasa,2023,gk_reflexes,0,5351,0.0
+Poland Ekstraklasa,2023,heading_accuracy,0,5351,0.0
+Poland Ekstraklasa,2023,interceptions,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,jumping,0,5351,0.0
+Poland Ekstraklasa,2023,long_passing,0,5351,0.0
+Poland Ekstraklasa,2023,long_shots,0,5351,0.0
+Poland Ekstraklasa,2023,penalties,0,5351,0.0
+Poland Ekstraklasa,2023,positioning,0,5351,0.0
+Poland Ekstraklasa,2023,reactions,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,short_passing,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,shot_power,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,sliding_tackle,0,5351,0.0
+Poland Ekstraklasa,2023,sprint_speed,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,stamina,18,5351,0.33638572229489816
+Poland Ekstraklasa,2023,standing_tackle,12,5351,0.22425714819659875
+Poland Ekstraklasa,2023,strength,6,5351,0.11212857409829938
+Poland Ekstraklasa,2023,vision,0,5351,0.0
+Poland Ekstraklasa,2023,volleys,0,5351,0.0
+Poland Ekstraklasa,2024,acceleration,8,4827,0.16573441060700228
+Poland Ekstraklasa,2024,aggression,8,4827,0.16573441060700228
+Poland Ekstraklasa,2024,agility,11,4827,0.22788481458462814
+Poland Ekstraklasa,2024,balance,4,4827,0.08286720530350114
+Poland Ekstraklasa,2024,ball_control,15,4827,0.3107520198881293
+Poland Ekstraklasa,2024,composure,0,4827,0.0
+Poland Ekstraklasa,2024,crossing,7,4827,0.145017609281127
+Poland Ekstraklasa,2024,curve,3,4827,0.062150403977625855
+Poland Ekstraklasa,2024,defensive_awareness,4,4827,0.08286720530350114
+Poland Ekstraklasa,2024,dribbling,7,4827,0.145017609281127
+Poland Ekstraklasa,2024,finishing,0,4827,0.0
+Poland Ekstraklasa,2024,fk_accuracy,0,4827,0.0
+Poland Ekstraklasa,2024,gk_diving,0,4827,0.0
+Poland Ekstraklasa,2024,gk_handling,0,4827,0.0
+Poland Ekstraklasa,2024,gk_kicking,0,4827,0.0
+Poland Ekstraklasa,2024,gk_positioning,0,4827,0.0
+Poland Ekstraklasa,2024,gk_reflexes,0,4827,0.0
+Poland Ekstraklasa,2024,heading_accuracy,0,4827,0.0
+Poland Ekstraklasa,2024,interceptions,4,4827,0.08286720530350114
+Poland Ekstraklasa,2024,jumping,0,4827,0.0
+Poland Ekstraklasa,2024,long_passing,0,4827,0.0
+Poland Ekstraklasa,2024,long_shots,0,4827,0.0
+Poland Ekstraklasa,2024,penalties,0,4827,0.0
+Poland Ekstraklasa,2024,positioning,0,4827,0.0
+Poland Ekstraklasa,2024,reactions,8,4827,0.16573441060700228
+Poland Ekstraklasa,2024,short_passing,4,4827,0.08286720530350114
+Poland Ekstraklasa,2024,shot_power,3,4827,0.062150403977625855
+Poland Ekstraklasa,2024,sliding_tackle,0,4827,0.0
+Poland Ekstraklasa,2024,sprint_speed,8,4827,0.16573441060700228
+Poland Ekstraklasa,2024,stamina,11,4827,0.22788481458462814
+Poland Ekstraklasa,2024,standing_tackle,8,4827,0.16573441060700228
+Poland Ekstraklasa,2024,strength,4,4827,0.08286720530350114
+Poland Ekstraklasa,2024,vision,0,4827,0.0
+Poland Ekstraklasa,2024,volleys,0,4827,0.0
+Portugal Liga NOS,2021,acceleration,0,3380,0.0
+Portugal Liga NOS,2021,aggression,0,3380,0.0
+Portugal Liga NOS,2021,agility,0,3380,0.0
+Portugal Liga NOS,2021,balance,0,3380,0.0
+Portugal Liga NOS,2021,ball_control,0,3380,0.0
+Portugal Liga NOS,2021,composure,0,3380,0.0
+Portugal Liga NOS,2021,crossing,0,3380,0.0
+Portugal Liga NOS,2021,curve,0,3380,0.0
+Portugal Liga NOS,2021,defensive_awareness,0,3380,0.0
+Portugal Liga NOS,2021,dribbling,0,3380,0.0
+Portugal Liga NOS,2021,finishing,0,3380,0.0
+Portugal Liga NOS,2021,fk_accuracy,0,3380,0.0
+Portugal Liga NOS,2021,gk_diving,0,3380,0.0
+Portugal Liga NOS,2021,gk_handling,0,3380,0.0
+Portugal Liga NOS,2021,gk_kicking,0,3380,0.0
+Portugal Liga NOS,2021,gk_positioning,0,3380,0.0
+Portugal Liga NOS,2021,gk_reflexes,0,3380,0.0
+Portugal Liga NOS,2021,heading_accuracy,0,3380,0.0
+Portugal Liga NOS,2021,interceptions,0,3380,0.0
+Portugal Liga NOS,2021,jumping,0,3380,0.0
+Portugal Liga NOS,2021,long_passing,0,3380,0.0
+Portugal Liga NOS,2021,long_shots,0,3380,0.0
+Portugal Liga NOS,2021,penalties,0,3380,0.0
+Portugal Liga NOS,2021,positioning,0,3380,0.0
+Portugal Liga NOS,2021,reactions,0,3380,0.0
+Portugal Liga NOS,2021,short_passing,0,3380,0.0
+Portugal Liga NOS,2021,shot_power,0,3380,0.0
+Portugal Liga NOS,2021,sliding_tackle,0,3380,0.0
+Portugal Liga NOS,2021,sprint_speed,0,3380,0.0
+Portugal Liga NOS,2021,stamina,0,3380,0.0
+Portugal Liga NOS,2021,standing_tackle,0,3380,0.0
+Portugal Liga NOS,2021,strength,0,3380,0.0
+Portugal Liga NOS,2021,vision,0,3380,0.0
+Portugal Liga NOS,2021,volleys,0,3380,0.0
+Portugal Liga NOS,2022,acceleration,25,4345,0.5753739930955121
+Portugal Liga NOS,2022,aggression,5,4345,0.11507479861910241
+Portugal Liga NOS,2022,agility,12,4345,0.2761795166858458
+Portugal Liga NOS,2022,balance,12,4345,0.2761795166858458
+Portugal Liga NOS,2022,ball_control,13,4345,0.2991944764096663
+Portugal Liga NOS,2022,composure,9,4345,0.20713463751438435
+Portugal Liga NOS,2022,crossing,8,4345,0.18411967779056387
+Portugal Liga NOS,2022,curve,4,4345,0.09205983889528194
+Portugal Liga NOS,2022,defensive_awareness,9,4345,0.20713463751438435
+Portugal Liga NOS,2022,dribbling,11,4345,0.25316455696202533
+Portugal Liga NOS,2022,finishing,15,4345,0.34522439585730724
+Portugal Liga NOS,2022,fk_accuracy,0,4345,0.0
+Portugal Liga NOS,2022,gk_diving,6,4345,0.1380897583429229
+Portugal Liga NOS,2022,gk_handling,4,4345,0.09205983889528194
+Portugal Liga NOS,2022,gk_kicking,5,4345,0.11507479861910241
+Portugal Liga NOS,2022,gk_positioning,5,4345,0.11507479861910241
+Portugal Liga NOS,2022,gk_reflexes,6,4345,0.1380897583429229
+Portugal Liga NOS,2022,heading_accuracy,0,4345,0.0
+Portugal Liga NOS,2022,interceptions,9,4345,0.20713463751438435
+Portugal Liga NOS,2022,jumping,32,4345,0.7364787111622555
+Portugal Liga NOS,2022,long_passing,16,4345,0.36823935558112775
+Portugal Liga NOS,2022,long_shots,14,4345,0.3222094361334868
+Portugal Liga NOS,2022,penalties,0,4345,0.0
+Portugal Liga NOS,2022,positioning,12,4345,0.2761795166858458
+Portugal Liga NOS,2022,reactions,22,4345,0.5063291139240507
+Portugal Liga NOS,2022,short_passing,11,4345,0.25316455696202533
+Portugal Liga NOS,2022,shot_power,6,4345,0.1380897583429229
+Portugal Liga NOS,2022,sliding_tackle,7,4345,0.1611047180667434
+Portugal Liga NOS,2022,sprint_speed,24,4345,0.5523590333716916
+Portugal Liga NOS,2022,stamina,36,4345,0.8285385500575374
+Portugal Liga NOS,2022,standing_tackle,6,4345,0.1380897583429229
+Portugal Liga NOS,2022,strength,12,4345,0.2761795166858458
+Portugal Liga NOS,2022,vision,16,4345,0.36823935558112775
+Portugal Liga NOS,2022,volleys,5,4345,0.11507479861910241
+Portugal Liga NOS,2023,acceleration,25,5072,0.49290220820189273
+Portugal Liga NOS,2023,aggression,6,5072,0.11829652996845426
+Portugal Liga NOS,2023,agility,4,5072,0.07886435331230283
+Portugal Liga NOS,2023,balance,12,5072,0.23659305993690852
+Portugal Liga NOS,2023,ball_control,16,5072,0.31545741324921134
+Portugal Liga NOS,2023,composure,12,5072,0.23659305993690852
+Portugal Liga NOS,2023,crossing,14,5072,0.27602523659305994
+Portugal Liga NOS,2023,curve,7,5072,0.13801261829652997
+Portugal Liga NOS,2023,defensive_awareness,1,5072,0.01971608832807571
+Portugal Liga NOS,2023,dribbling,16,5072,0.31545741324921134
+Portugal Liga NOS,2023,finishing,8,5072,0.15772870662460567
+Portugal Liga NOS,2023,fk_accuracy,1,5072,0.01971608832807571
+Portugal Liga NOS,2023,gk_diving,6,5072,0.11829652996845426
+Portugal Liga NOS,2023,gk_handling,6,5072,0.11829652996845426
+Portugal Liga NOS,2023,gk_kicking,6,5072,0.11829652996845426
+Portugal Liga NOS,2023,gk_positioning,6,5072,0.11829652996845426
+Portugal Liga NOS,2023,gk_reflexes,6,5072,0.11829652996845426
+Portugal Liga NOS,2023,heading_accuracy,0,5072,0.0
+Portugal Liga NOS,2023,interceptions,7,5072,0.13801261829652997
+Portugal Liga NOS,2023,jumping,28,5072,0.5520504731861199
+Portugal Liga NOS,2023,long_passing,12,5072,0.23659305993690852
+Portugal Liga NOS,2023,long_shots,8,5072,0.15772870662460567
+Portugal Liga NOS,2023,penalties,0,5072,0.0
+Portugal Liga NOS,2023,positioning,15,5072,0.29574132492113564
+Portugal Liga NOS,2023,reactions,20,5072,0.3943217665615142
+Portugal Liga NOS,2023,short_passing,14,5072,0.27602523659305994
+Portugal Liga NOS,2023,shot_power,7,5072,0.13801261829652997
+Portugal Liga NOS,2023,sliding_tackle,7,5072,0.13801261829652997
+Portugal Liga NOS,2023,sprint_speed,25,5072,0.49290220820189273
+Portugal Liga NOS,2023,stamina,37,5072,0.7294952681388013
+Portugal Liga NOS,2023,standing_tackle,7,5072,0.13801261829652997
+Portugal Liga NOS,2023,strength,13,5072,0.25630914826498424
+Portugal Liga NOS,2023,vision,8,5072,0.15772870662460567
+Portugal Liga NOS,2023,volleys,0,5072,0.0
+Portugal Liga NOS,2024,acceleration,19,4651,0.40851429800043
+Portugal Liga NOS,2024,aggression,3,4651,0.06450225757901526
+Portugal Liga NOS,2024,agility,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,balance,7,4651,0.15050526768436895
+Portugal Liga NOS,2024,ball_control,22,4651,0.4730165555794453
+Portugal Liga NOS,2024,composure,9,4651,0.1935067727370458
+Portugal Liga NOS,2024,crossing,11,4651,0.23650827778972264
+Portugal Liga NOS,2024,curve,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,defensive_awareness,1,4651,0.021500752526338422
+Portugal Liga NOS,2024,dribbling,22,4651,0.4730165555794453
+Portugal Liga NOS,2024,finishing,8,4651,0.17200602021070738
+Portugal Liga NOS,2024,fk_accuracy,1,4651,0.021500752526338422
+Portugal Liga NOS,2024,gk_diving,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,gk_handling,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,gk_kicking,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,gk_positioning,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,gk_reflexes,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,heading_accuracy,0,4651,0.0
+Portugal Liga NOS,2024,interceptions,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,jumping,19,4651,0.40851429800043
+Portugal Liga NOS,2024,long_passing,7,4651,0.15050526768436895
+Portugal Liga NOS,2024,long_shots,8,4651,0.17200602021070738
+Portugal Liga NOS,2024,penalties,0,4651,0.0
+Portugal Liga NOS,2024,positioning,15,4651,0.3225112878950763
+Portugal Liga NOS,2024,reactions,19,4651,0.40851429800043
+Portugal Liga NOS,2024,short_passing,12,4651,0.25800903031606104
+Portugal Liga NOS,2024,shot_power,7,4651,0.15050526768436895
+Portugal Liga NOS,2024,sliding_tackle,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,sprint_speed,19,4651,0.40851429800043
+Portugal Liga NOS,2024,stamina,26,4651,0.5590195656847989
+Portugal Liga NOS,2024,standing_tackle,4,4651,0.08600301010535369
+Portugal Liga NOS,2024,strength,10,4651,0.2150075252633842
+Portugal Liga NOS,2024,vision,10,4651,0.2150075252633842
+Portugal Liga NOS,2024,volleys,0,4651,0.0
+Saudi Arabia Professional League,2021,acceleration,0,3014,0.0
+Saudi Arabia Professional League,2021,aggression,0,3014,0.0
+Saudi Arabia Professional League,2021,agility,0,3014,0.0
+Saudi Arabia Professional League,2021,balance,0,3014,0.0
+Saudi Arabia Professional League,2021,ball_control,0,3014,0.0
+Saudi Arabia Professional League,2021,composure,0,3014,0.0
+Saudi Arabia Professional League,2021,crossing,0,3014,0.0
+Saudi Arabia Professional League,2021,curve,0,3014,0.0
+Saudi Arabia Professional League,2021,defensive_awareness,0,3014,0.0
+Saudi Arabia Professional League,2021,dribbling,0,3014,0.0
+Saudi Arabia Professional League,2021,finishing,0,3014,0.0
+Saudi Arabia Professional League,2021,fk_accuracy,0,3014,0.0
+Saudi Arabia Professional League,2021,gk_diving,0,3014,0.0
+Saudi Arabia Professional League,2021,gk_handling,0,3014,0.0
+Saudi Arabia Professional League,2021,gk_kicking,0,3014,0.0
+Saudi Arabia Professional League,2021,gk_positioning,0,3014,0.0
+Saudi Arabia Professional League,2021,gk_reflexes,0,3014,0.0
+Saudi Arabia Professional League,2021,heading_accuracy,0,3014,0.0
+Saudi Arabia Professional League,2021,interceptions,0,3014,0.0
+Saudi Arabia Professional League,2021,jumping,0,3014,0.0
+Saudi Arabia Professional League,2021,long_passing,0,3014,0.0
+Saudi Arabia Professional League,2021,long_shots,0,3014,0.0
+Saudi Arabia Professional League,2021,penalties,0,3014,0.0
+Saudi Arabia Professional League,2021,positioning,0,3014,0.0
+Saudi Arabia Professional League,2021,reactions,0,3014,0.0
+Saudi Arabia Professional League,2021,short_passing,0,3014,0.0
+Saudi Arabia Professional League,2021,shot_power,0,3014,0.0
+Saudi Arabia Professional League,2021,sliding_tackle,0,3014,0.0
+Saudi Arabia Professional League,2021,sprint_speed,0,3014,0.0
+Saudi Arabia Professional League,2021,stamina,0,3014,0.0
+Saudi Arabia Professional League,2021,standing_tackle,0,3014,0.0
+Saudi Arabia Professional League,2021,strength,3,3014,0.099535500995355
+Saudi Arabia Professional League,2021,vision,0,3014,0.0
+Saudi Arabia Professional League,2021,volleys,0,3014,0.0
+Saudi Arabia Professional League,2022,acceleration,12,3908,0.3070624360286592
+Saudi Arabia Professional League,2022,aggression,8,3908,0.2047082906857728
+Saudi Arabia Professional League,2022,agility,12,3908,0.3070624360286592
+Saudi Arabia Professional League,2022,balance,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,ball_control,0,3908,0.0
+Saudi Arabia Professional League,2022,composure,0,3908,0.0
+Saudi Arabia Professional League,2022,crossing,12,3908,0.3070624360286592
+Saudi Arabia Professional League,2022,curve,0,3908,0.0
+Saudi Arabia Professional League,2022,defensive_awareness,12,3908,0.3070624360286592
+Saudi Arabia Professional League,2022,dribbling,0,3908,0.0
+Saudi Arabia Professional League,2022,finishing,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,fk_accuracy,0,3908,0.0
+Saudi Arabia Professional League,2022,gk_diving,0,3908,0.0
+Saudi Arabia Professional League,2022,gk_handling,0,3908,0.0
+Saudi Arabia Professional League,2022,gk_kicking,0,3908,0.0
+Saudi Arabia Professional League,2022,gk_positioning,0,3908,0.0
+Saudi Arabia Professional League,2022,gk_reflexes,0,3908,0.0
+Saudi Arabia Professional League,2022,heading_accuracy,8,3908,0.2047082906857728
+Saudi Arabia Professional League,2022,interceptions,0,3908,0.0
+Saudi Arabia Professional League,2022,jumping,20,3908,0.5117707267144319
+Saudi Arabia Professional League,2022,long_passing,0,3908,0.0
+Saudi Arabia Professional League,2022,long_shots,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,penalties,0,3908,0.0
+Saudi Arabia Professional League,2022,positioning,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,reactions,8,3908,0.2047082906857728
+Saudi Arabia Professional League,2022,short_passing,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,shot_power,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,sliding_tackle,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,sprint_speed,20,3908,0.5117707267144319
+Saudi Arabia Professional League,2022,stamina,8,3908,0.2047082906857728
+Saudi Arabia Professional League,2022,standing_tackle,8,3908,0.2047082906857728
+Saudi Arabia Professional League,2022,strength,39,3908,0.9979529170931423
+Saudi Arabia Professional League,2022,vision,4,3908,0.1023541453428864
+Saudi Arabia Professional League,2022,volleys,0,3908,0.0
+Saudi Arabia Professional League,2023,acceleration,6,4795,0.1251303441084463
+Saudi Arabia Professional League,2023,aggression,7,4795,0.145985401459854
+Saudi Arabia Professional League,2023,agility,12,4795,0.2502606882168926
+Saudi Arabia Professional League,2023,balance,6,4795,0.1251303441084463
+Saudi Arabia Professional League,2023,ball_control,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,composure,0,4795,0.0
+Saudi Arabia Professional League,2023,crossing,18,4795,0.3753910323253389
+Saudi Arabia Professional League,2023,curve,0,4795,0.0
+Saudi Arabia Professional League,2023,defensive_awareness,12,4795,0.2502606882168926
+Saudi Arabia Professional League,2023,dribbling,0,4795,0.0
+Saudi Arabia Professional League,2023,finishing,0,4795,0.0
+Saudi Arabia Professional League,2023,fk_accuracy,0,4795,0.0
+Saudi Arabia Professional League,2023,gk_diving,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,gk_handling,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,gk_kicking,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,gk_positioning,2,4795,0.04171011470281543
+Saudi Arabia Professional League,2023,gk_reflexes,2,4795,0.04171011470281543
+Saudi Arabia Professional League,2023,heading_accuracy,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,interceptions,0,4795,0.0
+Saudi Arabia Professional League,2023,jumping,26,4795,0.5422314911366006
+Saudi Arabia Professional League,2023,long_passing,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,long_shots,0,4795,0.0
+Saudi Arabia Professional League,2023,penalties,0,4795,0.0
+Saudi Arabia Professional League,2023,positioning,0,4795,0.0
+Saudi Arabia Professional League,2023,reactions,8,4795,0.16684045881126172
+Saudi Arabia Professional League,2023,short_passing,7,4795,0.145985401459854
+Saudi Arabia Professional League,2023,shot_power,1,4795,0.020855057351407715
+Saudi Arabia Professional League,2023,sliding_tackle,7,4795,0.145985401459854
+Saudi Arabia Professional League,2023,sprint_speed,24,4795,0.5005213764337852
+Saudi Arabia Professional League,2023,stamina,13,4795,0.2711157455683003
+Saudi Arabia Professional League,2023,standing_tackle,13,4795,0.2711157455683003
+Saudi Arabia Professional League,2023,strength,43,4795,0.8967674661105318
+Saudi Arabia Professional League,2023,vision,0,4795,0.0
+Saudi Arabia Professional League,2023,volleys,0,4795,0.0
+Saudi Arabia Professional League,2024,acceleration,4,4442,0.090049527239982
+Saudi Arabia Professional League,2024,aggression,4,4442,0.090049527239982
+Saudi Arabia Professional League,2024,agility,8,4442,0.180099054479964
+Saudi Arabia Professional League,2024,balance,3,4442,0.0675371454299865
+Saudi Arabia Professional League,2024,ball_control,0,4442,0.0
+Saudi Arabia Professional League,2024,composure,0,4442,0.0
+Saudi Arabia Professional League,2024,crossing,11,4442,0.24763619990995048
+Saudi Arabia Professional League,2024,curve,0,4442,0.0
+Saudi Arabia Professional League,2024,defensive_awareness,6,4442,0.135074290859973
+Saudi Arabia Professional League,2024,dribbling,0,4442,0.0
+Saudi Arabia Professional League,2024,finishing,0,4442,0.0
+Saudi Arabia Professional League,2024,fk_accuracy,0,4442,0.0
+Saudi Arabia Professional League,2024,gk_diving,0,4442,0.0
+Saudi Arabia Professional League,2024,gk_handling,0,4442,0.0
+Saudi Arabia Professional League,2024,gk_kicking,0,4442,0.0
+Saudi Arabia Professional League,2024,gk_positioning,0,4442,0.0
+Saudi Arabia Professional League,2024,gk_reflexes,0,4442,0.0
+Saudi Arabia Professional League,2024,heading_accuracy,4,4442,0.090049527239982
+Saudi Arabia Professional League,2024,interceptions,0,4442,0.0
+Saudi Arabia Professional League,2024,jumping,18,4442,0.40522287257991896
+Saudi Arabia Professional League,2024,long_passing,1,4442,0.0225123818099955
+Saudi Arabia Professional League,2024,long_shots,0,4442,0.0
+Saudi Arabia Professional League,2024,penalties,0,4442,0.0
+Saudi Arabia Professional League,2024,positioning,0,4442,0.0
+Saudi Arabia Professional League,2024,reactions,4,4442,0.090049527239982
+Saudi Arabia Professional League,2024,short_passing,3,4442,0.0675371454299865
+Saudi Arabia Professional League,2024,shot_power,0,4442,0.0
+Saudi Arabia Professional League,2024,sliding_tackle,8,4442,0.180099054479964
+Saudi Arabia Professional League,2024,sprint_speed,13,4442,0.2926609635299415
+Saudi Arabia Professional League,2024,stamina,6,4442,0.135074290859973
+Saudi Arabia Professional League,2024,standing_tackle,7,4442,0.15758667266996848
+Saudi Arabia Professional League,2024,strength,27,4442,0.6078343088698784
+Saudi Arabia Professional League,2024,vision,0,4442,0.0
+Saudi Arabia Professional League,2024,volleys,0,4442,0.0
+Scotland Premiership,2021,acceleration,0,2053,0.0
+Scotland Premiership,2021,aggression,0,2053,0.0
+Scotland Premiership,2021,agility,0,2053,0.0
+Scotland Premiership,2021,balance,0,2053,0.0
+Scotland Premiership,2021,ball_control,0,2053,0.0
+Scotland Premiership,2021,composure,0,2053,0.0
+Scotland Premiership,2021,crossing,1,2053,0.04870920603994155
+Scotland Premiership,2021,curve,0,2053,0.0
+Scotland Premiership,2021,defensive_awareness,0,2053,0.0
+Scotland Premiership,2021,dribbling,0,2053,0.0
+Scotland Premiership,2021,finishing,4,2053,0.1948368241597662
+Scotland Premiership,2021,fk_accuracy,0,2053,0.0
+Scotland Premiership,2021,gk_diving,0,2053,0.0
+Scotland Premiership,2021,gk_handling,1,2053,0.04870920603994155
+Scotland Premiership,2021,gk_kicking,0,2053,0.0
+Scotland Premiership,2021,gk_positioning,1,2053,0.04870920603994155
+Scotland Premiership,2021,gk_reflexes,0,2053,0.0
+Scotland Premiership,2021,heading_accuracy,0,2053,0.0
+Scotland Premiership,2021,interceptions,0,2053,0.0
+Scotland Premiership,2021,jumping,0,2053,0.0
+Scotland Premiership,2021,long_passing,0,2053,0.0
+Scotland Premiership,2021,long_shots,3,2053,0.14612761811982464
+Scotland Premiership,2021,penalties,3,2053,0.14612761811982464
+Scotland Premiership,2021,positioning,0,2053,0.0
+Scotland Premiership,2021,reactions,0,2053,0.0
+Scotland Premiership,2021,short_passing,0,2053,0.0
+Scotland Premiership,2021,shot_power,0,2053,0.0
+Scotland Premiership,2021,sliding_tackle,0,2053,0.0
+Scotland Premiership,2021,sprint_speed,0,2053,0.0
+Scotland Premiership,2021,stamina,0,2053,0.0
+Scotland Premiership,2021,standing_tackle,3,2053,0.14612761811982464
+Scotland Premiership,2021,strength,0,2053,0.0
+Scotland Premiership,2021,vision,0,2053,0.0
+Scotland Premiership,2021,volleys,3,2053,0.14612761811982464
+Scotland Premiership,2022,acceleration,1,2476,0.04038772213247173
+Scotland Premiership,2022,aggression,0,2476,0.0
+Scotland Premiership,2022,agility,0,2476,0.0
+Scotland Premiership,2022,balance,4,2476,0.16155088852988692
+Scotland Premiership,2022,ball_control,2,2476,0.08077544426494346
+Scotland Premiership,2022,composure,0,2476,0.0
+Scotland Premiership,2022,crossing,0,2476,0.0
+Scotland Premiership,2022,curve,1,2476,0.04038772213247173
+Scotland Premiership,2022,defensive_awareness,0,2476,0.0
+Scotland Premiership,2022,dribbling,3,2476,0.12116316639741519
+Scotland Premiership,2022,finishing,1,2476,0.04038772213247173
+Scotland Premiership,2022,fk_accuracy,0,2476,0.0
+Scotland Premiership,2022,gk_diving,0,2476,0.0
+Scotland Premiership,2022,gk_handling,0,2476,0.0
+Scotland Premiership,2022,gk_kicking,0,2476,0.0
+Scotland Premiership,2022,gk_positioning,0,2476,0.0
+Scotland Premiership,2022,gk_reflexes,0,2476,0.0
+Scotland Premiership,2022,heading_accuracy,1,2476,0.04038772213247173
+Scotland Premiership,2022,interceptions,0,2476,0.0
+Scotland Premiership,2022,jumping,1,2476,0.04038772213247173
+Scotland Premiership,2022,long_passing,1,2476,0.04038772213247173
+Scotland Premiership,2022,long_shots,1,2476,0.04038772213247173
+Scotland Premiership,2022,penalties,0,2476,0.0
+Scotland Premiership,2022,positioning,0,2476,0.0
+Scotland Premiership,2022,reactions,0,2476,0.0
+Scotland Premiership,2022,short_passing,1,2476,0.04038772213247173
+Scotland Premiership,2022,shot_power,1,2476,0.04038772213247173
+Scotland Premiership,2022,sliding_tackle,0,2476,0.0
+Scotland Premiership,2022,sprint_speed,5,2476,0.20193861066235863
+Scotland Premiership,2022,stamina,8,2476,0.32310177705977383
+Scotland Premiership,2022,standing_tackle,1,2476,0.04038772213247173
+Scotland Premiership,2022,strength,5,2476,0.20193861066235863
+Scotland Premiership,2022,vision,0,2476,0.0
+Scotland Premiership,2022,volleys,1,2476,0.04038772213247173
+Scotland Premiership,2023,acceleration,1,2769,0.03611412062116288
+Scotland Premiership,2023,aggression,1,2769,0.03611412062116288
+Scotland Premiership,2023,agility,0,2769,0.0
+Scotland Premiership,2023,balance,7,2769,0.25279884434814015
+Scotland Premiership,2023,ball_control,1,2769,0.03611412062116288
+Scotland Premiership,2023,composure,0,2769,0.0
+Scotland Premiership,2023,crossing,0,2769,0.0
+Scotland Premiership,2023,curve,1,2769,0.03611412062116288
+Scotland Premiership,2023,defensive_awareness,1,2769,0.03611412062116288
+Scotland Premiership,2023,dribbling,0,2769,0.0
+Scotland Premiership,2023,finishing,1,2769,0.03611412062116288
+Scotland Premiership,2023,fk_accuracy,1,2769,0.03611412062116288
+Scotland Premiership,2023,gk_diving,0,2769,0.0
+Scotland Premiership,2023,gk_handling,0,2769,0.0
+Scotland Premiership,2023,gk_kicking,0,2769,0.0
+Scotland Premiership,2023,gk_positioning,0,2769,0.0
+Scotland Premiership,2023,gk_reflexes,0,2769,0.0
+Scotland Premiership,2023,heading_accuracy,1,2769,0.03611412062116288
+Scotland Premiership,2023,interceptions,1,2769,0.03611412062116288
+Scotland Premiership,2023,jumping,1,2769,0.03611412062116288
+Scotland Premiership,2023,long_passing,1,2769,0.03611412062116288
+Scotland Premiership,2023,long_shots,1,2769,0.03611412062116288
+Scotland Premiership,2023,penalties,0,2769,0.0
+Scotland Premiership,2023,positioning,1,2769,0.03611412062116288
+Scotland Premiership,2023,reactions,1,2769,0.03611412062116288
+Scotland Premiership,2023,short_passing,1,2769,0.03611412062116288
+Scotland Premiership,2023,shot_power,0,2769,0.0
+Scotland Premiership,2023,sliding_tackle,1,2769,0.03611412062116288
+Scotland Premiership,2023,sprint_speed,7,2769,0.25279884434814015
+Scotland Premiership,2023,stamina,7,2769,0.25279884434814015
+Scotland Premiership,2023,standing_tackle,1,2769,0.03611412062116288
+Scotland Premiership,2023,strength,6,2769,0.21668472372697725
+Scotland Premiership,2023,vision,1,2769,0.03611412062116288
+Scotland Premiership,2023,volleys,1,2769,0.03611412062116288
+Scotland Premiership,2024,acceleration,0,2667,0.0
+Scotland Premiership,2024,aggression,0,2667,0.0
+Scotland Premiership,2024,agility,0,2667,0.0
+Scotland Premiership,2024,balance,3,2667,0.1124859392575928
+Scotland Premiership,2024,ball_control,0,2667,0.0
+Scotland Premiership,2024,composure,0,2667,0.0
+Scotland Premiership,2024,crossing,0,2667,0.0
+Scotland Premiership,2024,curve,0,2667,0.0
+Scotland Premiership,2024,defensive_awareness,0,2667,0.0
+Scotland Premiership,2024,dribbling,0,2667,0.0
+Scotland Premiership,2024,finishing,0,2667,0.0
+Scotland Premiership,2024,fk_accuracy,0,2667,0.0
+Scotland Premiership,2024,gk_diving,0,2667,0.0
+Scotland Premiership,2024,gk_handling,0,2667,0.0
+Scotland Premiership,2024,gk_kicking,0,2667,0.0
+Scotland Premiership,2024,gk_positioning,0,2667,0.0
+Scotland Premiership,2024,gk_reflexes,0,2667,0.0
+Scotland Premiership,2024,heading_accuracy,0,2667,0.0
+Scotland Premiership,2024,interceptions,0,2667,0.0
+Scotland Premiership,2024,jumping,0,2667,0.0
+Scotland Premiership,2024,long_passing,0,2667,0.0
+Scotland Premiership,2024,long_shots,0,2667,0.0
+Scotland Premiership,2024,penalties,0,2667,0.0
+Scotland Premiership,2024,positioning,0,2667,0.0
+Scotland Premiership,2024,reactions,0,2667,0.0
+Scotland Premiership,2024,short_passing,0,2667,0.0
+Scotland Premiership,2024,shot_power,0,2667,0.0
+Scotland Premiership,2024,sliding_tackle,0,2667,0.0
+Scotland Premiership,2024,sprint_speed,3,2667,0.1124859392575928
+Scotland Premiership,2024,stamina,3,2667,0.1124859392575928
+Scotland Premiership,2024,standing_tackle,0,2667,0.0
+Scotland Premiership,2024,strength,3,2667,0.1124859392575928
+Scotland Premiership,2024,vision,0,2667,0.0
+Scotland Premiership,2024,volleys,0,2667,0.0
+Spain La Liga,2021,acceleration,0,4049,0.0
+Spain La Liga,2021,aggression,0,4049,0.0
+Spain La Liga,2021,agility,0,4049,0.0
+Spain La Liga,2021,balance,0,4049,0.0
+Spain La Liga,2021,ball_control,0,4049,0.0
+Spain La Liga,2021,composure,0,4049,0.0
+Spain La Liga,2021,crossing,0,4049,0.0
+Spain La Liga,2021,curve,0,4049,0.0
+Spain La Liga,2021,defensive_awareness,0,4049,0.0
+Spain La Liga,2021,dribbling,0,4049,0.0
+Spain La Liga,2021,finishing,0,4049,0.0
+Spain La Liga,2021,fk_accuracy,0,4049,0.0
+Spain La Liga,2021,gk_diving,0,4049,0.0
+Spain La Liga,2021,gk_handling,0,4049,0.0
+Spain La Liga,2021,gk_kicking,0,4049,0.0
+Spain La Liga,2021,gk_positioning,0,4049,0.0
+Spain La Liga,2021,gk_reflexes,0,4049,0.0
+Spain La Liga,2021,heading_accuracy,0,4049,0.0
+Spain La Liga,2021,interceptions,0,4049,0.0
+Spain La Liga,2021,jumping,0,4049,0.0
+Spain La Liga,2021,long_passing,0,4049,0.0
+Spain La Liga,2021,long_shots,0,4049,0.0
+Spain La Liga,2021,penalties,0,4049,0.0
+Spain La Liga,2021,positioning,0,4049,0.0
+Spain La Liga,2021,reactions,0,4049,0.0
+Spain La Liga,2021,short_passing,0,4049,0.0
+Spain La Liga,2021,shot_power,0,4049,0.0
+Spain La Liga,2021,sliding_tackle,0,4049,0.0
+Spain La Liga,2021,sprint_speed,0,4049,0.0
+Spain La Liga,2021,stamina,0,4049,0.0
+Spain La Liga,2021,standing_tackle,0,4049,0.0
+Spain La Liga,2021,strength,0,4049,0.0
+Spain La Liga,2021,vision,0,4049,0.0
+Spain La Liga,2021,volleys,0,4049,0.0
+Spain La Liga,2022,acceleration,37,4377,0.8453278501256568
+Spain La Liga,2022,aggression,5,4377,0.1142334932602239
+Spain La Liga,2022,agility,29,4377,0.6625542609092986
+Spain La Liga,2022,balance,23,4377,0.52547406899703
+Spain La Liga,2022,ball_control,21,4377,0.47978067169294036
+Spain La Liga,2022,composure,2,4377,0.045693397304089556
+Spain La Liga,2022,crossing,14,4377,0.3198537811286269
+Spain La Liga,2022,curve,2,4377,0.045693397304089556
+Spain La Liga,2022,defensive_awareness,5,4377,0.1142334932602239
+Spain La Liga,2022,dribbling,14,4377,0.3198537811286269
+Spain La Liga,2022,finishing,11,4377,0.2513136851724926
+Spain La Liga,2022,fk_accuracy,5,4377,0.1142334932602239
+Spain La Liga,2022,gk_diving,5,4377,0.1142334932602239
+Spain La Liga,2022,gk_handling,4,4377,0.09138679460817911
+Spain La Liga,2022,gk_kicking,4,4377,0.09138679460817911
+Spain La Liga,2022,gk_positioning,5,4377,0.1142334932602239
+Spain La Liga,2022,gk_reflexes,5,4377,0.1142334932602239
+Spain La Liga,2022,heading_accuracy,3,4377,0.06854009595613433
+Spain La Liga,2022,interceptions,4,4377,0.09138679460817911
+Spain La Liga,2022,jumping,18,4377,0.41124057573680606
+Spain La Liga,2022,long_passing,11,4377,0.2513136851724926
+Spain La Liga,2022,long_shots,10,4377,0.2284669865204478
+Spain La Liga,2022,penalties,0,4377,0.0
+Spain La Liga,2022,positioning,7,4377,0.15992689056431345
+Spain La Liga,2022,reactions,8,4377,0.18277358921635822
+Spain La Liga,2022,short_passing,19,4377,0.4340872743888508
+Spain La Liga,2022,shot_power,14,4377,0.3198537811286269
+Spain La Liga,2022,sliding_tackle,2,4377,0.045693397304089556
+Spain La Liga,2022,sprint_speed,42,4377,0.9595613433858807
+Spain La Liga,2022,stamina,44,4377,1.0052547406899703
+Spain La Liga,2022,standing_tackle,5,4377,0.1142334932602239
+Spain La Liga,2022,strength,38,4377,0.8681745487777016
+Spain La Liga,2022,vision,4,4377,0.09138679460817911
+Spain La Liga,2022,volleys,4,4377,0.09138679460817911
+Spain La Liga,2023,acceleration,31,4661,0.6650933276121004
+Spain La Liga,2023,aggression,1,4661,0.021454623471358077
+Spain La Liga,2023,agility,13,4661,0.278910105127655
+Spain La Liga,2023,balance,19,4661,0.4076378459558035
+Spain La Liga,2023,ball_control,7,4661,0.15018236429950654
+Spain La Liga,2023,composure,1,4661,0.021454623471358077
+Spain La Liga,2023,crossing,6,4661,0.12872774082814847
+Spain La Liga,2023,curve,0,4661,0.0
+Spain La Liga,2023,defensive_awareness,1,4661,0.021454623471358077
+Spain La Liga,2023,dribbling,1,4661,0.021454623471358077
+Spain La Liga,2023,finishing,7,4661,0.15018236429950654
+Spain La Liga,2023,fk_accuracy,6,4661,0.12872774082814847
+Spain La Liga,2023,gk_diving,6,4661,0.12872774082814847
+Spain La Liga,2023,gk_handling,6,4661,0.12872774082814847
+Spain La Liga,2023,gk_kicking,6,4661,0.12872774082814847
+Spain La Liga,2023,gk_positioning,6,4661,0.12872774082814847
+Spain La Liga,2023,gk_reflexes,6,4661,0.12872774082814847
+Spain La Liga,2023,heading_accuracy,0,4661,0.0
+Spain La Liga,2023,interceptions,1,4661,0.021454623471358077
+Spain La Liga,2023,jumping,12,4661,0.25745548165629695
+Spain La Liga,2023,long_passing,6,4661,0.12872774082814847
+Spain La Liga,2023,long_shots,7,4661,0.15018236429950654
+Spain La Liga,2023,penalties,0,4661,0.0
+Spain La Liga,2023,positioning,6,4661,0.12872774082814847
+Spain La Liga,2023,reactions,6,4661,0.12872774082814847
+Spain La Liga,2023,short_passing,7,4661,0.15018236429950654
+Spain La Liga,2023,shot_power,13,4661,0.278910105127655
+Spain La Liga,2023,sliding_tackle,0,4661,0.0
+Spain La Liga,2023,sprint_speed,31,4661,0.6650933276121004
+Spain La Liga,2023,stamina,31,4661,0.6650933276121004
+Spain La Liga,2023,standing_tackle,0,4661,0.0
+Spain La Liga,2023,strength,32,4661,0.6865479510834585
+Spain La Liga,2023,vision,0,4661,0.0
+Spain La Liga,2023,volleys,1,4661,0.021454623471358077
+Spain La Liga,2024,acceleration,13,4392,0.2959927140255009
+Spain La Liga,2024,aggression,0,4392,0.0
+Spain La Liga,2024,agility,6,4392,0.1366120218579235
+Spain La Liga,2024,balance,9,4392,0.20491803278688525
+Spain La Liga,2024,ball_control,3,4392,0.06830601092896176
+Spain La Liga,2024,composure,0,4392,0.0
+Spain La Liga,2024,crossing,3,4392,0.06830601092896176
+Spain La Liga,2024,curve,0,4392,0.0
+Spain La Liga,2024,defensive_awareness,0,4392,0.0
+Spain La Liga,2024,dribbling,0,4392,0.0
+Spain La Liga,2024,finishing,4,4392,0.09107468123861566
+Spain La Liga,2024,fk_accuracy,4,4392,0.09107468123861566
+Spain La Liga,2024,gk_diving,4,4392,0.09107468123861566
+Spain La Liga,2024,gk_handling,4,4392,0.09107468123861566
+Spain La Liga,2024,gk_kicking,4,4392,0.09107468123861566
+Spain La Liga,2024,gk_positioning,4,4392,0.09107468123861566
+Spain La Liga,2024,gk_reflexes,4,4392,0.09107468123861566
+Spain La Liga,2024,heading_accuracy,0,4392,0.0
+Spain La Liga,2024,interceptions,0,4392,0.0
+Spain La Liga,2024,jumping,6,4392,0.1366120218579235
+Spain La Liga,2024,long_passing,4,4392,0.09107468123861566
+Spain La Liga,2024,long_shots,4,4392,0.09107468123861566
+Spain La Liga,2024,penalties,0,4392,0.0
+Spain La Liga,2024,positioning,4,4392,0.09107468123861566
+Spain La Liga,2024,reactions,4,4392,0.09107468123861566
+Spain La Liga,2024,short_passing,3,4392,0.06830601092896176
+Spain La Liga,2024,shot_power,8,4392,0.18214936247723132
+Spain La Liga,2024,sliding_tackle,0,4392,0.0
+Spain La Liga,2024,sprint_speed,13,4392,0.2959927140255009
+Spain La Liga,2024,stamina,14,4392,0.31876138433515483
+Spain La Liga,2024,standing_tackle,0,4392,0.0
+Spain La Liga,2024,strength,13,4392,0.2959927140255009
+Spain La Liga,2024,vision,0,4392,0.0
+Spain La Liga,2024,volleys,0,4392,0.0
+Spain Segunda División,2021,acceleration,1,4146,0.0241196333815726
+Spain Segunda División,2021,aggression,1,4146,0.0241196333815726
+Spain Segunda División,2021,agility,0,4146,0.0
+Spain Segunda División,2021,balance,0,4146,0.0
+Spain Segunda División,2021,ball_control,0,4146,0.0
+Spain Segunda División,2021,composure,0,4146,0.0
+Spain Segunda División,2021,crossing,0,4146,0.0
+Spain Segunda División,2021,curve,1,4146,0.0241196333815726
+Spain Segunda División,2021,defensive_awareness,0,4146,0.0
+Spain Segunda División,2021,dribbling,1,4146,0.0241196333815726
+Spain Segunda División,2021,finishing,0,4146,0.0
+Spain Segunda División,2021,fk_accuracy,1,4146,0.0241196333815726
+Spain Segunda División,2021,gk_diving,0,4146,0.0
+Spain Segunda División,2021,gk_handling,0,4146,0.0
+Spain Segunda División,2021,gk_kicking,0,4146,0.0
+Spain Segunda División,2021,gk_positioning,0,4146,0.0
+Spain Segunda División,2021,gk_reflexes,0,4146,0.0
+Spain Segunda División,2021,heading_accuracy,0,4146,0.0
+Spain Segunda División,2021,interceptions,0,4146,0.0
+Spain Segunda División,2021,jumping,0,4146,0.0
+Spain Segunda División,2021,long_passing,0,4146,0.0
+Spain Segunda División,2021,long_shots,1,4146,0.0241196333815726
+Spain Segunda División,2021,penalties,0,4146,0.0
+Spain Segunda División,2021,positioning,1,4146,0.0241196333815726
+Spain Segunda División,2021,reactions,0,4146,0.0
+Spain Segunda División,2021,short_passing,0,4146,0.0
+Spain Segunda División,2021,shot_power,1,4146,0.0241196333815726
+Spain Segunda División,2021,sliding_tackle,0,4146,0.0
+Spain Segunda División,2021,sprint_speed,0,4146,0.0
+Spain Segunda División,2021,stamina,0,4146,0.0
+Spain Segunda División,2021,standing_tackle,0,4146,0.0
+Spain Segunda División,2021,strength,0,4146,0.0
+Spain Segunda División,2021,vision,1,4146,0.0241196333815726
+Spain Segunda División,2021,volleys,0,4146,0.0
+Spain Segunda División,2022,acceleration,50,5364,0.9321401938851603
+Spain Segunda División,2022,aggression,11,5364,0.20507084265473527
+Spain Segunda División,2022,agility,41,5364,0.7643549589858315
+Spain Segunda División,2022,balance,37,5364,0.6897837434750187
+Spain Segunda División,2022,ball_control,75,5364,1.3982102908277405
+Spain Segunda División,2022,composure,5,5364,0.09321401938851603
+Spain Segunda División,2022,crossing,31,5364,0.5779269202087994
+Spain Segunda División,2022,curve,0,5364,0.0
+Spain Segunda División,2022,defensive_awareness,5,5364,0.09321401938851603
+Spain Segunda División,2022,dribbling,52,5364,0.9694258016405667
+Spain Segunda División,2022,finishing,40,5364,0.7457121551081283
+Spain Segunda División,2022,fk_accuracy,4,5364,0.07457121551081283
+Spain Segunda División,2022,gk_diving,3,5364,0.05592841163310962
+Spain Segunda División,2022,gk_handling,2,5364,0.037285607755406416
+Spain Segunda División,2022,gk_kicking,3,5364,0.05592841163310962
+Spain Segunda División,2022,gk_positioning,3,5364,0.05592841163310962
+Spain Segunda División,2022,gk_reflexes,3,5364,0.05592841163310962
+Spain Segunda División,2022,heading_accuracy,28,5364,0.5219985085756897
+Spain Segunda División,2022,interceptions,8,5364,0.14914243102162567
+Spain Segunda División,2022,jumping,41,5364,0.7643549589858315
+Spain Segunda División,2022,long_passing,32,5364,0.5965697240865027
+Spain Segunda División,2022,long_shots,17,5364,0.3169276659209545
+Spain Segunda División,2022,penalties,0,5364,0.0
+Spain Segunda División,2022,positioning,14,5364,0.2609992542878449
+Spain Segunda División,2022,reactions,16,5364,0.29828486204325133
+Spain Segunda División,2022,short_passing,43,5364,0.8016405667412378
+Spain Segunda División,2022,shot_power,14,5364,0.2609992542878449
+Spain Segunda División,2022,sliding_tackle,25,5364,0.46607009694258017
+Spain Segunda División,2022,sprint_speed,59,5364,1.0999254287844893
+Spain Segunda División,2022,stamina,69,5364,1.2863534675615214
+Spain Segunda División,2022,standing_tackle,39,5364,0.727069351230425
+Spain Segunda División,2022,strength,53,5364,0.9880686055182699
+Spain Segunda División,2022,vision,18,5364,0.33557046979865773
+Spain Segunda División,2022,volleys,5,5364,0.09321401938851603
+Spain Segunda División,2023,acceleration,42,6276,0.6692160611854685
+Spain Segunda División,2023,aggression,18,6276,0.28680688336520077
+Spain Segunda División,2023,agility,54,6276,0.8604206500956023
+Spain Segunda División,2023,balance,36,6276,0.5736137667304015
+Spain Segunda División,2023,ball_control,60,6276,0.9560229445506692
+Spain Segunda División,2023,composure,12,6276,0.19120458891013384
+Spain Segunda División,2023,crossing,36,6276,0.5736137667304015
+Spain Segunda División,2023,curve,0,6276,0.0
+Spain Segunda División,2023,defensive_awareness,0,6276,0.0
+Spain Segunda División,2023,dribbling,48,6276,0.7648183556405354
+Spain Segunda División,2023,finishing,36,6276,0.5736137667304015
+Spain Segunda División,2023,fk_accuracy,6,6276,0.09560229445506692
+Spain Segunda División,2023,gk_diving,0,6276,0.0
+Spain Segunda División,2023,gk_handling,0,6276,0.0
+Spain Segunda División,2023,gk_kicking,0,6276,0.0
+Spain Segunda División,2023,gk_positioning,0,6276,0.0
+Spain Segunda División,2023,gk_reflexes,0,6276,0.0
+Spain Segunda División,2023,heading_accuracy,30,6276,0.4780114722753346
+Spain Segunda División,2023,interceptions,12,6276,0.19120458891013384
+Spain Segunda División,2023,jumping,48,6276,0.7648183556405354
+Spain Segunda División,2023,long_passing,30,6276,0.4780114722753346
+Spain Segunda División,2023,long_shots,12,6276,0.19120458891013384
+Spain Segunda División,2023,penalties,0,6276,0.0
+Spain Segunda División,2023,positioning,18,6276,0.28680688336520077
+Spain Segunda División,2023,reactions,18,6276,0.28680688336520077
+Spain Segunda División,2023,short_passing,49,6276,0.7807520713830465
+Spain Segunda División,2023,shot_power,6,6276,0.09560229445506692
+Spain Segunda División,2023,sliding_tackle,24,6276,0.3824091778202677
+Spain Segunda División,2023,sprint_speed,54,6276,0.8604206500956023
+Spain Segunda División,2023,stamina,78,6276,1.24282982791587
+Spain Segunda División,2023,standing_tackle,37,6276,0.5895474824729127
+Spain Segunda División,2023,strength,60,6276,0.9560229445506692
+Spain Segunda División,2023,vision,24,6276,0.3824091778202677
+Spain Segunda División,2023,volleys,0,6276,0.0
+Spain Segunda División,2024,acceleration,19,5857,0.32439815605258665
+Spain Segunda División,2024,aggression,11,5857,0.187809458767287
+Spain Segunda División,2024,agility,25,5857,0.4268396790165614
+Spain Segunda División,2024,balance,22,5857,0.375618917534574
+Spain Segunda División,2024,ball_control,29,5857,0.4951340276592112
+Spain Segunda División,2024,composure,7,5857,0.11951511012463718
+Spain Segunda División,2024,crossing,15,5857,0.2561038074099368
+Spain Segunda División,2024,curve,0,5857,0.0
+Spain Segunda División,2024,defensive_awareness,0,5857,0.0
+Spain Segunda División,2024,dribbling,22,5857,0.375618917534574
+Spain Segunda División,2024,finishing,14,5857,0.23903022024927437
+Spain Segunda División,2024,fk_accuracy,0,5857,0.0
+Spain Segunda División,2024,gk_diving,0,5857,0.0
+Spain Segunda División,2024,gk_handling,0,5857,0.0
+Spain Segunda División,2024,gk_kicking,0,5857,0.0
+Spain Segunda División,2024,gk_positioning,0,5857,0.0
+Spain Segunda División,2024,gk_reflexes,0,5857,0.0
+Spain Segunda División,2024,heading_accuracy,15,5857,0.2561038074099368
+Spain Segunda División,2024,interceptions,7,5857,0.11951511012463718
+Spain Segunda División,2024,jumping,26,5857,0.4439132661772238
+Spain Segunda División,2024,long_passing,11,5857,0.187809458767287
+Spain Segunda División,2024,long_shots,8,5857,0.13658869728529965
+Spain Segunda División,2024,penalties,0,5857,0.0
+Spain Segunda División,2024,positioning,10,5857,0.17073587160662454
+Spain Segunda División,2024,reactions,10,5857,0.17073587160662454
+Spain Segunda División,2024,short_passing,26,5857,0.4439132661772238
+Spain Segunda División,2024,shot_power,3,5857,0.05122076148198736
+Spain Segunda División,2024,sliding_tackle,12,5857,0.20488304592794945
+Spain Segunda División,2024,sprint_speed,26,5857,0.4439132661772238
+Spain Segunda División,2024,stamina,41,5857,0.7000170735871607
+Spain Segunda División,2024,standing_tackle,20,5857,0.3414717432132491
+Spain Segunda División,2024,strength,35,5857,0.5975755506231859
+Spain Segunda División,2024,vision,10,5857,0.17073587160662454
+Spain Segunda División,2024,volleys,0,5857,0.0
+Switzerland Super League,2021,acceleration,0,1738,0.0
+Switzerland Super League,2021,aggression,0,1738,0.0
+Switzerland Super League,2021,agility,0,1738,0.0
+Switzerland Super League,2021,balance,0,1738,0.0
+Switzerland Super League,2021,ball_control,0,1738,0.0
+Switzerland Super League,2021,composure,0,1738,0.0
+Switzerland Super League,2021,crossing,0,1738,0.0
+Switzerland Super League,2021,curve,0,1738,0.0
+Switzerland Super League,2021,defensive_awareness,0,1738,0.0
+Switzerland Super League,2021,dribbling,0,1738,0.0
+Switzerland Super League,2021,finishing,0,1738,0.0
+Switzerland Super League,2021,fk_accuracy,0,1738,0.0
+Switzerland Super League,2021,gk_diving,0,1738,0.0
+Switzerland Super League,2021,gk_handling,0,1738,0.0
+Switzerland Super League,2021,gk_kicking,0,1738,0.0
+Switzerland Super League,2021,gk_positioning,0,1738,0.0
+Switzerland Super League,2021,gk_reflexes,0,1738,0.0
+Switzerland Super League,2021,heading_accuracy,0,1738,0.0
+Switzerland Super League,2021,interceptions,0,1738,0.0
+Switzerland Super League,2021,jumping,0,1738,0.0
+Switzerland Super League,2021,long_passing,0,1738,0.0
+Switzerland Super League,2021,long_shots,0,1738,0.0
+Switzerland Super League,2021,penalties,0,1738,0.0
+Switzerland Super League,2021,positioning,0,1738,0.0
+Switzerland Super League,2021,reactions,0,1738,0.0
+Switzerland Super League,2021,short_passing,0,1738,0.0
+Switzerland Super League,2021,shot_power,0,1738,0.0
+Switzerland Super League,2021,sliding_tackle,0,1738,0.0
+Switzerland Super League,2021,sprint_speed,0,1738,0.0
+Switzerland Super League,2021,stamina,0,1738,0.0
+Switzerland Super League,2021,standing_tackle,0,1738,0.0
+Switzerland Super League,2021,strength,0,1738,0.0
+Switzerland Super League,2021,vision,0,1738,0.0
+Switzerland Super League,2021,volleys,0,1738,0.0
+Switzerland Super League,2022,acceleration,20,2222,0.9000900090009001
+Switzerland Super League,2022,aggression,4,2222,0.18001800180018002
+Switzerland Super League,2022,agility,16,2222,0.7200720072007201
+Switzerland Super League,2022,balance,8,2222,0.36003600360036003
+Switzerland Super League,2022,ball_control,8,2222,0.36003600360036003
+Switzerland Super League,2022,composure,4,2222,0.18001800180018002
+Switzerland Super League,2022,crossing,4,2222,0.18001800180018002
+Switzerland Super League,2022,curve,8,2222,0.36003600360036003
+Switzerland Super League,2022,defensive_awareness,4,2222,0.18001800180018002
+Switzerland Super League,2022,dribbling,16,2222,0.7200720072007201
+Switzerland Super League,2022,finishing,8,2222,0.36003600360036003
+Switzerland Super League,2022,fk_accuracy,4,2222,0.18001800180018002
+Switzerland Super League,2022,gk_diving,0,2222,0.0
+Switzerland Super League,2022,gk_handling,0,2222,0.0
+Switzerland Super League,2022,gk_kicking,0,2222,0.0
+Switzerland Super League,2022,gk_positioning,0,2222,0.0
+Switzerland Super League,2022,gk_reflexes,0,2222,0.0
+Switzerland Super League,2022,heading_accuracy,8,2222,0.36003600360036003
+Switzerland Super League,2022,interceptions,8,2222,0.36003600360036003
+Switzerland Super League,2022,jumping,20,2222,0.9000900090009001
+Switzerland Super League,2022,long_passing,8,2222,0.36003600360036003
+Switzerland Super League,2022,long_shots,4,2222,0.18001800180018002
+Switzerland Super League,2022,penalties,4,2222,0.18001800180018002
+Switzerland Super League,2022,positioning,16,2222,0.7200720072007201
+Switzerland Super League,2022,reactions,4,2222,0.18001800180018002
+Switzerland Super League,2022,short_passing,16,2222,0.7200720072007201
+Switzerland Super League,2022,shot_power,4,2222,0.18001800180018002
+Switzerland Super League,2022,sliding_tackle,8,2222,0.36003600360036003
+Switzerland Super League,2022,sprint_speed,16,2222,0.7200720072007201
+Switzerland Super League,2022,stamina,12,2222,0.54005400540054
+Switzerland Super League,2022,standing_tackle,0,2222,0.0
+Switzerland Super League,2022,strength,16,2222,0.7200720072007201
+Switzerland Super League,2022,vision,4,2222,0.18001800180018002
+Switzerland Super League,2022,volleys,8,2222,0.36003600360036003
+Switzerland Super League,2023,acceleration,30,2827,1.0611956137247966
+Switzerland Super League,2023,aggression,6,2827,0.21223912274495932
+Switzerland Super League,2023,agility,18,2827,0.636717368234878
+Switzerland Super League,2023,balance,6,2827,0.21223912274495932
+Switzerland Super League,2023,ball_control,6,2827,0.21223912274495932
+Switzerland Super League,2023,composure,6,2827,0.21223912274495932
+Switzerland Super League,2023,crossing,0,2827,0.0
+Switzerland Super League,2023,curve,6,2827,0.21223912274495932
+Switzerland Super League,2023,defensive_awareness,6,2827,0.21223912274495932
+Switzerland Super League,2023,dribbling,12,2827,0.42447824548991864
+Switzerland Super League,2023,finishing,12,2827,0.42447824548991864
+Switzerland Super League,2023,fk_accuracy,6,2827,0.21223912274495932
+Switzerland Super League,2023,gk_diving,0,2827,0.0
+Switzerland Super League,2023,gk_handling,0,2827,0.0
+Switzerland Super League,2023,gk_kicking,0,2827,0.0
+Switzerland Super League,2023,gk_positioning,0,2827,0.0
+Switzerland Super League,2023,gk_reflexes,0,2827,0.0
+Switzerland Super League,2023,heading_accuracy,12,2827,0.42447824548991864
+Switzerland Super League,2023,interceptions,6,2827,0.21223912274495932
+Switzerland Super League,2023,jumping,18,2827,0.636717368234878
+Switzerland Super League,2023,long_passing,6,2827,0.21223912274495932
+Switzerland Super League,2023,long_shots,6,2827,0.21223912274495932
+Switzerland Super League,2023,penalties,6,2827,0.21223912274495932
+Switzerland Super League,2023,positioning,18,2827,0.636717368234878
+Switzerland Super League,2023,reactions,6,2827,0.21223912274495932
+Switzerland Super League,2023,short_passing,12,2827,0.42447824548991864
+Switzerland Super League,2023,shot_power,6,2827,0.21223912274495932
+Switzerland Super League,2023,sliding_tackle,6,2827,0.21223912274495932
+Switzerland Super League,2023,sprint_speed,12,2827,0.42447824548991864
+Switzerland Super League,2023,stamina,6,2827,0.21223912274495932
+Switzerland Super League,2023,standing_tackle,0,2827,0.0
+Switzerland Super League,2023,strength,12,2827,0.42447824548991864
+Switzerland Super League,2023,vision,6,2827,0.21223912274495932
+Switzerland Super League,2023,volleys,12,2827,0.42447824548991864
+Switzerland Super League,2024,acceleration,16,2864,0.5586592178770949
+Switzerland Super League,2024,aggression,4,2864,0.13966480446927373
+Switzerland Super League,2024,agility,8,2864,0.27932960893854747
+Switzerland Super League,2024,balance,4,2864,0.13966480446927373
+Switzerland Super League,2024,ball_control,4,2864,0.13966480446927373
+Switzerland Super League,2024,composure,4,2864,0.13966480446927373
+Switzerland Super League,2024,crossing,0,2864,0.0
+Switzerland Super League,2024,curve,4,2864,0.13966480446927373
+Switzerland Super League,2024,defensive_awareness,4,2864,0.13966480446927373
+Switzerland Super League,2024,dribbling,8,2864,0.27932960893854747
+Switzerland Super League,2024,finishing,8,2864,0.27932960893854747
+Switzerland Super League,2024,fk_accuracy,4,2864,0.13966480446927373
+Switzerland Super League,2024,gk_diving,0,2864,0.0
+Switzerland Super League,2024,gk_handling,0,2864,0.0
+Switzerland Super League,2024,gk_kicking,0,2864,0.0
+Switzerland Super League,2024,gk_positioning,0,2864,0.0
+Switzerland Super League,2024,gk_reflexes,0,2864,0.0
+Switzerland Super League,2024,heading_accuracy,8,2864,0.27932960893854747
+Switzerland Super League,2024,interceptions,4,2864,0.13966480446927373
+Switzerland Super League,2024,jumping,9,2864,0.31424581005586594
+Switzerland Super League,2024,long_passing,4,2864,0.13966480446927373
+Switzerland Super League,2024,long_shots,4,2864,0.13966480446927373
+Switzerland Super League,2024,penalties,4,2864,0.13966480446927373
+Switzerland Super League,2024,positioning,9,2864,0.31424581005586594
+Switzerland Super League,2024,reactions,1,2864,0.034916201117318434
+Switzerland Super League,2024,short_passing,8,2864,0.27932960893854747
+Switzerland Super League,2024,shot_power,4,2864,0.13966480446927373
+Switzerland Super League,2024,sliding_tackle,4,2864,0.13966480446927373
+Switzerland Super League,2024,sprint_speed,4,2864,0.13966480446927373
+Switzerland Super League,2024,stamina,4,2864,0.13966480446927373
+Switzerland Super League,2024,standing_tackle,0,2864,0.0
+Switzerland Super League,2024,strength,5,2864,0.17458100558659218
+Switzerland Super League,2024,vision,4,2864,0.13966480446927373
+Switzerland Super League,2024,volleys,8,2864,0.27932960893854747
+Turkey Süper Lig,2021,acceleration,0,3517,0.0
+Turkey Süper Lig,2021,aggression,0,3517,0.0
+Turkey Süper Lig,2021,agility,0,3517,0.0
+Turkey Süper Lig,2021,balance,0,3517,0.0
+Turkey Süper Lig,2021,ball_control,0,3517,0.0
+Turkey Süper Lig,2021,composure,0,3517,0.0
+Turkey Süper Lig,2021,crossing,0,3517,0.0
+Turkey Süper Lig,2021,curve,0,3517,0.0
+Turkey Süper Lig,2021,defensive_awareness,0,3517,0.0
+Turkey Süper Lig,2021,dribbling,0,3517,0.0
+Turkey Süper Lig,2021,finishing,0,3517,0.0
+Turkey Süper Lig,2021,fk_accuracy,0,3517,0.0
+Turkey Süper Lig,2021,gk_diving,0,3517,0.0
+Turkey Süper Lig,2021,gk_handling,0,3517,0.0
+Turkey Süper Lig,2021,gk_kicking,0,3517,0.0
+Turkey Süper Lig,2021,gk_positioning,0,3517,0.0
+Turkey Süper Lig,2021,gk_reflexes,0,3517,0.0
+Turkey Süper Lig,2021,heading_accuracy,0,3517,0.0
+Turkey Süper Lig,2021,interceptions,0,3517,0.0
+Turkey Süper Lig,2021,jumping,0,3517,0.0
+Turkey Süper Lig,2021,long_passing,0,3517,0.0
+Turkey Süper Lig,2021,long_shots,0,3517,0.0
+Turkey Süper Lig,2021,penalties,0,3517,0.0
+Turkey Süper Lig,2021,positioning,0,3517,0.0
+Turkey Süper Lig,2021,reactions,0,3517,0.0
+Turkey Süper Lig,2021,short_passing,0,3517,0.0
+Turkey Süper Lig,2021,shot_power,0,3517,0.0
+Turkey Süper Lig,2021,sliding_tackle,0,3517,0.0
+Turkey Süper Lig,2021,sprint_speed,3,3517,0.08529997156667614
+Turkey Süper Lig,2021,stamina,0,3517,0.0
+Turkey Süper Lig,2021,standing_tackle,0,3517,0.0
+Turkey Süper Lig,2021,strength,0,3517,0.0
+Turkey Süper Lig,2021,vision,0,3517,0.0
+Turkey Süper Lig,2021,volleys,0,3517,0.0
+Turkey Süper Lig,2022,acceleration,25,4328,0.577634011090573
+Turkey Süper Lig,2022,aggression,6,4328,0.13863216266173753
+Turkey Süper Lig,2022,agility,12,4328,0.27726432532347506
+Turkey Süper Lig,2022,balance,16,4328,0.36968576709796674
+Turkey Süper Lig,2022,ball_control,7,4328,0.16173752310536044
+Turkey Süper Lig,2022,composure,2,4328,0.04621072088724584
+Turkey Süper Lig,2022,crossing,4,4328,0.09242144177449169
+Turkey Süper Lig,2022,curve,0,4328,0.0
+Turkey Süper Lig,2022,defensive_awareness,6,4328,0.13863216266173753
+Turkey Süper Lig,2022,dribbling,6,4328,0.13863216266173753
+Turkey Süper Lig,2022,finishing,10,4328,0.23105360443622922
+Turkey Süper Lig,2022,fk_accuracy,0,4328,0.0
+Turkey Süper Lig,2022,gk_diving,0,4328,0.0
+Turkey Süper Lig,2022,gk_handling,0,4328,0.0
+Turkey Süper Lig,2022,gk_kicking,4,4328,0.09242144177449169
+Turkey Süper Lig,2022,gk_positioning,4,4328,0.09242144177449169
+Turkey Süper Lig,2022,gk_reflexes,4,4328,0.09242144177449169
+Turkey Süper Lig,2022,heading_accuracy,3,4328,0.06931608133086876
+Turkey Süper Lig,2022,interceptions,5,4328,0.11552680221811461
+Turkey Süper Lig,2022,jumping,9,4328,0.20794824399260628
+Turkey Süper Lig,2022,long_passing,6,4328,0.13863216266173753
+Turkey Süper Lig,2022,long_shots,0,4328,0.0
+Turkey Süper Lig,2022,penalties,0,4328,0.0
+Turkey Süper Lig,2022,positioning,2,4328,0.04621072088724584
+Turkey Süper Lig,2022,reactions,18,4328,0.41589648798521256
+Turkey Süper Lig,2022,short_passing,8,4328,0.18484288354898337
+Turkey Süper Lig,2022,shot_power,8,4328,0.18484288354898337
+Turkey Süper Lig,2022,sliding_tackle,4,4328,0.09242144177449169
+Turkey Süper Lig,2022,sprint_speed,15,4328,0.3465804066543438
+Turkey Süper Lig,2022,stamina,17,4328,0.3927911275415896
+Turkey Süper Lig,2022,standing_tackle,14,4328,0.3234750462107209
+Turkey Süper Lig,2022,strength,29,4328,0.6700554528650647
+Turkey Süper Lig,2022,vision,2,4328,0.04621072088724584
+Turkey Süper Lig,2022,volleys,0,4328,0.0
+Turkey Süper Lig,2023,acceleration,36,5374,0.6698920729438035
+Turkey Süper Lig,2023,aggression,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,agility,13,5374,0.24190547078526237
+Turkey Süper Lig,2023,balance,24,5374,0.44659471529586897
+Turkey Süper Lig,2023,ball_control,19,5374,0.35355414960922965
+Turkey Süper Lig,2023,composure,0,5374,0.0
+Turkey Süper Lig,2023,crossing,7,5374,0.13025679196129514
+Turkey Süper Lig,2023,curve,0,5374,0.0
+Turkey Süper Lig,2023,defensive_awareness,7,5374,0.13025679196129514
+Turkey Süper Lig,2023,dribbling,19,5374,0.35355414960922965
+Turkey Süper Lig,2023,finishing,25,5374,0.4652028284331969
+Turkey Süper Lig,2023,fk_accuracy,0,5374,0.0
+Turkey Süper Lig,2023,gk_diving,0,5374,0.0
+Turkey Süper Lig,2023,gk_handling,0,5374,0.0
+Turkey Süper Lig,2023,gk_kicking,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,gk_positioning,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,gk_reflexes,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,heading_accuracy,12,5374,0.22329735764793449
+Turkey Süper Lig,2023,interceptions,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,jumping,12,5374,0.22329735764793449
+Turkey Süper Lig,2023,long_passing,7,5374,0.13025679196129514
+Turkey Süper Lig,2023,long_shots,0,5374,0.0
+Turkey Süper Lig,2023,penalties,0,5374,0.0
+Turkey Süper Lig,2023,positioning,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,reactions,31,5374,0.5768515072571642
+Turkey Süper Lig,2023,short_passing,20,5374,0.3721622627465575
+Turkey Süper Lig,2023,shot_power,12,5374,0.22329735764793449
+Turkey Süper Lig,2023,sliding_tackle,6,5374,0.11164867882396724
+Turkey Süper Lig,2023,sprint_speed,30,5374,0.5582433941198363
+Turkey Süper Lig,2023,stamina,25,5374,0.4652028284331969
+Turkey Süper Lig,2023,standing_tackle,18,5374,0.33494603647190174
+Turkey Süper Lig,2023,strength,42,5374,0.7815407517677707
+Turkey Süper Lig,2023,vision,7,5374,0.13025679196129514
+Turkey Süper Lig,2023,volleys,0,5374,0.0
+Turkey Süper Lig,2024,acceleration,21,4828,0.43496271748135873
+Turkey Süper Lig,2024,aggression,1,4828,0.020712510356255178
+Turkey Süper Lig,2024,agility,11,4828,0.22783761391880697
+Turkey Süper Lig,2024,balance,10,4828,0.2071251035625518
+Turkey Süper Lig,2024,ball_control,14,4828,0.2899751449875725
+Turkey Süper Lig,2024,composure,0,4828,0.0
+Turkey Süper Lig,2024,crossing,7,4828,0.14498757249378624
+Turkey Süper Lig,2024,curve,0,4828,0.0
+Turkey Süper Lig,2024,defensive_awareness,7,4828,0.14498757249378624
+Turkey Süper Lig,2024,dribbling,16,4828,0.33140016570008285
+Turkey Süper Lig,2024,finishing,16,4828,0.33140016570008285
+Turkey Süper Lig,2024,fk_accuracy,0,4828,0.0
+Turkey Süper Lig,2024,gk_diving,0,4828,0.0
+Turkey Süper Lig,2024,gk_handling,0,4828,0.0
+Turkey Süper Lig,2024,gk_kicking,4,4828,0.08285004142502071
+Turkey Süper Lig,2024,gk_positioning,4,4828,0.08285004142502071
+Turkey Süper Lig,2024,gk_reflexes,4,4828,0.08285004142502071
+Turkey Süper Lig,2024,heading_accuracy,8,4828,0.16570008285004142
+Turkey Süper Lig,2024,interceptions,4,4828,0.08285004142502071
+Turkey Süper Lig,2024,jumping,8,4828,0.16570008285004142
+Turkey Süper Lig,2024,long_passing,8,4828,0.16570008285004142
+Turkey Süper Lig,2024,long_shots,0,4828,0.0
+Turkey Süper Lig,2024,penalties,0,4828,0.0
+Turkey Süper Lig,2024,positioning,3,4828,0.06213753106876554
+Turkey Süper Lig,2024,reactions,23,4828,0.4763877381938691
+Turkey Süper Lig,2024,short_passing,20,4828,0.4142502071251036
+Turkey Süper Lig,2024,shot_power,4,4828,0.08285004142502071
+Turkey Süper Lig,2024,sliding_tackle,4,4828,0.08285004142502071
+Turkey Süper Lig,2024,sprint_speed,17,4828,0.352112676056338
+Turkey Süper Lig,2024,stamina,17,4828,0.352112676056338
+Turkey Süper Lig,2024,standing_tackle,7,4828,0.14498757249378624
+Turkey Süper Lig,2024,strength,22,4828,0.45567522783761394
+Turkey Süper Lig,2024,vision,7,4828,0.14498757249378624
+Turkey Süper Lig,2024,volleys,0,4828,0.0
