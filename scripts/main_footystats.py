@@ -24,7 +24,7 @@ def log_feature_error(msg: str) -> None:
 ut = utils
 global_instance = Global.get_instance()
 
-load_avg_team_strength()
+load_avg_team_strength()  # TODO: Remove this currently unused averaging?
 
 cache = try_load_snapshot()
 if sett.ALL_LOAD and cache is not None:
@@ -38,7 +38,7 @@ if sett.ALL_GET_NEW:
     ut.initialize_league_tables(precompute_positions=True, force_rebuild=True)
 
 # Only rebuild from CSV when explicitly requested (one-time migration / new data)
-load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False))
+load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False), debug=False)
 print("[sofifa] snapshots:", len(global_instance.sofifa_snapshots))
 
 ut.link_matches_to_comp_seasons()
