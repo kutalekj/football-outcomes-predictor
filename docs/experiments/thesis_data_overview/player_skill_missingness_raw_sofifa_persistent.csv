@@ -991,11 +991,11 @@ England Premier League,2022,agility,18,4465,0.40313549832026874
 England Premier League,2022,balance,18,4465,0.40313549832026874
 England Premier League,2022,ball_control,15,4465,0.335946248600224
 England Premier League,2022,composure,10,4465,0.22396416573348266
-England Premier League,2022,crossing,2,4465,0.04479283314669653
+England Premier League,2022,crossing,1,4465,0.022396416573348264
 England Premier League,2022,curve,1,4465,0.022396416573348264
 England Premier League,2022,defensive_awareness,5,4465,0.11198208286674133
-England Premier League,2022,dribbling,2,4465,0.04479283314669653
-England Premier League,2022,finishing,0,4465,0.0
+England Premier League,2022,dribbling,3,4465,0.0671892497200448
+England Premier League,2022,finishing,1,4465,0.022396416573348264
 England Premier League,2022,fk_accuracy,0,4465,0.0
 England Premier League,2022,gk_diving,4,4465,0.08958566629339305
 England Premier League,2022,gk_handling,4,4465,0.08958566629339305
@@ -1013,7 +1013,7 @@ England Premier League,2022,reactions,5,4465,0.11198208286674133
 England Premier League,2022,short_passing,6,4465,0.1343784994400896
 England Premier League,2022,shot_power,1,4465,0.022396416573348264
 England Premier League,2022,sliding_tackle,4,4465,0.08958566629339305
-England Premier League,2022,sprint_speed,28,4465,0.6270996640537514
+England Premier League,2022,sprint_speed,27,4465,0.6047032474804032
 England Premier League,2022,stamina,25,4465,0.5599104143337066
 England Premier League,2022,standing_tackle,8,4465,0.1791713325867861
 England Premier League,2022,strength,13,4465,0.2911534154535274
