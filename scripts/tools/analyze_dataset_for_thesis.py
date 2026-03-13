@@ -758,6 +758,132 @@ def plot_top_team_month_slices(overall_df: pd.DataFrame, out_dir: Path, top_n: i
     print(f"Saved: {pdf_path}")
 
 
+def _match_sort_key_for_analysis(m) -> Tuple:
+    dt = getattr(m, "datetime", None)
+    hr = getattr(m, "hour_utc", None)
+    hr = int(hr) if isinstance(hr, int) else -1
+    return dt, hr, m.id
+
+
+def _is_missing_stat_value(v, *, count_zero_as_missing: bool) -> bool:
+    if v is None or v == -1:
+        return True
+    if count_zero_as_missing and v == 0:
+        return True
+    return False
+
+
+def plot_prematch_xg_missingness_timeline(
+    stat_key: str,
+    *,
+    count_zero_as_missing: bool = True,
+    output_path: str | Path | None = None,
+    max_matches_cap: int | None = None,
+) -> None:
+    """
+    Plot a binary heatmap:
+      - rows = competition seasons
+      - columns = chronological match order inside that competition season
+      - value 1 = missing, 0 = present
+
+    Intended for:
+      stat_key in {"home_prematch_xg", "away_prematch_xg"}
+    """
+    if stat_key not in {"home_prematch_xg", "away_prematch_xg"}:
+        raise ValueError("stat_key must be 'home_prematch_xg' or 'away_prematch_xg'")
+
+    g = Global.get_instance()
+
+    # League-only, because that matches your thesis analysis focus
+    league_matches = [
+        m
+        for m in g.all_matches
+        if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE
+        and getattr(m, "season", None) is not None
+        and getattr(m, "datetime", None) is not None
+    ]
+
+    # Group by competition season label
+    grouped: dict[str, List] = {}
+    for m in league_matches:
+        row_label = f"{m.comp_name} | {m.season}"
+        grouped.setdefault(row_label, []).append(m)
+
+    # Stable row ordering
+    def _row_sort_key(label: str):
+        comp_name, season_str = label.rsplit(" | ", 1)
+        try:
+            season = int(season_str)
+        except Exception:
+            season = 999999
+        return comp_name, season
+
+    row_labels = sorted(grouped.keys(), key=_row_sort_key)
+
+    # Sort matches inside each season chronologically
+    rows_as_binary: List[List[float]] = []
+    max_len = 0
+
+    for row_label in row_labels:
+        ms = sorted(grouped[row_label], key=_match_sort_key_for_analysis)
+
+        row_vals = []
+        for m in ms:
+            v = (getattr(m, "stats", {}) or {}).get(stat_key, -1)
+            row_vals.append(1.0 if _is_missing_stat_value(v, count_zero_as_missing=count_zero_as_missing) else 0.0)
+
+        rows_as_binary.append(row_vals)
+        max_len = max(max_len, len(row_vals))
+
+    if max_len == 0:
+        print(f"[analysis] No matches found for {stat_key}; skipping timeline plot.")
+        return
+
+    if max_matches_cap is not None:
+        max_len = min(max_len, max_matches_cap)
+
+    # Pad shorter seasons with NaN so they render as blank on the right
+    arr = np.full((len(rows_as_binary), max_len), np.nan, dtype=np.float32)
+    for i, row_vals in enumerate(rows_as_binary):
+        clipped = row_vals[:max_len]
+        arr[i, : len(clipped)] = clipped
+
+    fig_h = max(10, 0.28 * len(row_labels))
+    fig_w = max(16, max_len / 10)
+
+    plt.figure(figsize=(fig_w, fig_h))
+    im = plt.imshow(arr, aspect="auto", interpolation="nearest", vmin=0.0, vmax=1.0)
+
+    zero_note = "counting 0 as missing" if count_zero_as_missing else "counting only -1/None as missing"
+    plt.title(f"Missingness timeline for {stat_key} by competition and season\n({zero_note})")
+    plt.xlabel("Match order within competition season")
+    plt.ylabel("Competition / Season")
+
+    plt.yticks(np.arange(len(row_labels)), row_labels, fontsize=8)
+
+    # Keep x ticks readable
+    if max_len <= 40:
+        xticks = np.arange(max_len)
+    else:
+        step = max(1, math.ceil(max_len / 20))
+        xticks = np.arange(0, max_len, step)
+    plt.xticks(xticks, xticks + 1)
+
+    cbar = plt.colorbar(im)
+    cbar.set_label("Missing value (1=yes, 0=no)")
+
+    plt.tight_layout()
+
+    if output_path is None:
+        suffix = "zero_missing" if count_zero_as_missing else "strict_missing"
+        output_path = f"{stat_key}_missingness_timeline_{suffix}.png"
+
+    plt.savefig(output_path, dpi=200, bbox_inches="tight")
+    plt.close()
+
+    print(f"[analysis] Saved prematch xG timeline plot: {output_path}")
+
+
 def main() -> None:
     out_dir = Path(sett.PROJECT_ROOT) / "docs/experiments/thesis_data_overview"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -853,6 +979,19 @@ def main() -> None:
         skill_rows_path = out_dir / "player_skill_missingness_raw_sofifa_persistent_snapshot_rows.csv"
         df_skill_persistent_rows.to_csv(skill_rows_path, index=False)
         print(f"Saved: {skill_rows_path}")
+
+    # 3) Pre-match xG missing values analysis
+    plot_prematch_xg_missingness_timeline(
+        "home_prematch_xg",
+        count_zero_as_missing=True,
+        output_path=out_dir / "home_prematch_xg_missingness_timeline_zero_missing.png",
+    )
+
+    plot_prematch_xg_missingness_timeline(
+        "away_prematch_xg",
+        count_zero_as_missing=True,
+        output_path=out_dir / "away_prematch_xg_missingness_timeline_zero_missing.png",
+    )
 
     print(f"All outputs saved into: {out_dir}")
 
