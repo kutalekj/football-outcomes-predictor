@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter, defaultdict
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -915,6 +916,210 @@ def plot_stat_missingness_timeline(
     print(f"[analysis] Saved stat timeline plot: {output_path}")
 
 
+def _competition_season_first_match_dates(league_matches: List[FSMatch]) -> Dict[Tuple[str, int], datetime]:
+    out: Dict[Tuple[str, int], datetime] = {}
+    for m in league_matches:
+        comp = getattr(m, "comp_name", None)
+        season = getattr(m, "season", None)
+        dt = getattr(m, "datetime", None)
+        if comp is None or season is None or dt is None:
+            continue
+
+        key = (comp, int(season))
+        prev = out.get(key)
+        if prev is None or dt < prev:
+            out[key] = dt
+    return out
+
+
+def build_fs_vs_sofifa_team_counts_per_comp_season(league_matches: List[FSMatch]) -> pd.DataFrame:
+    """
+    Compare:
+      - FootyStats distinct teams appearing in matches of a competition season
+      - SOFIFA distinct clubs in the mapped SOFIFA league, using the snapshot
+        nearest to the first match date of that competition season
+
+    This is a source-coverage comparison, not a matching-quality plot.
+    """
+    g = Global.get_instance()
+
+    # ---- FootyStats counts ----
+    fs_team_ids_by_cs: Dict[Tuple[str, int], set[int]] = defaultdict(set)
+    fs_team_names_by_cs: Dict[Tuple[str, int], set[str]] = defaultdict(set)  # just for debug
+    for m in league_matches:
+        comp_name = getattr(m, "comp_name", None)
+        season = getattr(m, "season", None)
+        if comp_name is None or season is None:
+            continue
+
+        key = (comp_name, int(season))
+        if getattr(m, "home_team", None) is not None:
+            fs_team_ids_by_cs[key].add(int(m.home_team.id))
+            fs_team_names_by_cs[key].add(m.home_team.name)
+        if getattr(m, "away_team", None) is not None:
+            fs_team_ids_by_cs[key].add(int(m.away_team.id))
+            fs_team_names_by_cs[key].add(m.away_team.name)
+
+    first_match_dates = _competition_season_first_match_dates(league_matches)
+
+    # ---- SOFIFA counts via nearest snapshot to season start ----
+    snapshots = getattr(g, "sofifa_snapshots", []) or []
+
+    rows = []
+    for (comp_name, season), fs_team_ids in sorted(fs_team_ids_by_cs.items(), key=lambda x: (x[0][0], x[0][1])):
+        sofifa_league_id = sett.FS_LEAGUE_TO_SOFIFA_LEAGUE_ID.get(comp_name)
+        first_dt = first_match_dates.get((comp_name, season))
+
+        sofifa_team_ids: set[int] = set()
+        sofifa_team_names: set[str] = set()  # just for debug
+        chosen_snapshot_date = None
+        snapshot_gap_days = None
+
+        if sofifa_league_id is not None and first_dt is not None and snapshots:
+            # choose snapshot nearest to season start
+            best_snap = min(
+                snapshots,
+                key=lambda x: abs((x[0] - first_dt.date()).days),
+            )
+            chosen_snapshot_date, snap_players = best_snap
+            snapshot_gap_days = abs((chosen_snapshot_date - first_dt.date()).days)
+
+            for _, rec in snap_players.items():
+                if not isinstance(rec, dict):
+                    continue
+
+                league_id = rec.get("club_league_id")
+                club_id = rec.get("club_id")
+
+                try:
+                    league_id = int(league_id) if league_id not in (None, "") else None
+                except Exception:
+                    league_id = None
+
+                try:
+                    club_id = int(club_id) if club_id not in (None, "") else None
+                except Exception:
+                    club_id = None
+
+                if league_id == int(sofifa_league_id) and club_id is not None:
+                    sofifa_team_ids.add(club_id)
+                    sofifa_team_names.add(rec.get("club_name"))
+
+        # TODO: Remove this debug print
+        if len(fs_team_names_by_cs[(comp_name, season)]) != len(sofifa_team_names):
+            print(
+                f"{len(fs_team_names_by_cs[(comp_name, season)])} teams found in FS data "
+                f"({comp_name}, {season}): {fs_team_names_by_cs[(comp_name, season)]}\n"
+                f"{len(sofifa_team_names)} teams found in SoFIFA data ({comp_name}, {season}): "
+                f"{sofifa_team_names}\n"
+            )
+            pass  # BREAKPOINT
+
+        rows.append(
+            {
+                "competition": comp_name,
+                "season": int(season),
+                "fs_n_teams": len(fs_team_ids),
+                "sofifa_n_teams": len(sofifa_team_ids) if sofifa_league_id is not None else np.nan,
+                "team_gap": (len(fs_team_ids) - len(sofifa_team_ids)) if sofifa_league_id is not None else np.nan,
+                "sofifa_league_id": sofifa_league_id,
+                "season_start_date": first_dt.date().isoformat() if first_dt is not None else None,
+                "sofifa_snapshot_date": chosen_snapshot_date.isoformat() if chosen_snapshot_date is not None else None,
+                "snapshot_gap_days": snapshot_gap_days,
+            }
+        )
+
+    df = pd.DataFrame(rows).sort_values(["competition", "season"]).reset_index(drop=True)
+    return df
+
+
+def plot_fs_vs_sofifa_team_counts(team_counts_df: pd.DataFrame, out_dir: Path) -> None:
+    """
+    Plot only SOFIFA undercoverage relative to FootyStats:
+      deficit = max(0, fs_n_teams - sofifa_n_teams)
+
+    This intentionally suppresses the visually noisy cases where SOFIFA has
+    more clubs than FootyStats teams, because those are usually overcoverage /
+    league-bucket breadth rather than harmful missingness.
+
+    Output:
+      - one bar per competition season
+      - bars shown only when deficit > 0
+      - labels show "FS X vs SOFIFA Y"
+    """
+    if team_counts_df.empty:
+        print("Skipping FS vs SOFIFA deficit plot because dataframe is empty.")
+        return
+
+    df = team_counts_df.copy()
+    df["label"] = df.apply(lambda r: f"{r['competition']} | {int(r['season'])}", axis=1)
+
+    # Keep stable order
+    df = df.sort_values(["competition", "season"]).reset_index(drop=True)
+
+    # Deficit = only the problematic direction
+    df["team_deficit"] = (df["fs_n_teams"] - df["sofifa_n_teams"]).clip(lower=0)
+
+    # Split into all rows vs highlighted rows
+    df_bad = df[df["team_deficit"] > 0].copy()
+
+    if df_bad.empty:
+        print("No competition seasons with SOFIFA undercoverage were found.")
+        return
+
+    fig_h = max(5, 0.55 * len(df_bad) + 2.5)
+    fig, ax = plt.subplots(figsize=(12.5, fig_h))
+
+    y = np.arange(len(df_bad))
+    bars = ax.barh(
+        y,
+        df_bad["team_deficit"],
+        color="crimson",
+        edgecolor="black",
+        linewidth=0.7,
+    )
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(df_bad["label"], fontsize=10)
+    ax.invert_yaxis()
+
+    ax.set_xlabel("Missing SOFIFA clubs relative to FootyStats team count")
+    ax.set_ylabel("Competition / Season")
+    ax.set_title("SOFIFA team undercoverage by competition season")
+
+    xmax = max(2, int(df_bad["team_deficit"].max()) + 2)
+    ax.set_xlim(0, xmax)
+    ax.grid(axis="x", linestyle="--", alpha=0.35)
+    ax.set_axisbelow(True)
+
+    for bar, (_, row) in zip(bars, df_bad.iterrows()):
+        fs_n = int(row["fs_n_teams"])
+        sf_n = int(row["sofifa_n_teams"])
+        deficit = int(row["team_deficit"])
+
+        txt = f"{deficit}  (FS {fs_n} vs SOFIFA {sf_n})"
+        ax.text(
+            min(bar.get_width() + 0.12, xmax - 0.1),
+            bar.get_y() + bar.get_height() / 2,
+            txt,
+            va="center",
+            ha="left",
+            fontsize=9,
+            color="black",
+        )
+
+    fig.tight_layout()
+
+    png_path = out_dir / "fs_vs_sofifa_team_undercoverage_per_comp_season.png"
+    pdf_path = out_dir / "fs_vs_sofifa_team_undercoverage_per_comp_season.pdf"
+    fig.savefig(png_path, dpi=220, bbox_inches="tight")
+    fig.savefig(pdf_path, bbox_inches="tight")
+    plt.close(fig)
+
+    print(f"Saved: {png_path}")
+    print(f"Saved: {pdf_path}")
+
+
 def main() -> None:
     out_dir = Path(sett.PROJECT_ROOT) / "docs/experiments/thesis_data_overview"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -923,6 +1128,13 @@ def main() -> None:
 
     # 1) Thesis-ready competition distribution figure
     plot_match_counts_per_comp(league_matches, out_dir)
+
+    # 1b) Compare FootyStats vs SOFIFA source coverage at team-count level
+    df_fs_vs_sofifa = build_fs_vs_sofifa_team_counts_per_comp_season(league_matches)
+    path = out_dir / "fs_vs_sofifa_team_counts_per_comp_season.csv"
+    df_fs_vs_sofifa.to_csv(path, index=False)
+    print(f"Saved: {path}")
+    plot_fs_vs_sofifa_team_counts(df_fs_vs_sofifa, out_dir)
 
     # 2a) Detailed raw match-stat missingness (+ selected zero values treated as missing)
     df_match = build_match_stats_missingness(league_matches, count_zero_as_missing=True)
