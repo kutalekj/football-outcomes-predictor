@@ -945,7 +945,6 @@ def build_fs_vs_sofifa_team_counts_per_comp_season(league_matches: List[FSMatch]
 
     # ---- FootyStats counts ----
     fs_team_ids_by_cs: Dict[Tuple[str, int], set[int]] = defaultdict(set)
-    fs_team_names_by_cs: Dict[Tuple[str, int], set[str]] = defaultdict(set)  # just for debug
     for m in league_matches:
         comp_name = getattr(m, "comp_name", None)
         season = getattr(m, "season", None)
@@ -955,10 +954,8 @@ def build_fs_vs_sofifa_team_counts_per_comp_season(league_matches: List[FSMatch]
         key = (comp_name, int(season))
         if getattr(m, "home_team", None) is not None:
             fs_team_ids_by_cs[key].add(int(m.home_team.id))
-            fs_team_names_by_cs[key].add(m.home_team.name)
         if getattr(m, "away_team", None) is not None:
             fs_team_ids_by_cs[key].add(int(m.away_team.id))
-            fs_team_names_by_cs[key].add(m.away_team.name)
 
     first_match_dates = _competition_season_first_match_dates(league_matches)
 
@@ -1004,16 +1001,6 @@ def build_fs_vs_sofifa_team_counts_per_comp_season(league_matches: List[FSMatch]
                 if league_id == int(sofifa_league_id) and club_id is not None:
                     sofifa_team_ids.add(club_id)
                     sofifa_team_names.add(rec.get("club_name"))
-
-        # TODO: Remove this debug print
-        if len(fs_team_names_by_cs[(comp_name, season)]) != len(sofifa_team_names):
-            print(
-                f"{len(fs_team_names_by_cs[(comp_name, season)])} teams found in FS data "
-                f"({comp_name}, {season}): {fs_team_names_by_cs[(comp_name, season)]}\n"
-                f"{len(sofifa_team_names)} teams found in SoFIFA data ({comp_name}, {season}): "
-                f"{sofifa_team_names}\n"
-            )
-            pass  # BREAKPOINT
 
         rows.append(
             {
