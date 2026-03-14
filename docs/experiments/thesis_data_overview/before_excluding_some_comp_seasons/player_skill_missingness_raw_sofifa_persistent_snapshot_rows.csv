@@ -1,0 +1,97 @@
+competition,season,n_player_snapshot_rows,n_unique_snapshots
+Australia A-League,2021,1902,6
+Australia A-League,2022,2366,6
+Australia A-League,2023,2796,6
+Australia A-League,2024,2773,6
+Austria Bundesliga,2021,2116,6
+Austria Bundesliga,2022,2706,6
+Austria Bundesliga,2023,3150,6
+Austria Bundesliga,2024,2984,6
+Belgium Pro League,2021,3210,6
+Belgium Pro League,2022,3784,6
+Belgium Pro League,2023,4162,6
+Belgium Pro League,2024,3824,6
+Denmark Superliga,2021,2211,6
+Denmark Superliga,2022,2694,6
+Denmark Superliga,2023,3082,6
+Denmark Superliga,2024,2813,6
+England Championship,2021,4633,6
+England Championship,2022,5157,6
+England Championship,2023,5409,6
+England Championship,2024,5175,6
+England EFL League One,2021,4140,6
+England EFL League One,2022,4710,6
+England EFL League One,2023,5305,6
+England EFL League One,2024,5143,6
+England EFL League Two,2021,4079,6
+England EFL League Two,2022,5475,6
+England EFL League Two,2023,6718,6
+England EFL League Two,2024,6242,6
+England Premier League,2021,4088,6
+England Premier League,2022,4465,6
+England Premier League,2023,4530,6
+England Premier League,2024,4053,6
+France Ligue 1,2021,3687,6
+France Ligue 1,2022,3930,6
+France Ligue 1,2023,3955,6
+France Ligue 1,2024,3697,6
+France Ligue 2,2021,3520,6
+France Ligue 2,2022,4442,6
+France Ligue 2,2023,5314,6
+France Ligue 2,2024,4731,6
+Germany 2. Bundesliga,2021,3228,6
+Germany 2. Bundesliga,2022,3781,6
+Germany 2. Bundesliga,2023,4161,6
+Germany 2. Bundesliga,2024,4105,6
+Germany Bundesliga,2021,3377,6
+Germany Bundesliga,2022,3652,6
+Germany Bundesliga,2023,3829,6
+Germany Bundesliga,2024,3621,6
+India Indian Super League,2021,1506,5
+India Indian Super League,2022,2339,6
+India Indian Super League,2023,2978,6
+India Indian Super League,2024,3097,6
+Italy Serie A,2021,3764,6
+Italy Serie A,2022,3941,6
+Italy Serie A,2023,4101,6
+Italy Serie A,2024,3938,6
+Italy Serie B,2021,1112,6
+Italy Serie B,2022,3315,6
+Italy Serie B,2023,4664,6
+Italy Serie B,2024,4682,6
+Netherlands Eredivisie,2021,3371,6
+Netherlands Eredivisie,2022,4241,6
+Netherlands Eredivisie,2023,4842,6
+Netherlands Eredivisie,2024,4532,6
+Poland Ekstraklasa,2021,3221,6
+Poland Ekstraklasa,2022,4401,6
+Poland Ekstraklasa,2023,5351,6
+Poland Ekstraklasa,2024,4827,6
+Portugal Liga NOS,2021,3380,6
+Portugal Liga NOS,2022,4345,6
+Portugal Liga NOS,2023,5072,6
+Portugal Liga NOS,2024,4651,6
+Saudi Arabia Professional League,2021,3014,6
+Saudi Arabia Professional League,2022,3908,6
+Saudi Arabia Professional League,2023,4795,6
+Saudi Arabia Professional League,2024,4442,6
+Scotland Premiership,2021,2053,6
+Scotland Premiership,2022,2476,6
+Scotland Premiership,2023,2769,6
+Scotland Premiership,2024,2667,6
+Spain La Liga,2021,4049,6
+Spain La Liga,2022,4377,6
+Spain La Liga,2023,4661,6
+Spain La Liga,2024,4392,6
+Spain Segunda División,2021,4146,6
+Spain Segunda División,2022,5364,6
+Spain Segunda División,2023,6276,6
+Spain Segunda División,2024,5857,6
+Switzerland Super League,2021,1738,6
+Switzerland Super League,2022,2222,6
+Switzerland Super League,2023,2827,6
+Switzerland Super League,2024,2864,6
+Turkey Süper Lig,2021,3517,6
+Turkey Süper Lig,2022,4328,6
+Turkey Süper Lig,2023,5374,6
+Turkey Süper Lig,2024,4828,6
