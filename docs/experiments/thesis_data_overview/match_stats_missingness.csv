@@ -15,7 +15,7 @@ Australia A-League,2021,away_yellow_cards,0,0,163,0.0,0.0,0.0
 Australia A-League,2021,home_attacks,1,1,163,0.6134969325153374,0.6134969325153374,0.6134969325153374
 Australia A-League,2021,home_corners,0,0,163,0.0,0.0,0.0
 Australia A-League,2021,home_dangerous_attacks,1,1,163,0.6134969325153374,0.6134969325153374,0.6134969325153374
-Australia A-League,2021,home_fouls,0,0,163,0.0,0.0,0.0
+Australia A-League,2021,home_fouls,1,1,163,0.6134969325153374,0.6134969325153374,0.6134969325153374
 Australia A-League,2021,home_offsides,0,0,163,0.0,0.0,0.0
 Australia A-League,2021,home_possession,0,0,163,0.0,0.0,0.0
 Australia A-League,2021,home_prematch_xg,12,12,163,7.361963190184049,7.361963190184049,7.361963190184049
@@ -35,7 +35,7 @@ Australia A-League,2022,away_prematch_xg,12,12,163,7.361963190184049,7.361963190
 Australia A-League,2022,away_red_cards,0,0,163,0.0,0.0,0.0
 Australia A-League,2022,away_shots_off_target,0,0,163,0.0,0.0,0.0
 Australia A-League,2022,away_shots_on_target,0,0,163,0.0,0.0,0.0
-Australia A-League,2022,away_total_shots,0,0,163,0.0,0.0,0.0
+Australia A-League,2022,away_total_shots,1,1,163,0.6134969325153374,0.6134969325153374,0.6134969325153374
 Australia A-League,2022,away_xg,0,0,163,0.0,0.0,0.0
 Australia A-League,2022,away_yellow_cards,0,0,163,0.0,0.0,0.0
 Australia A-League,2022,home_attacks,2,2,163,1.2269938650306749,1.2269938650306749,1.2269938650306749
@@ -61,7 +61,7 @@ Australia A-League,2023,away_prematch_xg,12,12,169,7.100591715976331,7.100591715
 Australia A-League,2023,away_red_cards,0,0,169,0.0,0.0,0.0
 Australia A-League,2023,away_shots_off_target,1,0,169,0.591715976331361,0.0,0.591715976331361
 Australia A-League,2023,away_shots_on_target,1,0,169,0.591715976331361,0.0,0.591715976331361
-Australia A-League,2023,away_total_shots,1,0,169,0.591715976331361,0.0,0.591715976331361
+Australia A-League,2023,away_total_shots,2,1,169,1.183431952662722,0.591715976331361,1.183431952662722
 Australia A-League,2023,away_xg,0,0,169,0.0,0.0,0.0
 Australia A-League,2023,away_yellow_cards,0,0,169,0.0,0.0,0.0
 Australia A-League,2023,home_attacks,1,1,169,0.591715976331361,0.591715976331361,0.591715976331361
@@ -87,7 +87,7 @@ Australia A-League,2024,away_prematch_xg,13,13,176,7.386363636363637,7.386363636
 Australia A-League,2024,away_red_cards,0,0,176,0.0,0.0,0.0
 Australia A-League,2024,away_shots_off_target,0,0,176,0.0,0.0,0.0
 Australia A-League,2024,away_shots_on_target,0,0,176,0.0,0.0,0.0
-Australia A-League,2024,away_total_shots,0,0,176,0.0,0.0,0.0
+Australia A-League,2024,away_total_shots,1,1,176,0.5681818181818182,0.5681818181818182,0.5681818181818182
 Australia A-League,2024,away_xg,0,0,176,0.0,0.0,0.0
 Australia A-League,2024,away_yellow_cards,0,0,176,0.0,0.0,0.0
 Australia A-League,2024,home_attacks,1,1,176,0.5681818181818182,0.5681818181818182,0.5681818181818182
@@ -106,20 +106,20 @@ Australia A-League,2024,home_yellow_cards,0,0,176,0.0,0.0,0.0
 Austria Bundesliga,2021,away_attacks,1,1,195,0.5128205128205128,0.5128205128205128,0.5128205128205128
 Austria Bundesliga,2021,away_corners,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,away_dangerous_attacks,1,1,195,0.5128205128205128,0.5128205128205128,0.5128205128205128
-Austria Bundesliga,2021,away_fouls,0,0,195,0.0,0.0,0.0
+Austria Bundesliga,2021,away_fouls,1,1,195,0.5128205128205128,0.5128205128205128,0.5128205128205128
 Austria Bundesliga,2021,away_offsides,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,away_possession,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,away_prematch_xg,12,12,195,6.153846153846154,6.153846153846154,6.153846153846154
 Austria Bundesliga,2021,away_red_cards,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,away_shots_off_target,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,away_shots_on_target,0,0,195,0.0,0.0,0.0
-Austria Bundesliga,2021,away_total_shots,0,0,195,0.0,0.0,0.0
+Austria Bundesliga,2021,away_total_shots,1,1,195,0.5128205128205128,0.5128205128205128,0.5128205128205128
 Austria Bundesliga,2021,away_xg,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,away_yellow_cards,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,home_attacks,1,1,195,0.5128205128205128,0.5128205128205128,0.5128205128205128
 Austria Bundesliga,2021,home_corners,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,home_dangerous_attacks,1,1,195,0.5128205128205128,0.5128205128205128,0.5128205128205128
-Austria Bundesliga,2021,home_fouls,0,0,195,0.0,0.0,0.0
+Austria Bundesliga,2021,home_fouls,3,3,195,1.5384615384615385,1.5384615384615385,1.5384615384615385
 Austria Bundesliga,2021,home_offsides,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,home_possession,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2021,home_prematch_xg,12,12,195,6.153846153846154,6.153846153846154,6.153846153846154
@@ -184,7 +184,7 @@ Austria Bundesliga,2023,home_yellow_cards,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2024,away_attacks,9,9,195,4.615384615384615,4.615384615384615,4.615384615384615
 Austria Bundesliga,2024,away_corners,1,0,195,0.5128205128205128,0.0,0.5128205128205128
 Austria Bundesliga,2024,away_dangerous_attacks,9,9,195,4.615384615384615,4.615384615384615,4.615384615384615
-Austria Bundesliga,2024,away_fouls,1,0,195,0.5128205128205128,0.0,0.5128205128205128
+Austria Bundesliga,2024,away_fouls,2,1,195,1.0256410256410255,0.5128205128205128,1.0256410256410255
 Austria Bundesliga,2024,away_offsides,9,0,195,4.615384615384615,0.0,4.615384615384615
 Austria Bundesliga,2024,away_possession,1,0,195,0.5128205128205128,0.0,0.5128205128205128
 Austria Bundesliga,2024,away_prematch_xg,13,13,195,6.666666666666667,6.666666666666667,6.666666666666667
@@ -197,7 +197,7 @@ Austria Bundesliga,2024,away_yellow_cards,0,0,195,0.0,0.0,0.0
 Austria Bundesliga,2024,home_attacks,9,9,195,4.615384615384615,4.615384615384615,4.615384615384615
 Austria Bundesliga,2024,home_corners,1,0,195,0.5128205128205128,0.0,0.5128205128205128
 Austria Bundesliga,2024,home_dangerous_attacks,9,9,195,4.615384615384615,4.615384615384615,4.615384615384615
-Austria Bundesliga,2024,home_fouls,1,0,195,0.5128205128205128,0.0,0.5128205128205128
+Austria Bundesliga,2024,home_fouls,3,2,195,1.5384615384615385,1.0256410256410255,1.5384615384615385
 Austria Bundesliga,2024,home_offsides,9,0,195,4.615384615384615,0.0,4.615384615384615
 Austria Bundesliga,2024,home_possession,1,0,195,0.5128205128205128,0.0,0.5128205128205128
 Austria Bundesliga,2024,home_prematch_xg,13,13,195,6.666666666666667,6.666666666666667,6.666666666666667
@@ -217,7 +217,7 @@ Belgium Pro League,2021,away_prematch_xg,18,18,330,5.454545454545454,5.454545454
 Belgium Pro League,2021,away_red_cards,1,0,330,0.30303030303030304,0.0,0.30303030303030304
 Belgium Pro League,2021,away_shots_off_target,1,0,330,0.30303030303030304,0.0,0.30303030303030304
 Belgium Pro League,2021,away_shots_on_target,1,0,330,0.30303030303030304,0.0,0.30303030303030304
-Belgium Pro League,2021,away_total_shots,1,0,330,0.30303030303030304,0.0,0.30303030303030304
+Belgium Pro League,2021,away_total_shots,2,1,330,0.6060606060606061,0.30303030303030304,0.6060606060606061
 Belgium Pro League,2021,away_xg,0,0,330,0.0,0.0,0.0
 Belgium Pro League,2021,away_yellow_cards,1,0,330,0.30303030303030304,0.0,0.30303030303030304
 Belgium Pro League,2021,home_attacks,3,3,330,0.9090909090909091,0.9090909090909091,0.9090909090909091
@@ -301,7 +301,7 @@ Belgium Pro League,2024,away_yellow_cards,0,0,313,0.0,0.0,0.0
 Belgium Pro League,2024,home_attacks,13,13,313,4.15335463258786,4.15335463258786,4.15335463258786
 Belgium Pro League,2024,home_corners,1,0,313,0.3194888178913738,0.0,0.3194888178913738
 Belgium Pro League,2024,home_dangerous_attacks,13,13,313,4.15335463258786,4.15335463258786,4.15335463258786
-Belgium Pro League,2024,home_fouls,1,0,313,0.3194888178913738,0.0,0.3194888178913738
+Belgium Pro League,2024,home_fouls,2,1,313,0.6389776357827476,0.3194888178913738,0.6389776357827476
 Belgium Pro League,2024,home_offsides,10,0,313,3.194888178913738,0.0,3.194888178913738
 Belgium Pro League,2024,home_possession,1,0,313,0.3194888178913738,0.0,0.3194888178913738
 Belgium Pro League,2024,home_prematch_xg,16,16,313,5.111821086261981,5.111821086261981,5.111821086261981
@@ -314,7 +314,7 @@ Belgium Pro League,2024,home_yellow_cards,0,0,313,0.0,0.0,0.0
 Denmark Superliga,2021,away_attacks,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,away_corners,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,away_dangerous_attacks,0,0,193,0.0,0.0,0.0
-Denmark Superliga,2021,away_fouls,0,0,193,0.0,0.0,0.0
+Denmark Superliga,2021,away_fouls,1,1,193,0.5181347150259067,0.5181347150259067,0.5181347150259067
 Denmark Superliga,2021,away_offsides,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,away_possession,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,away_prematch_xg,12,12,193,6.217616580310881,6.217616580310881,6.217616580310881
@@ -327,7 +327,7 @@ Denmark Superliga,2021,away_yellow_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,home_attacks,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,home_corners,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,home_dangerous_attacks,0,0,193,0.0,0.0,0.0
-Denmark Superliga,2021,home_fouls,0,0,193,0.0,0.0,0.0
+Denmark Superliga,2021,home_fouls,2,2,193,1.0362694300518134,1.0362694300518134,1.0362694300518134
 Denmark Superliga,2021,home_offsides,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,home_possession,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2021,home_prematch_xg,12,12,193,6.217616580310881,6.217616580310881,6.217616580310881
@@ -340,14 +340,14 @@ Denmark Superliga,2021,home_yellow_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,away_attacks,2,2,193,1.0362694300518134,1.0362694300518134,1.0362694300518134
 Denmark Superliga,2022,away_corners,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,away_dangerous_attacks,2,2,193,1.0362694300518134,1.0362694300518134,1.0362694300518134
-Denmark Superliga,2022,away_fouls,0,0,193,0.0,0.0,0.0
+Denmark Superliga,2022,away_fouls,2,2,193,1.0362694300518134,1.0362694300518134,1.0362694300518134
 Denmark Superliga,2022,away_offsides,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,away_possession,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,away_prematch_xg,12,12,193,6.217616580310881,6.217616580310881,6.217616580310881
 Denmark Superliga,2022,away_red_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,away_shots_off_target,1,0,193,0.5181347150259067,0.0,0.5181347150259067
 Denmark Superliga,2022,away_shots_on_target,1,0,193,0.5181347150259067,0.0,0.5181347150259067
-Denmark Superliga,2022,away_total_shots,0,0,193,0.0,0.0,0.0
+Denmark Superliga,2022,away_total_shots,1,1,193,0.5181347150259067,0.5181347150259067,0.5181347150259067
 Denmark Superliga,2022,away_xg,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,away_yellow_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,home_attacks,2,2,193,1.0362694300518134,1.0362694300518134,1.0362694300518134
@@ -360,7 +360,7 @@ Denmark Superliga,2022,home_prematch_xg,12,12,193,6.217616580310881,6.2176165803
 Denmark Superliga,2022,home_red_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,home_shots_off_target,1,0,193,0.5181347150259067,0.0,0.5181347150259067
 Denmark Superliga,2022,home_shots_on_target,1,0,193,0.5181347150259067,0.0,0.5181347150259067
-Denmark Superliga,2022,home_total_shots,0,0,193,0.0,0.0,0.0
+Denmark Superliga,2022,home_total_shots,1,1,193,0.5181347150259067,0.5181347150259067,0.5181347150259067
 Denmark Superliga,2022,home_xg,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2022,home_yellow_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2023,away_attacks,1,1,193,0.5181347150259067,0.5181347150259067,0.5181347150259067
@@ -392,7 +392,7 @@ Denmark Superliga,2023,home_yellow_cards,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2024,away_attacks,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2024,away_corners,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2024,away_dangerous_attacks,0,0,193,0.0,0.0,0.0
-Denmark Superliga,2024,away_fouls,0,0,193,0.0,0.0,0.0
+Denmark Superliga,2024,away_fouls,1,1,193,0.5181347150259067,0.5181347150259067,0.5181347150259067
 Denmark Superliga,2024,away_offsides,9,0,193,4.66321243523316,0.0,4.66321243523316
 Denmark Superliga,2024,away_possession,0,0,193,0.0,0.0,0.0
 Denmark Superliga,2024,away_prematch_xg,12,12,193,6.217616580310881,6.217616580310881,6.217616580310881
@@ -425,7 +425,7 @@ England Championship,2021,away_prematch_xg,24,24,557,4.308797127468582,4.3087971
 England Championship,2021,away_red_cards,0,0,557,0.0,0.0,0.0
 England Championship,2021,away_shots_off_target,0,0,557,0.0,0.0,0.0
 England Championship,2021,away_shots_on_target,0,0,557,0.0,0.0,0.0
-England Championship,2021,away_total_shots,0,0,557,0.0,0.0,0.0
+England Championship,2021,away_total_shots,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England Championship,2021,away_xg,0,0,557,0.0,0.0,0.0
 England Championship,2021,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England Championship,2021,home_attacks,0,0,557,0.0,0.0,0.0
@@ -444,14 +444,14 @@ England Championship,2021,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England Championship,2022,away_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England Championship,2022,away_corners,0,0,557,0.0,0.0,0.0
 England Championship,2022,away_dangerous_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
-England Championship,2022,away_fouls,16,0,557,2.872531418312388,0.0,2.872531418312388
+England Championship,2022,away_fouls,17,1,557,3.0520646319569122,0.17953321364452424,3.0520646319569122
 England Championship,2022,away_offsides,43,0,557,7.719928186714542,0.0,7.719928186714542
 England Championship,2022,away_possession,0,0,557,0.0,0.0,0.0
 England Championship,2022,away_prematch_xg,24,24,557,4.308797127468582,4.308797127468582,4.308797127468582
 England Championship,2022,away_red_cards,0,0,557,0.0,0.0,0.0
 England Championship,2022,away_shots_off_target,0,0,557,0.0,0.0,0.0
 England Championship,2022,away_shots_on_target,0,0,557,0.0,0.0,0.0
-England Championship,2022,away_total_shots,0,0,557,0.0,0.0,0.0
+England Championship,2022,away_total_shots,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England Championship,2022,away_xg,0,0,557,0.0,0.0,0.0
 England Championship,2022,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England Championship,2022,home_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
@@ -464,7 +464,7 @@ England Championship,2022,home_prematch_xg,24,24,557,4.308797127468582,4.3087971
 England Championship,2022,home_red_cards,0,0,557,0.0,0.0,0.0
 England Championship,2022,home_shots_off_target,0,0,557,0.0,0.0,0.0
 England Championship,2022,home_shots_on_target,0,0,557,0.0,0.0,0.0
-England Championship,2022,home_total_shots,0,0,557,0.0,0.0,0.0
+England Championship,2022,home_total_shots,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England Championship,2022,home_xg,0,0,557,0.0,0.0,0.0
 England Championship,2022,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England Championship,2023,away_attacks,0,0,557,0.0,0.0,0.0
@@ -496,27 +496,27 @@ England Championship,2023,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England Championship,2024,away_attacks,29,29,557,5.206463195691203,5.206463195691203,5.206463195691203
 England Championship,2024,away_corners,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England Championship,2024,away_dangerous_attacks,29,29,557,5.206463195691203,5.206463195691203,5.206463195691203
-England Championship,2024,away_fouls,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England Championship,2024,away_fouls,7,5,557,1.2567324955116697,0.8976660682226212,1.2567324955116697
 England Championship,2024,away_offsides,13,0,557,2.3339317773788153,0.0,2.3339317773788153
 England Championship,2024,away_possession,3,0,557,0.5385996409335727,0.0,0.5385996409335727
 England Championship,2024,away_prematch_xg,25,25,557,4.488330341113106,4.488330341113106,4.488330341113106
 England Championship,2024,away_red_cards,0,0,557,0.0,0.0,0.0
 England Championship,2024,away_shots_off_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England Championship,2024,away_shots_on_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
-England Championship,2024,away_total_shots,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England Championship,2024,away_total_shots,3,1,557,0.5385996409335727,0.17953321364452424,0.5385996409335727
 England Championship,2024,away_xg,0,0,557,0.0,0.0,0.0
 England Championship,2024,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England Championship,2024,home_attacks,29,29,557,5.206463195691203,5.206463195691203,5.206463195691203
 England Championship,2024,home_corners,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England Championship,2024,home_dangerous_attacks,29,29,557,5.206463195691203,5.206463195691203,5.206463195691203
-England Championship,2024,home_fouls,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England Championship,2024,home_fouls,5,3,557,0.8976660682226212,0.5385996409335727,0.8976660682226212
 England Championship,2024,home_offsides,13,0,557,2.3339317773788153,0.0,2.3339317773788153
 England Championship,2024,home_possession,3,0,557,0.5385996409335727,0.0,0.5385996409335727
 England Championship,2024,home_prematch_xg,25,25,557,4.488330341113106,4.488330341113106,4.488330341113106
 England Championship,2024,home_red_cards,0,0,557,0.0,0.0,0.0
 England Championship,2024,home_shots_off_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England Championship,2024,home_shots_on_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
-England Championship,2024,home_total_shots,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England Championship,2024,home_total_shots,3,1,557,0.5385996409335727,0.17953321364452424,0.5385996409335727
 England Championship,2024,home_xg,0,0,557,0.0,0.0,0.0
 England Championship,2024,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League One,2021,away_attacks,0,0,557,0.0,0.0,0.0
@@ -535,7 +535,7 @@ England EFL League One,2021,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League One,2021,home_attacks,0,0,557,0.0,0.0,0.0
 England EFL League One,2021,home_corners,0,0,557,0.0,0.0,0.0
 England EFL League One,2021,home_dangerous_attacks,0,0,557,0.0,0.0,0.0
-England EFL League One,2021,home_fouls,0,0,557,0.0,0.0,0.0
+England EFL League One,2021,home_fouls,2,2,557,0.3590664272890485,0.3590664272890485,0.3590664272890485
 England EFL League One,2021,home_offsides,17,0,557,3.0520646319569122,0.0,3.0520646319569122
 England EFL League One,2021,home_possession,0,0,557,0.0,0.0,0.0
 England EFL League One,2021,home_prematch_xg,24,24,557,4.308797127468582,4.308797127468582,4.308797127468582
@@ -600,14 +600,14 @@ England EFL League One,2023,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League One,2024,away_attacks,9,9,557,1.6157989228007181,1.6157989228007181,1.6157989228007181
 England EFL League One,2024,away_corners,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England EFL League One,2024,away_dangerous_attacks,9,9,557,1.6157989228007181,1.6157989228007181,1.6157989228007181
-England EFL League One,2024,away_fouls,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England EFL League One,2024,away_fouls,3,1,557,0.5385996409335727,0.17953321364452424,0.5385996409335727
 England EFL League One,2024,away_offsides,18,0,557,3.2315978456014363,0.0,3.2315978456014363
 England EFL League One,2024,away_possession,3,0,557,0.5385996409335727,0.0,0.5385996409335727
 England EFL League One,2024,away_prematch_xg,24,24,557,4.308797127468582,4.308797127468582,4.308797127468582
 England EFL League One,2024,away_red_cards,0,0,557,0.0,0.0,0.0
 England EFL League One,2024,away_shots_off_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England EFL League One,2024,away_shots_on_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
-England EFL League One,2024,away_total_shots,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England EFL League One,2024,away_total_shots,4,2,557,0.718132854578097,0.3590664272890485,0.718132854578097
 England EFL League One,2024,away_xg,0,0,557,0.0,0.0,0.0
 England EFL League One,2024,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League One,2024,home_attacks,9,9,557,1.6157989228007181,1.6157989228007181,1.6157989228007181
@@ -620,7 +620,7 @@ England EFL League One,2024,home_prematch_xg,24,24,557,4.308797127468582,4.30879
 England EFL League One,2024,home_red_cards,0,0,557,0.0,0.0,0.0
 England EFL League One,2024,home_shots_off_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
 England EFL League One,2024,home_shots_on_target,2,0,557,0.3590664272890485,0.0,0.3590664272890485
-England EFL League One,2024,home_total_shots,2,0,557,0.3590664272890485,0.0,0.3590664272890485
+England EFL League One,2024,home_total_shots,5,3,557,0.8976660682226212,0.5385996409335727,0.8976660682226212
 England EFL League One,2024,home_xg,0,0,557,0.0,0.0,0.0
 England EFL League One,2024,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2021,away_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
@@ -659,7 +659,7 @@ England EFL League Two,2022,away_prematch_xg,24,24,557,4.308797127468582,4.30879
 England EFL League Two,2022,away_red_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,away_shots_off_target,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,away_shots_on_target,0,0,557,0.0,0.0,0.0
-England EFL League Two,2022,away_total_shots,0,0,557,0.0,0.0,0.0
+England EFL League Two,2022,away_total_shots,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England EFL League Two,2022,away_xg,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,home_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
@@ -672,13 +672,13 @@ England EFL League Two,2022,home_prematch_xg,24,24,557,4.308797127468582,4.30879
 England EFL League Two,2022,home_red_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,home_shots_off_target,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,home_shots_on_target,0,0,557,0.0,0.0,0.0
-England EFL League Two,2022,home_total_shots,0,0,557,0.0,0.0,0.0
+England EFL League Two,2022,home_total_shots,2,2,557,0.3590664272890485,0.3590664272890485,0.3590664272890485
 England EFL League Two,2022,home_xg,0,0,557,0.0,0.0,0.0
 England EFL League Two,2022,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2023,away_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England EFL League Two,2023,away_corners,0,0,557,0.0,0.0,0.0
 England EFL League Two,2023,away_dangerous_attacks,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
-England EFL League Two,2023,away_fouls,0,0,557,0.0,0.0,0.0
+England EFL League Two,2023,away_fouls,1,1,557,0.17953321364452424,0.17953321364452424,0.17953321364452424
 England EFL League Two,2023,away_offsides,27,0,557,4.847396768402154,0.0,4.847396768402154
 England EFL League Two,2023,away_possession,0,0,557,0.0,0.0,0.0
 England EFL League Two,2023,away_prematch_xg,24,24,557,4.308797127468582,4.308797127468582,4.308797127468582
@@ -704,20 +704,20 @@ England EFL League Two,2023,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2024,away_attacks,14,14,557,2.5134649910233393,2.5134649910233393,2.5134649910233393
 England EFL League Two,2024,away_corners,7,0,557,1.2567324955116697,0.0,1.2567324955116697
 England EFL League Two,2024,away_dangerous_attacks,14,14,557,2.5134649910233393,2.5134649910233393,2.5134649910233393
-England EFL League Two,2024,away_fouls,7,0,557,1.2567324955116697,0.0,1.2567324955116697
+England EFL League Two,2024,away_fouls,12,5,557,2.154398563734291,0.8976660682226212,2.154398563734291
 England EFL League Two,2024,away_offsides,26,0,557,4.667863554757631,0.0,4.667863554757631
 England EFL League Two,2024,away_possession,7,0,557,1.2567324955116697,0.0,1.2567324955116697
 England EFL League Two,2024,away_prematch_xg,27,27,557,4.847396768402154,4.847396768402154,4.847396768402154
 England EFL League Two,2024,away_red_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2024,away_shots_off_target,7,0,557,1.2567324955116697,0.0,1.2567324955116697
 England EFL League Two,2024,away_shots_on_target,7,0,557,1.2567324955116697,0.0,1.2567324955116697
-England EFL League Two,2024,away_total_shots,7,0,557,1.2567324955116697,0.0,1.2567324955116697
+England EFL League Two,2024,away_total_shots,8,1,557,1.436265709156194,0.17953321364452424,1.436265709156194
 England EFL League Two,2024,away_xg,0,0,557,0.0,0.0,0.0
 England EFL League Two,2024,away_yellow_cards,0,0,557,0.0,0.0,0.0
 England EFL League Two,2024,home_attacks,14,14,557,2.5134649910233393,2.5134649910233393,2.5134649910233393
 England EFL League Two,2024,home_corners,7,0,557,1.2567324955116697,0.0,1.2567324955116697
 England EFL League Two,2024,home_dangerous_attacks,14,14,557,2.5134649910233393,2.5134649910233393,2.5134649910233393
-England EFL League Two,2024,home_fouls,7,0,557,1.2567324955116697,0.0,1.2567324955116697
+England EFL League Two,2024,home_fouls,13,6,557,2.3339317773788153,1.0771992818671454,2.3339317773788153
 England EFL League Two,2024,home_offsides,26,0,557,4.667863554757631,0.0,4.667863554757631
 England EFL League Two,2024,home_possession,7,0,557,1.2567324955116697,0.0,1.2567324955116697
 England EFL League Two,2024,home_prematch_xg,27,27,557,4.847396768402154,4.847396768402154,4.847396768402154
@@ -730,7 +730,7 @@ England EFL League Two,2024,home_yellow_cards,0,0,557,0.0,0.0,0.0
 England Premier League,2021,away_attacks,0,0,380,0.0,0.0,0.0
 England Premier League,2021,away_corners,0,0,380,0.0,0.0,0.0
 England Premier League,2021,away_dangerous_attacks,0,0,380,0.0,0.0,0.0
-England Premier League,2021,away_fouls,0,0,380,0.0,0.0,0.0
+England Premier League,2021,away_fouls,2,2,380,0.5263157894736842,0.5263157894736842,0.5263157894736842
 England Premier League,2021,away_offsides,24,0,380,6.315789473684211,0.0,6.315789473684211
 England Premier League,2021,away_possession,0,0,380,0.0,0.0,0.0
 England Premier League,2021,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -756,7 +756,7 @@ England Premier League,2021,home_yellow_cards,0,0,380,0.0,0.0,0.0
 England Premier League,2022,away_attacks,0,0,380,0.0,0.0,0.0
 England Premier League,2022,away_corners,0,0,380,0.0,0.0,0.0
 England Premier League,2022,away_dangerous_attacks,0,0,380,0.0,0.0,0.0
-England Premier League,2022,away_fouls,0,0,380,0.0,0.0,0.0
+England Premier League,2022,away_fouls,3,3,380,0.7894736842105263,0.7894736842105263,0.7894736842105263
 England Premier League,2022,away_offsides,12,0,380,3.1578947368421053,0.0,3.1578947368421053
 England Premier League,2022,away_possession,0,0,380,0.0,0.0,0.0
 England Premier League,2022,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -769,7 +769,7 @@ England Premier League,2022,away_yellow_cards,0,0,380,0.0,0.0,0.0
 England Premier League,2022,home_attacks,0,0,380,0.0,0.0,0.0
 England Premier League,2022,home_corners,0,0,380,0.0,0.0,0.0
 England Premier League,2022,home_dangerous_attacks,0,0,380,0.0,0.0,0.0
-England Premier League,2022,home_fouls,0,0,380,0.0,0.0,0.0
+England Premier League,2022,home_fouls,3,3,380,0.7894736842105263,0.7894736842105263,0.7894736842105263
 England Premier League,2022,home_offsides,12,0,380,3.1578947368421053,0.0,3.1578947368421053
 England Premier League,2022,home_possession,0,0,380,0.0,0.0,0.0
 England Premier League,2022,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -808,14 +808,14 @@ England Premier League,2023,home_yellow_cards,0,0,380,0.0,0.0,0.0
 England Premier League,2024,away_attacks,4,4,380,1.0526315789473684,1.0526315789473684,1.0526315789473684
 England Premier League,2024,away_corners,0,0,380,0.0,0.0,0.0
 England Premier League,2024,away_dangerous_attacks,4,4,380,1.0526315789473684,1.0526315789473684,1.0526315789473684
-England Premier League,2024,away_fouls,0,0,380,0.0,0.0,0.0
+England Premier League,2024,away_fouls,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 England Premier League,2024,away_offsides,17,0,380,4.473684210526316,0.0,4.473684210526316
 England Premier League,2024,away_possession,0,0,380,0.0,0.0,0.0
 England Premier League,2024,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
 England Premier League,2024,away_red_cards,0,0,380,0.0,0.0,0.0
 England Premier League,2024,away_shots_off_target,0,0,380,0.0,0.0,0.0
 England Premier League,2024,away_shots_on_target,0,0,380,0.0,0.0,0.0
-England Premier League,2024,away_total_shots,0,0,380,0.0,0.0,0.0
+England Premier League,2024,away_total_shots,4,4,380,1.0526315789473684,1.0526315789473684,1.0526315789473684
 England Premier League,2024,away_xg,0,0,380,0.0,0.0,0.0
 England Premier League,2024,away_yellow_cards,0,0,380,0.0,0.0,0.0
 England Premier League,2024,home_attacks,4,4,380,1.0526315789473684,1.0526315789473684,1.0526315789473684
@@ -834,7 +834,7 @@ England Premier League,2024,home_yellow_cards,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,away_attacks,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,away_corners,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,away_dangerous_attacks,0,0,380,0.0,0.0,0.0
-France Ligue 1,2021,away_fouls,0,0,380,0.0,0.0,0.0
+France Ligue 1,2021,away_fouls,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 France Ligue 1,2021,away_offsides,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,away_possession,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -847,7 +847,7 @@ France Ligue 1,2021,away_yellow_cards,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,home_attacks,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,home_corners,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,home_dangerous_attacks,0,0,380,0.0,0.0,0.0
-France Ligue 1,2021,home_fouls,0,0,380,0.0,0.0,0.0
+France Ligue 1,2021,home_fouls,4,4,380,1.0526315789473684,1.0526315789473684,1.0526315789473684
 France Ligue 1,2021,home_offsides,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,home_possession,0,0,380,0.0,0.0,0.0
 France Ligue 1,2021,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -860,7 +860,7 @@ France Ligue 1,2021,home_yellow_cards,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,away_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 France Ligue 1,2022,away_corners,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,away_dangerous_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
-France Ligue 1,2022,away_fouls,0,0,380,0.0,0.0,0.0
+France Ligue 1,2022,away_fouls,6,6,380,1.5789473684210527,1.5789473684210527,1.5789473684210527
 France Ligue 1,2022,away_offsides,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,away_possession,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -873,7 +873,7 @@ France Ligue 1,2022,away_yellow_cards,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,home_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 France Ligue 1,2022,home_corners,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,home_dangerous_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
-France Ligue 1,2022,home_fouls,0,0,380,0.0,0.0,0.0
+France Ligue 1,2022,home_fouls,5,5,380,1.3157894736842106,1.3157894736842106,1.3157894736842106
 France Ligue 1,2022,home_offsides,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,home_possession,0,0,380,0.0,0.0,0.0
 France Ligue 1,2022,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -925,7 +925,7 @@ France Ligue 1,2024,away_yellow_cards,0,0,306,0.0,0.0,0.0
 France Ligue 1,2024,home_attacks,16,16,306,5.228758169934641,5.228758169934641,5.228758169934641
 France Ligue 1,2024,home_corners,0,0,306,0.0,0.0,0.0
 France Ligue 1,2024,home_dangerous_attacks,16,16,306,5.228758169934641,5.228758169934641,5.228758169934641
-France Ligue 1,2024,home_fouls,0,0,306,0.0,0.0,0.0
+France Ligue 1,2024,home_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 France Ligue 1,2024,home_offsides,10,0,306,3.2679738562091503,0.0,3.2679738562091503
 France Ligue 1,2024,home_possession,0,0,306,0.0,0.0,0.0
 France Ligue 1,2024,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -945,7 +945,7 @@ France Ligue 2,2021,away_prematch_xg,20,20,382,5.2356020942408374,5.235602094240
 France Ligue 2,2021,away_red_cards,0,0,382,0.0,0.0,0.0
 France Ligue 2,2021,away_shots_off_target,0,0,382,0.0,0.0,0.0
 France Ligue 2,2021,away_shots_on_target,0,0,382,0.0,0.0,0.0
-France Ligue 2,2021,away_total_shots,0,0,382,0.0,0.0,0.0
+France Ligue 2,2021,away_total_shots,1,1,382,0.2617801047120419,0.2617801047120419,0.2617801047120419
 France Ligue 2,2021,away_xg,0,0,382,0.0,0.0,0.0
 France Ligue 2,2021,away_yellow_cards,0,0,382,0.0,0.0,0.0
 France Ligue 2,2021,home_attacks,2,2,382,0.5235602094240838,0.5235602094240838,0.5235602094240838
@@ -984,7 +984,7 @@ France Ligue 2,2022,home_prematch_xg,20,20,380,5.2631578947368425,5.263157894736
 France Ligue 2,2022,home_red_cards,0,0,380,0.0,0.0,0.0
 France Ligue 2,2022,home_shots_off_target,0,0,380,0.0,0.0,0.0
 France Ligue 2,2022,home_shots_on_target,0,0,380,0.0,0.0,0.0
-France Ligue 2,2022,home_total_shots,0,0,380,0.0,0.0,0.0
+France Ligue 2,2022,home_total_shots,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 France Ligue 2,2022,home_xg,0,0,380,0.0,0.0,0.0
 France Ligue 2,2022,home_yellow_cards,0,0,380,0.0,0.0,0.0
 France Ligue 2,2023,away_attacks,0,0,382,0.0,0.0,0.0
@@ -1016,14 +1016,14 @@ France Ligue 2,2023,home_yellow_cards,0,0,382,0.0,0.0,0.0
 France Ligue 2,2024,away_attacks,24,24,308,7.792207792207792,7.792207792207792,7.792207792207792
 France Ligue 2,2024,away_corners,3,0,308,0.974025974025974,0.0,0.974025974025974
 France Ligue 2,2024,away_dangerous_attacks,24,24,308,7.792207792207792,7.792207792207792,7.792207792207792
-France Ligue 2,2024,away_fouls,13,0,308,4.220779220779221,0.0,4.220779220779221
+France Ligue 2,2024,away_fouls,15,2,308,4.87012987012987,0.6493506493506493,4.87012987012987
 France Ligue 2,2024,away_offsides,20,0,308,6.4935064935064934,0.0,6.4935064935064934
 France Ligue 2,2024,away_possession,3,0,308,0.974025974025974,0.0,0.974025974025974
 France Ligue 2,2024,away_prematch_xg,18,18,308,5.8441558441558445,5.8441558441558445,5.8441558441558445
 France Ligue 2,2024,away_red_cards,0,0,308,0.0,0.0,0.0
 France Ligue 2,2024,away_shots_off_target,3,0,308,0.974025974025974,0.0,0.974025974025974
 France Ligue 2,2024,away_shots_on_target,3,0,308,0.974025974025974,0.0,0.974025974025974
-France Ligue 2,2024,away_total_shots,3,0,308,0.974025974025974,0.0,0.974025974025974
+France Ligue 2,2024,away_total_shots,4,1,308,1.2987012987012987,0.3246753246753247,1.2987012987012987
 France Ligue 2,2024,away_xg,0,0,308,0.0,0.0,0.0
 France Ligue 2,2024,away_yellow_cards,0,0,308,0.0,0.0,0.0
 France Ligue 2,2024,home_attacks,24,24,308,7.792207792207792,7.792207792207792,7.792207792207792
@@ -1036,13 +1036,13 @@ France Ligue 2,2024,home_prematch_xg,18,18,308,5.8441558441558445,5.844155844155
 France Ligue 2,2024,home_red_cards,0,0,308,0.0,0.0,0.0
 France Ligue 2,2024,home_shots_off_target,3,0,308,0.974025974025974,0.0,0.974025974025974
 France Ligue 2,2024,home_shots_on_target,3,0,308,0.974025974025974,0.0,0.974025974025974
-France Ligue 2,2024,home_total_shots,3,0,308,0.974025974025974,0.0,0.974025974025974
+France Ligue 2,2024,home_total_shots,4,1,308,1.2987012987012987,0.3246753246753247,1.2987012987012987
 France Ligue 2,2024,home_xg,0,0,308,0.0,0.0,0.0
 France Ligue 2,2024,home_yellow_cards,0,0,308,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,away_attacks,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,away_corners,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,away_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Germany 2. Bundesliga,2021,away_fouls,0,0,306,0.0,0.0,0.0
+Germany 2. Bundesliga,2021,away_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 Germany 2. Bundesliga,2021,away_offsides,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,away_possession,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1055,7 +1055,7 @@ Germany 2. Bundesliga,2021,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,home_attacks,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,home_corners,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,home_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Germany 2. Bundesliga,2021,home_fouls,0,0,306,0.0,0.0,0.0
+Germany 2. Bundesliga,2021,home_fouls,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Germany 2. Bundesliga,2021,home_offsides,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,home_possession,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2021,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1068,7 +1068,7 @@ Germany 2. Bundesliga,2021,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,away_attacks,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,away_corners,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,away_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Germany 2. Bundesliga,2022,away_fouls,0,0,306,0.0,0.0,0.0
+Germany 2. Bundesliga,2022,away_fouls,3,3,306,0.9803921568627451,0.9803921568627451,0.9803921568627451
 Germany 2. Bundesliga,2022,away_offsides,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,away_possession,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1081,7 +1081,7 @@ Germany 2. Bundesliga,2022,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,home_attacks,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,home_corners,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,home_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Germany 2. Bundesliga,2022,home_fouls,0,0,306,0.0,0.0,0.0
+Germany 2. Bundesliga,2022,home_fouls,3,3,306,0.9803921568627451,0.9803921568627451,0.9803921568627451
 Germany 2. Bundesliga,2022,home_offsides,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,home_possession,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2022,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1120,7 +1120,7 @@ Germany 2. Bundesliga,2023,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2024,away_attacks,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
 Germany 2. Bundesliga,2024,away_corners,3,0,306,0.9803921568627451,0.0,0.9803921568627451
 Germany 2. Bundesliga,2024,away_dangerous_attacks,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
-Germany 2. Bundesliga,2024,away_fouls,3,0,306,0.9803921568627451,0.0,0.9803921568627451
+Germany 2. Bundesliga,2024,away_fouls,4,1,306,1.3071895424836601,0.32679738562091504,1.3071895424836601
 Germany 2. Bundesliga,2024,away_offsides,6,0,306,1.9607843137254901,0.0,1.9607843137254901
 Germany 2. Bundesliga,2024,away_possession,3,0,306,0.9803921568627451,0.0,0.9803921568627451
 Germany 2. Bundesliga,2024,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1133,7 +1133,7 @@ Germany 2. Bundesliga,2024,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany 2. Bundesliga,2024,home_attacks,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
 Germany 2. Bundesliga,2024,home_corners,3,0,306,0.9803921568627451,0.0,0.9803921568627451
 Germany 2. Bundesliga,2024,home_dangerous_attacks,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
-Germany 2. Bundesliga,2024,home_fouls,3,0,306,0.9803921568627451,0.0,0.9803921568627451
+Germany 2. Bundesliga,2024,home_fouls,4,1,306,1.3071895424836601,0.32679738562091504,1.3071895424836601
 Germany 2. Bundesliga,2024,home_offsides,6,0,306,1.9607843137254901,0.0,1.9607843137254901
 Germany 2. Bundesliga,2024,home_possession,3,0,306,0.9803921568627451,0.0,0.9803921568627451
 Germany 2. Bundesliga,2024,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1159,7 +1159,7 @@ Germany Bundesliga,2021,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2021,home_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Germany Bundesliga,2021,home_corners,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2021,home_dangerous_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
-Germany Bundesliga,2021,home_fouls,0,0,306,0.0,0.0,0.0
+Germany Bundesliga,2021,home_fouls,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Germany Bundesliga,2021,home_offsides,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2021,home_possession,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2021,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1172,7 +1172,7 @@ Germany Bundesliga,2021,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2022,away_attacks,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2022,away_corners,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2022,away_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Germany Bundesliga,2022,away_fouls,0,0,306,0.0,0.0,0.0
+Germany Bundesliga,2022,away_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 Germany Bundesliga,2022,away_offsides,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2022,away_possession,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2022,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1224,7 +1224,7 @@ Germany Bundesliga,2023,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,away_attacks,10,10,306,3.2679738562091503,3.2679738562091503,3.2679738562091503
 Germany Bundesliga,2024,away_corners,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,away_dangerous_attacks,10,10,306,3.2679738562091503,3.2679738562091503,3.2679738562091503
-Germany Bundesliga,2024,away_fouls,0,0,306,0.0,0.0,0.0
+Germany Bundesliga,2024,away_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 Germany Bundesliga,2024,away_offsides,4,0,306,1.3071895424836601,0.0,1.3071895424836601
 Germany Bundesliga,2024,away_possession,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1237,20 +1237,20 @@ Germany Bundesliga,2024,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,home_attacks,10,10,306,3.2679738562091503,3.2679738562091503,3.2679738562091503
 Germany Bundesliga,2024,home_corners,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,home_dangerous_attacks,10,10,306,3.2679738562091503,3.2679738562091503,3.2679738562091503
-Germany Bundesliga,2024,home_fouls,0,0,306,0.0,0.0,0.0
+Germany Bundesliga,2024,home_fouls,3,3,306,0.9803921568627451,0.9803921568627451,0.9803921568627451
 Germany Bundesliga,2024,home_offsides,4,0,306,1.3071895424836601,0.0,1.3071895424836601
 Germany Bundesliga,2024,home_possession,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
 Germany Bundesliga,2024,home_red_cards,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,home_shots_off_target,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,home_shots_on_target,0,0,306,0.0,0.0,0.0
-Germany Bundesliga,2024,home_total_shots,0,0,306,0.0,0.0,0.0
+Germany Bundesliga,2024,home_total_shots,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Germany Bundesliga,2024,home_xg,0,0,306,0.0,0.0,0.0
 Germany Bundesliga,2024,home_yellow_cards,0,0,306,0.0,0.0,0.0
 India Indian Super League,2021,away_attacks,2,2,115,1.7391304347826086,1.7391304347826086,1.7391304347826086
 India Indian Super League,2021,away_corners,0,0,115,0.0,0.0,0.0
 India Indian Super League,2021,away_dangerous_attacks,2,2,115,1.7391304347826086,1.7391304347826086,1.7391304347826086
-India Indian Super League,2021,away_fouls,0,0,115,0.0,0.0,0.0
+India Indian Super League,2021,away_fouls,1,1,115,0.8695652173913043,0.8695652173913043,0.8695652173913043
 India Indian Super League,2021,away_offsides,2,0,115,1.7391304347826086,0.0,1.7391304347826086
 India Indian Super League,2021,away_possession,0,0,115,0.0,0.0,0.0
 India Indian Super League,2021,away_prematch_xg,11,11,115,9.565217391304348,9.565217391304348,9.565217391304348
@@ -1263,7 +1263,7 @@ India Indian Super League,2021,away_yellow_cards,0,0,115,0.0,0.0,0.0
 India Indian Super League,2021,home_attacks,2,2,115,1.7391304347826086,1.7391304347826086,1.7391304347826086
 India Indian Super League,2021,home_corners,0,0,115,0.0,0.0,0.0
 India Indian Super League,2021,home_dangerous_attacks,2,2,115,1.7391304347826086,1.7391304347826086,1.7391304347826086
-India Indian Super League,2021,home_fouls,0,0,115,0.0,0.0,0.0
+India Indian Super League,2021,home_fouls,1,1,115,0.8695652173913043,0.8695652173913043,0.8695652173913043
 India Indian Super League,2021,home_offsides,2,0,115,1.7391304347826086,0.0,1.7391304347826086
 India Indian Super League,2021,home_possession,0,0,115,0.0,0.0,0.0
 India Indian Super League,2021,home_prematch_xg,12,12,115,10.434782608695652,10.434782608695652,10.434782608695652
@@ -1276,7 +1276,7 @@ India Indian Super League,2021,home_yellow_cards,0,0,115,0.0,0.0,0.0
 India Indian Super League,2022,away_attacks,2,2,117,1.7094017094017093,1.7094017094017093,1.7094017094017093
 India Indian Super League,2022,away_corners,0,0,117,0.0,0.0,0.0
 India Indian Super League,2022,away_dangerous_attacks,2,2,117,1.7094017094017093,1.7094017094017093,1.7094017094017093
-India Indian Super League,2022,away_fouls,0,0,117,0.0,0.0,0.0
+India Indian Super League,2022,away_fouls,2,2,117,1.7094017094017093,1.7094017094017093,1.7094017094017093
 India Indian Super League,2022,away_offsides,2,0,117,1.7094017094017093,0.0,1.7094017094017093
 India Indian Super League,2022,away_possession,0,0,117,0.0,0.0,0.0
 India Indian Super League,2022,away_prematch_xg,11,11,117,9.401709401709402,9.401709401709402,9.401709401709402
@@ -1289,7 +1289,7 @@ India Indian Super League,2022,away_yellow_cards,0,0,117,0.0,0.0,0.0
 India Indian Super League,2022,home_attacks,2,2,117,1.7094017094017093,1.7094017094017093,1.7094017094017093
 India Indian Super League,2022,home_corners,0,0,117,0.0,0.0,0.0
 India Indian Super League,2022,home_dangerous_attacks,2,2,117,1.7094017094017093,1.7094017094017093,1.7094017094017093
-India Indian Super League,2022,home_fouls,0,0,117,0.0,0.0,0.0
+India Indian Super League,2022,home_fouls,1,1,117,0.8547008547008547,0.8547008547008547,0.8547008547008547
 India Indian Super League,2022,home_offsides,2,0,117,1.7094017094017093,0.0,1.7094017094017093
 India Indian Super League,2022,home_possession,0,0,117,0.0,0.0,0.0
 India Indian Super League,2022,home_prematch_xg,11,11,117,9.401709401709402,9.401709401709402,9.401709401709402
@@ -1354,20 +1354,20 @@ India Indian Super League,2024,home_yellow_cards,0,0,163,0.0,0.0,0.0
 Italy Serie A,2021,away_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Italy Serie A,2021,away_corners,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,away_dangerous_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
-Italy Serie A,2021,away_fouls,0,0,380,0.0,0.0,0.0
+Italy Serie A,2021,away_fouls,2,2,380,0.5263157894736842,0.5263157894736842,0.5263157894736842
 Italy Serie A,2021,away_offsides,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,away_possession,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
 Italy Serie A,2021,away_red_cards,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,away_shots_off_target,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,away_shots_on_target,0,0,380,0.0,0.0,0.0
-Italy Serie A,2021,away_total_shots,0,0,380,0.0,0.0,0.0
+Italy Serie A,2021,away_total_shots,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Italy Serie A,2021,away_xg,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,away_yellow_cards,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,home_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Italy Serie A,2021,home_corners,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,home_dangerous_attacks,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
-Italy Serie A,2021,home_fouls,0,0,380,0.0,0.0,0.0
+Italy Serie A,2021,home_fouls,2,2,380,0.5263157894736842,0.5263157894736842,0.5263157894736842
 Italy Serie A,2021,home_offsides,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,home_possession,0,0,380,0.0,0.0,0.0
 Italy Serie A,2021,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -1380,7 +1380,7 @@ Italy Serie A,2021,home_yellow_cards,0,0,380,0.0,0.0,0.0
 Italy Serie A,2022,away_attacks,2,2,381,0.5249343832020997,0.5249343832020997,0.5249343832020997
 Italy Serie A,2022,away_corners,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,away_dangerous_attacks,2,2,381,0.5249343832020997,0.5249343832020997,0.5249343832020997
-Italy Serie A,2022,away_fouls,0,0,381,0.0,0.0,0.0
+Italy Serie A,2022,away_fouls,7,7,381,1.837270341207349,1.837270341207349,1.837270341207349
 Italy Serie A,2022,away_offsides,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,away_possession,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,away_prematch_xg,20,20,381,5.2493438320209975,5.2493438320209975,5.2493438320209975
@@ -1393,7 +1393,7 @@ Italy Serie A,2022,away_yellow_cards,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,home_attacks,2,2,381,0.5249343832020997,0.5249343832020997,0.5249343832020997
 Italy Serie A,2022,home_corners,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,home_dangerous_attacks,2,2,381,0.5249343832020997,0.5249343832020997,0.5249343832020997
-Italy Serie A,2022,home_fouls,0,0,381,0.0,0.0,0.0
+Italy Serie A,2022,home_fouls,1,1,381,0.26246719160104987,0.26246719160104987,0.26246719160104987
 Italy Serie A,2022,home_offsides,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,home_possession,0,0,381,0.0,0.0,0.0
 Italy Serie A,2022,home_prematch_xg,20,20,381,5.2493438320209975,5.2493438320209975,5.2493438320209975
@@ -1432,7 +1432,7 @@ Italy Serie A,2023,home_yellow_cards,0,0,380,0.0,0.0,0.0
 Italy Serie A,2024,away_attacks,14,14,380,3.6842105263157894,3.6842105263157894,3.6842105263157894
 Italy Serie A,2024,away_corners,0,0,380,0.0,0.0,0.0
 Italy Serie A,2024,away_dangerous_attacks,14,14,380,3.6842105263157894,3.6842105263157894,3.6842105263157894
-Italy Serie A,2024,away_fouls,0,0,380,0.0,0.0,0.0
+Italy Serie A,2024,away_fouls,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Italy Serie A,2024,away_offsides,12,0,380,3.1578947368421053,0.0,3.1578947368421053
 Italy Serie A,2024,away_possession,0,0,380,0.0,0.0,0.0
 Italy Serie A,2024,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -1458,7 +1458,7 @@ Italy Serie A,2024,home_yellow_cards,0,0,380,0.0,0.0,0.0
 Italy Serie B,2021,away_attacks,1,1,390,0.2564102564102564,0.2564102564102564,0.2564102564102564
 Italy Serie B,2021,away_corners,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,away_dangerous_attacks,1,1,390,0.2564102564102564,0.2564102564102564,0.2564102564102564
-Italy Serie B,2021,away_fouls,0,0,390,0.0,0.0,0.0
+Italy Serie B,2021,away_fouls,5,5,390,1.2820512820512822,1.2820512820512822,1.2820512820512822
 Italy Serie B,2021,away_offsides,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,away_possession,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,away_prematch_xg,20,20,390,5.128205128205129,5.128205128205129,5.128205128205129
@@ -1471,7 +1471,7 @@ Italy Serie B,2021,away_yellow_cards,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,home_attacks,1,1,390,0.2564102564102564,0.2564102564102564,0.2564102564102564
 Italy Serie B,2021,home_corners,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,home_dangerous_attacks,1,1,390,0.2564102564102564,0.2564102564102564,0.2564102564102564
-Italy Serie B,2021,home_fouls,0,0,390,0.0,0.0,0.0
+Italy Serie B,2021,home_fouls,8,8,390,2.051282051282051,2.051282051282051,2.051282051282051
 Italy Serie B,2021,home_offsides,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,home_possession,0,0,390,0.0,0.0,0.0
 Italy Serie B,2021,home_prematch_xg,20,20,390,5.128205128205129,5.128205128205129,5.128205128205129
@@ -1484,7 +1484,7 @@ Italy Serie B,2021,home_yellow_cards,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,away_attacks,10,10,390,2.5641025641025643,2.5641025641025643,2.5641025641025643
 Italy Serie B,2022,away_corners,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,away_dangerous_attacks,10,10,390,2.5641025641025643,2.5641025641025643,2.5641025641025643
-Italy Serie B,2022,away_fouls,0,0,390,0.0,0.0,0.0
+Italy Serie B,2022,away_fouls,7,7,390,1.794871794871795,1.794871794871795,1.794871794871795
 Italy Serie B,2022,away_offsides,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,away_possession,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,away_prematch_xg,20,20,390,5.128205128205129,5.128205128205129,5.128205128205129
@@ -1497,7 +1497,7 @@ Italy Serie B,2022,away_yellow_cards,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,home_attacks,10,10,390,2.5641025641025643,2.5641025641025643,2.5641025641025643
 Italy Serie B,2022,home_corners,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,home_dangerous_attacks,10,10,390,2.5641025641025643,2.5641025641025643,2.5641025641025643
-Italy Serie B,2022,home_fouls,0,0,390,0.0,0.0,0.0
+Italy Serie B,2022,home_fouls,10,10,390,2.5641025641025643,2.5641025641025643,2.5641025641025643
 Italy Serie B,2022,home_offsides,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,home_possession,0,0,390,0.0,0.0,0.0
 Italy Serie B,2022,home_prematch_xg,20,20,390,5.128205128205129,5.128205128205129,5.128205128205129
@@ -1536,7 +1536,7 @@ Italy Serie B,2023,home_yellow_cards,0,0,390,0.0,0.0,0.0
 Italy Serie B,2024,away_attacks,23,23,390,5.897435897435898,5.897435897435898,5.897435897435898
 Italy Serie B,2024,away_corners,1,0,390,0.2564102564102564,0.0,0.2564102564102564
 Italy Serie B,2024,away_dangerous_attacks,23,23,390,5.897435897435898,5.897435897435898,5.897435897435898
-Italy Serie B,2024,away_fouls,1,0,390,0.2564102564102564,0.0,0.2564102564102564
+Italy Serie B,2024,away_fouls,4,3,390,1.0256410256410255,0.7692307692307693,1.0256410256410255
 Italy Serie B,2024,away_offsides,13,0,390,3.3333333333333335,0.0,3.3333333333333335
 Italy Serie B,2024,away_possession,1,0,390,0.2564102564102564,0.0,0.2564102564102564
 Italy Serie B,2024,away_prematch_xg,20,20,390,5.128205128205129,5.128205128205129,5.128205128205129
@@ -1562,7 +1562,7 @@ Italy Serie B,2024,home_yellow_cards,0,0,390,0.0,0.0,0.0
 Netherlands Eredivisie,2021,away_attacks,1,1,312,0.32051282051282054,0.32051282051282054,0.32051282051282054
 Netherlands Eredivisie,2021,away_corners,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2021,away_dangerous_attacks,1,1,312,0.32051282051282054,0.32051282051282054,0.32051282051282054
-Netherlands Eredivisie,2021,away_fouls,0,0,312,0.0,0.0,0.0
+Netherlands Eredivisie,2021,away_fouls,2,2,312,0.6410256410256411,0.6410256410256411,0.6410256410256411
 Netherlands Eredivisie,2021,away_offsides,1,0,312,0.32051282051282054,0.0,0.32051282051282054
 Netherlands Eredivisie,2021,away_possession,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2021,away_prematch_xg,18,18,312,5.769230769230769,5.769230769230769,5.769230769230769
@@ -1575,7 +1575,7 @@ Netherlands Eredivisie,2021,away_yellow_cards,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2021,home_attacks,1,1,312,0.32051282051282054,0.32051282051282054,0.32051282051282054
 Netherlands Eredivisie,2021,home_corners,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2021,home_dangerous_attacks,1,1,312,0.32051282051282054,0.32051282051282054,0.32051282051282054
-Netherlands Eredivisie,2021,home_fouls,0,0,312,0.0,0.0,0.0
+Netherlands Eredivisie,2021,home_fouls,4,4,312,1.2820512820512822,1.2820512820512822,1.2820512820512822
 Netherlands Eredivisie,2021,home_offsides,1,0,312,0.32051282051282054,0.0,0.32051282051282054
 Netherlands Eredivisie,2021,home_possession,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2021,home_prematch_xg,18,18,312,5.769230769230769,5.769230769230769,5.769230769230769
@@ -1588,7 +1588,7 @@ Netherlands Eredivisie,2021,home_yellow_cards,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2022,away_attacks,1,1,312,0.32051282051282054,0.32051282051282054,0.32051282051282054
 Netherlands Eredivisie,2022,away_corners,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2022,away_dangerous_attacks,1,1,312,0.32051282051282054,0.32051282051282054,0.32051282051282054
-Netherlands Eredivisie,2022,away_fouls,0,0,312,0.0,0.0,0.0
+Netherlands Eredivisie,2022,away_fouls,2,2,312,0.6410256410256411,0.6410256410256411,0.6410256410256411
 Netherlands Eredivisie,2022,away_offsides,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2022,away_possession,0,0,312,0.0,0.0,0.0
 Netherlands Eredivisie,2022,away_prematch_xg,18,18,312,5.769230769230769,5.769230769230769,5.769230769230769
@@ -1627,7 +1627,7 @@ Netherlands Eredivisie,2023,away_yellow_cards,0,0,309,0.0,0.0,0.0
 Netherlands Eredivisie,2023,home_attacks,0,0,309,0.0,0.0,0.0
 Netherlands Eredivisie,2023,home_corners,0,0,309,0.0,0.0,0.0
 Netherlands Eredivisie,2023,home_dangerous_attacks,0,0,309,0.0,0.0,0.0
-Netherlands Eredivisie,2023,home_fouls,0,0,309,0.0,0.0,0.0
+Netherlands Eredivisie,2023,home_fouls,1,1,309,0.32362459546925565,0.32362459546925565,0.32362459546925565
 Netherlands Eredivisie,2023,home_offsides,0,0,309,0.0,0.0,0.0
 Netherlands Eredivisie,2023,home_possession,0,0,309,0.0,0.0,0.0
 Netherlands Eredivisie,2023,home_prematch_xg,18,18,309,5.825242718446602,5.825242718446602,5.825242718446602
@@ -1640,7 +1640,7 @@ Netherlands Eredivisie,2023,home_yellow_cards,0,0,309,0.0,0.0,0.0
 Netherlands Eredivisie,2024,away_attacks,13,13,309,4.207119741100324,4.207119741100324,4.207119741100324
 Netherlands Eredivisie,2024,away_corners,1,0,309,0.32362459546925565,0.0,0.32362459546925565
 Netherlands Eredivisie,2024,away_dangerous_attacks,13,13,309,4.207119741100324,4.207119741100324,4.207119741100324
-Netherlands Eredivisie,2024,away_fouls,1,0,309,0.32362459546925565,0.0,0.32362459546925565
+Netherlands Eredivisie,2024,away_fouls,3,2,309,0.970873786407767,0.6472491909385113,0.970873786407767
 Netherlands Eredivisie,2024,away_offsides,20,0,309,6.472491909385114,0.0,6.472491909385114
 Netherlands Eredivisie,2024,away_possession,1,0,309,0.32362459546925565,0.0,0.32362459546925565
 Netherlands Eredivisie,2024,away_prematch_xg,18,18,309,5.825242718446602,5.825242718446602,5.825242718446602
@@ -1666,7 +1666,7 @@ Netherlands Eredivisie,2024,home_yellow_cards,0,0,309,0.0,0.0,0.0
 Poland Ekstraklasa,2021,away_attacks,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,away_corners,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,away_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Poland Ekstraklasa,2021,away_fouls,0,0,306,0.0,0.0,0.0
+Poland Ekstraklasa,2021,away_fouls,8,8,306,2.6143790849673203,2.6143790849673203,2.6143790849673203
 Poland Ekstraklasa,2021,away_offsides,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,away_possession,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1679,7 +1679,7 @@ Poland Ekstraklasa,2021,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,home_attacks,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,home_corners,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,home_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Poland Ekstraklasa,2021,home_fouls,0,0,306,0.0,0.0,0.0
+Poland Ekstraklasa,2021,home_fouls,4,4,306,1.3071895424836601,1.3071895424836601,1.3071895424836601
 Poland Ekstraklasa,2021,home_offsides,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,home_possession,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2021,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1692,7 +1692,7 @@ Poland Ekstraklasa,2021,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,away_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Poland Ekstraklasa,2022,away_corners,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,away_dangerous_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
-Poland Ekstraklasa,2022,away_fouls,0,0,306,0.0,0.0,0.0
+Poland Ekstraklasa,2022,away_fouls,4,4,306,1.3071895424836601,1.3071895424836601,1.3071895424836601
 Poland Ekstraklasa,2022,away_offsides,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,away_possession,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1705,7 +1705,7 @@ Poland Ekstraklasa,2022,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,home_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Poland Ekstraklasa,2022,home_corners,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,home_dangerous_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
-Poland Ekstraklasa,2022,home_fouls,0,0,306,0.0,0.0,0.0
+Poland Ekstraklasa,2022,home_fouls,3,3,306,0.9803921568627451,0.9803921568627451,0.9803921568627451
 Poland Ekstraklasa,2022,home_offsides,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,home_possession,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2022,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1744,7 +1744,7 @@ Poland Ekstraklasa,2023,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2024,away_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Poland Ekstraklasa,2024,away_corners,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2024,away_dangerous_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
-Poland Ekstraklasa,2024,away_fouls,0,0,306,0.0,0.0,0.0
+Poland Ekstraklasa,2024,away_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 Poland Ekstraklasa,2024,away_offsides,12,0,306,3.9215686274509802,0.0,3.9215686274509802
 Poland Ekstraklasa,2024,away_possession,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2024,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1757,7 +1757,7 @@ Poland Ekstraklasa,2024,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2024,home_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Poland Ekstraklasa,2024,home_corners,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2024,home_dangerous_attacks,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
-Poland Ekstraklasa,2024,home_fouls,0,0,306,0.0,0.0,0.0
+Poland Ekstraklasa,2024,home_fouls,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Poland Ekstraklasa,2024,home_offsides,12,0,306,3.9215686274509802,0.0,3.9215686274509802
 Poland Ekstraklasa,2024,home_possession,0,0,306,0.0,0.0,0.0
 Poland Ekstraklasa,2024,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1770,7 +1770,7 @@ Poland Ekstraklasa,2024,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,away_attacks,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,away_corners,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,away_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Portugal Liga NOS,2021,away_fouls,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2021,away_fouls,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Portugal Liga NOS,2021,away_offsides,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,away_possession,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1783,20 +1783,20 @@ Portugal Liga NOS,2021,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_attacks,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_corners,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Portugal Liga NOS,2021,home_fouls,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2021,home_fouls,3,3,306,0.9803921568627451,0.9803921568627451,0.9803921568627451
 Portugal Liga NOS,2021,home_offsides,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_possession,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
 Portugal Liga NOS,2021,home_red_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_shots_off_target,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_shots_on_target,0,0,306,0.0,0.0,0.0
-Portugal Liga NOS,2021,home_total_shots,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2021,home_total_shots,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Portugal Liga NOS,2021,home_xg,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2021,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,away_attacks,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,away_corners,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,away_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Portugal Liga NOS,2022,away_fouls,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2022,away_fouls,4,4,306,1.3071895424836601,1.3071895424836601,1.3071895424836601
 Portugal Liga NOS,2022,away_offsides,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,away_possession,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1809,7 +1809,7 @@ Portugal Liga NOS,2022,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,home_attacks,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,home_corners,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,home_dangerous_attacks,0,0,306,0.0,0.0,0.0
-Portugal Liga NOS,2022,home_fouls,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2022,home_fouls,6,6,306,1.9607843137254901,1.9607843137254901,1.9607843137254901
 Portugal Liga NOS,2022,home_offsides,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,home_possession,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2022,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1848,20 +1848,20 @@ Portugal Liga NOS,2023,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,away_attacks,14,14,306,4.57516339869281,4.57516339869281,4.57516339869281
 Portugal Liga NOS,2024,away_corners,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,away_dangerous_attacks,14,14,306,4.57516339869281,4.57516339869281,4.57516339869281
-Portugal Liga NOS,2024,away_fouls,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2024,away_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 Portugal Liga NOS,2024,away_offsides,6,0,306,1.9607843137254901,0.0,1.9607843137254901
 Portugal Liga NOS,2024,away_possession,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,away_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
 Portugal Liga NOS,2024,away_red_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,away_shots_off_target,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,away_shots_on_target,0,0,306,0.0,0.0,0.0
-Portugal Liga NOS,2024,away_total_shots,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2024,away_total_shots,1,1,306,0.32679738562091504,0.32679738562091504,0.32679738562091504
 Portugal Liga NOS,2024,away_xg,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,home_attacks,14,14,306,4.57516339869281,4.57516339869281,4.57516339869281
 Portugal Liga NOS,2024,home_corners,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,home_dangerous_attacks,14,14,306,4.57516339869281,4.57516339869281,4.57516339869281
-Portugal Liga NOS,2024,home_fouls,0,0,306,0.0,0.0,0.0
+Portugal Liga NOS,2024,home_fouls,2,2,306,0.6535947712418301,0.6535947712418301,0.6535947712418301
 Portugal Liga NOS,2024,home_offsides,6,0,306,1.9607843137254901,0.0,1.9607843137254901
 Portugal Liga NOS,2024,home_possession,0,0,306,0.0,0.0,0.0
 Portugal Liga NOS,2024,home_prematch_xg,18,18,306,5.882352941176471,5.882352941176471,5.882352941176471
@@ -1881,7 +1881,7 @@ Saudi Arabia Professional League,2021,away_prematch_xg,17,17,240,7.0833333333333
 Saudi Arabia Professional League,2021,away_red_cards,1,0,240,0.4166666666666667,0.0,0.4166666666666667
 Saudi Arabia Professional League,2021,away_shots_off_target,3,0,240,1.25,0.0,1.25
 Saudi Arabia Professional League,2021,away_shots_on_target,3,0,240,1.25,0.0,1.25
-Saudi Arabia Professional League,2021,away_total_shots,3,0,240,1.25,0.0,1.25
+Saudi Arabia Professional League,2021,away_total_shots,4,1,240,1.6666666666666667,0.4166666666666667,1.6666666666666667
 Saudi Arabia Professional League,2021,away_xg,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2021,away_yellow_cards,1,0,240,0.4166666666666667,0.0,0.4166666666666667
 Saudi Arabia Professional League,2021,home_attacks,13,13,240,5.416666666666667,5.416666666666667,5.416666666666667
@@ -1894,7 +1894,7 @@ Saudi Arabia Professional League,2021,home_prematch_xg,17,17,240,7.0833333333333
 Saudi Arabia Professional League,2021,home_red_cards,1,0,240,0.4166666666666667,0.0,0.4166666666666667
 Saudi Arabia Professional League,2021,home_shots_off_target,3,0,240,1.25,0.0,1.25
 Saudi Arabia Professional League,2021,home_shots_on_target,3,0,240,1.25,0.0,1.25
-Saudi Arabia Professional League,2021,home_total_shots,3,0,240,1.25,0.0,1.25
+Saudi Arabia Professional League,2021,home_total_shots,4,1,240,1.6666666666666667,0.4166666666666667,1.6666666666666667
 Saudi Arabia Professional League,2021,home_xg,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2021,home_yellow_cards,1,0,240,0.4166666666666667,0.0,0.4166666666666667
 Saudi Arabia Professional League,2022,away_attacks,7,7,240,2.9166666666666665,2.9166666666666665,2.9166666666666665
@@ -1907,7 +1907,7 @@ Saudi Arabia Professional League,2022,away_prematch_xg,18,18,240,7.5,7.5,7.5
 Saudi Arabia Professional League,2022,away_red_cards,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,away_shots_off_target,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,away_shots_on_target,0,0,240,0.0,0.0,0.0
-Saudi Arabia Professional League,2022,away_total_shots,0,0,240,0.0,0.0,0.0
+Saudi Arabia Professional League,2022,away_total_shots,2,2,240,0.8333333333333334,0.8333333333333334,0.8333333333333334
 Saudi Arabia Professional League,2022,away_xg,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,away_yellow_cards,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,home_attacks,7,7,240,2.9166666666666665,2.9166666666666665,2.9166666666666665
@@ -1920,7 +1920,7 @@ Saudi Arabia Professional League,2022,home_prematch_xg,17,17,240,7.0833333333333
 Saudi Arabia Professional League,2022,home_red_cards,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,home_shots_off_target,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,home_shots_on_target,0,0,240,0.0,0.0,0.0
-Saudi Arabia Professional League,2022,home_total_shots,0,0,240,0.0,0.0,0.0
+Saudi Arabia Professional League,2022,home_total_shots,2,2,240,0.8333333333333334,0.8333333333333334,0.8333333333333334
 Saudi Arabia Professional League,2022,home_xg,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2022,home_yellow_cards,0,0,240,0.0,0.0,0.0
 Saudi Arabia Professional League,2023,away_attacks,0,0,306,0.0,0.0,0.0
@@ -1952,14 +1952,14 @@ Saudi Arabia Professional League,2023,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Saudi Arabia Professional League,2024,away_attacks,13,13,306,4.248366013071895,4.248366013071895,4.248366013071895
 Saudi Arabia Professional League,2024,away_corners,4,0,306,1.3071895424836601,0.0,1.3071895424836601
 Saudi Arabia Professional League,2024,away_dangerous_attacks,13,13,306,4.248366013071895,4.248366013071895,4.248366013071895
-Saudi Arabia Professional League,2024,away_fouls,3,0,306,0.9803921568627451,0.0,0.9803921568627451
+Saudi Arabia Professional League,2024,away_fouls,4,1,306,1.3071895424836601,0.32679738562091504,1.3071895424836601
 Saudi Arabia Professional League,2024,away_offsides,10,0,306,3.2679738562091503,0.0,3.2679738562091503
 Saudi Arabia Professional League,2024,away_possession,3,0,306,0.9803921568627451,0.0,0.9803921568627451
 Saudi Arabia Professional League,2024,away_prematch_xg,9,9,306,2.9411764705882355,2.9411764705882355,2.9411764705882355
 Saudi Arabia Professional League,2024,away_red_cards,0,0,306,0.0,0.0,0.0
 Saudi Arabia Professional League,2024,away_shots_off_target,4,0,306,1.3071895424836601,0.0,1.3071895424836601
 Saudi Arabia Professional League,2024,away_shots_on_target,4,0,306,1.3071895424836601,0.0,1.3071895424836601
-Saudi Arabia Professional League,2024,away_total_shots,4,0,306,1.3071895424836601,0.0,1.3071895424836601
+Saudi Arabia Professional League,2024,away_total_shots,5,1,306,1.6339869281045751,0.32679738562091504,1.6339869281045751
 Saudi Arabia Professional League,2024,away_xg,0,0,306,0.0,0.0,0.0
 Saudi Arabia Professional League,2024,away_yellow_cards,0,0,306,0.0,0.0,0.0
 Saudi Arabia Professional League,2024,home_attacks,13,13,306,4.248366013071895,4.248366013071895,4.248366013071895
@@ -1978,7 +1978,7 @@ Saudi Arabia Professional League,2024,home_yellow_cards,0,0,306,0.0,0.0,0.0
 Scotland Premiership,2021,away_attacks,1,1,228,0.43859649122807015,0.43859649122807015,0.43859649122807015
 Scotland Premiership,2021,away_corners,0,0,228,0.0,0.0,0.0
 Scotland Premiership,2021,away_dangerous_attacks,1,1,228,0.43859649122807015,0.43859649122807015,0.43859649122807015
-Scotland Premiership,2021,away_fouls,0,0,228,0.0,0.0,0.0
+Scotland Premiership,2021,away_fouls,1,1,228,0.43859649122807015,0.43859649122807015,0.43859649122807015
 Scotland Premiership,2021,away_offsides,4,0,228,1.7543859649122806,0.0,1.7543859649122806
 Scotland Premiership,2021,away_possession,0,0,228,0.0,0.0,0.0
 Scotland Premiership,2021,away_prematch_xg,12,12,228,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2037,7 +2037,7 @@ Scotland Premiership,2023,away_prematch_xg,12,12,228,5.2631578947368425,5.263157
 Scotland Premiership,2023,away_red_cards,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Scotland Premiership,2023,away_shots_off_target,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Scotland Premiership,2023,away_shots_on_target,1,0,228,0.43859649122807015,0.0,0.43859649122807015
-Scotland Premiership,2023,away_total_shots,1,0,228,0.43859649122807015,0.0,0.43859649122807015
+Scotland Premiership,2023,away_total_shots,3,2,228,1.3157894736842106,0.8771929824561403,1.3157894736842106
 Scotland Premiership,2023,away_xg,0,0,228,0.0,0.0,0.0
 Scotland Premiership,2023,away_yellow_cards,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Scotland Premiership,2023,home_attacks,1,1,228,0.43859649122807015,0.43859649122807015,0.43859649122807015
@@ -2063,7 +2063,7 @@ Scotland Premiership,2024,away_prematch_xg,12,12,228,5.2631578947368425,5.263157
 Scotland Premiership,2024,away_red_cards,0,0,228,0.0,0.0,0.0
 Scotland Premiership,2024,away_shots_off_target,4,0,228,1.7543859649122806,0.0,1.7543859649122806
 Scotland Premiership,2024,away_shots_on_target,4,0,228,1.7543859649122806,0.0,1.7543859649122806
-Scotland Premiership,2024,away_total_shots,4,0,228,1.7543859649122806,0.0,1.7543859649122806
+Scotland Premiership,2024,away_total_shots,5,1,228,2.192982456140351,0.43859649122807015,2.192982456140351
 Scotland Premiership,2024,away_xg,0,0,228,0.0,0.0,0.0
 Scotland Premiership,2024,away_yellow_cards,0,0,228,0.0,0.0,0.0
 Scotland Premiership,2024,home_attacks,8,8,228,3.508771929824561,3.508771929824561,3.508771929824561
@@ -2082,7 +2082,7 @@ Scotland Premiership,2024,home_yellow_cards,0,0,228,0.0,0.0,0.0
 Spain La Liga,2021,away_attacks,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,away_corners,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,away_dangerous_attacks,0,0,380,0.0,0.0,0.0
-Spain La Liga,2021,away_fouls,0,0,380,0.0,0.0,0.0
+Spain La Liga,2021,away_fouls,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Spain La Liga,2021,away_offsides,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,away_possession,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2095,7 +2095,7 @@ Spain La Liga,2021,away_yellow_cards,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,home_attacks,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,home_corners,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,home_dangerous_attacks,0,0,380,0.0,0.0,0.0
-Spain La Liga,2021,home_fouls,0,0,380,0.0,0.0,0.0
+Spain La Liga,2021,home_fouls,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Spain La Liga,2021,home_offsides,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,home_possession,0,0,380,0.0,0.0,0.0
 Spain La Liga,2021,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2108,7 +2108,7 @@ Spain La Liga,2021,home_yellow_cards,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,away_attacks,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,away_corners,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,away_dangerous_attacks,0,0,380,0.0,0.0,0.0
-Spain La Liga,2022,away_fouls,0,0,380,0.0,0.0,0.0
+Spain La Liga,2022,away_fouls,1,1,380,0.2631578947368421,0.2631578947368421,0.2631578947368421
 Spain La Liga,2022,away_offsides,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,away_possession,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2121,7 +2121,7 @@ Spain La Liga,2022,away_yellow_cards,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,home_attacks,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,home_corners,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,home_dangerous_attacks,0,0,380,0.0,0.0,0.0
-Spain La Liga,2022,home_fouls,0,0,380,0.0,0.0,0.0
+Spain La Liga,2022,home_fouls,2,2,380,0.5263157894736842,0.5263157894736842,0.5263157894736842
 Spain La Liga,2022,home_offsides,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,home_possession,0,0,380,0.0,0.0,0.0
 Spain La Liga,2022,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2167,7 +2167,7 @@ Spain La Liga,2024,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368
 Spain La Liga,2024,away_red_cards,0,0,380,0.0,0.0,0.0
 Spain La Liga,2024,away_shots_off_target,1,0,380,0.2631578947368421,0.0,0.2631578947368421
 Spain La Liga,2024,away_shots_on_target,1,0,380,0.2631578947368421,0.0,0.2631578947368421
-Spain La Liga,2024,away_total_shots,1,0,380,0.2631578947368421,0.0,0.2631578947368421
+Spain La Liga,2024,away_total_shots,3,2,380,0.7894736842105263,0.5263157894736842,0.7894736842105263
 Spain La Liga,2024,away_xg,0,0,380,0.0,0.0,0.0
 Spain La Liga,2024,away_yellow_cards,0,0,380,0.0,0.0,0.0
 Spain La Liga,2024,home_attacks,4,4,380,1.0526315789473684,1.0526315789473684,1.0526315789473684
@@ -2186,7 +2186,7 @@ Spain La Liga,2024,home_yellow_cards,0,0,380,0.0,0.0,0.0
 Spain Segunda División,2021,away_attacks,1,1,468,0.21367521367521367,0.21367521367521367,0.21367521367521367
 Spain Segunda División,2021,away_corners,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,away_dangerous_attacks,1,1,468,0.21367521367521367,0.21367521367521367,0.21367521367521367
-Spain Segunda División,2021,away_fouls,0,0,468,0.0,0.0,0.0
+Spain Segunda División,2021,away_fouls,3,3,468,0.6410256410256411,0.6410256410256411,0.6410256410256411
 Spain Segunda División,2021,away_offsides,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,away_possession,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,away_prematch_xg,22,22,468,4.700854700854701,4.700854700854701,4.700854700854701
@@ -2199,7 +2199,7 @@ Spain Segunda División,2021,away_yellow_cards,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,home_attacks,1,1,468,0.21367521367521367,0.21367521367521367,0.21367521367521367
 Spain Segunda División,2021,home_corners,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,home_dangerous_attacks,1,1,468,0.21367521367521367,0.21367521367521367,0.21367521367521367
-Spain Segunda División,2021,home_fouls,0,0,468,0.0,0.0,0.0
+Spain Segunda División,2021,home_fouls,4,4,468,0.8547008547008547,0.8547008547008547,0.8547008547008547
 Spain Segunda División,2021,home_offsides,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,home_possession,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2021,home_prematch_xg,22,22,468,4.700854700854701,4.700854700854701,4.700854700854701
@@ -2212,20 +2212,20 @@ Spain Segunda División,2021,home_yellow_cards,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_attacks,8,8,468,1.7094017094017093,1.7094017094017093,1.7094017094017093
 Spain Segunda División,2022,away_corners,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_dangerous_attacks,8,8,468,1.7094017094017093,1.7094017094017093,1.7094017094017093
-Spain Segunda División,2022,away_fouls,0,0,468,0.0,0.0,0.0
+Spain Segunda División,2022,away_fouls,6,6,468,1.2820512820512822,1.2820512820512822,1.2820512820512822
 Spain Segunda División,2022,away_offsides,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_possession,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_prematch_xg,22,22,468,4.700854700854701,4.700854700854701,4.700854700854701
 Spain Segunda División,2022,away_red_cards,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_shots_off_target,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_shots_on_target,0,0,468,0.0,0.0,0.0
-Spain Segunda División,2022,away_total_shots,0,0,468,0.0,0.0,0.0
+Spain Segunda División,2022,away_total_shots,1,1,468,0.21367521367521367,0.21367521367521367,0.21367521367521367
 Spain Segunda División,2022,away_xg,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,away_yellow_cards,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,home_attacks,8,8,468,1.7094017094017093,1.7094017094017093,1.7094017094017093
 Spain Segunda División,2022,home_corners,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,home_dangerous_attacks,8,8,468,1.7094017094017093,1.7094017094017093,1.7094017094017093
-Spain Segunda División,2022,home_fouls,0,0,468,0.0,0.0,0.0
+Spain Segunda División,2022,home_fouls,4,4,468,0.8547008547008547,0.8547008547008547,0.8547008547008547
 Spain Segunda División,2022,home_offsides,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,home_possession,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2022,home_prematch_xg,22,22,468,4.700854700854701,4.700854700854701,4.700854700854701
@@ -2264,7 +2264,7 @@ Spain Segunda División,2023,home_yellow_cards,0,0,468,0.0,0.0,0.0
 Spain Segunda División,2024,away_attacks,25,25,464,5.387931034482759,5.387931034482759,5.387931034482759
 Spain Segunda División,2024,away_corners,1,0,464,0.21551724137931033,0.0,0.21551724137931033
 Spain Segunda División,2024,away_dangerous_attacks,25,25,464,5.387931034482759,5.387931034482759,5.387931034482759
-Spain Segunda División,2024,away_fouls,1,0,464,0.21551724137931033,0.0,0.21551724137931033
+Spain Segunda División,2024,away_fouls,4,3,464,0.8620689655172413,0.646551724137931,0.8620689655172413
 Spain Segunda División,2024,away_offsides,14,0,464,3.0172413793103448,0.0,3.0172413793103448
 Spain Segunda División,2024,away_possession,1,0,464,0.21551724137931033,0.0,0.21551724137931033
 Spain Segunda División,2024,away_prematch_xg,22,22,464,4.741379310344827,4.741379310344827,4.741379310344827
@@ -2277,7 +2277,7 @@ Spain Segunda División,2024,away_yellow_cards,0,0,464,0.0,0.0,0.0
 Spain Segunda División,2024,home_attacks,25,25,464,5.387931034482759,5.387931034482759,5.387931034482759
 Spain Segunda División,2024,home_corners,1,0,464,0.21551724137931033,0.0,0.21551724137931033
 Spain Segunda División,2024,home_dangerous_attacks,25,25,464,5.387931034482759,5.387931034482759,5.387931034482759
-Spain Segunda División,2024,home_fouls,1,0,464,0.21551724137931033,0.0,0.21551724137931033
+Spain Segunda División,2024,home_fouls,2,1,464,0.43103448275862066,0.21551724137931033,0.43103448275862066
 Spain Segunda División,2024,home_offsides,14,0,464,3.0172413793103448,0.0,3.0172413793103448
 Spain Segunda División,2024,home_possession,1,0,464,0.21551724137931033,0.0,0.21551724137931033
 Spain Segunda División,2024,home_prematch_xg,22,22,464,4.741379310344827,4.741379310344827,4.741379310344827
@@ -2290,7 +2290,7 @@ Spain Segunda División,2024,home_yellow_cards,0,0,464,0.0,0.0,0.0
 Switzerland Super League,2021,away_attacks,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2021,away_corners,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2021,away_dangerous_attacks,0,0,180,0.0,0.0,0.0
-Switzerland Super League,2021,away_fouls,0,0,180,0.0,0.0,0.0
+Switzerland Super League,2021,away_fouls,2,2,180,1.1111111111111112,1.1111111111111112,1.1111111111111112
 Switzerland Super League,2021,away_offsides,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2021,away_possession,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2021,away_prematch_xg,10,10,180,5.555555555555555,5.555555555555555,5.555555555555555
@@ -2329,7 +2329,7 @@ Switzerland Super League,2022,away_yellow_cards,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2022,home_attacks,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2022,home_corners,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2022,home_dangerous_attacks,0,0,180,0.0,0.0,0.0
-Switzerland Super League,2022,home_fouls,0,0,180,0.0,0.0,0.0
+Switzerland Super League,2022,home_fouls,1,1,180,0.5555555555555556,0.5555555555555556,0.5555555555555556
 Switzerland Super League,2022,home_offsides,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2022,home_possession,0,0,180,0.0,0.0,0.0
 Switzerland Super League,2022,home_prematch_xg,10,10,180,5.555555555555555,5.555555555555555,5.555555555555555
@@ -2368,7 +2368,7 @@ Switzerland Super League,2023,home_yellow_cards,0,0,228,0.0,0.0,0.0
 Switzerland Super League,2024,away_attacks,10,10,228,4.385964912280702,4.385964912280702,4.385964912280702
 Switzerland Super League,2024,away_corners,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Switzerland Super League,2024,away_dangerous_attacks,10,10,228,4.385964912280702,4.385964912280702,4.385964912280702
-Switzerland Super League,2024,away_fouls,1,0,228,0.43859649122807015,0.0,0.43859649122807015
+Switzerland Super League,2024,away_fouls,2,1,228,0.8771929824561403,0.43859649122807015,0.8771929824561403
 Switzerland Super League,2024,away_offsides,8,0,228,3.508771929824561,0.0,3.508771929824561
 Switzerland Super League,2024,away_possession,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Switzerland Super League,2024,away_prematch_xg,12,12,228,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2381,7 +2381,7 @@ Switzerland Super League,2024,away_yellow_cards,0,0,228,0.0,0.0,0.0
 Switzerland Super League,2024,home_attacks,10,10,228,4.385964912280702,4.385964912280702,4.385964912280702
 Switzerland Super League,2024,home_corners,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Switzerland Super League,2024,home_dangerous_attacks,10,10,228,4.385964912280702,4.385964912280702,4.385964912280702
-Switzerland Super League,2024,home_fouls,1,0,228,0.43859649122807015,0.0,0.43859649122807015
+Switzerland Super League,2024,home_fouls,2,1,228,0.8771929824561403,0.43859649122807015,0.8771929824561403
 Switzerland Super League,2024,home_offsides,8,0,228,3.508771929824561,0.0,3.508771929824561
 Switzerland Super League,2024,home_possession,1,0,228,0.43859649122807015,0.0,0.43859649122807015
 Switzerland Super League,2024,home_prematch_xg,12,12,228,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2394,7 +2394,7 @@ Switzerland Super League,2024,home_yellow_cards,0,0,228,0.0,0.0,0.0
 Turkey Süper Lig,2021,away_attacks,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,away_corners,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,away_dangerous_attacks,0,0,380,0.0,0.0,0.0
-Turkey Süper Lig,2021,away_fouls,0,0,380,0.0,0.0,0.0
+Turkey Süper Lig,2021,away_fouls,2,2,380,0.5263157894736842,0.5263157894736842,0.5263157894736842
 Turkey Süper Lig,2021,away_offsides,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,away_possession,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,away_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2407,7 +2407,7 @@ Turkey Süper Lig,2021,away_yellow_cards,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,home_attacks,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,home_corners,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,home_dangerous_attacks,0,0,380,0.0,0.0,0.0
-Turkey Süper Lig,2021,home_fouls,0,0,380,0.0,0.0,0.0
+Turkey Süper Lig,2021,home_fouls,2,2,380,0.5263157894736842,0.5263157894736842,0.5263157894736842
 Turkey Süper Lig,2021,home_offsides,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,home_possession,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2021,home_prematch_xg,20,20,380,5.2631578947368425,5.2631578947368425,5.2631578947368425
@@ -2420,7 +2420,7 @@ Turkey Süper Lig,2021,home_yellow_cards,0,0,380,0.0,0.0,0.0
 Turkey Süper Lig,2022,away_attacks,29,29,342,8.47953216374269,8.47953216374269,8.47953216374269
 Turkey Süper Lig,2022,away_corners,29,0,342,8.47953216374269,0.0,8.47953216374269
 Turkey Süper Lig,2022,away_dangerous_attacks,29,29,342,8.47953216374269,8.47953216374269,8.47953216374269
-Turkey Süper Lig,2022,away_fouls,29,0,342,8.47953216374269,0.0,8.47953216374269
+Turkey Süper Lig,2022,away_fouls,33,4,342,9.649122807017545,1.1695906432748537,9.649122807017545
 Turkey Süper Lig,2022,away_offsides,29,0,342,8.47953216374269,0.0,8.47953216374269
 Turkey Süper Lig,2022,away_possession,29,0,342,8.47953216374269,0.0,8.47953216374269
 Turkey Süper Lig,2022,away_prematch_xg,19,19,342,5.555555555555555,5.555555555555555,5.555555555555555
@@ -2433,7 +2433,7 @@ Turkey Süper Lig,2022,away_yellow_cards,29,0,342,8.47953216374269,0.0,8.4795321
 Turkey Süper Lig,2022,home_attacks,29,29,342,8.47953216374269,8.47953216374269,8.47953216374269
 Turkey Süper Lig,2022,home_corners,29,0,342,8.47953216374269,0.0,8.47953216374269
 Turkey Süper Lig,2022,home_dangerous_attacks,29,29,342,8.47953216374269,8.47953216374269,8.47953216374269
-Turkey Süper Lig,2022,home_fouls,29,0,342,8.47953216374269,0.0,8.47953216374269
+Turkey Süper Lig,2022,home_fouls,31,2,342,9.064327485380117,0.5847953216374269,9.064327485380117
 Turkey Süper Lig,2022,home_offsides,29,0,342,8.47953216374269,0.0,8.47953216374269
 Turkey Süper Lig,2022,home_possession,29,0,342,8.47953216374269,0.0,8.47953216374269
 Turkey Süper Lig,2022,home_prematch_xg,19,19,342,5.555555555555555,5.555555555555555,5.555555555555555
@@ -2479,13 +2479,13 @@ Turkey Süper Lig,2024,away_prematch_xg,19,19,342,5.555555555555555,5.5555555555
 Turkey Süper Lig,2024,away_red_cards,0,0,342,0.0,0.0,0.0
 Turkey Süper Lig,2024,away_shots_off_target,2,0,342,0.5847953216374269,0.0,0.5847953216374269
 Turkey Süper Lig,2024,away_shots_on_target,2,0,342,0.5847953216374269,0.0,0.5847953216374269
-Turkey Süper Lig,2024,away_total_shots,2,0,342,0.5847953216374269,0.0,0.5847953216374269
+Turkey Süper Lig,2024,away_total_shots,3,1,342,0.8771929824561403,0.29239766081871343,0.8771929824561403
 Turkey Süper Lig,2024,away_xg,0,0,342,0.0,0.0,0.0
 Turkey Süper Lig,2024,away_yellow_cards,0,0,342,0.0,0.0,0.0
 Turkey Süper Lig,2024,home_attacks,17,17,342,4.970760233918129,4.970760233918129,4.970760233918129
 Turkey Süper Lig,2024,home_corners,2,0,342,0.5847953216374269,0.0,0.5847953216374269
 Turkey Süper Lig,2024,home_dangerous_attacks,17,17,342,4.970760233918129,4.970760233918129,4.970760233918129
-Turkey Süper Lig,2024,home_fouls,1,0,342,0.29239766081871343,0.0,0.29239766081871343
+Turkey Süper Lig,2024,home_fouls,3,2,342,0.8771929824561403,0.5847953216374269,0.8771929824561403
 Turkey Süper Lig,2024,home_offsides,5,0,342,1.4619883040935673,0.0,1.4619883040935673
 Turkey Süper Lig,2024,home_possession,1,0,342,0.29239766081871343,0.0,0.29239766081871343
 Turkey Süper Lig,2024,home_prematch_xg,19,19,342,5.555555555555555,5.555555555555555,5.555555555555555

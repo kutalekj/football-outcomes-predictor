@@ -23,6 +23,12 @@ matplotlib.use("Agg")
 
 # Raw match-stat fields where literal zero may also mean “missing / unavailable” in provider data.
 ZERO_AS_MISSING_STATS = {
+    "home_total_shots",
+    "away_total_shots",
+    "home_fouls",
+    "away_fouls",
+    "home_possession",
+    "away_possession",
     "home_attacks",
     "away_attacks",
     "home_dangerous_attacks",
@@ -36,8 +42,9 @@ ZERO_AS_MISSING_STATS = {
 PCT_MIN = 0.0
 PCT_MAX = 100.0
 HEATMAP_GAMMA = 0.40
-PCT_CMAP = "viridis"
+PCT_CMAP = "magma"
 PCT_BAR_YMAX = 100.0
+PCT_CBAR_TICKS = [0, 2, 5, 10, 15, 20, 30, 50, 100]
 
 
 def _get_comp_colors() -> Dict[str, str]:
@@ -125,10 +132,10 @@ def plot_match_counts_per_comp(league_matches: List[FSMatch], out_dir: Path) -> 
     return df
 
 
-def _is_missing_match_stat(stat: str, value) -> bool:
+def _is_missing_match_stat(stat: str, value, *, count_zero_as_missing: bool = True) -> bool:
     if value is None or value == -1:
         return True
-    if stat in ZERO_AS_MISSING_STATS and value == 0:
+    if count_zero_as_missing and stat in ZERO_AS_MISSING_STATS and value == 0:
         return True
     return False
 
@@ -144,7 +151,11 @@ def _is_missing_skill_value(value) -> bool:
     return isinstance(value, float) and math.isnan(value)
 
 
-def build_match_stats_missingness(league_matches: List[FSMatch]) -> pd.DataFrame:
+def build_match_stats_missingness(
+    league_matches: List[FSMatch],
+    *,
+    count_zero_as_missing: bool = True,
+) -> pd.DataFrame:
     if not league_matches:
         return pd.DataFrame(
             columns=[
@@ -172,15 +183,21 @@ def build_match_stats_missingness(league_matches: List[FSMatch]) -> pd.DataFrame
             key = (comp, season, stat)
             totals[key] += 1
             v = m.stats.get(stat, -1)
+
             if v == 0 and stat in ZERO_AS_MISSING_STATS:
                 zeros[key] += 1
-            if _is_missing_match_stat(stat, v):
+
+            if _is_missing_match_stat(stat, v, count_zero_as_missing=count_zero_as_missing):
                 missing[key] += 1
 
     rows = []
     for key, n_total in totals.items():
         n_missing = missing.get(key, 0)
         n_zero = zeros.get(key, 0)
+
+        missing_pct = 100.0 * n_missing / n_total if n_total else math.nan
+        zero_pct = 100.0 * n_zero / n_total if n_total else math.nan
+
         rows.append(
             {
                 "competition": key[0],
@@ -189,9 +206,9 @@ def build_match_stats_missingness(league_matches: List[FSMatch]) -> pd.DataFrame
                 "n_missing": n_missing,
                 "n_zero": n_zero,
                 "n_total": n_total,
-                "missing_pct": 100.0 * n_missing / n_total if n_total else math.nan,
-                "zero_pct": 100.0 * n_zero / n_total if n_total else math.nan,
-                "missing_or_zero_pct": 100.0 * n_missing / n_total if n_total else math.nan,
+                "missing_pct": missing_pct,
+                "zero_pct": zero_pct,
+                "missing_or_zero_pct": missing_pct,
             }
         )
 
@@ -485,7 +502,7 @@ def plot_pct_heatmap(
     data = pivot_df.astype(float)
     norm = PowerNorm(gamma=HEATMAP_GAMMA, vmin=PCT_MIN, vmax=PCT_MAX)
 
-    sns.heatmap(
+    hm = sns.heatmap(
         data,
         ax=ax,
         cmap=cmap,
@@ -495,7 +512,10 @@ def plot_pct_heatmap(
         linewidths=0.5,
         linecolor="white",
         cbar=True,
-        cbar_kws={"label": cbar_label},
+        cbar_kws={
+            "label": cbar_label,
+            "ticks": PCT_CBAR_TICKS,
+        },
     )
 
     ax.set_title(title)
@@ -503,6 +523,7 @@ def plot_pct_heatmap(
         ax.set_xlabel(x_label)
     if y_label is not None:
         ax.set_ylabel(y_label)
+
     ax.tick_params(axis="x", rotation=x_rotation)
     ax.tick_params(axis="y", rotation=y_rotation)
 
@@ -518,6 +539,11 @@ def plot_pct_heatmap(
         rotation=0,
         fontsize=10,
     )
+
+    # Make colorbar labels explicit and easier to read
+    cbar = hm.collections[0].colorbar
+    cbar.set_ticks(PCT_CBAR_TICKS)
+    cbar.set_ticklabels([f"{t:g}" for t in PCT_CBAR_TICKS])
 
 
 def plot_missingness_heatmap(
@@ -765,7 +791,7 @@ def _match_sort_key_for_analysis(m) -> Tuple:
     return dt, hr, m.id
 
 
-def _is_missing_stat_value(v, *, count_zero_as_missing: bool) -> bool:
+def _is_missing_timeline_value(v, *, count_zero_as_missing: bool) -> bool:
     if v is None or v == -1:
         return True
     if count_zero_as_missing and v == 0:
@@ -830,7 +856,7 @@ def plot_prematch_xg_missingness_timeline(
         row_vals = []
         for m in ms:
             v = (getattr(m, "stats", {}) or {}).get(stat_key, -1)
-            row_vals.append(1.0 if _is_missing_stat_value(v, count_zero_as_missing=count_zero_as_missing) else 0.0)
+            row_vals.append(1.0 if _is_missing_timeline_value(v, count_zero_as_missing=count_zero_as_missing) else 0.0)
 
         rows_as_binary.append(row_vals)
         max_len = max(max_len, len(row_vals))
@@ -894,7 +920,7 @@ def main() -> None:
     plot_match_counts_per_comp(league_matches, out_dir)
 
     # 2a) Detailed raw match-stat missingness (+ selected zero values treated as missing)
-    df_match = build_match_stats_missingness(league_matches)
+    df_match = build_match_stats_missingness(league_matches, count_zero_as_missing=True)
     save_missingness_tables(df_match, out_dir, "match_stats_missingness", "stat")
     plot_missingness_heatmap(
         df_match,
@@ -902,9 +928,23 @@ def main() -> None:
         row_cols=["competition", "season"],
         col_name="stat",
         stem="match_stats_missingness_heatmap_comp_season",
-        title="Missing match statistics by competition and season",
+        title="Missing match statistics by competition and season\n(zeros counted as missing for selected stats)",
         value_field="missing_pct",
         cbar_label="Missing or zero-as-missing values (%)",
+    )
+
+    # 2a-alt) Strict raw match-stat missingness: only -1 / None count as missing
+    df_match_strict = build_match_stats_missingness(league_matches, count_zero_as_missing=False)
+    save_missingness_tables(df_match_strict, out_dir, "match_stats_missingness_strict", "stat")
+    plot_missingness_heatmap(
+        df_match_strict,
+        out_dir=out_dir,
+        row_cols=["competition", "season"],
+        col_name="stat",
+        stem="match_stats_missingness_strict_heatmap_comp_season",
+        title="Missing match statistics by competition and season\n(only -1 / None counted as missing)",
+        value_field="missing_pct",
+        cbar_label="Missing values (%)",
     )
 
     # Useful extra heatmap: literal zeros only for the selected ambiguous stats.
