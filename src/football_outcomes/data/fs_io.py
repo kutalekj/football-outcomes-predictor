@@ -184,7 +184,7 @@ def _should_shift_skills_left_by_2(cells: List[str], header_idx: Dict[str, int])
     return pre_block_looks_like_skills and text_leaked_into_skill_tail and corrected_play_styles_looks_valid
 
 
-def load_sofifa_players(*, rebuild: bool = False, debug: bool = False) -> None:
+def load_sofifa_players(*, rebuild: bool = False, debug_shifts: bool = False) -> None:
     """
     Loads SOFIFA player snapshots from CSV files.
 
@@ -305,7 +305,7 @@ def load_sofifa_players(*, rebuild: bool = False, debug: bool = False) -> None:
 
                 if shifted:
                     num_shifted_left_2 += 1
-                    if debug:
+                    if debug_shifts:
                         print(
                             f"[sofifa][warn] {path.name}:{row_num} player_id={sofifa_id} "
                             f"shifted by 2 to the left (name={name_norm})"

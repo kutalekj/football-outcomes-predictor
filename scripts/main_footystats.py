@@ -38,7 +38,7 @@ if sett.ALL_GET_NEW:
     ut.initialize_league_tables(precompute_positions=True, force_rebuild=True)
 
 # Only rebuild from CSV when explicitly requested (one-time migration / new data)
-load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False), debug=False)
+load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False), debug_shifts=False)
 print("[sofifa] snapshots:", len(global_instance.sofifa_snapshots))
 
 ut.link_matches_to_comp_seasons()
@@ -48,7 +48,12 @@ match_fs_teams_to_sofifa_teams(force=False)
 
 # Relevant matches only (league comps)
 all_matches_sorted = sorted(global_instance.all_matches, key=fu.match_sort_key)
-league_matches_sorted = [m for m in all_matches_sorted if m.comp_name in sett.COMPS_LEAGUE]
+league_matches_sorted = utils.filter_clean_league_matches(all_matches_sorted)
+league_matches_sorted = [
+    m
+    for m in league_matches_sorted
+    if getattr(m, "season", None) is not None and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
+]
 
 team_index_all = fu.build_team_match_index(all_matches_sorted)
 team_index_league = fu.build_team_match_index(league_matches_sorted)

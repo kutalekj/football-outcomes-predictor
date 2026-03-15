@@ -204,3 +204,28 @@ def link_matches_to_comp_seasons() -> None:
     print(f"[link] Linked {len(g.all_matches) - missing}/{len(g.all_matches)} matches to comp seasons.")
     if missing:
         print(f"[link] Warning: {missing} matches not found in any comp season.")
+
+
+def is_excluded_comp_season(comp_name: str | None, season: int | None) -> bool:
+    if comp_name is None or season is None:
+        return False
+    return (comp_name, int(season)) in sett.EXCLUDED_COMP_SEASONS
+
+
+def filter_clean_league_matches(matches):
+    """
+    Keep only league matches that are not in excluded competition seasons.
+    """
+    return [
+        m
+        for m in matches
+        if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE
+        and not is_excluded_comp_season(getattr(m, "comp_name", None), getattr(m, "season", None))
+    ]
+
+
+def get_allowed_match_stat_keys(stat_keys):
+    """
+    Drop stats that should remain in raw data but be ignored in cleaned analysis/modeling.
+    """
+    return [k for k in stat_keys if k not in sett.IGNORED_MATCH_STATS]

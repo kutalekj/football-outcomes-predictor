@@ -122,7 +122,7 @@ FS_TEAM_ID_TO_SOFIFA_TEAM_ID = {
 }
 
 # --- FS team <-> SOFIFA team matching ---
-SF_TEAM_MATCH_MAX_CANDIDATES = 3  # keep top-N candidates for debug
+SF_TEAM_MATCH_MAX_CANDIDATES = 1  # keep top-N candidates for debug
 
 # --- Name-only fallback bucket limit ---
 SF_NAME_BUCKET_MAX = 200
@@ -133,7 +133,7 @@ GK_SKILL_START_INDEX = 29
 GK_SKILL_END_INDEX = 34  # Python slice end
 FORCE_EXACTLY_ONE_GK_ROW = True
 GK_ROLE_SCORE_MIN_GAP = 0.5  # minimal separation to treat as GK-like (TODO: tune)
-DEBUG_TEAM_STRENGTH = False  # optional log
+DEBUG_TEAM_STRENGTH = True  # optional log
 
 SOG_NORM_COEFFICIENT = 12.5
 SOFFG_NORM_COEFFICIENT = 23.0  # TODO: Tune
@@ -149,6 +149,20 @@ TEAM_XG_NORM_COEFFICIENT = 3.25
 TOTAL_XG_NORM_COEFFICIENT = 5.25
 TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 3.4
 TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
+
+# Competition seasons to exclude from cleaned league-only analyses/training
+EXCLUDED_COMP_SEASONS = {
+    ("Italy Serie B", 2021),
+    ("Poland Ekstraklasa", 2021),
+    ("Turkey Süper Lig", 2024),
+    ("India Indian Super League", 2024),
+}
+
+# Raw match stats that remain stored in match.stats, but are ignored in cleaned analyses/modeling
+IGNORED_MATCH_STATS = {
+    "home_offsides",
+    "away_offsides",
+}
 
 COUNTRIES = [
     "Belgium",

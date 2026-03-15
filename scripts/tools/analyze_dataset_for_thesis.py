@@ -14,6 +14,7 @@ import seaborn as sns
 from matplotlib.axes import Axes
 from matplotlib.colors import PowerNorm
 
+import football_outcomes.utils.fs_common as utils
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import load_snapshot
@@ -66,7 +67,7 @@ def load_data_into_globals() -> List[FSMatch]:
     fill_globals_with_cache(bundle, update_leagues_list=False)
     g = Global.get_instance()
 
-    league_matches = [m for m in g.all_matches if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE]
+    league_matches = utils.filter_clean_league_matches(g.all_matches)
     league_matches = [
         m
         for m in league_matches
@@ -172,7 +173,7 @@ def build_match_stats_missingness(
             ]
         )
 
-    stat_keys = list(league_matches[0].stats.keys())
+    stat_keys = utils.get_allowed_match_stat_keys(list(league_matches[0].stats.keys()))
     totals: Dict[Tuple[str, int, str], int] = defaultdict(int)
     missing: Dict[Tuple[str, int, str], int] = defaultdict(int)
     zeros: Dict[Tuple[str, int, str], int] = defaultdict(int)
@@ -593,6 +594,8 @@ def plot_missingness_heatmap(
 
 def build_match_stats_team_month_missingness(
     league_matches: List[FSMatch],
+    *,
+    count_zero_as_missing: bool = True,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Localize missingness by (competition, season, team, month, stat) to reveal whether a problematic comp-season
@@ -639,7 +642,7 @@ def build_match_stats_team_month_missingness(
             pd.DataFrame(columns=empty_cols_summary),
         )
 
-    stat_keys = list(league_matches[0].stats.keys())
+    stat_keys = utils.get_allowed_match_stat_keys(list(league_matches[0].stats.keys()))
     totals: Dict[Tuple[str, int, int, str, int, str], int] = defaultdict(int)
     missing: Dict[Tuple[str, int, int, str, int, str], int] = defaultdict(int)
     match_ids: Dict[Tuple[str, int, int, str, int], set] = defaultdict(set)
@@ -665,7 +668,7 @@ def build_match_stats_team_month_missingness(
                 key = (m.comp_name, m.season, team_id, team_name, int(month), stat)
                 totals[key] += 1
                 v = m.stats.get(stat, -1)
-                if _is_missing_match_stat(stat, v):
+                if _is_missing_match_stat(stat, v, count_zero_as_missing=count_zero_as_missing):
                     missing[key] += 1
 
     detail_rows = []
@@ -820,12 +823,9 @@ def plot_stat_missingness_timeline(
     """
     g = Global.get_instance()
 
+    league_matches = utils.filter_clean_league_matches(g.all_matches)
     league_matches = [
-        m
-        for m in g.all_matches
-        if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE
-        and getattr(m, "season", None) is not None
-        and getattr(m, "datetime", None) is not None
+        m for m in league_matches if getattr(m, "season", None) is not None and getattr(m, "datetime", None) is not None
     ]
 
     if not league_matches:
@@ -968,7 +968,6 @@ def build_fs_vs_sofifa_team_counts_per_comp_season(league_matches: List[FSMatch]
         first_dt = first_match_dates.get((comp_name, season))
 
         sofifa_team_ids: set[int] = set()
-        sofifa_team_names: set[str] = set()  # just for debug
         chosen_snapshot_date = None
         snapshot_gap_days = None
 
@@ -1000,7 +999,6 @@ def build_fs_vs_sofifa_team_counts_per_comp_season(league_matches: List[FSMatch]
 
                 if league_id == int(sofifa_league_id) and club_id is not None:
                     sofifa_team_ids.add(club_id)
-                    sofifa_team_names.add(rec.get("club_name"))
 
         rows.append(
             {
