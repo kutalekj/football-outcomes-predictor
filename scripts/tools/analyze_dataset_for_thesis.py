@@ -48,6 +48,18 @@ PCT_CMAP = "inferno"
 PCT_BAR_YMAX = 100.0
 PCT_CBAR_TICKS = [0, 2, 5, 10, 15, 20, 30, 50, 100]
 
+THESIS_PAIR_GRID_COLOR = "#3a3a3a"
+THESIS_PAIR_GRID_WIDTH = 0.14
+THESIS_PAIR_MASK_COLOR = "#504d4d"
+
+THESIS_PAIR_TITLE_FONTSIZE = 24
+THESIS_PAIR_AXIS_LABEL_FONTSIZE = 20
+THESIS_PAIR_CBAR_LABEL_FONTSIZE = 20
+THESIS_PAIR_CBAR_TICK_FONTSIZE = 16
+
+THESIS_PAIR_SUPXLABEL_Y = 0.065
+THESIS_PAIR_SUPYLABEL_X = 0.065
+
 
 def _get_comp_colors() -> Dict[str, str]:
     cfg_colors = getattr(sett, "COMPS_LEAGUE_COLORS", None)
@@ -62,24 +74,39 @@ def _get_comp_colors() -> Dict[str, str]:
     return fixed
 
 
-def load_data_into_globals() -> List[FSMatch]:
+def load_data_into_globals() -> None:
     bundle = load_snapshot()
     fill_globals_with_cache(bundle, update_leagues_list=False)
     g = Global.get_instance()
 
-    league_matches = utils.filter_clean_league_matches(g.all_matches)
+    print(
+        f"Loaded {len(g.all_matches)} total matches in globals; "
+        f"{len(sett.COMPS_LEAGUE)} league competitions configured for "
+        f"seasons {sett.FIRST_SEASON}..{sett.LAST_SEASON - 1}."
+    )
+
+
+def get_league_matches(*, apply_clean_filter: bool) -> List[FSMatch]:
+    g = Global.get_instance()
+
+    if apply_clean_filter:
+        league_matches = utils.filter_clean_league_matches(g.all_matches)
+    else:
+        league_matches = [m for m in g.all_matches if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE]
+
     league_matches = [
         m
         for m in league_matches
         if getattr(m, "season", None) is not None and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
     ]
     league_matches.sort(key=lambda m: ((getattr(m, "datetime", None) or 0), getattr(m, "hour_utc", -1), m.id))
-
-    print(
-        f"Loaded {len(league_matches)} league matches across {len(sett.COMPS_LEAGUE)} league competitions "
-        f"for seasons {sett.FIRST_SEASON}..{sett.LAST_SEASON - 1}."
-    )
     return league_matches
+
+
+def get_allowed_stat_keys_for_mode(stat_keys: List[str], *, ignore_ignored_stats: bool) -> List[str]:
+    if ignore_ignored_stats:
+        return utils.get_allowed_match_stat_keys(stat_keys)
+    return list(stat_keys)
 
 
 def build_missingness_pivot(
@@ -135,14 +162,14 @@ def _plot_pct_heatmap_thesis(
     show_cbar: bool = False,
     cbar_label: str = "Missing values (%)",
     hide_ticks: bool = True,
-    mask_color: str = "#d9d9d9",
+    mask_color: str = THESIS_PAIR_MASK_COLOR,
 ) -> None:
     """
     Minimal thesis-ready heatmap:
       - no title
       - optional colorbar
       - optional hidden ticks
-      - NaN cells shown in a subtle gray mask
+      - NaN cells shown in a darker gray mask
     """
     data = pivot_df.astype(float)
     norm = PowerNorm(gamma=HEATMAP_GAMMA, vmin=PCT_MIN, vmax=PCT_MAX)
@@ -157,8 +184,8 @@ def _plot_pct_heatmap_thesis(
         vmin=PCT_MIN,
         vmax=PCT_MAX,
         norm=norm,
-        linewidths=0.35,
-        linecolor="white",
+        linewidths=THESIS_PAIR_GRID_WIDTH,
+        linecolor=THESIS_PAIR_GRID_COLOR,
         cbar=show_cbar,
         cbar_kws=(
             {
@@ -176,8 +203,18 @@ def _plot_pct_heatmap_thesis(
         ax.set_xlabel("")
         ax.set_ylabel("")
     else:
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor", fontsize=8)
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=8)
+        ax.set_xticklabels(
+            ax.get_xticklabels(),
+            rotation=45,
+            ha="right",
+            rotation_mode="anchor",
+            fontsize=9,
+        )
+        ax.set_yticklabels(
+            ax.get_yticklabels(),
+            rotation=0,
+            fontsize=9,
+        )
 
     for spine in ax.spines.values():
         spine.set_visible(False)
@@ -186,6 +223,8 @@ def _plot_pct_heatmap_thesis(
         cbar = hm.collections[0].colorbar
         cbar.set_ticks(PCT_CBAR_TICKS)
         cbar.set_ticklabels([f"{t:g}" for t in PCT_CBAR_TICKS])
+        cbar.ax.tick_params(labelsize=THESIS_PAIR_CBAR_TICK_FONTSIZE)
+        cbar.set_label(cbar_label, fontsize=THESIS_PAIR_CBAR_LABEL_FONTSIZE)
 
 
 def plot_thesis_pair_heatmaps(
@@ -195,6 +234,8 @@ def plot_thesis_pair_heatmaps(
     out_dir: Path,
     stem: str,
     cbar_label: str,
+    x_label: Optional[str] = None,
+    y_label: Optional[str] = None,
     align_shapes: bool = True,
     mask_missing_shape: bool = True,
     hide_ticks: bool = True,
@@ -221,19 +262,24 @@ def plot_thesis_pair_heatmaps(
     n_rows = max(len(left_plot.index), len(right_plot.index))
     n_cols = max(len(left_plot.columns), len(right_plot.columns))
 
-    fig_w = max(10, 0.28 * n_cols * 2 + (2.0 if show_cbar else 0.0))
-    fig_h = max(4.5, 0.18 * n_rows + 1.2)
+    fig_w = max(10.5, 0.28 * n_cols * 2 + (2.1 if show_cbar else 0.0))
+    fig_h = max(4.8, 0.18 * n_rows + 1.35)
 
     if show_cbar:
         fig, axes = plt.subplots(
             1,
             3,
             figsize=(fig_w, fig_h),
-            gridspec_kw={"width_ratios": [1, 1, 0.05], "wspace": 0.03},
+            gridspec_kw={"width_ratios": [1, 1, 0.055], "wspace": 0.025},
         )
         ax_left, ax_right, cax = axes
     else:
-        fig, axes = plt.subplots(1, 2, figsize=(fig_w, fig_h), gridspec_kw={"wspace": 0.03})
+        fig, axes = plt.subplots(
+            1,
+            2,
+            figsize=(fig_w, fig_h),
+            gridspec_kw={"wspace": 0.025},
+        )
         ax_left, ax_right = axes
         cax = None
 
@@ -253,22 +299,37 @@ def plot_thesis_pair_heatmaps(
     )
 
     if left_caption:
-        ax_left.set_title(left_caption, fontsize=10, pad=6)
+        ax_left.set_title(left_caption, fontsize=THESIS_PAIR_TITLE_FONTSIZE, pad=8)
     if right_caption:
-        ax_right.set_title(right_caption, fontsize=10, pad=6)
+        ax_right.set_title(right_caption, fontsize=THESIS_PAIR_TITLE_FONTSIZE, pad=8)
 
     if show_cbar:
         norm = PowerNorm(gamma=HEATMAP_GAMMA, vmin=PCT_MIN, vmax=PCT_MAX)
         cmap_obj = matplotlib.cm.get_cmap(PCT_CMAP).copy()
-        cmap_obj.set_bad("#d9d9d9")
+        cmap_obj.set_bad(THESIS_PAIR_MASK_COLOR)
         sm = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_obj)
         sm.set_array([])
         cbar = fig.colorbar(sm, cax=cax)
-        cbar.set_label(cbar_label)
+        cbar.set_label(cbar_label, fontsize=THESIS_PAIR_CBAR_LABEL_FONTSIZE)
         cbar.set_ticks(PCT_CBAR_TICKS)
         cbar.set_ticklabels([f"{t:g}" for t in PCT_CBAR_TICKS])
+        cbar.ax.tick_params(labelsize=THESIS_PAIR_CBAR_TICK_FONTSIZE)
 
-    fig.tight_layout()
+    if x_label is not None:
+        fig.supxlabel(
+            x_label,
+            fontsize=THESIS_PAIR_AXIS_LABEL_FONTSIZE,
+            y=THESIS_PAIR_SUPXLABEL_Y,
+        )
+
+    if y_label is not None:
+        fig.supylabel(
+            y_label,
+            fontsize=THESIS_PAIR_AXIS_LABEL_FONTSIZE,
+            x=THESIS_PAIR_SUPYLABEL_X,
+        )
+
+    fig.tight_layout(rect=[0.06, 0.08, 0.985, 0.98])
 
     png_path = out_dir / f"{stem}.png"
     pdf_path = out_dir / f"{stem}.pdf"
@@ -307,6 +368,8 @@ def plot_thesis_match_stats_before_after(
         out_dir=out_dir,
         stem=stem,
         cbar_label="Missing values (%)",
+        x_label="Match statistics",
+        y_label="Competition - season",
         align_shapes=True,
         mask_missing_shape=True,
         hide_ticks=True,
@@ -343,6 +406,8 @@ def plot_thesis_sofifa_skill_raw_vs_persistent(
         out_dir=out_dir,
         stem=stem,
         cbar_label="Missing values (%)",
+        x_label="Player skills",
+        y_label="Competition - season",
         align_shapes=True,
         mask_missing_shape=False,
         hide_ticks=True,
@@ -427,6 +492,7 @@ def build_match_stats_missingness(
     league_matches: List[FSMatch],
     *,
     count_zero_as_missing: bool = True,
+    ignore_ignored_stats: bool = True,
 ) -> pd.DataFrame:
     if not league_matches:
         return pd.DataFrame(
@@ -443,7 +509,11 @@ def build_match_stats_missingness(
             ]
         )
 
-    stat_keys = utils.get_allowed_match_stat_keys(list(league_matches[0].stats.keys()))
+    stat_keys = get_allowed_stat_keys_for_mode(
+        list(league_matches[0].stats.keys()),
+        ignore_ignored_stats=ignore_ignored_stats,
+    )
+
     totals: Dict[Tuple[str, int, str], int] = defaultdict(int)
     missing: Dict[Tuple[str, int, str], int] = defaultdict(int)
     zeros: Dict[Tuple[str, int, str], int] = defaultdict(int)
@@ -866,10 +936,10 @@ def build_match_stats_team_month_missingness(
     league_matches: List[FSMatch],
     *,
     count_zero_as_missing: bool = True,
+    ignore_ignored_stats: bool = True,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    Localize missingness by (competition, season, team, month, stat) to reveal whether a problematic comp-season
-    cell is driven by a few specific teams and/or time periods.
+    Localize missingness by (competition, season, team, month, stat).
     """
     if not league_matches:
         empty_cols_detail = [
@@ -912,7 +982,11 @@ def build_match_stats_team_month_missingness(
             pd.DataFrame(columns=empty_cols_summary),
         )
 
-    stat_keys = utils.get_allowed_match_stat_keys(list(league_matches[0].stats.keys()))
+    stat_keys = get_allowed_stat_keys_for_mode(
+        list(league_matches[0].stats.keys()),
+        ignore_ignored_stats=ignore_ignored_stats,
+    )
+
     totals: Dict[Tuple[str, int, int, str, int, str], int] = defaultdict(int)
     missing: Dict[Tuple[str, int, int, str, int, str], int] = defaultdict(int)
     match_ids: Dict[Tuple[str, int, int, str, int], set] = defaultdict(set)
@@ -1076,33 +1150,31 @@ def _is_missing_timeline_value(v, *, count_zero_as_missing: bool) -> bool:
 def plot_stat_missingness_timeline(
     stat_key: str,
     *,
+    apply_clean_filter: bool,
     count_zero_as_missing: bool = False,
     output_path: str | Path | None = None,
     max_matches_cap: int | None = None,
     title_prefix: str = "Missingness timeline",
 ) -> None:
-    """
-    Plot a binary heatmap:
-      - rows = competition seasons
-      - columns = chronological match order inside that competition season
-      - value 1 = missing, 0 = present
-
-    Supports any key present in FSMatch.stats, e.g.:
-      - home_prematch_xg / away_prematch_xg
-      - home_offsides / away_offsides
-    """
     g = Global.get_instance()
 
-    league_matches = utils.filter_clean_league_matches(g.all_matches)
+    if apply_clean_filter:
+        league_matches = utils.filter_clean_league_matches(g.all_matches)
+    else:
+        league_matches = [m for m in g.all_matches if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE]
+
     league_matches = [
-        m for m in league_matches if getattr(m, "season", None) is not None and getattr(m, "datetime", None) is not None
+        m
+        for m in league_matches
+        if getattr(m, "season", None) is not None
+        and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
+        and getattr(m, "datetime", None) is not None
     ]
 
     if not league_matches:
         print(f"[analysis] No league matches found for timeline plot of {stat_key}.")
         return
 
-    # Validate stat exists at least somewhere
     sample_stats = getattr(league_matches[0], "stats", {}) or {}
     if stat_key not in sample_stats:
         raise ValueError(f"stat_key '{stat_key}' not found in match.stats")
@@ -1375,24 +1447,33 @@ def plot_fs_vs_sofifa_team_counts(team_counts_df: pd.DataFrame, out_dir: Path) -
     print(f"Saved: {pdf_path}")
 
 
-def main() -> None:
-    out_dir = Path(sett.PROJECT_ROOT) / "docs/experiments/thesis_data_overview"
+def run_analysis_suite(
+    *,
+    out_dir: Path,
+    apply_clean_filter: bool,
+    ignore_ignored_stats: bool,
+    include_offsides_timelines: bool,
+) -> Dict[str, pd.DataFrame]:
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    league_matches = load_data_into_globals()
+    league_matches = get_league_matches(apply_clean_filter=apply_clean_filter)
 
-    # 1) Thesis-ready competition distribution figure
+    # 1) Competition distribution
     plot_match_counts_per_comp(league_matches, out_dir)
 
-    # 1b) Compare FootyStats vs SOFIFA source coverage at team-count level
+    # 1b) FS vs SOFIFA source coverage
     df_fs_vs_sofifa = build_fs_vs_sofifa_team_counts_per_comp_season(league_matches)
     path = out_dir / "fs_vs_sofifa_team_counts_per_comp_season.csv"
     df_fs_vs_sofifa.to_csv(path, index=False)
     print(f"Saved: {path}")
     plot_fs_vs_sofifa_team_counts(df_fs_vs_sofifa, out_dir)
 
-    # 2a) Detailed raw match-stat missingness (+ selected zero values treated as missing)
-    df_match = build_match_stats_missingness(league_matches, count_zero_as_missing=True)
+    # 2a) Match-stat missingness
+    df_match = build_match_stats_missingness(
+        league_matches,
+        count_zero_as_missing=True,
+        ignore_ignored_stats=ignore_ignored_stats,
+    )
     save_missingness_tables(df_match, out_dir, "match_stats_missingness", "stat")
     plot_missingness_heatmap(
         df_match,
@@ -1405,8 +1486,11 @@ def main() -> None:
         cbar_label="Missing or zero-as-missing values (%)",
     )
 
-    # 2a-alt) Strict raw match-stat missingness: only -1 / None count as missing
-    df_match_strict = build_match_stats_missingness(league_matches, count_zero_as_missing=False)
+    df_match_strict = build_match_stats_missingness(
+        league_matches,
+        count_zero_as_missing=False,
+        ignore_ignored_stats=ignore_ignored_stats,
+    )
     save_missingness_tables(df_match_strict, out_dir, "match_stats_missingness_strict", "stat")
     plot_missingness_heatmap(
         df_match_strict,
@@ -1419,7 +1503,6 @@ def main() -> None:
         cbar_label="Missing values (%)",
     )
 
-    # Useful extra heatmap: literal zeros only for the selected ambiguous stats.
     df_match_zero_subset = df_match[df_match["stat"].isin(ZERO_AS_MISSING_STATS)].copy()
     if not df_match_zero_subset.empty:
         plot_missingness_heatmap(
@@ -1433,9 +1516,10 @@ def main() -> None:
             cbar_label="Zero values (%)",
         )
 
-    # 2a-extra) Localization of match-stat missingness by team and month within seasons.
     df_team_month_detail, df_team_month_overall, df_team_month_summary = build_match_stats_team_month_missingness(
-        league_matches
+        league_matches,
+        count_zero_as_missing=True,
+        ignore_ignored_stats=ignore_ignored_stats,
     )
     if not df_team_month_detail.empty:
         path = out_dir / "match_stats_missingness_team_month_detail.csv"
@@ -1451,7 +1535,7 @@ def main() -> None:
         df_team_month_summary.to_csv(path, index=False)
         print(f"Saved: {path}")
 
-    # 2b) Detailed player-skill missingness from raw SOFIFA CSV snapshots.
+    # 2b) SOFIFA skill missingness
     df_skill, df_skill_rows = build_player_skill_missingness_from_raw_sofifa()
     save_missingness_tables(df_skill, out_dir, "player_skill_missingness_raw_sofifa", "skill")
     if not df_skill.empty:
@@ -1469,7 +1553,6 @@ def main() -> None:
         df_skill_rows.to_csv(skill_rows_path, index=False)
         print(f"Saved: {skill_rows_path}")
 
-    # 2c) Persistent-missing raw SOFIFA player skills (missing also in adjacent snapshots).
     df_skill_persistent, df_skill_persistent_rows = build_player_skill_missingness_from_raw_sofifa_persistent()
     save_missingness_tables(
         df_skill_persistent,
@@ -1492,7 +1575,6 @@ def main() -> None:
         df_skill_persistent_rows.to_csv(skill_rows_path, index=False)
         print(f"Saved: {skill_rows_path}")
 
-    # Thesis plot
     if (not df_skill.empty) and (not df_skill_persistent.empty):
         plot_thesis_sofifa_skill_raw_vs_persistent(
             df_skill,
@@ -1500,52 +1582,89 @@ def main() -> None:
             out_dir=out_dir,
         )
 
-    # 3) Pre-match xG missing values analysis
+    # 3) Pre-match xG timelines
     plot_stat_missingness_timeline(
         "home_prematch_xg",
+        apply_clean_filter=apply_clean_filter,
         count_zero_as_missing=True,
         output_path=out_dir / "home_prematch_xg_missingness_timeline_zero_missing.png",
         title_prefix="Missingness timeline",
     )
-
     plot_stat_missingness_timeline(
         "away_prematch_xg",
+        apply_clean_filter=apply_clean_filter,
         count_zero_as_missing=True,
         output_path=out_dir / "away_prematch_xg_missingness_timeline_zero_missing.png",
         title_prefix="Missingness timeline",
     )
 
-    # 4) Offsides strict-missing analysis (-1 / None only)
-    plot_stat_missingness_timeline(
-        "home_offsides",
-        count_zero_as_missing=False,
-        output_path=out_dir / "home_offsides_missingness_timeline_strict_missing.png",
-        title_prefix="Missingness timeline",
-    )
-
-    plot_stat_missingness_timeline(
-        "away_offsides",
-        count_zero_as_missing=False,
-        output_path=out_dir / "away_offsides_missingness_timeline_strict_missing.png",
-        title_prefix="Missingness timeline",
-    )
-
-    # Thesis plot
-    before_match_stats_csv = out_dir / "match_stats_missingness_strict_before_cleaning.csv"
-    if before_match_stats_csv.exists():
-        df_before = pd.read_csv(before_match_stats_csv)
-        plot_thesis_match_stats_before_after(
-            df_before,
-            df_match_strict,
-            out_dir=out_dir,
+    # 4) Offsides timelines only when desired
+    if include_offsides_timelines:
+        plot_stat_missingness_timeline(
+            "home_offsides",
+            apply_clean_filter=apply_clean_filter,
+            count_zero_as_missing=False,
+            output_path=out_dir / "home_offsides_missingness_timeline_strict_missing.png",
+            title_prefix="Missingness timeline",
         )
-    else:
-        print(
-            f"[thesis] Skipping before-vs-after match-stat thesis plot because "
-            f"{before_match_stats_csv.name} was not found."
+        plot_stat_missingness_timeline(
+            "away_offsides",
+            apply_clean_filter=apply_clean_filter,
+            count_zero_as_missing=False,
+            output_path=out_dir / "away_offsides_missingness_timeline_strict_missing.png",
+            title_prefix="Missingness timeline",
         )
 
     print(f"All outputs saved into: {out_dir}")
+    return {
+        "df_match": df_match,
+        "df_match_strict": df_match_strict,
+        "df_skill": df_skill,
+        "df_skill_persistent": df_skill_persistent,
+        "df_fs_vs_sofifa": df_fs_vs_sofifa,
+    }
+
+
+def main() -> None:
+    base_out_dir = Path(sett.PROJECT_ROOT) / "docs/experiments/thesis_data_overview"
+    base_out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Load raw snapshot data once
+    load_data_into_globals()
+
+    before_out_dir = base_out_dir / "before_comp_season_filtering"
+    after_out_dir = base_out_dir / "after_comp_season_filtering"
+
+    # BEFORE: all league competition seasons, all raw match stats including offsides
+    before_results = run_analysis_suite(
+        out_dir=before_out_dir,
+        apply_clean_filter=False,
+        ignore_ignored_stats=False,
+        include_offsides_timelines=True,
+    )
+
+    # AFTER: excluded competition seasons removed, ignored stats removed from stat-based summaries
+    after_results = run_analysis_suite(
+        out_dir=after_out_dir,
+        apply_clean_filter=True,
+        ignore_ignored_stats=True,
+        include_offsides_timelines=False,
+    )
+
+    # Thesis-ready before vs after match-stat comparison
+    if (
+        before_results["df_match_strict"] is not None
+        and not before_results["df_match_strict"].empty
+        and after_results["df_match_strict"] is not None
+        and not after_results["df_match_strict"].empty
+    ):
+        plot_thesis_match_stats_before_after(
+            before_results["df_match_strict"],
+            after_results["df_match_strict"],
+            out_dir=base_out_dir,
+        )
+
+    print(f"All thesis overview outputs saved under: {base_out_dir}")
 
 
 if __name__ == "__main__":
