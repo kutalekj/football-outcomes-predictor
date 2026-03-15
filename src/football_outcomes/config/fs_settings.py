@@ -154,7 +154,7 @@ TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 5.75
 EXCLUDED_COMP_SEASONS = {
     ("Italy Serie B", 2021),
     ("Poland Ekstraklasa", 2021),
-    ("Turkey Süper Lig", 2024),
+    ("Turkey Süper Lig", 2022),
     ("India Indian Super League", 2024),
 }
 
