@@ -82,6 +82,276 @@ def load_data_into_globals() -> List[FSMatch]:
     return league_matches
 
 
+def build_missingness_pivot(
+    df: pd.DataFrame,
+    *,
+    row_cols: List[str],
+    col_name: str,
+    value_field: str = "missing_pct",
+) -> pd.DataFrame:
+    pivot = df.pivot_table(index=row_cols, columns=col_name, values=value_field, aggfunc="mean")
+    pivot = pivot.sort_index()
+
+    if pivot.empty:
+        return pivot
+
+    row_labels = [" | ".join(map(str, idx if isinstance(idx, tuple) else (idx,))) for idx in pivot.index]
+    pivot = pivot.copy()
+    pivot.index = row_labels
+    return pivot
+
+
+def _reindex_for_comparable_heatmaps(
+    left: pd.DataFrame,
+    right: pd.DataFrame,
+    *,
+    union_rows: bool = True,
+    union_cols: bool = True,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Reindex two pivots to the same row/column space.
+    Missing rows/cols become NaN and can be rendered as gray.
+    """
+    if union_rows:
+        all_rows = sorted(set(left.index).union(set(right.index)))
+    else:
+        all_rows = list(left.index)
+
+    if union_cols:
+        all_cols = list(dict.fromkeys(list(left.columns) + list(right.columns)))
+    else:
+        all_cols = list(left.columns)
+
+    left2 = left.reindex(index=all_rows, columns=all_cols)
+    right2 = right.reindex(index=all_rows, columns=all_cols)
+    return left2, right2
+
+
+def _plot_pct_heatmap_thesis(
+    pivot_df: pd.DataFrame,
+    ax: Axes,
+    *,
+    cmap: str = PCT_CMAP,
+    show_cbar: bool = False,
+    cbar_label: str = "Missing values (%)",
+    hide_ticks: bool = True,
+    mask_color: str = "#d9d9d9",
+) -> None:
+    """
+    Minimal thesis-ready heatmap:
+      - no title
+      - optional colorbar
+      - optional hidden ticks
+      - NaN cells shown in a subtle gray mask
+    """
+    data = pivot_df.astype(float)
+    norm = PowerNorm(gamma=HEATMAP_GAMMA, vmin=PCT_MIN, vmax=PCT_MAX)
+
+    cmap_obj = matplotlib.cm.get_cmap(cmap).copy()
+    cmap_obj.set_bad(mask_color)
+
+    hm = sns.heatmap(
+        data,
+        ax=ax,
+        cmap=cmap_obj,
+        vmin=PCT_MIN,
+        vmax=PCT_MAX,
+        norm=norm,
+        linewidths=0.35,
+        linecolor="white",
+        cbar=show_cbar,
+        cbar_kws=(
+            {
+                "label": cbar_label,
+                "ticks": PCT_CBAR_TICKS,
+            }
+            if show_cbar
+            else None
+        ),
+    )
+
+    if hide_ticks:
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_xlabel("")
+        ax.set_ylabel("")
+    else:
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor", fontsize=8)
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=8)
+
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    if show_cbar:
+        cbar = hm.collections[0].colorbar
+        cbar.set_ticks(PCT_CBAR_TICKS)
+        cbar.set_ticklabels([f"{t:g}" for t in PCT_CBAR_TICKS])
+
+
+def plot_thesis_pair_heatmaps(
+    left_pivot: pd.DataFrame,
+    right_pivot: pd.DataFrame,
+    *,
+    out_dir: Path,
+    stem: str,
+    cbar_label: str,
+    align_shapes: bool = True,
+    mask_missing_shape: bool = True,
+    hide_ticks: bool = True,
+    show_cbar: bool = True,
+    left_caption: Optional[str] = None,
+    right_caption: Optional[str] = None,
+) -> None:
+    """
+    Two aligned heatmaps side by side for thesis use.
+    """
+    if left_pivot.empty or right_pivot.empty:
+        print(f"Skipping thesis pair heatmap {stem}: one side is empty.")
+        return
+
+    if align_shapes:
+        left_plot, right_plot = _reindex_for_comparable_heatmaps(left_pivot, right_pivot)
+    else:
+        left_plot, right_plot = left_pivot.copy(), right_pivot.copy()
+
+    if not mask_missing_shape:
+        left_plot = left_plot.dropna(axis=0, how="all").dropna(axis=1, how="all")
+        right_plot = right_plot.dropna(axis=0, how="all").dropna(axis=1, how="all")
+
+    n_rows = max(len(left_plot.index), len(right_plot.index))
+    n_cols = max(len(left_plot.columns), len(right_plot.columns))
+
+    fig_w = max(10, 0.28 * n_cols * 2 + (2.0 if show_cbar else 0.0))
+    fig_h = max(4.5, 0.18 * n_rows + 1.2)
+
+    if show_cbar:
+        fig, axes = plt.subplots(
+            1,
+            3,
+            figsize=(fig_w, fig_h),
+            gridspec_kw={"width_ratios": [1, 1, 0.05], "wspace": 0.03},
+        )
+        ax_left, ax_right, cax = axes
+    else:
+        fig, axes = plt.subplots(1, 2, figsize=(fig_w, fig_h), gridspec_kw={"wspace": 0.03})
+        ax_left, ax_right = axes
+        cax = None
+
+    _plot_pct_heatmap_thesis(
+        left_plot,
+        ax_left,
+        show_cbar=False,
+        cbar_label=cbar_label,
+        hide_ticks=hide_ticks,
+    )
+    _plot_pct_heatmap_thesis(
+        right_plot,
+        ax_right,
+        show_cbar=False,
+        cbar_label=cbar_label,
+        hide_ticks=hide_ticks,
+    )
+
+    if left_caption:
+        ax_left.set_title(left_caption, fontsize=10, pad=6)
+    if right_caption:
+        ax_right.set_title(right_caption, fontsize=10, pad=6)
+
+    if show_cbar:
+        norm = PowerNorm(gamma=HEATMAP_GAMMA, vmin=PCT_MIN, vmax=PCT_MAX)
+        cmap_obj = matplotlib.cm.get_cmap(PCT_CMAP).copy()
+        cmap_obj.set_bad("#d9d9d9")
+        sm = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap_obj)
+        sm.set_array([])
+        cbar = fig.colorbar(sm, cax=cax)
+        cbar.set_label(cbar_label)
+        cbar.set_ticks(PCT_CBAR_TICKS)
+        cbar.set_ticklabels([f"{t:g}" for t in PCT_CBAR_TICKS])
+
+    fig.tight_layout()
+
+    png_path = out_dir / f"{stem}.png"
+    pdf_path = out_dir / f"{stem}.pdf"
+    fig.savefig(png_path, dpi=260, bbox_inches="tight")
+    fig.savefig(pdf_path, bbox_inches="tight")
+    plt.close(fig)
+
+    print(f"Saved: {png_path}")
+    print(f"Saved: {pdf_path}")
+
+
+def plot_thesis_match_stats_before_after(
+    df_before: pd.DataFrame,
+    df_after: pd.DataFrame,
+    *,
+    out_dir: Path,
+    stem: str = "thesis_match_stats_missingness_before_after",
+    value_field: str = "missing_pct",
+) -> None:
+    left_pivot = build_missingness_pivot(
+        df_before,
+        row_cols=["competition", "season"],
+        col_name="stat",
+        value_field=value_field,
+    )
+    right_pivot = build_missingness_pivot(
+        df_after,
+        row_cols=["competition", "season"],
+        col_name="stat",
+        value_field=value_field,
+    )
+
+    plot_thesis_pair_heatmaps(
+        left_pivot,
+        right_pivot,
+        out_dir=out_dir,
+        stem=stem,
+        cbar_label="Missing values (%)",
+        align_shapes=True,
+        mask_missing_shape=True,
+        hide_ticks=True,
+        show_cbar=True,
+        left_caption="Before cleaning",
+        right_caption="After cleaning",
+    )
+
+
+def plot_thesis_sofifa_skill_raw_vs_persistent(
+    df_raw: pd.DataFrame,
+    df_persistent: pd.DataFrame,
+    *,
+    out_dir: Path,
+    stem: str = "thesis_sofifa_skill_missingness_raw_vs_persistent",
+    value_field: str = "missing_pct",
+) -> None:
+    left_pivot = build_missingness_pivot(
+        df_raw,
+        row_cols=["competition", "season"],
+        col_name="skill",
+        value_field=value_field,
+    )
+    right_pivot = build_missingness_pivot(
+        df_persistent,
+        row_cols=["competition", "season"],
+        col_name="skill",
+        value_field=value_field,
+    )
+
+    plot_thesis_pair_heatmaps(
+        left_pivot,
+        right_pivot,
+        out_dir=out_dir,
+        stem=stem,
+        cbar_label="Missing values (%)",
+        align_shapes=True,
+        mask_missing_shape=False,
+        hide_ticks=True,
+        show_cbar=True,
+        left_caption="Missing in raw snapshots",
+        right_caption="Persistently missing",
+    )
+
+
 def plot_match_counts_per_comp(league_matches: List[FSMatch], out_dir: Path) -> pd.DataFrame:
     counts = Counter(m.comp_name for m in league_matches)
     rows = [(comp, counts.get(comp, 0)) for comp in sett.COMPS_LEAGUE]
@@ -1222,6 +1492,14 @@ def main() -> None:
         df_skill_persistent_rows.to_csv(skill_rows_path, index=False)
         print(f"Saved: {skill_rows_path}")
 
+    # Thesis plot
+    if (not df_skill.empty) and (not df_skill_persistent.empty):
+        plot_thesis_sofifa_skill_raw_vs_persistent(
+            df_skill,
+            df_skill_persistent,
+            out_dir=out_dir,
+        )
+
     # 3) Pre-match xG missing values analysis
     plot_stat_missingness_timeline(
         "home_prematch_xg",
@@ -1251,6 +1529,21 @@ def main() -> None:
         output_path=out_dir / "away_offsides_missingness_timeline_strict_missing.png",
         title_prefix="Missingness timeline",
     )
+
+    # Thesis plot
+    before_match_stats_csv = out_dir / "match_stats_missingness_strict_before_cleaning.csv"
+    if before_match_stats_csv.exists():
+        df_before = pd.read_csv(before_match_stats_csv)
+        plot_thesis_match_stats_before_after(
+            df_before,
+            df_match_strict,
+            out_dir=out_dir,
+        )
+    else:
+        print(
+            f"[thesis] Skipping before-vs-after match-stat thesis plot because "
+            f"{before_match_stats_csv.name} was not found."
+        )
 
     print(f"All outputs saved into: {out_dir}")
 
