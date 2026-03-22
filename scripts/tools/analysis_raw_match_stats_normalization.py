@@ -35,7 +35,7 @@ APPLY_CLEAN_FILTER = True
 TEAM_LEVEL_STAT_SPECS: List[Tuple[str, Optional[str], Tuple[str, str]]] = [
     ("goals scored", "GOALS_NORM_COEFFICIENT", ("home_goals", "away_goals")),
     ("shots on target", "SOG_NORM_COEFFICIENT", ("home_shots_on_target", "away_shots_on_target")),
-    ("shots off target", "SOFFG_NORM_COEFFICIENT", ("home_shots_off_target", "away_shots_off_target")),
+    ("shots off target", "SHOTS_OFF_G_NORM_COEFFICIENT", ("home_shots_off_target", "away_shots_off_target")),
     ("total shots", "TOTAL_SHOTS_NORM_COEFFICIENT", ("home_total_shots", "away_total_shots")),
     ("corner kicks", "CORNER_KICKS_NORM_COEFFICIENT", ("home_corners", "away_corners")),
     ("fouls committed", "FOULS_NORM_COEFFICIENT", ("home_fouls", "away_fouls")),
@@ -54,7 +54,7 @@ TOTAL_LEVEL_STAT_SPECS: List[Tuple[str, str, Tuple[str, str]]] = [
 NAME_TO_SETTING = {
     "goals scored": "GOALS_NORM_COEFFICIENT",
     "shots on target": "SOG_NORM_COEFFICIENT",
-    "shots off target": "SOFFG_NORM_COEFFICIENT",
+    "shots off target": "SHOTS_OFF_G_NORM_COEFFICIENT",
     "total shots": "TOTAL_SHOTS_NORM_COEFFICIENT",
     "corner kicks": "CORNER_KICKS_NORM_COEFFICIENT",
     "fouls committed": "FOULS_NORM_COEFFICIENT",

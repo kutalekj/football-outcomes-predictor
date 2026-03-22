@@ -618,7 +618,7 @@ class FSMatch:
             5,
             "home_shots_on_target",
             "away_shots_on_target",
-            fu.normalize_sog,
+            fu.normalize_shots_on_g,
         )
         mf.home_avg_shots_on_target_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -627,7 +627,7 @@ class FSMatch:
             20,
             "home_shots_on_target",
             "away_shots_on_target",
-            fu.normalize_sog,
+            fu.normalize_shots_on_g,
         )
         mf.away_avg_shots_on_target_last_5 = fu.avg_stat_last_n(
             team_index_league,
@@ -636,7 +636,7 @@ class FSMatch:
             5,
             "home_shots_on_target",
             "away_shots_on_target",
-            fu.normalize_sog,
+            fu.normalize_shots_on_g,
         )
         mf.away_avg_shots_on_target_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -645,7 +645,7 @@ class FSMatch:
             20,
             "home_shots_on_target",
             "away_shots_on_target",
-            fu.normalize_sog,
+            fu.normalize_shots_on_g,
         )
 
         mf.home_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
@@ -655,7 +655,7 @@ class FSMatch:
             5,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_soffg,
+            fu.normalize_shots_off_g,
         )
         mf.home_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -664,7 +664,7 @@ class FSMatch:
             20,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_soffg,
+            fu.normalize_shots_off_g,
         )
         mf.away_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
             team_index_league,
@@ -673,7 +673,7 @@ class FSMatch:
             5,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_soffg,
+            fu.normalize_shots_off_g,
         )
         mf.away_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
             team_index_league,
@@ -682,7 +682,7 @@ class FSMatch:
             20,
             "home_shots_off_target",
             "away_shots_off_target",
-            fu.normalize_soffg,
+            fu.normalize_shots_off_g,
         )
 
         mf.home_avg_total_shots_last_5 = fu.avg_stat_last_n(

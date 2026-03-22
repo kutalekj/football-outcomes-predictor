@@ -38,12 +38,12 @@ def normalize_goals(goals_per_game: float) -> float:
     return min_max_scaling_with_clipping(goals_per_game, sett.GOALS_NORM_COEFFICIENT)
 
 
-def normalize_sog(v: float) -> float:
-    return min_max_scaling_with_clipping(v, sett.SOG_NORM_COEFFICIENT)
+def normalize_shots_on_g(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.SHOTS_ON_G_NORM_COEFFICIENT)
 
 
-def normalize_soffg(v: float) -> float:
-    return min_max_scaling_with_clipping(v, sett.SOFFG_NORM_COEFFICIENT)
+def normalize_shots_off_g(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.SHOTS_OFF_G_NORM_COEFFICIENT)
 
 
 def normalize_total_shots(v: float) -> float:
@@ -86,7 +86,9 @@ def normalize_total_pre_match_xg(v: float) -> float:
     return min_max_scaling_with_clipping(v, sett.TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT)
 
 
-def normalize_elo(raw_elo: float, min_elo: float = 1000.0, max_elo: float = 2000.0) -> float:
+def normalize_elo(
+    raw_elo: float, min_elo: float = sett.ELO_MIN_NORM_COEFFICIENT, max_elo: float = sett.ELO_MAX_NORM_COEFFICIENT
+) -> float:
     return clip01((raw_elo - min_elo) / (max_elo - min_elo))
 
 
@@ -448,7 +450,7 @@ def debug_print_match_and_features(match):
     # -------------------------
     # FEATURES BEFORE MATCH (Genk-side only)
     # -------------------------
-    print("\n\tFEATURES_BEFORE_MATCH:")
+    print(f"\n\tFEATURES_BEFORE_MATCH: (pos. in season: {f.match_position_in_season:.2f})")
     TARGET_TEAM = "KRC Genk"
 
     home_name = getattr(match.home_team, "name", "") or ""
@@ -579,7 +581,7 @@ def debug_print_match_and_features(match):
         "home_avg_shots_on_target_last_20",
         "away_avg_shots_on_target_last_5",
         "away_avg_shots_on_target_last_20",
-        coeff=sett.SOG_NORM_COEFFICIENT,
+        coeff=sett.SHOTS_ON_G_NORM_COEFFICIENT,
         indent_tabs=12,
     )
 
@@ -590,7 +592,7 @@ def debug_print_match_and_features(match):
         "home_avg_shots_off_target_last_20",
         "away_avg_shots_off_target_last_5",
         "away_avg_shots_off_target_last_20",
-        coeff=sett.SOFFG_NORM_COEFFICIENT,
+        coeff=sett.SHOTS_OFF_G_NORM_COEFFICIENT,
         indent_tabs=4,
     )
 
