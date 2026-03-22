@@ -10,8 +10,8 @@ DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_NO-25-26-MATCHES_v4.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_NO-25-26-MATCHES_v4.pkl"
+LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl"
+SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl"
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
@@ -216,6 +216,7 @@ COMPS_LEAGUE = [
     "Switzerland Super League",
 ]
 
+VALIDATE_ROUND_IDS = True
 LEAGUE_VALID_ROUND_IDS_BY_SEASON = {
     ("Australia A-League", 2021): {76909},
     ("Australia A-League", 2022): {92941},

@@ -256,6 +256,31 @@ def filter_valid_round_matches(matches):
     return out
 
 
+def validate_league_valid_round_ids() -> None:
+    g = Global.get_instance()
+
+    present_keys = sorted(
+        {
+            (cs.name, cs.season)
+            for cs in g.all_comp_seasons.values()
+            if cs.name in sett.COMPS_LEAGUE
+            and cs.season is not None
+            and sett.FIRST_SEASON <= cs.season < sett.LAST_SEASON
+            and (cs.name, cs.season) not in sett.EXCLUDED_COMP_SEASONS
+        }
+    )
+
+    missing = [key for key in present_keys if key not in sett.LEAGUE_VALID_ROUND_IDS_BY_SEASON]
+
+    if missing:
+        print("[valid_rounds] Missing whitelist entries:")
+        for key in missing:
+            print(f"  {key}")
+        raise ValueError("LEAGUE_VALID_ROUND_IDS_BY_SEASON is incomplete.")
+
+    print(f"[valid_rounds] OK ({len(present_keys)} competition seasons validated)")
+
+
 def get_allowed_match_stat_keys(stat_keys):
     """
     Drop stats that should remain in raw data but be ignored in cleaned analysis/modeling.

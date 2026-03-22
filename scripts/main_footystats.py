@@ -29,19 +29,20 @@ load_avg_team_strength()  # TODO: Remove this currently unused averaging?
 cache = try_load_snapshot()
 if sett.ALL_LOAD and cache is not None:
     fill_globals_with_cache(cache, update_leagues_list=False)
-    ut.ensure_comp_season_dates(force=False)
-    ut.initialize_league_tables(precompute_positions=True, force_rebuild=False)
 
 if sett.ALL_GET_NEW:
     bundle = retrieve_new_data()
-    ut.ensure_comp_season_dates(force=True)
-    ut.initialize_league_tables(precompute_positions=True, force_rebuild=True)
 
-# Only rebuild from CSV when explicitly requested (one-time migration / new data)
+# Only rebuild from CSV when explicitly requested (one-time migration/new data)
 load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False), debug_shifts=False)
 print("[sofifa] snapshots:", len(global_instance.sofifa_snapshots))
 
 ut.link_matches_to_comp_seasons()
+if sett.VALIDATE_ROUND_IDS:
+    ut.validate_league_valid_round_ids()
+
+ut.ensure_comp_season_dates(force=sett.ALL_GET_NEW)
+ut.initialize_league_tables(precompute_positions=True, force_rebuild=sett.ALL_GET_NEW)
 
 # Match FS league teams to SOFIFA teams (one-time per run)
 match_fs_teams_to_sofifa_teams(force=False)
