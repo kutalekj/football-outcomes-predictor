@@ -1,0 +1,505 @@
+Output directory: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown
+League matches analyzed: 30741
+Apply clean filter: True
+Season range: 2021..2024
+
+Saved table: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\postseason_breakdown_by_season_20260322_174128.csv
+Saved table: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\postseason_breakdown_by_competition_20260322_174128.csv
+Saved table: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\round_type_breakdown_by_season_20260322_174128.csv
+
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\postseason_breakdown_stacked_20260322_174128.png
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\postseason_breakdown_stacked_20260322_174128.pdf
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\postseason_breakdown_share_20260322_174128.png
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\postseason_breakdown_share_20260322_174128.pdf
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\round_type_breakdown_20260322_174128.png
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_postseason_match_breakdown\round_type_breakdown_20260322_174128.pdf
+
+================================================================================================
+REGULAR VS NON-REGULAR LEAGUE MATCH ANALYSIS
+================================================================================================
+Goal: use persisted FSMatch.regular_season to quantify regular vs non-regular matches exactly.
+Additional goal: summarize round_id counts for affected competition seasons to distinguish split
+formats from seasons where only a small playoff block appears at the end.
+
+Per-season breakdown:
+[Australia A-League, 2021] total=163, regular=156, non_regular=7 (4.29%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=26/26.5/30
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Australia A-League, 2022] total=163, regular=156, non_regular=7 (4.29%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=26/26.5/29
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Australia A-League, 2023] total=169, regular=162, non_regular=7 (4.14%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=27/27.5/31
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Australia A-League, 2024] total=176, regular=169, non_regular=7 (3.98%), teams=13, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=26/26.0/30
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Austria Bundesliga, 2021] total=195, regular=132, non_regular=63 (32.31%), teams=12, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=32/32.0/35
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Austria Bundesliga, 2022] total=195, regular=132, non_regular=63 (32.31%), teams=12, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=32/32.0/35
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Austria Bundesliga, 2023] total=195, regular=132, non_regular=63 (32.31%), teams=12, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=32/32.0/35
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Austria Bundesliga, 2024] total=195, regular=132, non_regular=63 (32.31%), teams=12, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=32/32.0/35
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Belgium Pro League, 2021] total=330, regular=306, non_regular=24 (7.27%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/40
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Belgium Pro League, 2022] total=330, regular=306, non_regular=24 (7.27%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/40
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Belgium Pro League, 2023] total=313, regular=240, non_regular=73 (23.32%), teams=16, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=36/40.0/41
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Belgium Pro League, 2024] total=313, regular=240, non_regular=73 (23.32%), teams=16, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=36/40.0/41
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Denmark Superliga, 2021] total=193, regular=132, non_regular=61 (31.61%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=32/32.0/33
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Denmark Superliga, 2022] total=193, regular=132, non_regular=61 (31.61%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=32/32.0/33
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Denmark Superliga, 2023] total=193, regular=132, non_regular=61 (31.61%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=32/32.0/33
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Denmark Superliga, 2024] total=193, regular=132, non_regular=61 (31.61%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=32/32.0/33
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Championship, 2021] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Championship, 2022] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Championship, 2023] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Championship, 2024] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League One, 2021] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League One, 2022] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League One, 2023] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League One, 2024] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League Two, 2021] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League Two, 2022] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League Two, 2023] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England EFL League Two, 2024] total=557, regular=552, non_regular=5 (0.90%), teams=24, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=46/46.0/49
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Premier League, 2021] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Premier League, 2022] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Premier League, 2023] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[England Premier League, 2024] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 1, 2021] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 1, 2022] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 1, 2023] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 1, 2024] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 2, 2021] total=382, regular=380, non_regular=2 (0.52%), teams=20, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=38/38.0/40
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 2, 2022] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 2, 2023] total=382, regular=380, non_regular=2 (0.52%), teams=20, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=38/38.0/40
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[France Ligue 2, 2024] total=308, regular=306, non_regular=2 (0.65%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/36
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany 2. Bundesliga, 2021] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany 2. Bundesliga, 2022] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany 2. Bundesliga, 2023] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany 2. Bundesliga, 2024] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany Bundesliga, 2021] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany Bundesliga, 2022] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany Bundesliga, 2023] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Germany Bundesliga, 2024] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[India Indian Super League, 2021] total=115, regular=110, non_regular=5 (4.35%), teams=11, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=20/20.0/23
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[India Indian Super League, 2022] total=117, regular=110, non_regular=7 (5.98%), teams=11, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=20/21.0/24
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[India Indian Super League, 2023] total=139, regular=132, non_regular=7 (5.04%), teams=12, round_ids=4, regular_round_ids=1, non_regular_round_ids=3, team_matches=min/med/max=22/22.5/25
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie A, 2021] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie A, 2022] total=381, regular=380, non_regular=1 (0.26%), teams=20, round_ids=2, regular_round_ids=1, non_regular_round_ids=1, team_matches=min/med/max=38/38.0/39
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie A, 2023] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie A, 2024] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie B, 2022] total=390, regular=380, non_regular=10 (2.56%), teams=20, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=38/38.0/43
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie B, 2023] total=390, regular=380, non_regular=10 (2.56%), teams=20, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=38/38.0/42
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Italy Serie B, 2024] total=390, regular=380, non_regular=10 (2.56%), teams=20, round_ids=5, regular_round_ids=1, non_regular_round_ids=4, team_matches=min/med/max=38/38.0/42
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Netherlands Eredivisie, 2021] total=312, regular=306, non_regular=6 (1.92%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Netherlands Eredivisie, 2022] total=312, regular=306, non_regular=6 (1.92%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Netherlands Eredivisie, 2023] total=309, regular=306, non_regular=3 (0.97%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/36
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Netherlands Eredivisie, 2024] total=309, regular=306, non_regular=3 (0.97%), teams=18, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=34/34.0/36
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Poland Ekstraklasa, 2022] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Poland Ekstraklasa, 2023] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Poland Ekstraklasa, 2024] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Portugal Liga NOS, 2021] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Portugal Liga NOS, 2022] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Portugal Liga NOS, 2023] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Portugal Liga NOS, 2024] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Saudi Arabia Professional League, 2021] total=240, regular=240, non_regular=0 (0.00%), teams=16, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=30/30.0/30
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Saudi Arabia Professional League, 2022] total=240, regular=240, non_regular=0 (0.00%), teams=16, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=30/30.0/30
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Saudi Arabia Professional League, 2023] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Saudi Arabia Professional League, 2024] total=306, regular=306, non_regular=0 (0.00%), teams=18, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=34/34.0/34
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Scotland Premiership, 2021] total=228, regular=198, non_regular=30 (13.16%), teams=12, round_ids=2, regular_round_ids=1, non_regular_round_ids=1, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Scotland Premiership, 2022] total=228, regular=198, non_regular=30 (13.16%), teams=12, round_ids=2, regular_round_ids=1, non_regular_round_ids=1, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Scotland Premiership, 2023] total=228, regular=198, non_regular=30 (13.16%), teams=12, round_ids=2, regular_round_ids=1, non_regular_round_ids=1, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Scotland Premiership, 2024] total=228, regular=198, non_regular=30 (13.16%), teams=12, round_ids=2, regular_round_ids=1, non_regular_round_ids=1, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain La Liga, 2021] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain La Liga, 2022] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain La Liga, 2023] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain La Liga, 2024] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain Segunda División, 2021] total=468, regular=462, non_regular=6 (1.28%), teams=22, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=42/42.0/46
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain Segunda División, 2022] total=468, regular=462, non_regular=6 (1.28%), teams=22, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=42/42.0/46
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain Segunda División, 2023] total=468, regular=462, non_regular=6 (1.28%), teams=22, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=42/42.0/46
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Spain Segunda División, 2024] total=464, regular=462, non_regular=2 (0.43%), teams=22, round_ids=2, regular_round_ids=1, non_regular_round_ids=1, team_matches=min/med/max=42/42.0/44
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Switzerland Super League, 2021] total=180, regular=180, non_regular=0 (0.00%), teams=10, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=36/36.0/36
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Switzerland Super League, 2022] total=180, regular=180, non_regular=0 (0.00%), teams=10, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=36/36.0/36
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Switzerland Super League, 2023] total=228, regular=198, non_regular=30 (13.16%), teams=12, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Switzerland Super League, 2024] total=228, regular=198, non_regular=30 (13.16%), teams=12, round_ids=3, regular_round_ids=1, non_regular_round_ids=2, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Turkey Süper Lig, 2021] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Turkey Süper Lig, 2023] total=380, regular=380, non_regular=0 (0.00%), teams=20, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=38/38.0/38
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+[Turkey Süper Lig, 2024] total=342, regular=342, non_regular=0 (0.00%), teams=19, round_ids=1, regular_round_ids=1, non_regular_round_ids=0, team_matches=min/med/max=36/36.0/36
+  notes: Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. Round-type counts are grouped by round_id.
+
+Aggregated competition totals:
+Belgium Pro League: total=1286, regular=1092, non_regular=194 (15.09%)
+England Premier League: total=1520, regular=1520, non_regular=0 (0.00%)
+England Championship: total=2228, regular=2208, non_regular=20 (0.90%)
+England EFL League One: total=2228, regular=2208, non_regular=20 (0.90%)
+England EFL League Two: total=2228, regular=2208, non_regular=20 (0.90%)
+France Ligue 1: total=1372, regular=1372, non_regular=0 (0.00%)
+France Ligue 2: total=1452, regular=1446, non_regular=6 (0.41%)
+Netherlands Eredivisie: total=1242, regular=1224, non_regular=18 (1.45%)
+Turkey Süper Lig: total=1102, regular=1102, non_regular=0 (0.00%)
+Germany Bundesliga: total=1224, regular=1224, non_regular=0 (0.00%)
+Germany 2. Bundesliga: total=1224, regular=1224, non_regular=0 (0.00%)
+Saudi Arabia Professional League: total=1092, regular=1092, non_regular=0 (0.00%)
+India Indian Super League: total=371, regular=352, non_regular=19 (5.12%)
+Australia A-League: total=671, regular=643, non_regular=28 (4.17%)
+Austria Bundesliga: total=780, regular=528, non_regular=252 (32.31%)
+Spain La Liga: total=1520, regular=1520, non_regular=0 (0.00%)
+Spain Segunda División: total=1868, regular=1848, non_regular=20 (1.07%)
+Italy Serie A: total=1521, regular=1520, non_regular=1 (0.07%)
+Italy Serie B: total=1170, regular=1140, non_regular=30 (2.56%)
+Scotland Premiership: total=912, regular=792, non_regular=120 (13.16%)
+Poland Ekstraklasa: total=918, regular=918, non_regular=0 (0.00%)
+Denmark Superliga: total=772, regular=528, non_regular=244 (31.61%)
+Portugal Liga NOS: total=1224, regular=1224, non_regular=0 (0.00%)
+Switzerland Super League: total=816, regular=756, non_regular=60 (7.35%)
+
+Round-type counts for affected competition seasons:
+[Australia A-League, 2021, round_id=76909] matches=156, teams=12, regular=156, non_regular=0, type=regular-season round type
+[Australia A-League, 2021, round_id=76910] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Australia A-League, 2021, round_id=76911] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Australia A-League, 2021, round_id=76912] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Australia A-League, 2022, round_id=92941] matches=156, teams=12, regular=156, non_regular=0, type=regular-season round type
+[Australia A-League, 2022, round_id=92942] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Australia A-League, 2022, round_id=92943] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Australia A-League, 2022, round_id=92944] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Australia A-League, 2023, round_id=103342] matches=162, teams=12, regular=162, non_regular=0, type=regular-season round type
+[Australia A-League, 2023, round_id=103343] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Australia A-League, 2023, round_id=103344] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Australia A-League, 2023, round_id=103345] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Australia A-League, 2024, round_id=114723] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Australia A-League, 2024, round_id=114724] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Australia A-League, 2024, round_id=114725] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Australia A-League, 2024, round_id=114726] matches=169, teams=13, regular=169, non_regular=0, type=regular-season round type
+[Austria Bundesliga, 2021, round_id=70480] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Austria Bundesliga, 2021, round_id=70481] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Austria Bundesliga, 2021, round_id=70482] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Austria Bundesliga, 2021, round_id=70483] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2021, round_id=70484] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2022, round_id=92495] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Austria Bundesliga, 2022, round_id=92496] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Austria Bundesliga, 2022, round_id=92497] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Austria Bundesliga, 2022, round_id=92498] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2022, round_id=92499] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2023, round_id=101611] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Austria Bundesliga, 2023, round_id=101612] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2023, round_id=101613] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2023, round_id=101614] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Austria Bundesliga, 2023, round_id=101615] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Austria Bundesliga, 2024, round_id=110504] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Austria Bundesliga, 2024, round_id=110505] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2024, round_id=110506] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Austria Bundesliga, 2024, round_id=110507] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Austria Bundesliga, 2024, round_id=110508] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Belgium Pro League, 2021, round_id=71342] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[Belgium Pro League, 2021, round_id=71344] matches=12, teams=4, regular=0, non_regular=12, type=non-regular round type
+[Belgium Pro League, 2021, round_id=71345] matches=12, teams=4, regular=0, non_regular=12, type=non-regular round type
+[Belgium Pro League, 2022, round_id=91136] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[Belgium Pro League, 2022, round_id=91138] matches=12, teams=4, regular=0, non_regular=12, type=non-regular round type
+[Belgium Pro League, 2022, round_id=91139] matches=12, teams=4, regular=0, non_regular=12, type=non-regular round type
+[Belgium Pro League, 2023, round_id=100236] matches=240, teams=16, regular=240, non_regular=0, type=regular-season round type
+[Belgium Pro League, 2023, round_id=100237] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Belgium Pro League, 2023, round_id=100238] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Belgium Pro League, 2023, round_id=100239] matches=12, teams=4, regular=0, non_regular=12, type=non-regular round type
+[Belgium Pro League, 2023, round_id=100360] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Belgium Pro League, 2024, round_id=109364] matches=240, teams=16, regular=240, non_regular=0, type=regular-season round type
+[Belgium Pro League, 2024, round_id=109365] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Belgium Pro League, 2024, round_id=109366] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Belgium Pro League, 2024, round_id=109367] matches=12, teams=4, regular=0, non_regular=12, type=non-regular round type
+[Belgium Pro League, 2024, round_id=109368] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Denmark Superliga, 2021, round_id=69687] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Denmark Superliga, 2021, round_id=69688] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Denmark Superliga, 2021, round_id=69689] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2021, round_id=69690] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2022, round_id=90173] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Denmark Superliga, 2022, round_id=90174] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Denmark Superliga, 2022, round_id=90175] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2022, round_id=90176] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2023, round_id=99948] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[Denmark Superliga, 2023, round_id=99949] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Denmark Superliga, 2023, round_id=99950] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2023, round_id=99951] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2024, round_id=109324] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Denmark Superliga, 2024, round_id=109325] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2024, round_id=109326] matches=30, teams=6, regular=0, non_regular=30, type=non-regular round type
+[Denmark Superliga, 2024, round_id=109327] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[England Championship, 2021, round_id=71403] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England Championship, 2021, round_id=71404] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England Championship, 2021, round_id=71405] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England Championship, 2022, round_id=91360] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England Championship, 2022, round_id=91361] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England Championship, 2022, round_id=91362] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England Championship, 2023, round_id=100549] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England Championship, 2023, round_id=100550] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England Championship, 2023, round_id=100551] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England Championship, 2024, round_id=110437] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England Championship, 2024, round_id=110438] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England Championship, 2024, round_id=110439] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League One, 2021, round_id=70530] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League One, 2021, round_id=70531] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League One, 2021, round_id=70532] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League One, 2022, round_id=91270] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League One, 2022, round_id=91271] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League One, 2022, round_id=91272] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League One, 2023, round_id=100257] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League One, 2023, round_id=100258] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League One, 2023, round_id=100259] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League One, 2024, round_id=110421] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League One, 2024, round_id=110422] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League One, 2024, round_id=110423] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League Two, 2021, round_id=70518] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League Two, 2021, round_id=70519] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League Two, 2021, round_id=70520] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League Two, 2022, round_id=91288] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League Two, 2022, round_id=91289] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League Two, 2022, round_id=91290] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League Two, 2023, round_id=100252] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League Two, 2023, round_id=100253] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League Two, 2023, round_id=100254] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[England EFL League Two, 2024, round_id=110360] matches=552, teams=24, regular=552, non_regular=0, type=regular-season round type
+[England EFL League Two, 2024, round_id=110361] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[England EFL League Two, 2024, round_id=110362] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[France Ligue 2, 2021, round_id=70537] matches=380, teams=20, regular=380, non_regular=0, type=regular-season round type
+[France Ligue 2, 2021, round_id=70538] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[France Ligue 2, 2021, round_id=70539] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[France Ligue 2, 2023, round_id=100424] matches=380, teams=20, regular=380, non_regular=0, type=regular-season round type
+[France Ligue 2, 2023, round_id=100425] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[France Ligue 2, 2023, round_id=100426] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[France Ligue 2, 2024, round_id=110068] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[France Ligue 2, 2024, round_id=110069] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[France Ligue 2, 2024, round_id=110070] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[India Indian Super League, 2021, round_id=76989] matches=110, teams=11, regular=110, non_regular=0, type=regular-season round type
+[India Indian Super League, 2021, round_id=76990] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[India Indian Super League, 2021, round_id=76991] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[India Indian Super League, 2022, round_id=94212] matches=110, teams=11, regular=110, non_regular=0, type=regular-season round type
+[India Indian Super League, 2022, round_id=94213] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[India Indian Super League, 2022, round_id=94214] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[India Indian Super League, 2022, round_id=94215] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[India Indian Super League, 2023, round_id=103943] matches=132, teams=12, regular=132, non_regular=0, type=regular-season round type
+[India Indian Super League, 2023, round_id=103944] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[India Indian Super League, 2023, round_id=103945] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[India Indian Super League, 2023, round_id=103946] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie A, 2022, round_id=91440] matches=380, teams=20, regular=380, non_regular=0, type=regular-season round type
+[Italy Serie A, 2022, round_id=99576] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Italy Serie B, 2022, round_id=92413] matches=380, teams=20, regular=380, non_regular=0, type=regular-season round type
+[Italy Serie B, 2022, round_id=92414] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2022, round_id=92415] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Italy Serie B, 2022, round_id=92416] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2022, round_id=92417] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2023, round_id=101135] matches=380, teams=20, regular=380, non_regular=0, type=regular-season round type
+[Italy Serie B, 2023, round_id=101136] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2023, round_id=101137] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Italy Serie B, 2023, round_id=101138] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2023, round_id=101139] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2024, round_id=111101] matches=380, teams=20, regular=380, non_regular=0, type=regular-season round type
+[Italy Serie B, 2024, round_id=111102] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2024, round_id=111103] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Italy Serie B, 2024, round_id=111104] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Italy Serie B, 2024, round_id=111105] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Netherlands Eredivisie, 2021, round_id=69596] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[Netherlands Eredivisie, 2021, round_id=69597] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Netherlands Eredivisie, 2021, round_id=69598] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Netherlands Eredivisie, 2022, round_id=90847] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[Netherlands Eredivisie, 2022, round_id=90848] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Netherlands Eredivisie, 2022, round_id=90849] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Netherlands Eredivisie, 2023, round_id=100519] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[Netherlands Eredivisie, 2023, round_id=100520] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Netherlands Eredivisie, 2023, round_id=100521] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Netherlands Eredivisie, 2024, round_id=110009] matches=306, teams=18, regular=306, non_regular=0, type=regular-season round type
+[Netherlands Eredivisie, 2024, round_id=110010] matches=1, teams=2, regular=0, non_regular=1, type=non-regular round type
+[Netherlands Eredivisie, 2024, round_id=110011] matches=2, teams=4, regular=0, non_regular=2, type=non-regular round type
+[Scotland Premiership, 2021, round_id=70405] matches=30, teams=12, regular=0, non_regular=30, type=non-regular round type
+[Scotland Premiership, 2021, round_id=70406] matches=198, teams=12, regular=198, non_regular=0, type=regular-season round type
+[Scotland Premiership, 2022, round_id=90927] matches=198, teams=12, regular=198, non_regular=0, type=regular-season round type
+[Scotland Premiership, 2022, round_id=90928] matches=30, teams=12, regular=0, non_regular=30, type=non-regular round type
+[Scotland Premiership, 2023, round_id=100485] matches=198, teams=12, regular=198, non_regular=0, type=regular-season round type
+[Scotland Premiership, 2023, round_id=100486] matches=30, teams=12, regular=0, non_regular=30, type=non-regular round type
+[Scotland Premiership, 2024, round_id=110446] matches=198, teams=12, regular=198, non_regular=0, type=regular-season round type
+[Scotland Premiership, 2024, round_id=110447] matches=30, teams=12, regular=0, non_regular=30, type=non-regular round type
+[Spain Segunda División, 2021, round_id=71625] matches=462, teams=22, regular=462, non_regular=0, type=regular-season round type
+[Spain Segunda División, 2021, round_id=71626] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Spain Segunda División, 2021, round_id=71627] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Spain Segunda División, 2022, round_id=91355] matches=462, teams=22, regular=462, non_regular=0, type=regular-season round type
+[Spain Segunda División, 2022, round_id=91356] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Spain Segunda División, 2022, round_id=91357] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Spain Segunda División, 2023, round_id=100613] matches=462, teams=22, regular=462, non_regular=0, type=regular-season round type
+[Spain Segunda División, 2023, round_id=100614] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Spain Segunda División, 2023, round_id=100615] matches=4, teams=4, regular=0, non_regular=4, type=non-regular round type
+[Spain Segunda División, 2024, round_id=110497] matches=462, teams=22, regular=462, non_regular=0, type=regular-season round type
+[Spain Segunda División, 2024, round_id=118585] matches=2, teams=2, regular=0, non_regular=2, type=non-regular round type
+[Switzerland Super League, 2023, round_id=100248] matches=198, teams=12, regular=198, non_regular=0, type=regular-season round type
+[Switzerland Super League, 2023, round_id=100249] matches=15, teams=6, regular=0, non_regular=15, type=non-regular round type
+[Switzerland Super League, 2023, round_id=100250] matches=15, teams=6, regular=0, non_regular=15, type=non-regular round type
+[Switzerland Super League, 2024, round_id=110027] matches=198, teams=12, regular=198, non_regular=0, type=regular-season round type
+[Switzerland Super League, 2024, round_id=110028] matches=15, teams=6, regular=0, non_regular=15, type=non-regular round type
+[Switzerland Super League, 2024, round_id=110029] matches=15, teams=6, regular=0, non_regular=15, type=non-regular round type
