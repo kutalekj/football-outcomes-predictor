@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -42,6 +43,35 @@ load_sofifa_players(rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False), deb
 print("[sofifa] snapshots:", len(global_instance.sofifa_snapshots))
 
 ut.link_matches_to_comp_seasons()
+
+# ------------------------------------------------------------------
+# One-time migration: mark league matches as regular season / non-regular
+# and persist it into the cached snapshot.
+# ------------------------------------------------------------------
+if getattr(sett, "REBUILD_REGULAR_SEASON_FLAGS", False):
+    print("[regular_season] Starting one-time annotation pass...")
+
+    ut.annotate_regular_season_matches(debug_non_regular=True)
+
+    bundle_to_store = FSDataBundle(
+        global_instance.all_comp_seasons,
+        global_instance.all_teams,
+        global_instance.all_players,
+        global_instance.all_matches,
+        global_instance.leagues_list,
+        sofifa_snapshots=getattr(global_instance, "sofifa_snapshots", []),
+        sofifa_player_occurrences=getattr(global_instance, "sofifa_player_occurrences", {}),
+        sofifa_players_by_dob=getattr(global_instance, "sofifa_players_by_dob", {}),
+        fs_to_sofifa_cache=getattr(global_instance, "fs_to_sofifa_cache", {}),
+        sofifa_team_meta=getattr(global_instance, "sofifa_team_meta", {}),
+        sofifa_players_by_team=getattr(global_instance, "sofifa_players_by_team", {}),
+        sofifa_teams_by_league=getattr(global_instance, "sofifa_teams_by_league", {}),
+        fs_team_to_sofifa_team=getattr(global_instance, "fs_team_to_sofifa_team", {}),
+    )
+    save_snapshot(bundle_to_store)
+
+    print("[regular_season] Snapshot saved.")
+    sys.exit(0)
 
 # Match FS league teams to SOFIFA teams (one-time per run)
 match_fs_teams_to_sofifa_teams(force=False)

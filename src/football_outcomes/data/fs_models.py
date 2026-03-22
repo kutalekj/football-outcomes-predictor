@@ -370,6 +370,10 @@ class FSMatch:
         self.season: Optional[int] = None
         self.round_id: Optional[int] = None
         self.game_week: Optional[int] = None
+
+        # True = regular season league match, False = post-season/playoff/split-stage/ir-reg. match
+        self.regular_season: bool = False
+
         self.datetime = None
         self.month: Optional[int] = None
         self.hour_utc: Optional[int] = None

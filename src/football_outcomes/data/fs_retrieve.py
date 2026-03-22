@@ -268,6 +268,7 @@ def retrieve_new_data() -> FSDataBundle:
                 )
             new_match.round_id = m["roundID"]
             new_match.game_week = m["game_week"]
+            new_match.regular_season = False
 
             tz_local = zoneinfo.ZoneInfo("Europe/Brussels")  # TODO: Correct local timezones
             dt_utc = datetime.fromtimestamp(m["date_unix"], tz=timezone.utc)

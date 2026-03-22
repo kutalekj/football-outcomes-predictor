@@ -229,3 +229,104 @@ def get_allowed_match_stat_keys(stat_keys):
     Drop stats that should remain in raw data but be ignored in cleaned analysis/modeling.
     """
     return [k for k in stat_keys if k not in sett.IGNORED_MATCH_STATS]
+
+
+def _match_sort_key_for_regular_season_flag(m):
+    dt = getattr(m, "datetime", None)
+    hr = getattr(m, "hour_utc", None)
+    hr = hr if isinstance(hr, int) else -1
+    return dt, hr, m.id
+
+
+def annotate_regular_season_matches(debug_non_regular: bool = True) -> None:
+    """
+    Mark league matches as regular season / non-regular season using round_id tracking.
+
+    Assumption:
+      - each competition season starts with the regular-season phase
+      - round_id is constant inside that round type
+      - when round_id first changes away from the initial one, the season has moved
+        into a non-regular phase (playoffs / split group / final series, etc.)
+
+    All matches are first reset to regular_season=False.
+    Then only league matches in the configured season interval are annotated.
+    """
+    g = Global.get_instance()
+
+    # Reset everything first
+    for m in g.all_matches:
+        m.regular_season = False
+
+    league_matches = [
+        m
+        for m in g.all_matches
+        if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE
+        and getattr(m, "season", None) is not None
+        and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
+    ]
+
+    by_comp_season: dict[int, list] = defaultdict(list)
+    for m in league_matches:
+        comp_season_id = getattr(m, "comp_season_id", None)
+        if comp_season_id is None:
+            continue
+        by_comp_season[comp_season_id].append(m)
+
+    total_regular = 0
+    total_non_regular = 0
+
+    for comp_season_id, matches in sorted(by_comp_season.items()):
+        matches.sort(key=_match_sort_key_for_regular_season_flag)
+
+        first_match = matches[0]
+        comp_name = getattr(first_match, "comp_name", "<unknown>")
+        season = getattr(first_match, "season", None)
+
+        initial_round_id = getattr(first_match, "round_id", None)
+        phase_switched = False
+        switch_reason = None
+
+        print(
+            f"[regular_season] Processing [{comp_name} {season}] "
+            f"matches={len(matches)} initial_round_id={initial_round_id}"
+        )
+
+        for m in matches:
+            rid = getattr(m, "round_id", None)
+
+            if not phase_switched:
+                # Switch signal: first round_id change away from initial regular-season round_id
+                if initial_round_id is not None and rid is not None and rid != initial_round_id:
+                    phase_switched = True
+                    switch_reason = f"round_id changed from initial {initial_round_id} to {rid}"
+
+            m.regular_season = not phase_switched
+
+            if m.regular_season:
+                total_regular += 1
+            else:
+                total_non_regular += 1
+                if debug_non_regular:
+                    home_name = m.home_team.name if m.home_team is not None else "?"
+                    away_name = m.away_team.name if m.away_team is not None else "?"
+                    print(
+                        "[regular_season][NON-REGULAR] "
+                        f"{m.comp_name} {m.season} "
+                        f"date={m.datetime.date() if m.datetime else None} "
+                        f"hour_utc={m.hour_utc} "
+                        f"game_week={m.game_week} "
+                        f"round_id={m.round_id} "
+                        f"match_id={m.id} "
+                        f"{home_name} vs {away_name} "
+                        f"reason={switch_reason}"
+                    )
+
+        reg_cnt = sum(1 for m in matches if m.regular_season)
+        nonreg_cnt = len(matches) - reg_cnt
+        print(f"[regular_season] Done [{comp_name} {season}] " f"regular={reg_cnt} non_regular={nonreg_cnt}")
+
+    print(
+        "[regular_season] Summary: "
+        f"regular={total_regular}, non_regular={total_non_regular}, "
+        f"total={total_regular + total_non_regular}"
+    )
