@@ -27,7 +27,7 @@ matplotlib.use("Agg")
 # -----------------------------------------------------------------------------
 
 # One clean thesis-friendly rule for all clipping constants.
-CLIP_PERCENTILE = 95.0
+CLIP_PERCENTILE = 99.0
 
 # Keep this aligned with your missingness analysis style.
 APPLY_CLEAN_FILTER = True
@@ -116,11 +116,11 @@ class EloSummary:
     mean: float
     std: float
     min_: float
-    p02: float
+    p01: float
     p05: float
     p50: float
     p95: float
-    p98: float
+    p99: float
     max_: float
     recommended_min: float
     recommended_max: float
@@ -268,14 +268,14 @@ def collect_elo_summary(league_matches_sorted: List[FSMatch]) -> Optional[EloSum
         mean=float(np.mean(arr)),
         std=float(np.std(arr, ddof=0)),
         min_=float(np.min(arr)),
-        p02=float(np.percentile(arr, 2)),
+        p01=float(np.percentile(arr, 1)),
         p05=float(np.percentile(arr, 5)),
         p50=float(np.percentile(arr, 50)),
         p95=float(np.percentile(arr, 95)),
-        p98=float(np.percentile(arr, 98)),
+        p99=float(np.percentile(arr, 99)),
         max_=float(np.max(arr)),
-        recommended_min=float(np.percentile(arr, 2)),
-        recommended_max=float(np.percentile(arr, 98)),
+        recommended_min=float(np.percentile(arr, 1)),
+        recommended_max=float(np.percentile(arr, 99)),
     )
 
 
@@ -311,8 +311,10 @@ def write_recommendations(
     log.log("RAW MATCH STATISTICS NORMALIZATION ANALYSIS")
     log.log("=" * 88)
     log.log(f"Chosen global rule for clip constants: empirical p{percentile:.0f}")
-    log.log("Reason: normalization constants used are upper clipping scales in value/constant normalization,")
-    log.log("so p95 choice avoids chasing outliers while keeping a single consistent rule for all constants.")
+    log.log("Reason: normalization constants are upper clipping scales in value/constant normalization,")
+    log.log("and with a dataset of more than 30,000 league matches, p99 remains robust while preserving more")
+    log.log("legitimate upper-tail variation than p95. The same less-strict philosophy is used for Elo by")
+    log.log("recommending p01/p99 bounds instead of p02/p98.")
     log.log()
 
     for s in summaries:
@@ -346,8 +348,8 @@ def write_recommendations(
         )
         log.log(
             f"Elo stats: n={elo_summary.n}, mean={elo_summary.mean:.2f}, std={elo_summary.std:.2f}, "
-            f"min={elo_summary.min_:.2f}, p02={elo_summary.p02:.2f}, p05={elo_summary.p05:.2f}, "
-            f"p50={elo_summary.p50:.2f}, p95={elo_summary.p95:.2f}, p98={elo_summary.p98:.2f}, "
+            f"min={elo_summary.min_:.2f}, p01={elo_summary.p01:.2f}, p05={elo_summary.p05:.2f}, "
+            f"p50={elo_summary.p50:.2f}, p95={elo_summary.p95:.2f}, p99={elo_summary.p99:.2f}, "
             f"max={elo_summary.max_:.2f}"
         )
 
@@ -477,9 +479,10 @@ def save_outputs(
     elo_summary: Optional[EloSummary],
     league_matches_sorted: List[FSMatch],
     logger: TeeLogger,
+    timestamp: str,
 ) -> None:
     summary_df = build_summary_table(summaries)
-    summary_csv = out_dir / "normalization_constants_summary.csv"
+    summary_csv = out_dir / f"normalization_constants_summary_{timestamp}.csv"
     summary_df.to_csv(summary_csv, index=False)
     logger.log(f"Saved table: {summary_csv}")
 
@@ -491,23 +494,23 @@ def save_outputs(
                     "mean": elo_summary.mean,
                     "std": elo_summary.std,
                     "min": elo_summary.min_,
-                    "p02": elo_summary.p02,
+                    "p01": elo_summary.p01,
                     "p05": elo_summary.p05,
                     "p50": elo_summary.p50,
                     "p95": elo_summary.p95,
-                    "p98": elo_summary.p98,
+                    "p99": elo_summary.p99,
                     "max": elo_summary.max_,
                     "recommended_min": elo_summary.recommended_min,
                     "recommended_max": elo_summary.recommended_max,
                 }
             ]
         )
-        elo_csv = out_dir / "elo_normalization_summary.csv"
+        elo_csv = out_dir / f"elo_normalization_summary_{timestamp}.csv"
         elo_df.to_csv(elo_csv, index=False)
         logger.log(f"Saved table: {elo_csv}")
 
-    plot_png = out_dir / "raw_match_stat_distributions.png"
-    plot_pdf = out_dir / "raw_match_stat_distributions.pdf"
+    plot_png = out_dir / f"raw_match_stat_distributions_{timestamp}.png"
+    plot_pdf = out_dir / f"raw_match_stat_distributions_{timestamp}.pdf"
     make_distribution_plot(league_matches_sorted, plot_png, plot_pdf)
     logger.log(f"Saved plot: {plot_png}")
     logger.log(f"Saved plot: {plot_pdf}")
@@ -537,7 +540,7 @@ def run_analysis(*, out_dir: Path, apply_clean_filter: bool, percentile: float) 
         summaries = collect_distribution_summaries(league_matches_sorted, percentile=percentile)
         elo_summary = collect_elo_summary(league_matches_sorted)
         write_recommendations(logger, summaries, elo_summary, percentile=percentile)
-        save_outputs(out_dir, summaries, elo_summary, league_matches_sorted, logger)
+        save_outputs(out_dir, summaries, elo_summary, league_matches_sorted, logger, timestamp)
     finally:
         logger.close()
 
