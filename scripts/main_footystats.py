@@ -49,6 +49,7 @@ match_fs_teams_to_sofifa_teams(force=False)
 # Relevant matches only (league comps)
 all_matches_sorted = sorted(global_instance.all_matches, key=fu.match_sort_key)
 league_matches_sorted = utils.filter_clean_league_matches(all_matches_sorted)
+league_matches_sorted = utils.filter_valid_round_matches(league_matches_sorted)
 league_matches_sorted = [
     m
     for m in league_matches_sorted

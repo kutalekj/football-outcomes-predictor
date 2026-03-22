@@ -224,6 +224,38 @@ def filter_clean_league_matches(matches):
     ]
 
 
+def filter_valid_round_matches(matches):
+    """
+    Keep only league matches whose rounds are valid.
+    """
+    out = []
+
+    missing_keys = set()
+    excluded = 0
+
+    for m in matches:
+        key = (m.comp_name, m.season)
+        valid_round_ids = sett.LEAGUE_VALID_ROUND_IDS_BY_SEASON.get(key)
+
+        if valid_round_ids is None:
+            missing_keys.add(key)
+            excluded += 1
+            continue
+
+        if m.round_id in valid_round_ids:
+            out.append(m)
+        else:
+            excluded += 1
+
+    if missing_keys:
+        print("[valid_rounds] Missing whitelist entries for:")
+        for key in sorted(missing_keys):
+            print(f"  {key}")
+
+    print(f"[valid_rounds] kept={len(out)} excluded={excluded}")
+    return out
+
+
 def get_allowed_match_stat_keys(stat_keys):
     """
     Drop stats that should remain in raw data but be ignored in cleaned analysis/modeling.
