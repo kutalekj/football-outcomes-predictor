@@ -415,13 +415,13 @@ def _make_round_type_plot(df_rounds: pd.DataFrame, out_png: Path, out_pdf: Path)
 # -----------------------------------------------------------------------------
 
 
-def _write_report(log: TeeLogger, df_seasons: pd.DataFrame, df_comp: pd.DataFrame, df_rounds: pd.DataFrame) -> None:
+def _write_report(log: TeeLogger, df_seasons: pd.DataFrame, df_comp: pd.DataFrame, df_rounds_all: pd.DataFrame) -> None:
     log.log("=" * 96)
     log.log("REGULAR VS NON-REGULAR LEAGUE MATCH ANALYSIS")
     log.log("=" * 96)
     log.log("Goal: use persisted FSMatch.regular_season to quantify regular vs non-regular matches exactly.")
-    log.log("Additional goal: summarize round_id counts for affected competition seasons to distinguish split")
-    log.log("formats from seasons where only a small playoff block appears at the end.")
+    log.log("Additional goal: summarize round_id counts for all competition seasons in CSV outputs, while")
+    log.log("limiting the round-type plots to seasons with non-regular matches only.")
     log.log()
 
     log.log("Per-season breakdown:")
@@ -445,9 +445,9 @@ def _write_report(log: TeeLogger, df_seasons: pd.DataFrame, df_comp: pd.DataFram
         )
     log.log()
 
-    if not df_rounds.empty:
-        log.log("Round-type counts for affected competition seasons:")
-        for _, row in df_rounds.sort_values(["comp_name", "season", "round_id"]).iterrows():
+    if not df_rounds_all.empty:
+        log.log("Round-type counts for all competition seasons (CSV complete; plots affected-only):")
+        for _, row in df_rounds_all.sort_values(["comp_name", "season", "round_id"]).iterrows():
             log.log(
                 f"[{row['comp_name']}, {int(row['season'])}, round_id={int(row['round_id'])}] "
                 f"matches={int(row['match_count'])}, teams={int(row['distinct_teams'])}, "
@@ -482,21 +482,26 @@ def run_analysis(*, out_dir: Path, apply_clean_filter: bool) -> None:
         logger.log()
 
         season_rows = build_season_breakdown(league_matches)
-        round_rows = build_round_type_breakdown(
+        round_rows_all = build_round_type_breakdown(
+            league_matches,
+            only_affected=False,
+        )
+        round_rows_for_plot = build_round_type_breakdown(
             league_matches,
             only_affected=ONLY_AFFECTED_SEASONS_FOR_ROUND_PLOTS,
         )
 
         df_seasons = _season_rows_to_df(season_rows)
         df_comp = _aggregate_competition_totals(df_seasons)
-        df_rounds = _round_rows_to_df(round_rows)
+        df_rounds_all = _round_rows_to_df(round_rows_all)
+        df_rounds_for_plot = _round_rows_to_df(round_rows_for_plot)
 
         season_csv = out_dir / f"postseason_breakdown_by_season_{timestamp}.csv"
         comp_csv = out_dir / f"postseason_breakdown_by_competition_{timestamp}.csv"
         rounds_csv = out_dir / f"round_type_breakdown_by_season_{timestamp}.csv"
         df_seasons.to_csv(season_csv, index=False)
         df_comp.to_csv(comp_csv, index=False)
-        df_rounds.to_csv(rounds_csv, index=False)
+        df_rounds_all.to_csv(rounds_csv, index=False)
 
         logger.log(f"Saved table: {season_csv}")
         logger.log(f"Saved table: {comp_csv}")
@@ -512,18 +517,18 @@ def run_analysis(*, out_dir: Path, apply_clean_filter: bool) -> None:
 
         _make_stacked_bar(df_comp, stacked_png, stacked_pdf)
         _make_non_regular_share_plot(df_comp, share_png, share_pdf)
-        _make_round_type_plot(df_rounds, rounds_png, rounds_pdf)
+        _make_round_type_plot(df_rounds_for_plot, rounds_png, rounds_pdf)
 
         logger.log(f"Saved plot: {stacked_png}")
         logger.log(f"Saved plot: {stacked_pdf}")
         logger.log(f"Saved plot: {share_png}")
         logger.log(f"Saved plot: {share_pdf}")
-        if not df_rounds.empty:
+        if not df_rounds_for_plot.empty:
             logger.log(f"Saved plot: {rounds_png}")
             logger.log(f"Saved plot: {rounds_pdf}")
         logger.log()
 
-        _write_report(logger, df_seasons, df_comp, df_rounds)
+        _write_report(logger, df_seasons, df_comp, df_rounds_all)
     finally:
         logger.close()
 
