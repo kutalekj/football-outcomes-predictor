@@ -52,10 +52,14 @@ class SeasonBreakdown:
     total_matches: int
     regular_matches: int
     non_regular_matches: int
+    non_regular_kept_matches: int
+    non_regular_filtered_matches: int
     non_regular_share: float
     distinct_round_ids: int
     regular_round_ids: int
     non_regular_round_ids: int
+    kept_round_ids: int
+    filtered_round_ids: int
     min_team_matches: int
     max_team_matches: int
     median_team_matches: float
@@ -74,14 +78,12 @@ class RoundTypeBreakdown:
     distinct_teams: int
     regular_matches: int
     non_regular_matches: int
+    kept_matches: int
+    filtered_matches: int
+    whitelist_status: str
     inferred_round_type: str
     first_match_date: Optional[str]
     last_match_date: Optional[str]
-
-
-# -----------------------------------------------------------------------------
-# Data loading
-# -----------------------------------------------------------------------------
 
 
 def load_data_into_globals() -> None:
@@ -114,9 +116,8 @@ def get_league_matches(*, apply_clean_filter: bool) -> List[FSMatch]:
     return league_matches
 
 
-# -----------------------------------------------------------------------------
-# Core analysis
-# -----------------------------------------------------------------------------
+def _fmt_dt(dt) -> Optional[str]:
+    return dt.isoformat() if dt is not None else None
 
 
 def _group_matches_by_comp_and_season(matches: List[FSMatch]) -> Dict[Tuple[str, int, int], List[FSMatch]]:
@@ -141,8 +142,10 @@ def _team_match_counts(matches: List[FSMatch]) -> Dict[int, int]:
     return counts
 
 
-def _fmt_dt(dt) -> Optional[str]:
-    return dt.isoformat() if dt is not None else None
+def _valid_round_ids(comp_name: str, season: int) -> set[int]:
+    mapping = getattr(sett, "LEAGUE_VALID_ROUND_IDS_BY_SEASON", {})
+    vals = mapping.get((comp_name, season), set())
+    return {int(x) for x in vals}
 
 
 def build_season_breakdown(league_matches: List[FSMatch]) -> List[SeasonBreakdown]:
@@ -156,6 +159,18 @@ def build_season_breakdown(league_matches: List[FSMatch]) -> List[SeasonBreakdow
         total_matches = len(matches)
         regular_matches = sum(1 for m in matches if bool(getattr(m, "regular_season", False)))
         non_regular_matches = total_matches - regular_matches
+
+        valid_round_ids = _valid_round_ids(comp_name, season)
+        non_regular_kept_matches = sum(
+            1
+            for m in matches
+            if (not bool(getattr(m, "regular_season", False))) and getattr(m, "round_id", None) in valid_round_ids
+        )
+        non_regular_filtered_matches = sum(
+            1
+            for m in matches
+            if (not bool(getattr(m, "regular_season", False))) and getattr(m, "round_id", None) not in valid_round_ids
+        )
         non_regular_share = float(non_regular_matches / total_matches) if total_matches > 0 else 0.0
 
         round_ids = {getattr(m, "round_id", None) for m in matches if getattr(m, "round_id", None) is not None}
@@ -167,8 +182,12 @@ def build_season_breakdown(league_matches: List[FSMatch]) -> List[SeasonBreakdow
         non_regular_round_ids = {
             getattr(m, "round_id", None)
             for m in matches
-            if not bool(getattr(m, "regular_season", False)) and getattr(m, "round_id", None) is not None
+            if (not bool(getattr(m, "regular_season", False))) and getattr(m, "round_id", None) is not None
         }
+        kept_round_ids = {
+            getattr(m, "round_id", None) for m in matches if getattr(m, "round_id", None) in valid_round_ids
+        }
+        filtered_round_ids = round_ids - kept_round_ids
 
         dts = [getattr(m, "datetime", None) for m in matches if getattr(m, "datetime", None) is not None]
         first_dt = min(dts) if dts else None
@@ -176,7 +195,7 @@ def build_season_breakdown(league_matches: List[FSMatch]) -> List[SeasonBreakdow
 
         notes = (
             "Exact regular/non-regular split taken from persisted FSMatch.regular_season flag. "
-            "Round-type counts are grouped by round_id."
+            "Kept/filtered non-regular matches derived from LEAGUE_VALID_ROUND_IDS_BY_SEASON."
         )
 
         rows.append(
@@ -188,10 +207,14 @@ def build_season_breakdown(league_matches: List[FSMatch]) -> List[SeasonBreakdow
                 total_matches=total_matches,
                 regular_matches=regular_matches,
                 non_regular_matches=non_regular_matches,
+                non_regular_kept_matches=non_regular_kept_matches,
+                non_regular_filtered_matches=non_regular_filtered_matches,
                 non_regular_share=non_regular_share,
                 distinct_round_ids=len(round_ids),
                 regular_round_ids=len(regular_round_ids),
                 non_regular_round_ids=len(non_regular_round_ids),
+                kept_round_ids=len(kept_round_ids),
+                filtered_round_ids=len(filtered_round_ids),
                 min_team_matches=min(team_counts.values()) if team_counts else 0,
                 max_team_matches=max(team_counts.values()) if team_counts else 0,
                 median_team_matches=float(median(team_counts.values())) if team_counts else 0.0,
@@ -215,6 +238,8 @@ def build_round_type_breakdown(league_matches: List[FSMatch], *, only_affected: 
         if only_affected and not has_non_regular:
             continue
 
+        valid_round_ids = _valid_round_ids(comp_name, season)
+
         by_round: Dict[int, List[FSMatch]] = defaultdict(list)
         for m in matches:
             round_id = getattr(m, "round_id", None)
@@ -225,6 +250,8 @@ def build_round_type_breakdown(league_matches: List[FSMatch], *, only_affected: 
         for round_id, round_matches in sorted(by_round.items(), key=lambda x: x[0]):
             regular_count = sum(1 for m in round_matches if bool(getattr(m, "regular_season", False)))
             non_regular_count = len(round_matches) - regular_count
+            kept_count = sum(1 for m in round_matches if getattr(m, "round_id", None) in valid_round_ids)
+            filtered_count = len(round_matches) - kept_count
 
             if regular_count > 0 and non_regular_count == 0:
                 inferred = "regular-season round type"
@@ -232,6 +259,8 @@ def build_round_type_breakdown(league_matches: List[FSMatch], *, only_affected: 
                 inferred = "non-regular round type"
             else:
                 inferred = "mixed / check manually"
+
+            status = "kept" if round_id in valid_round_ids else "filtered"
 
             teams = set()
             for m in round_matches:
@@ -254,6 +283,9 @@ def build_round_type_breakdown(league_matches: List[FSMatch], *, only_affected: 
                     distinct_teams=len(teams),
                     regular_matches=regular_count,
                     non_regular_matches=non_regular_count,
+                    kept_matches=kept_count,
+                    filtered_matches=filtered_count,
+                    whitelist_status=status,
                     inferred_round_type=inferred,
                     first_match_date=_fmt_dt(first_dt),
                     last_match_date=_fmt_dt(last_dt),
@@ -261,11 +293,6 @@ def build_round_type_breakdown(league_matches: List[FSMatch], *, only_affected: 
             )
 
     return rows
-
-
-# -----------------------------------------------------------------------------
-# DataFrames / plots
-# -----------------------------------------------------------------------------
 
 
 def _season_rows_to_df(rows: List[SeasonBreakdown]) -> pd.DataFrame:
@@ -278,16 +305,26 @@ def _round_rows_to_df(rows: List[RoundTypeBreakdown]) -> pd.DataFrame:
 
 def _aggregate_competition_totals(df_seasons: pd.DataFrame) -> pd.DataFrame:
     g = (
-        df_seasons.groupby("comp_name", as_index=False)[["total_matches", "regular_matches", "non_regular_matches"]]
+        df_seasons.groupby("comp_name", as_index=False)[
+            [
+                "total_matches",
+                "regular_matches",
+                "non_regular_matches",
+                "non_regular_kept_matches",
+                "non_regular_filtered_matches",
+            ]
+        ]
         .sum()
         .copy()
     )
     g["non_regular_share"] = g["non_regular_matches"] / g["total_matches"]
-
-    comp_order = [name for name in sett.COMPS_LEAGUE if name in set(g["comp_name"])]
-    g["comp_name"] = pd.Categorical(g["comp_name"], categories=comp_order, ordered=True)
-    g = g.sort_values(["comp_name"]).reset_index(drop=True)
+    g = g.sort_values(["total_matches", "comp_name"], ascending=[False, True]).reset_index(drop=True)
     return g
+
+
+def _get_comp_color(comp_name: str):
+    color_map = getattr(sett, "COMPS_LEAGUE_COLORS", {})
+    return color_map.get(comp_name, None)
 
 
 def _make_stacked_bar(df_comp: pd.DataFrame, out_png: Path, out_pdf: Path) -> None:
@@ -389,8 +426,9 @@ def _make_round_type_plot(df_rounds: pd.DataFrame, out_png: Path, out_pdf: Path)
         ax.bar(x, reg, label="Regular-season matches")
         ax.bar(x, nonreg, bottom=reg, label="Non-regular matches")
 
+        max_count = max(sub["match_count"]) if len(sub) else 0
         for i, total in enumerate((sub["match_count"]).tolist()):
-            ax.text(i, total + max(sub["match_count"]) * 0.03, str(int(total)), ha="center", va="bottom", fontsize=8)
+            ax.text(i, total + max_count * 0.03, str(int(total)), ha="center", va="bottom", fontsize=8)
 
         ax.set_title(f"{comp_name} {int(season)}/{int(season) + 1}")
         ax.set_xlabel("round_id")
@@ -410,125 +448,192 @@ def _make_round_type_plot(df_rounds: pd.DataFrame, out_png: Path, out_pdf: Path)
     plt.close(fig)
 
 
-# -----------------------------------------------------------------------------
-# Reporting / run
-# -----------------------------------------------------------------------------
+def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, out_pdf: Path) -> None:
+    if df_comp.empty:
+        return
+
+    fig, ax = plt.subplots(figsize=(18, 8))
+
+    x = list(range(len(df_comp)))
+    labels = df_comp["comp_name"].astype(str).tolist()
+    regular = df_comp["regular_matches"].astype(int).tolist()
+    nonreg_kept = df_comp["non_regular_kept_matches"].astype(int).tolist()
+    nonreg_filtered = df_comp["non_regular_filtered_matches"].astype(int).tolist()
+    totals = df_comp["total_matches"].astype(int).tolist()
+
+    first_regular = True
+    first_kept = True
+    first_filtered = True
+
+    for i, comp_name in enumerate(labels):
+        base_color = _get_comp_color(comp_name)
+
+        ax.bar(
+            i,
+            regular[i],
+            color=base_color,
+            edgecolor="black",
+            linewidth=0.6,
+            label="Regular matches kept" if first_regular else None,
+        )
+        first_regular = False
+
+        ax.bar(
+            i,
+            nonreg_kept[i],
+            bottom=regular[i],
+            color=base_color,
+            edgecolor="black",
+            linewidth=0.6,
+            hatch="///",
+            label="Non-regular matches kept" if first_kept else None,
+        )
+        first_kept = False
+
+        ax.bar(
+            i,
+            nonreg_filtered[i],
+            bottom=regular[i] + nonreg_kept[i],
+            color="black",
+            edgecolor="black",
+            linewidth=0.6,
+            label="Non-regular matches filtered out" if first_filtered else None,
+        )
+        first_filtered = False
+
+    ymax = max(totals) if totals else 0
+    for i, total in enumerate(totals):
+        ax.text(i, total + ymax * 0.01, str(int(total)), ha="center", va="bottom", fontsize=9)
+
+        filtered = nonreg_filtered[i]
+        if total > 0 and filtered > 0:
+            pct = 100.0 * float(filtered) / float(total)
+            ax.text(
+                i,
+                total + ymax * 0.045,
+                f"{pct:.1f}%",
+                ha="center",
+                va="bottom",
+                fontsize=11,
+                fontweight="bold",
+                color="black",
+            )
+
+    ax.set_title(
+        "League matches per competition (2021/2022–2024/2025): kept regular, kept non-regular, "
+        "and filtered-out non-regular"
+    )
+    ax.set_ylim(0, ymax * 1.12 if ymax > 0 else 1)
+    ax.set_xlabel("Competition")
+    ax.set_ylabel("Number of matches")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=45, ha="right")
+    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    ax.set_axisbelow(True)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(out_png, dpi=250, bbox_inches="tight")
+    fig.savefig(out_pdf, bbox_inches="tight")
+    plt.close(fig)
 
 
-def _write_report(log: TeeLogger, df_seasons: pd.DataFrame, df_comp: pd.DataFrame, df_rounds_all: pd.DataFrame) -> None:
+def _write_report(log: TeeLogger, df_seasons: pd.DataFrame, df_comp: pd.DataFrame) -> None:
     log.log("=" * 96)
     log.log("REGULAR VS NON-REGULAR LEAGUE MATCH ANALYSIS")
     log.log("=" * 96)
     log.log("Goal: use persisted FSMatch.regular_season to quantify regular vs non-regular matches exactly.")
-    log.log("Additional goal: summarize round_id counts for all competition seasons in CSV outputs, while")
-    log.log("limiting the round-type plots to seasons with non-regular matches only.")
+    log.log("Additional goal: quantify which non-regular matches are retained by the round whitelist and which")
+    log.log("are filtered out as playoff/relegation/promotion noise.")
     log.log()
 
     log.log("Per-season breakdown:")
     for _, row in df_seasons.iterrows():
         log.log(
             f"[{row['comp_name']}, {int(row['season'])}] total={int(row['total_matches'])}, "
-            f"regular={int(row['regular_matches'])}, non_regular={int(row['non_regular_matches'])} "
-            f"({100.0 * float(row['non_regular_share']):.2f}%), teams={int(row['n_teams'])}, "
-            f"round_ids={int(row['distinct_round_ids'])}, regular_round_ids={int(row['regular_round_ids'])}, "
-            f"non_regular_round_ids={int(row['non_regular_round_ids'])}, team_matches=min/med/max="
-            f"{int(row['min_team_matches'])}/{float(row['median_team_matches']):.1f}/{int(row['max_team_matches'])}"
+            f"regular={int(row['regular_matches'])}, non_regular={int(row['non_regular_matches'])}, "
+            f"non_regular_kept={int(row['non_regular_kept_matches'])}, "
+            f"non_regular_filtered={int(row['non_regular_filtered_matches'])}"
         )
-        log.log(f"  notes: {row['notes']}")
-        log.log()
+    log.log()
 
     log.log("Aggregated competition totals:")
     for _, row in df_comp.iterrows():
         log.log(
-            f"{row['comp_name']}: total={int(row['total_matches'])}, regular={int(row['regular_matches'])}, "
-            f"non_regular={int(row['non_regular_matches'])} ({100.0 * float(row['non_regular_share']):.2f}%)"
+            f"[{row['comp_name']}] total={int(row['total_matches'])}, "
+            f"regular={int(row['regular_matches'])}, "
+            f"non_regular_kept={int(row['non_regular_kept_matches'])}, "
+            f"non_regular_filtered={int(row['non_regular_filtered_matches'])}"
         )
     log.log()
 
-    if not df_rounds_all.empty:
-        log.log("Round-type counts for all competition seasons (CSV complete; plots affected-only):")
-        for _, row in df_rounds_all.sort_values(["comp_name", "season", "round_id"]).iterrows():
-            log.log(
-                f"[{row['comp_name']}, {int(row['season'])}, round_id={int(row['round_id'])}] "
-                f"matches={int(row['match_count'])}, teams={int(row['distinct_teams'])}, "
-                f"regular={int(row['regular_matches'])}, non_regular={int(row['non_regular_matches'])}, "
-                f"type={row['inferred_round_type']}"
-            )
 
+def run_analysis(out_dir: Path, *, apply_clean_filter: bool = True) -> None:
+    _ensure_dir(out_dir)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-def run_analysis(*, out_dir: Path, apply_clean_filter: bool) -> None:
     load_data_into_globals()
     league_matches = get_league_matches(apply_clean_filter=apply_clean_filter)
 
-    if not league_matches:
-        print("No league matches available for regular/non-regular analysis.")
-        return
+    season_rows = build_season_breakdown(league_matches)
+    round_rows_all = build_round_type_breakdown(league_matches, only_affected=False)
+    round_rows_for_plot = build_round_type_breakdown(
+        league_matches, only_affected=ONLY_AFFECTED_SEASONS_FOR_ROUND_PLOTS
+    )
 
-    if not any(hasattr(m, "regular_season") for m in league_matches):
-        raise RuntimeError(
-            "Loaded snapshot matches do not contain regular_season. Rebuild / reload the updated snapshot first."
-        )
+    df_seasons = (
+        _season_rows_to_df(season_rows).sort_values(["comp_name", "season", "comp_season_id"]).reset_index(drop=True)
+    )
+    df_comp = _aggregate_competition_totals(df_seasons)
+    df_rounds_all = (
+        _round_rows_to_df(round_rows_all)
+        .sort_values(["comp_name", "season", "comp_season_id", "round_id"])
+        .reset_index(drop=True)
+    )
+    df_rounds_plot = (
+        _round_rows_to_df(round_rows_for_plot)
+        .sort_values(["comp_name", "season", "comp_season_id", "round_id"])
+        .reset_index(drop=True)
+    )
 
-    _ensure_dir(out_dir)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_path = out_dir / f"analysis_postseason_match_breakdown_{timestamp}.log"
+    seasons_csv = out_dir / f"postseason_breakdown_by_season_{ts}.csv"
+    comp_csv = out_dir / f"postseason_breakdown_by_competition_{ts}.csv"
+    rounds_csv = out_dir / f"round_type_breakdown_by_season_{ts}.csv"
+
+    df_seasons.to_csv(seasons_csv, index=False, encoding="utf-8")
+    df_comp.to_csv(comp_csv, index=False, encoding="utf-8")
+    df_rounds_all.to_csv(rounds_csv, index=False, encoding="utf-8")
+
+    stacked_png = out_dir / f"postseason_regular_vs_nonregular_stacked_{ts}.png"
+    stacked_pdf = out_dir / f"postseason_regular_vs_nonregular_stacked_{ts}.pdf"
+    share_png = out_dir / f"postseason_nonregular_share_{ts}.png"
+    share_pdf = out_dir / f"postseason_nonregular_share_{ts}.pdf"
+    rounds_png = out_dir / f"round_type_breakdown_{ts}.png"
+    rounds_pdf = out_dir / f"round_type_breakdown_{ts}.pdf"
+    outcome_png = out_dir / f"postseason_filtering_outcome_stacked_{ts}.png"
+    outcome_pdf = out_dir / f"postseason_filtering_outcome_stacked_{ts}.pdf"
+
+    _make_stacked_bar(df_comp, stacked_png, stacked_pdf)
+    _make_non_regular_share_plot(df_comp, share_png, share_pdf)
+    _make_round_type_plot(df_rounds_plot, rounds_png, rounds_pdf)
+    _make_filtering_outcome_stacked_plot(df_comp, outcome_png, outcome_pdf)
+
+    log_path = out_dir / f"postseason_analysis_report_{ts}.txt"
     logger = TeeLogger(log_path)
-
     try:
-        logger.log(f"Output directory: {out_dir}")
-        logger.log(f"League matches analyzed: {len(league_matches)}")
-        logger.log(f"Apply clean filter: {apply_clean_filter}")
-        logger.log(f"Season range: {sett.FIRST_SEASON}..{sett.LAST_SEASON - 1}")
+        logger.log(f"Saved CSV: {seasons_csv}")
+        logger.log(f"Saved CSV: {comp_csv}")
+        logger.log(f"Saved CSV: {rounds_csv}")
         logger.log()
-
-        season_rows = build_season_breakdown(league_matches)
-        round_rows_all = build_round_type_breakdown(
-            league_matches,
-            only_affected=False,
-        )
-        round_rows_for_plot = build_round_type_breakdown(
-            league_matches,
-            only_affected=ONLY_AFFECTED_SEASONS_FOR_ROUND_PLOTS,
-        )
-
-        df_seasons = _season_rows_to_df(season_rows)
-        df_comp = _aggregate_competition_totals(df_seasons)
-        df_rounds_all = _round_rows_to_df(round_rows_all)
-        df_rounds_for_plot = _round_rows_to_df(round_rows_for_plot)
-
-        season_csv = out_dir / f"postseason_breakdown_by_season_{timestamp}.csv"
-        comp_csv = out_dir / f"postseason_breakdown_by_competition_{timestamp}.csv"
-        rounds_csv = out_dir / f"round_type_breakdown_by_season_{timestamp}.csv"
-        df_seasons.to_csv(season_csv, index=False)
-        df_comp.to_csv(comp_csv, index=False)
-        df_rounds_all.to_csv(rounds_csv, index=False)
-
-        logger.log(f"Saved table: {season_csv}")
-        logger.log(f"Saved table: {comp_csv}")
-        logger.log(f"Saved table: {rounds_csv}")
-        logger.log()
-
-        stacked_png = out_dir / f"postseason_breakdown_stacked_{timestamp}.png"
-        stacked_pdf = out_dir / f"postseason_breakdown_stacked_{timestamp}.pdf"
-        share_png = out_dir / f"postseason_breakdown_share_{timestamp}.png"
-        share_pdf = out_dir / f"postseason_breakdown_share_{timestamp}.pdf"
-        rounds_png = out_dir / f"round_type_breakdown_{timestamp}.png"
-        rounds_pdf = out_dir / f"round_type_breakdown_{timestamp}.pdf"
-
-        _make_stacked_bar(df_comp, stacked_png, stacked_pdf)
-        _make_non_regular_share_plot(df_comp, share_png, share_pdf)
-        _make_round_type_plot(df_rounds_for_plot, rounds_png, rounds_pdf)
-
         logger.log(f"Saved plot: {stacked_png}")
         logger.log(f"Saved plot: {stacked_pdf}")
         logger.log(f"Saved plot: {share_png}")
         logger.log(f"Saved plot: {share_pdf}")
-        if not df_rounds_for_plot.empty:
-            logger.log(f"Saved plot: {rounds_png}")
-            logger.log(f"Saved plot: {rounds_pdf}")
+        logger.log(f"Saved plot: {rounds_png}")
+        logger.log(f"Saved plot: {rounds_pdf}")
+        logger.log(f"Saved plot: {outcome_png}")
+        logger.log(f"Saved plot: {outcome_pdf}")
         logger.log()
-
-        _write_report(logger, df_seasons, df_comp, df_rounds_all)
+        _write_report(logger, df_seasons, df_comp)
     finally:
         logger.close()
 
