@@ -514,7 +514,7 @@ def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, o
                 f"{pct:.1f}%",
                 ha="center",
                 va="bottom",
-                fontsize=11,
+                fontsize=13,
                 fontweight="bold",
                 color="black",
             )
