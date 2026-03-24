@@ -21,6 +21,66 @@ def log_feature_error(msg: str) -> None:
         f.write(msg.rstrip("\n") + "\n")
 
 
+def debug_count_entities(matches, label: str) -> None:
+    team_ids = set()
+    player_ids = set()
+
+    for m in matches:
+        if getattr(m, "home_team", None) is not None:
+            team_ids.add(m.home_team.id)
+        if getattr(m, "away_team", None) is not None:
+            team_ids.add(m.away_team.id)
+
+        for p in getattr(m, "home_lineup", []) or []:
+            if p is not None:
+                player_ids.add(p.id)
+        for p in getattr(m, "away_lineup", []) or []:
+            if p is not None:
+                player_ids.add(p.id)
+
+    print(f"[{label}] matches={len(matches)}, " f"teams={len(team_ids)}, " f"players_in_lineups={len(player_ids)}")
+
+
+def debug_sofifa_snapshot_player_coverage(matches) -> None:
+    g = Global.get_instance()
+
+    # Step 1: collect FS player IDs from matches
+    fs_player_ids = set()
+    for m in matches:
+        for p in getattr(m, "home_lineup", []) or []:
+            if p is not None:
+                fs_player_ids.add(p.id)
+        for p in getattr(m, "away_lineup", []) or []:
+            if p is not None:
+                fs_player_ids.add(p.id)
+
+    print(f"[sofifa] unique FS players in matches: {len(fs_player_ids)}")
+
+    # Step 2: map to SOFIFA player IDs
+    sofifa_ids = set()
+    unmapped = 0
+
+    for fs_id in fs_player_ids:
+        match = g.fs_to_sofifa_cache.get(fs_id)
+        if match is None or match[0] is None:
+            unmapped += 1
+            continue
+        sofifa_ids.add(match[0])
+
+    print(f"[sofifa] mapped to SOFIFA players: {len(sofifa_ids)}")
+    print(f"[sofifa] unmapped FS players: {unmapped}")
+
+    # Step 3: count per snapshot
+    print("\n[sofifa] approximate coverage per snapshot:")
+
+    for snap_date, players_dict in g.sofifa_snapshots:
+        snapshot_player_ids = set(players_dict.keys())
+
+        overlap = len(snapshot_player_ids & sofifa_ids)
+
+        print(f"{snap_date}: " f"{overlap} relevant players " f"(~{overlap/1000:.1f}k)")
+
+
 ut = utils
 global_instance = Global.get_instance()
 
@@ -49,6 +109,18 @@ match_fs_teams_to_sofifa_teams(force=False)
 
 # Relevant matches only (league comps)
 all_matches_sorted = sorted(global_instance.all_matches, key=fu.match_sort_key)
+
+league_matches_all_24 = [
+    m
+    for m in all_matches_sorted
+    if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE
+    and getattr(m, "season", None) is not None
+    and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
+]
+
+debug_count_entities(league_matches_all_24, "24 domestic leagues before filtering")
+debug_sofifa_snapshot_player_coverage(league_matches_all_24)
+
 league_matches_sorted = utils.filter_clean_league_matches(all_matches_sorted)
 league_matches_sorted = utils.filter_valid_round_matches(league_matches_sorted)
 league_matches_sorted = [
@@ -56,6 +128,8 @@ league_matches_sorted = [
     for m in league_matches_sorted
     if getattr(m, "season", None) is not None and sett.FIRST_SEASON <= m.season < sett.LAST_SEASON
 ]
+
+debug_count_entities(league_matches_sorted, "24 domestic leagues after filtering")
 
 team_index_all = fu.build_team_match_index(all_matches_sorted)
 team_index_league = fu.build_team_match_index(league_matches_sorted)
