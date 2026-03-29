@@ -92,20 +92,15 @@ def normalize_elo(
     return clip01((raw_elo - min_elo) / (max_elo - min_elo))
 
 
-def _to01_from_pm1(x: float) -> float:
-    return clip01((x + 1.0) / 2.0)
-
-
 def hour_month_cyclic(hour_utc: int, month: int) -> Tuple[float, float, float, float]:
     # hour in [0..23], month in [1..12]
     hour_angle = 2.0 * math.pi * (float(hour_utc) / 24.0)
     month_angle = 2.0 * math.pi * ((float(month) - 1.0) / 12.0)
-
     return (
-        _to01_from_pm1(math.sin(hour_angle)),
-        _to01_from_pm1(math.cos(hour_angle)),
-        _to01_from_pm1(math.sin(month_angle)),
-        _to01_from_pm1(math.cos(month_angle)),
+        math.sin(hour_angle),
+        math.cos(hour_angle),
+        math.sin(month_angle),
+        math.cos(month_angle),
     )
 
 
