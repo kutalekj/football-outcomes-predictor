@@ -29,6 +29,12 @@ def min_max_scaling_with_clipping(value: float, max_value: float) -> float:
     return clip01(float(value) / float(max_value))
 
 
+def normalize_season(season: int) -> float:
+    if season is None:
+        return 0.0
+    return clip01((float(season) - float(sett.FIRST_SEASON)) / (2024.0 - float(sett.FIRST_SEASON)))
+
+
 def normalize_points(points_per_game: float) -> float:
     # points_per_game is in [0, 3]
     return clip01(points_per_game / 3.0)

@@ -538,7 +538,7 @@ class FSMatch:
 
         mf = FSMatchFeatures(
             comp_id=comp_id,
-            season=self.season,
+            season=fu.normalize_season(self.season),
             home_team_id=self.home_team.id,
             away_team_id=self.away_team.id,
             hours_sin=hs,

@@ -99,6 +99,7 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
     """
     vals = [
         # --- contextual scalar features
+        _v(f.season),
         _v(f.hours_sin),
         _v(f.hours_cos),
         _v(f.month_sin),
