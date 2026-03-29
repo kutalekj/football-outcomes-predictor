@@ -188,26 +188,35 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
     return np.asarray(vals, dtype=np.float32)
 
 
-def _strength_to_np(mat) -> np.ndarray:
+def _strength_to_value_and_mask(mat) -> tuple[np.ndarray, np.ndarray]:
     """
-    Convert 11x34 list -> np.ndarray, keep -1 values.
+    Convert 11x34 list -> (values, mask)
+      values: float32 in [0,1], missing cells filled with 0.0
+      mask:   float32 in {0,1}, 1=observed, 0=missing
     """
     if mat is None:
-        return np.zeros((11, 34), dtype=np.float32)
+        values = np.zeros((11, 34), dtype=np.float32)
+        mask = np.zeros((11, 34), dtype=np.float32)
+        return values, mask
 
     arr = np.asarray(mat, dtype=np.float32)
 
     if arr.shape != (11, 34):
-        out = np.zeros((11, 34), dtype=np.float32)
-        flat = arr.flatten()
-        flat = flat[: 11 * 34]
-        out[: flat.size // 34, :34] = flat.reshape(-1, 34)
+        out = np.full((11, 34), -1.0, dtype=np.float32)
+        flat = arr.flatten()[: 11 * 34]
+        if flat.size > 0:
+            reshaped = flat.reshape(-1, 34)
+            out[: reshaped.shape[0], : reshaped.shape[1]] = reshaped
         arr = out
 
-    if np.nanmax(arr) > 2.0:
-        arr = arr / 100.0
+    # valid = anything not marked missing by -1
+    mask = (arr >= 0.0).astype(np.float32)
 
-    return np.clip(arr, -1.0, 1.0)
+    values = arr.copy()
+    values[mask == 1.0] = np.clip(values[mask == 1.0] / 100.0, 0.0, 1.0)
+    values[mask == 0.0] = 0.0
+
+    return values.astype(np.float32), mask.astype(np.float32)
 
 
 def build_arrays_for_matches(
@@ -235,9 +244,10 @@ def build_arrays_for_matches(
 
         X_c.append(comp_name_to_id[m.comp_name])  # comp
 
-        hs = _strength_to_np(f.home_team_strength)
-        aw = _strength_to_np(f.away_team_strength)
-        X_s.append(np.stack([hs, aw], axis=0))  # team strength
+        hs_val, hs_mask = _strength_to_value_and_mask(f.home_team_strength)
+        aw_val, aw_mask = _strength_to_value_and_mask(f.away_team_strength)
+
+        X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))  # (num_matches, 4, 11, 34)
 
         total_goals = (m.home_goals or 0) + (m.away_goals or 0)
         if mode == "binary_u25":
