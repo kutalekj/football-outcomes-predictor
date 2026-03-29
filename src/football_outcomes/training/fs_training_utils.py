@@ -94,16 +94,42 @@ def _v(x) -> float:
 
 def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
     """
-    Scalar numerical features only (no categorical, no strengths).
+    All scalar numerical features only.
+    Excludes categorical IDs and structured team-strength tensors.
     """
     vals = [
+        # --- contextual scalar features
         _v(f.hours_sin),
         _v(f.hours_cos),
         _v(f.month_sin),
         _v(f.month_cos),
+        _v(f.match_position_in_season),
+        # --- Elo
         _v(f.home_elo),
         _v(f.away_elo),
-        _v(f.match_position_in_season),
+        # --- xG features
+        _v(f.home_avg_xg_last_5),
+        _v(f.home_avg_xg_last_20),
+        _v(f.away_avg_xg_last_5),
+        _v(f.away_avg_xg_last_20),
+        _v(f.home_avg_xg_total_last_5),
+        _v(f.home_avg_xg_total_last_20),
+        _v(f.away_avg_xg_total_last_5),
+        _v(f.away_avg_xg_total_last_20),
+        _v(f.home_avg_pre_match_xg_last_5),
+        _v(f.home_avg_pre_match_xg_last_20),
+        _v(f.away_avg_pre_match_xg_last_5),
+        _v(f.away_avg_pre_match_xg_last_20),
+        _v(f.home_avg_pre_match_xg_total_last_5),
+        _v(f.home_avg_pre_match_xg_total_last_20),
+        _v(f.away_avg_pre_match_xg_total_last_5),
+        _v(f.away_avg_pre_match_xg_total_last_20),
+        # --- match load
+        _v(f.home_match_load_per_day_last_10_days),
+        _v(f.home_match_load_per_day_last_25_days),
+        _v(f.away_match_load_per_day_last_10_days),
+        _v(f.away_match_load_per_day_last_25_days),
+        # --- points/goals
         _v(f.home_avg_points_last_5),
         _v(f.home_avg_points_last_20),
         _v(f.away_avg_points_last_5),
@@ -112,16 +138,52 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
         _v(f.home_avg_goals_last_20),
         _v(f.away_avg_goals_last_5),
         _v(f.away_avg_goals_last_20),
-        _v(f.home_avg_xg_last_5),
-        _v(f.home_avg_xg_last_20),
-        _v(f.away_avg_xg_last_5),
-        _v(f.away_avg_xg_last_20),
-        _v(f.home_match_load_per_day_last_10_days),
-        _v(f.home_match_load_per_day_last_25_days),
-        _v(f.away_match_load_per_day_last_10_days),
-        _v(f.away_match_load_per_day_last_25_days),
+        # --- shots
+        _v(f.home_avg_shots_on_target_last_5),
+        _v(f.home_avg_shots_on_target_last_20),
+        _v(f.away_avg_shots_on_target_last_5),
+        _v(f.away_avg_shots_on_target_last_20),
+        _v(f.home_avg_shots_off_target_last_5),
+        _v(f.home_avg_shots_off_target_last_20),
+        _v(f.away_avg_shots_off_target_last_5),
+        _v(f.away_avg_shots_off_target_last_20),
+        _v(f.home_avg_total_shots_last_5),
+        _v(f.home_avg_total_shots_last_20),
+        _v(f.away_avg_total_shots_last_5),
+        _v(f.away_avg_total_shots_last_20),
+        # --- corners / possession / fouls / attacks
+        _v(f.home_avg_corner_kicks_last_5),
+        _v(f.home_avg_corner_kicks_last_20),
+        _v(f.away_avg_corner_kicks_last_5),
+        _v(f.away_avg_corner_kicks_last_20),
+        _v(f.home_avg_ball_possession_last_5),
+        _v(f.home_avg_ball_possession_last_20),
+        _v(f.away_avg_ball_possession_last_5),
+        _v(f.away_avg_ball_possession_last_20),
+        _v(f.home_avg_fouls_last_5),
+        _v(f.home_avg_fouls_last_20),
+        _v(f.away_avg_fouls_last_5),
+        _v(f.away_avg_fouls_last_20),
+        _v(f.home_avg_attacks_last_5),
+        _v(f.home_avg_attacks_last_20),
+        _v(f.away_avg_attacks_last_5),
+        _v(f.away_avg_attacks_last_20),
+        _v(f.home_avg_dang_attacks_last_5),
+        _v(f.home_avg_dang_attacks_last_20),
+        _v(f.away_avg_dang_attacks_last_5),
+        _v(f.away_avg_dang_attacks_last_20),
+        # --- league table
         _v(f.home_curr_position),
         _v(f.away_curr_position),
+        # --- role-specific goals scored / conceded
+        _v(f.home_avg_goals_scored_home_last_5),
+        _v(f.home_avg_goals_scored_home_last_20),
+        _v(f.away_avg_goals_scored_away_last_5),
+        _v(f.away_avg_goals_scored_away_last_20),
+        _v(f.home_avg_goals_conceded_home_last_5),
+        _v(f.home_avg_goals_conceded_home_last_20),
+        _v(f.away_avg_goals_conceded_away_last_5),
+        _v(f.away_avg_goals_conceded_away_last_20),
     ]
     return np.asarray(vals, dtype=np.float32)
 
