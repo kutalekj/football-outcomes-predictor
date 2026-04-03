@@ -22,6 +22,7 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.metrics import AUC
 from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch
@@ -38,6 +39,7 @@ class TrainConfig:
     mode: str = "binary_u25"  # "binary_u25" | "goals_dist" | "goals_reg"
     window_rounds: int = 25
     epochs_per_step: int = 5
+    learning_rate: float = 0.0001
     batch_size: int = 64
 
     team_emb_dim: int = 8
@@ -72,7 +74,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     x_c = Input((1,), dtype="int32", name="comp_id")
     x_s = Input((4, 11, 34), name="strength")
 
-    team_emb = Embedding(num_teams, cfg.team_emb_dim)  # TODO: Check if normalized to (0,1)
+    team_emb = Embedding(num_teams, cfg.team_emb_dim)
     home_e = Flatten()(team_emb(x_h))
     away_e = Flatten()(team_emb(x_a))
     comp_e = Flatten()(Embedding(num_comps, cfg.comp_emb_dim)(x_c))
@@ -93,7 +95,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         y = Dense(1, activation="sigmoid")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
         model.compile(
-            optimizer="adam",
+            optimizer=Adam(learning_rate=cfg.learning_rate),
             loss="binary_crossentropy",
             metrics=["accuracy"],
         )
@@ -102,7 +104,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         y = Dense(cfg.max_goals_class + 1, activation="softmax")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
         model.compile(
-            optimizer="adam",
+            optimizer=Adam(learning_rate=cfg.learning_rate),
             loss="sparse_categorical_crossentropy",
             metrics=["accuracy"],
         )
@@ -111,7 +113,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         y = Dense(1, activation="linear")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
         model.compile(
-            optimizer="adam",
+            optimizer=Adam(learning_rate=cfg.learning_rate),
             loss="mae",
             metrics=["mae"],
         )
@@ -127,7 +129,7 @@ def train_rolling(
     cat_maps: CatMaps,
     cfg: TrainConfig,
 ) -> Model:
-    rounds = distribute_matches_into_rounds(matches_sorted)  # TODO: Room for improvement
+    rounds = distribute_matches_into_rounds(matches_sorted)
 
     sample_feat = matches_sorted[0].features_before_match
     num_num = extract_numerical_features(sample_feat).shape[0]
