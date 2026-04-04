@@ -18,7 +18,7 @@ from tensorflow.keras.layers import (
     Flatten,
     GlobalAveragePooling1D,
     Input,
-    Reshape,
+    Lambda,
 )
 from tensorflow.keras.metrics import AUC
 from tensorflow.keras.models import Model
@@ -72,27 +72,55 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     x_h = Input((1,), dtype="int32", name="home_id")
     x_a = Input((1,), dtype="int32", name="away_id")
     x_c = Input((1,), dtype="int32", name="comp_id")
+
+    # Team-Strength tensor: [home_values, home_mask, away_values, away_mask]
     x_s = Input((4, 11, 34), name="strength")
 
-    team_emb = Embedding(num_teams, cfg.team_emb_dim)
-    home_e = Flatten()(team_emb(x_h))
-    away_e = Flatten()(team_emb(x_a))
-    comp_e = Flatten()(Embedding(num_comps, cfg.comp_emb_dim)(x_c))
+    # Categorical branches
+    team_emb = Embedding(num_teams, cfg.team_emb_dim, name="team_embedding")
+    home_e = Flatten(name="home_embedding_flat")(team_emb(x_h))
+    away_e = Flatten(name="away_embedding_flat")(team_emb(x_a))
 
-    s = Reshape((44, 34))(x_s)
-    s = Dense(64, activation="relu")(s)
-    s = GlobalAveragePooling1D()(s)
-    s = Dense(cfg.strength_emb_dim, activation="relu")(s)
+    comp_emb_layer = Embedding(num_comps, cfg.comp_emb_dim, name="competition_embedding")
+    comp_e = Flatten(name="competition_embedding_flat")(comp_emb_layer(x_c))
 
-    z = Concatenate()([x_num, home_e, away_e, comp_e, s])
-    z = Dense(128, activation="relu")(z)
-    z = Dropout(0.5)(z)
-    z = Dense(64, activation="relu")(z)
-    z = Dropout(0.4)(z)
-    z = Dense(32, activation="relu")(z)
+    # Split strength tensor
+    # x_s shape = (batch, 4, 11, 34)
+    home_vals = Lambda(lambda t: t[:, 0], name="home_strength_values")(x_s)  # (batch, 11, 34)
+    home_mask = Lambda(lambda t: t[:, 1], name="home_strength_mask")(x_s)  # (batch, 11, 34)
+    away_vals = Lambda(lambda t: t[:, 2], name="away_strength_values")(x_s)  # (batch, 11, 34)
+    away_mask = Lambda(lambda t: t[:, 3], name="away_strength_mask")(x_s)  # (batch, 11, 34)
+
+    # Concatenate values + mask per team => (batch, 11, 68)
+    home_team_input = Concatenate(axis=-1, name="home_strength_concat")([home_vals, home_mask])
+    away_team_input = Concatenate(axis=-1, name="away_strength_concat")([away_vals, away_mask])
+
+    # Shared team-strength encoder
+    strength_dense_1 = Dense(64, activation="relu", name="strength_dense_1")
+    strength_dense_2 = Dense(32, activation="relu", name="strength_dense_2")
+    strength_pool = GlobalAveragePooling1D(name="strength_pool")
+    strength_proj = Dense(cfg.strength_emb_dim, activation="relu", name="strength_projection")
+
+    def encode_team(team_tensor):
+        z = strength_dense_1(team_tensor)  # (batch, 11, 64)
+        z = strength_dense_2(z)  # (batch, 11, 32)
+        z = strength_pool(z)  # (batch, 32)
+        z = strength_proj(z)  # (batch, strength_emb_dim)
+        return z
+
+    home_s = encode_team(home_team_input)
+    away_s = encode_team(away_team_input)
+
+    z = Concatenate(name="fusion")([x_num, home_e, away_e, comp_e, home_s, away_s])
+
+    z = Dense(128, activation="relu", name="mlp_dense_1")(z)
+    z = Dropout(0.5, name="mlp_dropout_1")(z)
+    z = Dense(64, activation="relu", name="mlp_dense_2")(z)
+    z = Dropout(0.4, name="mlp_dropout_2")(z)
+    z = Dense(32, activation="relu", name="mlp_dense_3")(z)
 
     if cfg.mode == "binary_u25":
-        y = Dense(1, activation="sigmoid")(z)
+        y = Dense(1, activation="sigmoid", name="output_binary")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
@@ -101,7 +129,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         )
 
     elif cfg.mode == "goals_dist":
-        y = Dense(cfg.max_goals_class + 1, activation="softmax")(z)
+        y = Dense(cfg.max_goals_class + 1, activation="softmax", name="output_multiclass")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
@@ -110,7 +138,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         )
 
     elif cfg.mode == "goals_reg":
-        y = Dense(1, activation="linear")(z)
+        y = Dense(1, activation="linear", name="output_regression")(z)
         model = Model([x_num, x_h, x_a, x_c, x_s], y)
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
@@ -145,8 +173,6 @@ def train_rolling(
         cfg=cfg,
     )
 
-    early = EarlyStopping(patience=2, restore_best_weights=True)
-
     # ---- TensorBoard logging (always under sett.DATA_DIR)
     run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_root = Path(sett.DATA_DIR) / "tensorboard_logs"
@@ -172,6 +198,13 @@ def train_rolling(
         V = build_arrays_for_matches(val_ms, cat_maps, cfg.mode, cfg.max_goals_class)
 
         print(f"[train] round {i+1}/{len(rounds)}  train={len(train_ms)} val={len(val_ms)}")
+
+        early = EarlyStopping(
+            patience=2,
+            restore_best_weights=True,
+            monitor="val_loss",
+            mode="min",
+        )
 
         model.fit(
             X[:-1],
