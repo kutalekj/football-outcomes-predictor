@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import os
 import random
 from dataclasses import dataclass
@@ -189,6 +190,7 @@ def train_rolling(
 
     # Extra per-round metrics: show in TensorBoard one point per rolling round
     tb_writer = tf.summary.create_file_writer(log_dir)
+    round_records = []
 
     for i in range(cfg.window_rounds, len(rounds) - 1):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
@@ -223,6 +225,17 @@ def train_rolling(
             val_loss, val_acc = val_metrics
             print(f"[round {i + 1}] val_loss={val_loss:.4f} val_acc={val_acc:.4f}")
 
+            round_records.append(
+                {
+                    "round_idx": round_step,
+                    "train_size": len(train_ms),
+                    "val_size": len(val_ms),
+                    "mode": cfg.mode,
+                    "val_loss": float(val_loss),
+                    "val_accuracy": float(val_acc),
+                }
+            )
+
         elif cfg.mode == "goals_dist":  # multi-class classification
             val_loss, val_acc = val_metrics
             print(f"[round {i + 1}] val_loss={val_loss:.4f} val_acc={val_acc:.4f}")
@@ -248,6 +261,21 @@ def train_rolling(
                 f"auc={derived_under25_auc:.3f} brier={brier:.4f}"
             )
 
+            round_records.append(
+                {
+                    "round_idx": round_step,
+                    "train_size": len(train_ms),
+                    "val_size": len(val_ms),
+                    "mode": cfg.mode,
+                    "val_loss": float(val_loss),
+                    "val_accuracy": float(val_acc),
+                    "expected_goals_mae": float(mae),
+                    "derived_under25_accuracy": float(derived_under25_acc),
+                    "derived_under25_auc": float(derived_under25_auc),
+                    "derived_under25_brier": float(brier),
+                }
+            )
+
             # Manual TensorBoard scalars (one point per round)
             with tb_writer.as_default():
                 tf.summary.scalar("round/val_loss", float(val_loss), step=round_step)
@@ -271,5 +299,27 @@ def train_rolling(
                 tf.summary.scalar("round/val_mae", float(val_mae), step=round_step)
                 tf.summary.scalar("round/derived_under25_accuracy", float(under25_acc), step=round_step)
                 tb_writer.flush()
+
+            round_records.append(
+                {
+                    "round_idx": round_step,
+                    "train_size": len(train_ms),
+                    "val_size": len(val_ms),
+                    "mode": cfg.mode,
+                    "val_mae": float(val_mae),
+                    "derived_under25_accuracy": float(under25_acc),
+                }
+            )
+
+    csv_path = Path(log_dir) / "round_metrics.csv"
+
+    if round_records:
+        fieldnames = sorted({k for rec in round_records for k in rec.keys()})
+        with csv_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(round_records)
+
+        print(f"[metrics] saved round-level metrics to {csv_path}")
 
     return model
