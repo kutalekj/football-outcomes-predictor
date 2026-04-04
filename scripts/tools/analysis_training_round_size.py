@@ -84,11 +84,14 @@ def main() -> None:
     ax.axhline(median_size, linestyle=":", label=f"Median = {median_size:.2f}")
     ax.legend()
 
-    combined_path = out_dir / "round_size_analysis_combined.png"
-    fig.savefig(combined_path, dpi=200)
+    combined_png_path = out_dir / "round_size_analysis_combined.png"
+    combined_pdf_path = out_dir / "round_size_analysis_combined.pdf"
+    fig.savefig(combined_png_path, dpi=200)
+    fig.savefig(combined_pdf_path)
     plt.close(fig)
 
-    print(f"Saved combined figure to: {combined_path}")
+    print(f"Saved combined PNG figure to: {combined_png_path}")
+    print(f"Saved combined PDF figure to: {combined_pdf_path}")
 
     # --------------------------------------------------
     # Optional: separate chronological-only plot
@@ -102,11 +105,14 @@ def main() -> None:
     ax.axhline(median_size, linestyle=":", label=f"Median = {median_size:.2f}")
     ax.legend()
 
-    chrono_path = out_dir / "round_size_chronological.png"
-    fig.savefig(chrono_path, dpi=200)
+    chrono_png_path = out_dir / "round_size_chronological.png"
+    chrono_pdf_path = out_dir / "round_size_chronological.pdf"
+    fig.savefig(chrono_png_path, dpi=200)
+    fig.savefig(chrono_pdf_path)
     plt.close(fig)
 
-    print(f"Saved chronological figure to: {chrono_path}")
+    print(f"Saved chronological PNG figure to: {chrono_png_path}")
+    print(f"Saved chronological PDF figure to: {chrono_pdf_path}")
 
 
 if __name__ == "__main__":
