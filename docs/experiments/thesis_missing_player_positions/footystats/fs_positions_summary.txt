@@ -1,0 +1,13 @@
+Total FS players: 63805
+Missing position: 0 (0.00%)
+Non-missing position: 63805 (100.00%)
+
+Counts of expected FS positions:
+  Goalkeeper: 6127
+  Defender: 15501
+  Midfielder: 29855
+  Forward: 12319
+
+Unexpected FS position values:
+  Unknown: 2
+  Coach: 1

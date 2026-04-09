@@ -1,0 +1,25 @@
+Total player entries: 668734
+Missing positions: 0 (0.00%)
+
+Position counts:
+  CM: 147145
+  CB: 139969
+  ST: 120918
+  CDM: 102048
+  LM: 88152
+  RM: 84647
+  CAM: 78624
+  GK: 75150
+  RB: 71242
+  LB: 68716
+  LW: 40834
+  RW: 40470
+  LWB: 18333
+  RWB: 17264
+  CF: 14244
+  LDM: 1
+
+Positions per player distribution:
+  1 positions: 330308
+  2 positions: 237829
+  3 positions: 100597
