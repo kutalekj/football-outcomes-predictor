@@ -46,6 +46,7 @@ class TrainConfig:
     team_emb_dim: int = 8
     comp_emb_dim: int = 5
     strength_emb_dim: int = 24
+    position_emb_dim: int = 3
 
     max_goals_class: int = 10
     seed: int | None = 42
@@ -74,8 +75,12 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     x_a = Input((1,), dtype="int32", name="away_id")
     x_c = Input((1,), dtype="int32", name="comp_id")
 
-    # Team-Strength tensor: [home_values, home_mask, away_values, away_mask]
+    # Team-strength tensor: [home_values, home_mask, away_values, away_mask]
     x_s = Input((4, 11, 34), name="strength")
+
+    # Coarse FootyStats player positions for home/away lineups
+    x_hp = Input((11,), dtype="int32", name="home_positions")
+    x_ap = Input((11,), dtype="int32", name="away_positions")
 
     # Categorical branches
     team_emb = Embedding(num_teams, cfg.team_emb_dim, name="team_embedding")
@@ -85,6 +90,14 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     comp_emb_layer = Embedding(num_comps, cfg.comp_emb_dim, name="competition_embedding")
     comp_e = Flatten(name="competition_embedding_flat")(comp_emb_layer(x_c))
 
+    position_emb_layer = Embedding(
+        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+        output_dim=cfg.position_emb_dim,
+        name="position_embedding",
+    )
+    home_pos_e = position_emb_layer(x_hp)  # (batch, 11, position_emb_dim)
+    away_pos_e = position_emb_layer(x_ap)  # (batch, 11, position_emb_dim)
+
     # Split strength tensor
     # x_s shape = (batch, 4, 11, 34)
     home_vals = Lambda(lambda t: t[:, 0], name="home_strength_values")(x_s)  # (batch, 11, 34)
@@ -92,9 +105,9 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     away_vals = Lambda(lambda t: t[:, 2], name="away_strength_values")(x_s)  # (batch, 11, 34)
     away_mask = Lambda(lambda t: t[:, 3], name="away_strength_mask")(x_s)  # (batch, 11, 34)
 
-    # Concatenate values + mask per team => (batch, 11, 68)
-    home_team_input = Concatenate(axis=-1, name="home_strength_concat")([home_vals, home_mask])
-    away_team_input = Concatenate(axis=-1, name="away_strength_concat")([away_vals, away_mask])
+    # Concatenate values + mask + position embedding per team
+    home_team_input = Concatenate(axis=-1, name="home_strength_concat")([home_vals, home_mask, home_pos_e])
+    away_team_input = Concatenate(axis=-1, name="away_strength_concat")([away_vals, away_mask, away_pos_e])
 
     # Shared team-strength encoder
     strength_dense_1 = Dense(64, activation="relu", name="strength_dense_1")
@@ -120,9 +133,11 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     z = Dropout(0.4, name="mlp_dropout_2")(z)
     z = Dense(32, activation="relu", name="mlp_dense_3")(z)
 
+    inputs = [x_num, x_h, x_a, x_c, x_s, x_hp, x_ap]
+
     if cfg.mode == "binary_u25":
         y = Dense(1, activation="sigmoid", name="output_binary")(z)
-        model = Model([x_num, x_h, x_a, x_c, x_s], y)
+        model = Model(inputs, y)
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
             loss="binary_crossentropy",
@@ -131,7 +146,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
 
     elif cfg.mode == "goals_dist":
         y = Dense(cfg.max_goals_class + 1, activation="softmax", name="output_multiclass")(z)
-        model = Model([x_num, x_h, x_a, x_c, x_s], y)
+        model = Model(inputs, y)
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
             loss="sparse_categorical_crossentropy",
@@ -140,7 +155,7 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
 
     elif cfg.mode == "goals_reg":
         y = Dense(1, activation="linear", name="output_regression")(z)
-        model = Model([x_num, x_h, x_a, x_c, x_s], y)
+        model = Model(inputs, y)
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
             loss="mae",

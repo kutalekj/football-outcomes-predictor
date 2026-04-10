@@ -15,6 +15,7 @@ from rapidfuzz import fuzz
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_models import FSPlayer
+from football_outcomes.utils.fs_common import normalize_fs_player_position
 
 _debug_log_path: Optional[str] = None
 
@@ -708,7 +709,8 @@ _FS_POS_ORDER = {
 
 
 def _pos_rank(p: FSPlayer) -> int:
-    return _FS_POS_ORDER.get(p.position or "", 99)
+    pos = normalize_fs_player_position(p.position or "", p.known_as)
+    return _FS_POS_ORDER.get(pos, 99)
 
 
 def _gk_role_score(skills: List[float]) -> float:
@@ -764,6 +766,69 @@ def _ensure_one_goalkeeper_row(rows: List[Tuple[FSPlayer, List[float]]]) -> List
     missing_player.position = "Goalkeeper"
     rows.insert(0, (missing_player, [-1.0] * len(sett.PLAYER_SKILLS)))
     return rows
+
+
+def _select_and_sort_lineup(curr_match: "FSMatch", team_id: int) -> tuple[list[FSPlayer], str]:
+    """
+    Return (sorted_lineup, side) for the requested team in the match.
+
+    The ordering mirrors calculate_team_strength():
+      - lineup chosen by side
+      - sorted by coarse FS position
+      - padded/truncated to exactly TEAM_STRENGTH_NUM_PLAYERS
+    """
+    if curr_match.home_team is not None and curr_match.home_team.id == team_id:
+        lineup = getattr(curr_match, "home_lineup", None)
+        side = "home"
+    elif curr_match.away_team is not None and curr_match.away_team.id == team_id:
+        lineup = getattr(curr_match, "away_lineup", None)
+        side = "away"
+    else:
+        raise ValueError(f"Team {team_id} not in match {curr_match.id}")
+
+    if lineup is None:
+        lineup = []
+    elif not isinstance(lineup, list):
+        raise TypeError(f"Lineup must be list[FSPlayer], got {type(lineup)}")
+
+    if len(lineup) > sett.TEAM_STRENGTH_NUM_PLAYERS:
+        raise ValueError(f"Lineup has >{sett.TEAM_STRENGTH_NUM_PLAYERS} players: {len(lineup)}")
+
+    lineup_sorted = sorted(lineup, key=_pos_rank)
+
+    # If no explicit goalkeeper is present, insert one to keep row structure aligned.
+    has_gk = any(normalize_fs_player_position(p.position or "", p.known_as) == "Goalkeeper" for p in lineup_sorted)
+    if not has_gk:
+        missing_gk = FSPlayer(-1, "MISSING_GK", "", "", "", "MISSING_GK")
+        missing_gk.position = "Goalkeeper"
+        lineup_sorted.insert(0, missing_gk)
+
+    while len(lineup_sorted) < sett.TEAM_STRENGTH_NUM_PLAYERS:
+        mp = FSPlayer(-1, "MISSING", "", "", "", "MISSING")
+        mp.position = "Unknown"
+        lineup_sorted.append(mp)
+
+    lineup_sorted = lineup_sorted[: sett.TEAM_STRENGTH_NUM_PLAYERS]
+    return lineup_sorted, side
+
+
+def calculate_team_position_indices(curr_match: "FSMatch", team_id: int) -> List[int]:
+    """
+    Build a TEAM_STRENGTH_NUM_PLAYERS-length vector of coarse FS player-position indices.
+
+    The returned order is aligned with the team-strength rows:
+      - lineup selected by side
+      - sorted by coarse position (GK/DEF/MID/FWD)
+      - missing rows padded with "Unknown"
+    """
+    lineup_sorted, _ = _select_and_sort_lineup(curr_match, team_id)
+
+    pos_idxs: List[int] = []
+    for p in lineup_sorted:
+        pos = normalize_fs_player_position(getattr(p, "position", "") or "", p.known_as)
+        pos_idxs.append(int(sett.FS_PLAYER_POSITION_TO_IDX[pos]))
+
+    return pos_idxs
 
 
 # ---------- main: calculate_team_strength ----------

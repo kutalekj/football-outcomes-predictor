@@ -387,3 +387,16 @@ def annotate_regular_season_matches(debug_non_regular: bool = True) -> None:
         f"regular={total_regular}, non_regular={total_non_regular}, "
         f"total={total_regular + total_non_regular}"
     )
+
+
+def normalize_fs_player_position(pos: str, player_name: str) -> str:
+    pos = (pos or "").strip()
+
+    if pos in sett.VALID_FS_PLAYER_POSITIONS:
+        return pos
+
+    if pos in {"", "Unknown"}:
+        return "Unknown"
+
+    print(f"WARNING: Found an unknown FS player position [{pos}] (player [{player_name}]).")
+    return "Unknown"

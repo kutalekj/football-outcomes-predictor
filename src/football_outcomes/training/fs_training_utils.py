@@ -7,6 +7,7 @@ import numpy as np
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch, FSMatchFeatures
+from football_outcomes.utils.fs_player_skill_utils import calculate_team_position_indices
 
 
 @dataclass
@@ -230,7 +231,7 @@ def build_arrays_for_matches(
     Prepare model inputs and labels.
     """
 
-    X_num, X_h, X_a, X_c, X_s, y = [], [], [], [], [], []
+    X_num, X_h, X_a, X_c, X_s, X_hp, X_ap, y = [], [], [], [], [], [], [], []
 
     comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
 
@@ -250,6 +251,22 @@ def build_arrays_for_matches(
 
         X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))  # (num_matches, 4, 11, 34)
 
+        # Coarse FootyStats player-position indices aligned with the team-strength rows
+        home_pos = getattr(f, "home_player_positions", None)
+        if home_pos is None:
+            home_pos = getattr(f, "home_positions", None)
+        if home_pos is None:
+            home_pos = calculate_team_position_indices(m, m.home_team.id)
+
+        away_pos = getattr(f, "away_player_positions", None)
+        if away_pos is None:
+            away_pos = getattr(f, "away_positions", None)
+        if away_pos is None:
+            away_pos = calculate_team_position_indices(m, m.away_team.id)
+
+        X_hp.append(np.asarray(home_pos, dtype=np.int32))
+        X_ap.append(np.asarray(away_pos, dtype=np.int32))
+
         total_goals = (m.home_goals or 0) + (m.away_goals or 0)
         if mode == "binary_u25":
             y.append(1.0 if total_goals <= 2 else 0.0)
@@ -268,5 +285,7 @@ def build_arrays_for_matches(
         np.asarray(X_a, np.int32)[:, None],
         np.asarray(X_c, np.int32)[:, None],
         np.asarray(X_s, np.float32),
+        np.asarray(X_hp, np.int32),
+        np.asarray(X_ap, np.int32),
         np.asarray(y, y_dtype),
     )

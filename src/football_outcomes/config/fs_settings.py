@@ -407,3 +407,13 @@ PLAYER_SKILLS = [
     "gk_positioning",
     "gk_reflexes",
 ]
+
+VALID_FS_PLAYER_POSITIONS = ["Goalkeeper", "Defender", "Midfielder", "Forward"]
+
+FS_PLAYER_POSITION_TO_IDX = {
+    "Goalkeeper": 0,
+    "Defender": 1,
+    "Midfielder": 2,
+    "Forward": 3,
+    "Unknown": 4,
+}
