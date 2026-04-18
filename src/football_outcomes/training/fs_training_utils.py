@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 
@@ -31,7 +31,6 @@ def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
     team_ids = set()
     comp_ids = set()
 
-    # Build comp_name -> comp_id mapping (FootyStats uses comp_season IDs, not comp ID)
     comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
 
     for m in league_matches_sorted:
@@ -42,13 +41,12 @@ def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
             raise ValueError(f"Match {m.id} has comp_name=None")
 
         if m.comp_name not in comp_name_to_id:
-            raise ValueError(f"Match {m.id} has comp_name '{m.comp_name}' " f"which is not in COMPS_LEAGUE")
+            raise ValueError(f"Match {m.id} has comp_name '{m.comp_name}' which is not in COMPS_LEAGUE")
 
         comp_ids.add(comp_name_to_id[m.comp_name])
 
     team_id_map = {tid: i for i, tid in enumerate(sorted(team_ids))}
     comp_id_map = {cid: i for i, cid in enumerate(sorted(comp_ids))}
-
     return CatMaps(team_id_map=team_id_map, comp_id_map=comp_id_map)
 
 
@@ -84,6 +82,17 @@ def distribute_matches_into_rounds(sorted_matches: List[FSMatch]) -> List[List[F
     return rounds
 
 
+def summarize_rounds(rounds: List[List[FSMatch]]) -> dict:
+    sizes = np.asarray([len(r) for r in rounds], dtype=np.int32)
+    return {
+        "num_rounds": int(len(rounds)),
+        "min_round_size": int(sizes.min()) if sizes.size else 0,
+        "max_round_size": int(sizes.max()) if sizes.size else 0,
+        "mean_round_size": float(sizes.mean()) if sizes.size else 0.0,
+        "median_round_size": float(np.median(sizes)) if sizes.size else 0.0,
+    }
+
+
 # ---------------------------------------------------------------------
 # Feature extraction
 # ---------------------------------------------------------------------
@@ -99,17 +108,14 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
     Excludes categorical IDs and structured team-strength tensors.
     """
     vals = [
-        # --- contextual scalar features
         _v(f.season),
         _v(f.hours_sin),
         _v(f.hours_cos),
         _v(f.month_sin),
         _v(f.month_cos),
         _v(f.match_position_in_season),
-        # --- Elo
         _v(f.home_elo),
         _v(f.away_elo),
-        # --- xG features
         _v(f.home_avg_xg_last_5),
         _v(f.home_avg_xg_last_20),
         _v(f.away_avg_xg_last_5),
@@ -126,12 +132,10 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
         _v(f.home_avg_pre_match_xg_total_last_20),
         _v(f.away_avg_pre_match_xg_total_last_5),
         _v(f.away_avg_pre_match_xg_total_last_20),
-        # --- match load
         _v(f.home_match_load_per_day_last_10_days),
         _v(f.home_match_load_per_day_last_25_days),
         _v(f.away_match_load_per_day_last_10_days),
         _v(f.away_match_load_per_day_last_25_days),
-        # --- points/goals
         _v(f.home_avg_points_last_5),
         _v(f.home_avg_points_last_20),
         _v(f.away_avg_points_last_5),
@@ -140,7 +144,6 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
         _v(f.home_avg_goals_last_20),
         _v(f.away_avg_goals_last_5),
         _v(f.away_avg_goals_last_20),
-        # --- shots
         _v(f.home_avg_shots_on_target_last_5),
         _v(f.home_avg_shots_on_target_last_20),
         _v(f.away_avg_shots_on_target_last_5),
@@ -153,7 +156,6 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
         _v(f.home_avg_total_shots_last_20),
         _v(f.away_avg_total_shots_last_5),
         _v(f.away_avg_total_shots_last_20),
-        # --- corners / possession / fouls / attacks
         _v(f.home_avg_corner_kicks_last_5),
         _v(f.home_avg_corner_kicks_last_20),
         _v(f.away_avg_corner_kicks_last_5),
@@ -174,10 +176,8 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
         _v(f.home_avg_dang_attacks_last_20),
         _v(f.away_avg_dang_attacks_last_5),
         _v(f.away_avg_dang_attacks_last_20),
-        # --- league table
         _v(f.home_curr_position),
         _v(f.away_curr_position),
-        # --- role-specific goals scored / conceded
         _v(f.home_avg_goals_scored_home_last_5),
         _v(f.home_avg_goals_scored_home_last_20),
         _v(f.away_avg_goals_scored_away_last_5),
@@ -190,7 +190,7 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
     return np.asarray(vals, dtype=np.float32)
 
 
-def _strength_to_value_and_mask(mat) -> tuple[np.ndarray, np.ndarray]:
+def _strength_to_value_and_mask(mat) -> Tuple[np.ndarray, np.ndarray]:
     """
     Convert 11x34 list -> (values, mask)
       values: float32 in [0,1], missing cells filled with 0.0
@@ -211,7 +211,6 @@ def _strength_to_value_and_mask(mat) -> tuple[np.ndarray, np.ndarray]:
             out[: reshaped.shape[0], : reshaped.shape[1]] = reshaped
         arr = out
 
-    # valid = anything not marked missing by -1
     mask = (arr >= 0.0).astype(np.float32)
 
     values = arr.copy()
@@ -240,27 +239,20 @@ def build_arrays_for_matches(
         if f is None:
             raise ValueError(f"Match {m.id} has no features")
 
-        X_num.append(extract_numerical_features(f))  # numerical
-        X_h.append(cat_maps.team_id_map[m.home_team.id])  # home team
-        X_a.append(cat_maps.team_id_map[m.away_team.id])  # away team
-
-        X_c.append(comp_name_to_id[m.comp_name])  # comp
+        X_num.append(extract_numerical_features(f))
+        X_h.append(cat_maps.team_id_map[m.home_team.id])
+        X_a.append(cat_maps.team_id_map[m.away_team.id])
+        X_c.append(comp_name_to_id[m.comp_name])
 
         hs_val, hs_mask = _strength_to_value_and_mask(f.home_team_strength)
         aw_val, aw_mask = _strength_to_value_and_mask(f.away_team_strength)
+        X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))
 
-        X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))  # (num_matches, 4, 11, 34)
-
-        # Coarse FootyStats player-position indices aligned with the team-strength rows
-        home_pos = getattr(f, "home_player_positions", None)
-        if home_pos is None:
-            home_pos = getattr(f, "home_positions", None)
+        home_pos = getattr(f, "home_player_positions", None) or getattr(f, "home_positions", None)
         if home_pos is None:
             home_pos = calculate_team_position_indices(m, m.home_team.id)
 
-        away_pos = getattr(f, "away_player_positions", None)
-        if away_pos is None:
-            away_pos = getattr(f, "away_positions", None)
+        away_pos = getattr(f, "away_player_positions", None) or getattr(f, "away_positions", None)
         if away_pos is None:
             away_pos = calculate_team_position_indices(m, m.away_team.id)
 
@@ -289,3 +281,40 @@ def build_arrays_for_matches(
         np.asarray(X_ap, np.int32),
         np.asarray(y, y_dtype),
     )
+
+
+def build_flat_tabular_arrays_for_matches(
+    matches: List[FSMatch],
+    cat_maps: CatMaps,
+    mode: str,
+    max_goals_class: int = 10,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Flatten everything into a single 2D matrix for classical sklearn baselines.
+    Includes:
+      - scalar numerical features
+      - one-hot-ready categorical ids as integer columns
+      - flattened strength tensor
+      - player position indices
+    """
+    X_num, X_h, X_a, X_c, X_s, X_hp, X_ap, y = build_arrays_for_matches(
+        matches=matches,
+        cat_maps=cat_maps,
+        mode=mode,
+        max_goals_class=max_goals_class,
+    )
+
+    X = np.concatenate(
+        [
+            X_num,
+            X_h.astype(np.float32),
+            X_a.astype(np.float32),
+            X_c.astype(np.float32),
+            X_s.reshape(len(matches), -1),
+            X_hp.astype(np.float32),
+            X_ap.astype(np.float32),
+        ],
+        axis=1,
+    )
+
+    return X.astype(np.float32), y
