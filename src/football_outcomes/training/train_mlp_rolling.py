@@ -60,7 +60,7 @@ class TrainConfig:
 
     # Observability and diagnostics
     enable_branch_diagnostics: bool = True
-    probe_matches: int = 64
+    probe_matches: int = 32
     use_team_strength: bool = True
     use_team_ids: bool = True
     use_comp_embedding: bool = True
@@ -88,6 +88,7 @@ def _zero_vec_from_scalar_input(x, width: int, name: str):
 class LayerDriftLogger(Callback):
     """
     Logs L2 drift from initialization for selected layers.
+    Skips layers that are not present in the current model variant.
     """
 
     def __init__(self, layer_names: List[str], writer, every_epoch: bool = True):
@@ -96,15 +97,21 @@ class LayerDriftLogger(Callback):
         self.writer = writer
         self.every_epoch = every_epoch
         self._initial = {}
+        self._present_layer_names = []
 
     def on_train_begin(self, logs=None):
+        self._present_layer_names = []
         for name in self.layer_names:
-            layer = self.model.get_layer(name)
+            try:
+                layer = self.model.get_layer(name)
+            except ValueError:
+                continue
             self._initial[name] = [w.numpy().copy() for w in layer.weights]
+            self._present_layer_names.append(name)
 
     def on_epoch_end(self, epoch, logs=None):
         with self.writer.as_default():
-            for name in self.layer_names:
+            for name in self._present_layer_names:
                 layer = self.model.get_layer(name)
                 init_ws = self._initial[name]
                 curr_ws = layer.weights
@@ -120,6 +127,7 @@ class LayerDriftLogger(Callback):
 class BranchProbeLogger(Callback):
     """
     Logs activation variance on a fixed probe batch to detect dead branches.
+    Skips layers that are not present in the current model variant.
     """
 
     def __init__(self, probe_inputs, writer, layer_names: List[str]):
@@ -130,8 +138,13 @@ class BranchProbeLogger(Callback):
         self._submodels = {}
 
     def on_train_begin(self, logs=None):
+        self._submodels = {}
         for name in self.layer_names:
-            self._submodels[name] = Model(self.model.inputs, self.model.get_layer(name).output)
+            try:
+                layer = self.model.get_layer(name)
+            except ValueError:
+                continue
+            self._submodels[name] = Model(self.model.inputs, layer.output)
 
     def on_epoch_end(self, epoch, logs=None):
         with self.writer.as_default():
@@ -310,7 +323,7 @@ def train_rolling(
 
     tb = TensorBoard(
         log_dir=log_dir,
-        histogram_freq=1,
+        histogram_freq=0,
         write_graph=True,
         write_images=False,
     )
@@ -335,7 +348,7 @@ def train_rolling(
             drift_names.append("team_embedding")
         if cfg.use_comp_embedding:
             drift_names.append("competition_embedding")
-        if cfg.use_position_embedding:
+        if cfg.use_team_strength and cfg.use_position_embedding:
             drift_names.append("position_embedding")
         if cfg.use_team_strength:
             drift_names.extend(["strength_dense_1", "strength_dense_2", "strength_projection"])
