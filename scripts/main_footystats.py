@@ -136,16 +136,18 @@ cfg = TrainConfig(
     mode="binary_u25",
     model_version="v2",
     use_team_aux_head=False,
+    aux_task=None,
     learning_rate=0.0001,
     batch_size=64,
     window_rounds=25,
-    epochs_per_step=5,
+    epochs_per_step=4,
     seed=42,
+    run_name="mlp_binary_u25_diag_v2-lite_26-04-19-17-20",
 )
 
 model = train_rolling(league_matches_sorted, cat_maps, cfg)
-model.save("mlp_full_v2_binary_u25.keras")
-print("Model saved.")
+# model.save("mlp_full_v2_binary_u25.keras")
+# print("Model saved.")
 
 if sett.ALL_STORE:
     save_snapshot(

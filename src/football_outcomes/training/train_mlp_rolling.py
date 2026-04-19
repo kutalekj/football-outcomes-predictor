@@ -11,6 +11,7 @@ from typing import Dict, List
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras import regularizers
 from tensorflow.keras.callbacks import Callback, EarlyStopping, TensorBoard
 from tensorflow.keras.layers import (
     Concatenate,
@@ -49,7 +50,7 @@ class TrainConfig:
 
     team_emb_dim: int = 8
     comp_emb_dim: int = 5
-    strength_emb_dim: int = 24
+    strength_emb_dim: int = 16
     position_emb_dim: int = 3
 
     max_goals_class: int = 10
@@ -57,25 +58,31 @@ class TrainConfig:
 
     # New:
     model_version: str = "v2"  # "v1" | "v2"
-    use_team_aux_head: bool = True
-    aux_task: str | None = "goals_reg"  # None | "binary_u25" | "goals_reg" | "goals_dist"
-    aux_weight: float = 0.25
+    use_team_aux_head: bool = False
+    aux_task: str | None = None
+    aux_weight: float = 0.15
 
-    # Branch widths
-    num_branch_dim: int = 64
-    cat_branch_dim: int = 64
-    team_branch_dim: int = 64
-    player_row_hidden_dim: int = 64
-    role_post_hidden_dim: int = 64
-    fusion_hidden_dim_1: int = 128
-    fusion_hidden_dim_2: int = 64
+    # Branch widths (v2-lite)
+    num_branch_dim: int = 48
+    cat_branch_dim: int = 32
+    team_branch_dim: int = 32
+    player_row_hidden_dim: int = 32
+    role_post_hidden_dim: int = 32
+    fusion_hidden_dim_1: int = 64
+    fusion_hidden_dim_2: int = 32
 
-    # Regularization
-    tabular_dropout: float = 0.15
-    cat_dropout: float = 0.10
-    team_dropout: float = 0.10
-    fusion_dropout_1: float = 0.35
-    fusion_dropout_2: float = 0.25
+    # Regularization (v2-lite)
+    tabular_dropout: float = 0.20
+    cat_dropout: float = 0.15
+    team_dropout: float = 0.25
+    fusion_dropout_1: float = 0.45
+    fusion_dropout_2: float = 0.30
+
+    # L2 regularization (v2-lite)
+    num_l2: float = 1e-5
+    cat_l2: float = 1e-5
+    team_l2: float = 5e-5
+    fusion_l2: float = 5e-5
 
     # Logging and evaluation
     run_name: str | None = None
@@ -268,8 +275,18 @@ def _build_team_repr_v2(
     team_pos_e = position_emb_layer(team_pos_ids)  # (B,11,pos_dim)
     team_input = Concatenate(axis=-1, name=f"{prefix}_strength_concat")([team_vals, team_mask, team_pos_e])
 
-    row_h1 = Dense(row_hidden, activation="relu", name=f"{prefix}_row_dense_1")(team_input)
-    row_h2 = Dense(row_hidden, activation="relu", name=f"{prefix}_row_dense_2")(row_h1)
+    row_h1 = Dense(
+        row_hidden,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.team_l2),
+        name=f"{prefix}_row_dense_1",
+    )(team_input)
+    row_h2 = Dense(
+        row_hidden,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.team_l2),
+        name=f"{prefix}_row_dense_2",
+    )(row_h1)
 
     row_valid = _row_valid_mask(team_mask, prefix)
 
@@ -285,9 +302,19 @@ def _build_team_repr_v2(
 
     role_cat = Concatenate(name=f"{prefix}_role_concat")([gk_pool, def_pool, mid_pool, fwd_pool])
 
-    z = Dense(role_hidden, activation="relu", name=f"{prefix}_role_post_dense_1")(role_cat)
+    z = Dense(
+        role_hidden,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.team_l2),
+        name=f"{prefix}_role_post_dense_1",
+    )(role_cat)
     z = Dropout(cfg.team_dropout, name=f"{prefix}_role_post_dropout")(z)
-    z = Dense(out_dim, activation="relu", name=f"{prefix}_team_repr")(z)
+    z = Dense(
+        out_dim,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.team_l2),
+        name=f"{prefix}_team_repr",
+    )(z)
 
     return z
 
@@ -444,9 +471,19 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     # ------------------------------------------------------------
     # Branch 1: numerical/context branch
     # ------------------------------------------------------------
-    z_num = Dense(128, activation="relu", name="num_branch_dense_1")(x_num)
+    z_num = Dense(
+        96,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.num_l2),
+        name="num_branch_dense_1",
+    )(x_num)
     z_num = Dropout(cfg.tabular_dropout, name="num_branch_dropout")(z_num)
-    z_num = Dense(cfg.num_branch_dim, activation="relu", name="num_branch_proj")(z_num)
+    z_num = Dense(
+        cfg.num_branch_dim,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.num_l2),
+        name="num_branch_proj",
+    )(z_num)
     z_num = LayerNormalization(name="num_branch_ln")(z_num)
 
     # ------------------------------------------------------------
@@ -463,7 +500,12 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     team_absdiff = _abs_diff(home_e, away_e, "team_embedding_absdiff")
 
     z_cat = Concatenate(name="cat_branch_concat")([home_e, away_e, team_diff, team_absdiff, comp_e])
-    z_cat = Dense(cfg.cat_branch_dim, activation="relu", name="cat_branch_proj")(z_cat)
+    z_cat = Dense(
+        cfg.cat_branch_dim,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.cat_l2),
+        name="cat_branch_proj",
+    )(z_cat)
     z_cat = Dropout(cfg.cat_dropout, name="cat_branch_dropout")(z_cat)
     z_cat = LayerNormalization(name="cat_branch_ln")(z_cat)
 
@@ -500,7 +542,12 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     team_repr_absdiff = _abs_diff(home_team_repr, away_team_repr, "team_repr_absdiff")
 
     z_team = Concatenate(name="team_branch_concat")([home_team_repr, away_team_repr, team_repr_diff, team_repr_absdiff])
-    z_team = Dense(cfg.team_branch_dim, activation="relu", name="team_branch_proj")(z_team)
+    z_team = Dense(
+        cfg.team_branch_dim,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.team_l2),
+        name="team_branch_proj",
+    )(z_team)
     z_team = Dropout(cfg.team_dropout, name="team_branch_dropout")(z_team)
     z_team = LayerNormalization(name="team_branch_ln")(z_team)
 
@@ -508,9 +555,19 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     # Fusion
     # ------------------------------------------------------------
     z = Concatenate(name="fusion")([z_num, z_cat, z_team])
-    z = Dense(cfg.fusion_hidden_dim_1, activation="relu", name="fusion_dense_1")(z)
+    z = Dense(
+        cfg.fusion_hidden_dim_1,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.fusion_l2),
+        name="fusion_dense_1",
+    )(z)
     z = Dropout(cfg.fusion_dropout_1, name="fusion_dropout_1")(z)
-    z = Dense(cfg.fusion_hidden_dim_2, activation="relu", name="fusion_dense_2")(z)
+    z = Dense(
+        cfg.fusion_hidden_dim_2,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.fusion_l2),
+        name="fusion_dense_2",
+    )(z)
     z = Dropout(cfg.fusion_dropout_2, name="fusion_dropout_2")(z)
 
     # Main output
@@ -663,8 +720,15 @@ def train_rolling(
     round_records = []
     oos_rows = []
 
+    # Build probe batch once (from first available training window)
+    if cfg.enable_branch_diagnostics:
+        probe_ms = matches_sorted[: cfg.probe_matches]
+        probe_arr = build_arrays_for_matches(probe_ms, cat_maps, cfg.mode, cfg.max_goals_class)
+        probe_inputs = probe_arr[:-1]  # exclude targets
+    else:
+        probe_inputs = None
+
     callbacks_common: List[Callback] = [tb]
-    probe_inputs = None
     if cfg.enable_branch_diagnostics and probe_inputs is not None:
         drift_names = []
 
