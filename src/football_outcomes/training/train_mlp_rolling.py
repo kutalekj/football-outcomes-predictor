@@ -4,7 +4,7 @@ import csv
 import json
 import os
 import random
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
@@ -21,6 +21,7 @@ from tensorflow.keras.layers import (
     GlobalAveragePooling1D,
     Input,
     Lambda,
+    LayerNormalization,
 )
 from tensorflow.keras.metrics import AUC
 from tensorflow.keras.models import Model
@@ -31,6 +32,7 @@ from football_outcomes.data.fs_models import FSMatch
 from football_outcomes.training.fs_training_utils import (
     CatMaps,
     build_arrays_for_matches,
+    build_aux_targets_for_matches,
     distribute_matches_into_rounds,
     extract_numerical_features,
     summarize_rounds,
@@ -39,7 +41,7 @@ from football_outcomes.training.fs_training_utils import (
 
 @dataclass
 class TrainConfig:
-    mode: str = "binary_u25"
+    mode: str = "binary_u25"  # "binary_u25" | "goals_dist" | "goals_reg"
     window_rounds: int = 25
     epochs_per_step: int = 5
     learning_rate: float = 0.0001
@@ -52,6 +54,28 @@ class TrainConfig:
 
     max_goals_class: int = 10
     seed: int | None = 42
+
+    # New:
+    model_version: str = "v2"  # "v1" | "v2"
+    use_team_aux_head: bool = True
+    aux_task: str | None = "goals_reg"  # None | "binary_u25" | "goals_reg" | "goals_dist"
+    aux_weight: float = 0.25
+
+    # Branch widths
+    num_branch_dim: int = 64
+    cat_branch_dim: int = 64
+    team_branch_dim: int = 64
+    player_row_hidden_dim: int = 64
+    role_post_hidden_dim: int = 64
+    fusion_hidden_dim_1: int = 128
+    fusion_hidden_dim_2: int = 64
+
+    # Regularization
+    tabular_dropout: float = 0.15
+    cat_dropout: float = 0.10
+    team_dropout: float = 0.10
+    fusion_dropout_1: float = 0.35
+    fusion_dropout_2: float = 0.25
 
     # Logging and evaluation
     run_name: str | None = None
@@ -155,7 +179,140 @@ class BranchProbeLogger(Callback):
             self.writer.flush()
 
 
-def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
+def _abs_diff(a, b, name: str):
+    return Lambda(lambda xs: tf.abs(xs[0] - xs[1]), name=name)([a, b])
+
+
+def _vec_diff(a, b, name: str):
+    return Lambda(lambda xs: xs[0] - xs[1], name=name)([a, b])
+
+
+def _safe_zero_vec(x, width: int, name: str):
+    return Lambda(
+        lambda t, d=int(width): tf.zeros((tf.shape(t)[0], d), dtype=tf.float32),
+        name=name,
+    )(x)
+
+
+def _split_strength_tensor(x_s):
+    home_vals = Lambda(lambda t: t[:, 0], name="home_strength_values")(x_s)  # (B,11,34)
+    home_mask = Lambda(lambda t: t[:, 1], name="home_strength_mask")(x_s)  # (B,11,34)
+    away_vals = Lambda(lambda t: t[:, 2], name="away_strength_values")(x_s)  # (B,11,34)
+    away_mask = Lambda(lambda t: t[:, 3], name="away_strength_mask")(x_s)  # (B,11,34)
+    return home_vals, home_mask, away_vals, away_mask
+
+
+def _row_valid_mask(mask_tensor, prefix: str):
+    # Convert (B,11,34) -> (B,11,1): row is valid if at least one skill is observed.
+    return Lambda(
+        lambda m: tf.cast(tf.reduce_max(m, axis=-1, keepdims=True) > 0.0, tf.float32),
+        name=f"{prefix}_row_valid_mask",
+    )(mask_tensor)
+
+
+def _role_average_pool(encoded_rows, pos_ids, row_valid_mask, role_idx: int, prefix: str):
+    """
+    masked average over players whose coarse position equals role_idx.
+    pos_ids: (B,11)
+    row_valid_mask: (B,11,1)
+    encoded_rows: (B,11,H)
+    returns: (B,H)
+    """
+    role_mask = Lambda(
+        lambda p, r=int(role_idx): tf.cast(tf.equal(p, r), tf.float32)[..., None],
+        name=f"{prefix}_role{role_idx}_mask",
+    )(pos_ids)
+
+    combined_mask = Lambda(
+        lambda xs: xs[0] * xs[1],
+        name=f"{prefix}_role{role_idx}_combined_mask",
+    )([role_mask, row_valid_mask])
+
+    masked_sum = Lambda(
+        lambda xs: tf.reduce_sum(xs[0] * xs[1], axis=1),
+        name=f"{prefix}_role{role_idx}_sum",
+    )([encoded_rows, combined_mask])
+
+    denom = Lambda(
+        lambda m: tf.maximum(tf.reduce_sum(m, axis=1), 1e-6),
+        name=f"{prefix}_role{role_idx}_denom",
+    )(combined_mask)
+
+    pooled = Lambda(
+        lambda xs: xs[0] / xs[1],
+        name=f"{prefix}_role{role_idx}_avg",
+    )([masked_sum, denom])
+
+    return pooled
+
+
+def _build_team_repr_v2(
+    team_vals,
+    team_mask,
+    team_pos_ids,
+    position_emb_layer,
+    cfg: TrainConfig,
+    prefix: str,
+):
+    """
+    Build one team's structured representation using:
+      values + mask + position embedding
+      -> shared row encoder
+      -> role-aware pooling (GK/DEF/MID/FWD)
+      -> post-pooling projection
+    """
+    row_hidden = int(cfg.player_row_hidden_dim)
+    role_hidden = int(cfg.role_post_hidden_dim)
+    out_dim = int(cfg.strength_emb_dim)
+
+    team_pos_e = position_emb_layer(team_pos_ids)  # (B,11,pos_dim)
+    team_input = Concatenate(axis=-1, name=f"{prefix}_strength_concat")([team_vals, team_mask, team_pos_e])
+
+    row_h1 = Dense(row_hidden, activation="relu", name=f"{prefix}_row_dense_1")(team_input)
+    row_h2 = Dense(row_hidden, activation="relu", name=f"{prefix}_row_dense_2")(row_h1)
+
+    row_valid = _row_valid_mask(team_mask, prefix)
+
+    gk_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Goalkeeper"])
+    def_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Defender"])
+    mid_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Midfielder"])
+    fwd_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Forward"])
+
+    gk_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, gk_idx, prefix)
+    def_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, def_idx, prefix)
+    mid_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, mid_idx, prefix)
+    fwd_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, fwd_idx, prefix)
+
+    role_cat = Concatenate(name=f"{prefix}_role_concat")([gk_pool, def_pool, mid_pool, fwd_pool])
+
+    z = Dense(role_hidden, activation="relu", name=f"{prefix}_role_post_dense_1")(role_cat)
+    z = Dropout(cfg.team_dropout, name=f"{prefix}_role_post_dropout")(z)
+    z = Dense(out_dim, activation="relu", name=f"{prefix}_team_repr")(z)
+
+    return z
+
+
+def _main_loss_and_metrics_for_mode(cfg: TrainConfig):
+    if cfg.mode == "binary_u25":
+        return "binary_crossentropy", ["accuracy", AUC(name="auc")]
+    if cfg.mode == "goals_dist":
+        return "sparse_categorical_crossentropy", ["accuracy"]
+    if cfg.mode == "goals_reg":
+        return "mae", ["mae"]
+    raise ValueError(f"Unknown mode: {cfg.mode}")
+
+
+def _aux_loss_and_metrics_for_task(aux_task: str):
+    if aux_task == "binary_u25":
+        return "binary_crossentropy", ["accuracy"]
+    if aux_task == "goals_dist":
+        return "sparse_categorical_crossentropy", ["accuracy"]
+    if aux_task == "goals_reg":
+        return "mae", ["mae"]
+    raise ValueError(f"Unknown aux_task: {aux_task}")
+
+
+def build_model_v1(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     x_num = Input((num_num,), name="num")
     x_h = Input((1,), dtype="int32", name="home_id")
     x_a = Input((1,), dtype="int32", name="away_id")
@@ -275,6 +432,154 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     return model
 
 
+def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
+    x_num = Input((num_num,), name="num")
+    x_h = Input((1,), dtype="int32", name="home_id")
+    x_a = Input((1,), dtype="int32", name="away_id")
+    x_c = Input((1,), dtype="int32", name="comp_id")
+    x_s = Input((4, 11, 34), name="strength")
+    x_hp = Input((11,), dtype="int32", name="home_positions")
+    x_ap = Input((11,), dtype="int32", name="away_positions")
+
+    # ------------------------------------------------------------
+    # Branch 1: numerical/context branch
+    # ------------------------------------------------------------
+    z_num = Dense(128, activation="relu", name="num_branch_dense_1")(x_num)
+    z_num = Dropout(cfg.tabular_dropout, name="num_branch_dropout")(z_num)
+    z_num = Dense(cfg.num_branch_dim, activation="relu", name="num_branch_proj")(z_num)
+    z_num = LayerNormalization(name="num_branch_ln")(z_num)
+
+    # ------------------------------------------------------------
+    # Branch 2: categorical branch with explicit comparisons
+    # ------------------------------------------------------------
+    team_emb = Embedding(num_teams, cfg.team_emb_dim, name="team_embedding")
+    home_e = Flatten(name="home_embedding_flat")(team_emb(x_h))
+    away_e = Flatten(name="away_embedding_flat")(team_emb(x_a))
+
+    comp_emb_layer = Embedding(num_comps, cfg.comp_emb_dim, name="competition_embedding")
+    comp_e = Flatten(name="competition_embedding_flat")(comp_emb_layer(x_c))
+
+    team_diff = _vec_diff(home_e, away_e, "team_embedding_diff")
+    team_absdiff = _abs_diff(home_e, away_e, "team_embedding_absdiff")
+
+    z_cat = Concatenate(name="cat_branch_concat")([home_e, away_e, team_diff, team_absdiff, comp_e])
+    z_cat = Dense(cfg.cat_branch_dim, activation="relu", name="cat_branch_proj")(z_cat)
+    z_cat = Dropout(cfg.cat_dropout, name="cat_branch_dropout")(z_cat)
+    z_cat = LayerNormalization(name="cat_branch_ln")(z_cat)
+
+    # ------------------------------------------------------------
+    # Branch 3: structured team-strength branch
+    # ------------------------------------------------------------
+    home_vals, home_mask, away_vals, away_mask = _split_strength_tensor(x_s)
+
+    position_emb_layer = Embedding(
+        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+        output_dim=cfg.position_emb_dim,
+        name="position_embedding",
+    )
+
+    home_team_repr = _build_team_repr_v2(
+        home_vals,
+        home_mask,
+        x_hp,
+        position_emb_layer,
+        cfg,
+        prefix="home",
+    )
+
+    away_team_repr = _build_team_repr_v2(
+        away_vals,
+        away_mask,
+        x_ap,
+        position_emb_layer,
+        cfg,
+        prefix="away",
+    )
+
+    team_repr_diff = _vec_diff(home_team_repr, away_team_repr, "team_repr_diff")
+    team_repr_absdiff = _abs_diff(home_team_repr, away_team_repr, "team_repr_absdiff")
+
+    z_team = Concatenate(name="team_branch_concat")([home_team_repr, away_team_repr, team_repr_diff, team_repr_absdiff])
+    z_team = Dense(cfg.team_branch_dim, activation="relu", name="team_branch_proj")(z_team)
+    z_team = Dropout(cfg.team_dropout, name="team_branch_dropout")(z_team)
+    z_team = LayerNormalization(name="team_branch_ln")(z_team)
+
+    # ------------------------------------------------------------
+    # Fusion
+    # ------------------------------------------------------------
+    z = Concatenate(name="fusion")([z_num, z_cat, z_team])
+    z = Dense(cfg.fusion_hidden_dim_1, activation="relu", name="fusion_dense_1")(z)
+    z = Dropout(cfg.fusion_dropout_1, name="fusion_dropout_1")(z)
+    z = Dense(cfg.fusion_hidden_dim_2, activation="relu", name="fusion_dense_2")(z)
+    z = Dropout(cfg.fusion_dropout_2, name="fusion_dropout_2")(z)
+
+    # Main output
+    if cfg.mode == "binary_u25":
+        output_main = Dense(1, activation="sigmoid", name="output_main")(z)
+    elif cfg.mode == "goals_dist":
+        output_main = Dense(cfg.max_goals_class + 1, activation="softmax", name="output_main")(z)
+    elif cfg.mode == "goals_reg":
+        output_main = Dense(1, activation="linear", name="output_main")(z)
+    else:
+        raise ValueError(f"Unknown mode: {cfg.mode}")
+
+    outputs = [output_main]
+
+    # Optional auxiliary output from team branch only
+    if cfg.use_team_aux_head and cfg.aux_task is not None:
+        z_aux = Dense(32, activation="relu", name="team_aux_hidden")(z_team)
+
+        if cfg.aux_task == "binary_u25":
+            output_aux = Dense(1, activation="sigmoid", name="output_team_aux")(z_aux)
+        elif cfg.aux_task == "goals_dist":
+            output_aux = Dense(cfg.max_goals_class + 1, activation="softmax", name="output_team_aux")(z_aux)
+        elif cfg.aux_task == "goals_reg":
+            output_aux = Dense(1, activation="linear", name="output_team_aux")(z_aux)
+        else:
+            raise ValueError(f"Unknown aux_task: {cfg.aux_task}")
+
+        outputs.append(output_aux)
+
+    model = Model(inputs=[x_num, x_h, x_a, x_c, x_s, x_hp, x_ap], outputs=outputs)
+
+    main_loss, main_metrics = _main_loss_and_metrics_for_mode(cfg)
+
+    if cfg.use_team_aux_head and cfg.aux_task is not None:
+        aux_loss, aux_metrics = _aux_loss_and_metrics_for_task(cfg.aux_task)
+
+        model.compile(
+            optimizer=Adam(learning_rate=cfg.learning_rate),
+            loss={
+                "output_main": main_loss,
+                "output_team_aux": aux_loss,
+            },
+            loss_weights={
+                "output_main": 1.0,
+                "output_team_aux": cfg.aux_weight,
+            },
+            metrics={
+                "output_main": main_metrics,
+                "output_team_aux": aux_metrics,
+            },
+        )
+    else:
+        model.compile(
+            optimizer=Adam(learning_rate=cfg.learning_rate),
+            loss={"output_main": main_loss},
+            metrics={"output_main": main_metrics},
+        )
+
+    return model
+
+
+def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
+    if cfg.model_version == "v1":
+        return build_model_v1(num_num, num_teams, num_comps, cfg)
+    if cfg.model_version == "v2":
+        return build_model_v2(num_num, num_teams, num_comps, cfg)
+    raise ValueError(f"Unknown model_version: {cfg.model_version}")
+
+
 def _binary_summary(y_true: np.ndarray, y_prob: np.ndarray) -> Dict[str, float]:
     y_hat = (y_prob >= 0.5).astype(np.float32)
     acc = float(np.mean(y_hat == y_true))
@@ -289,6 +594,28 @@ def _reg_summary(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     mae = float(np.mean(np.abs(y_pred - y_true)))
     rmse = float(np.sqrt(np.mean((y_pred - y_true) ** 2)))
     return {"pooled_mae": mae, "pooled_rmse": rmse}
+
+
+def _make_train_targets(matches: List[FSMatch], y_main: np.ndarray, cfg: TrainConfig):
+    if cfg.model_version == "v2" and cfg.use_team_aux_head and cfg.aux_task is not None:
+        y_aux = build_aux_targets_for_matches(matches, cfg.aux_task, cfg.max_goals_class)
+        return {
+            "output_main": y_main,
+            "output_team_aux": y_aux,
+        }
+    return y_main
+
+
+def _extract_main_predictions(pred):
+    """
+    model.predict(...) returns:
+      - ndarray for single-output
+      - list for multi-output
+    We always want the main output.
+    """
+    if isinstance(pred, list):
+        return pred[0]
+    return pred
 
 
 def train_rolling(
@@ -336,33 +663,52 @@ def train_rolling(
     round_records = []
     oos_rows = []
 
-    probe_inputs = None
-    if cfg.enable_branch_diagnostics:
-        probe_ms = matches_sorted[: min(len(matches_sorted), cfg.probe_matches)]
-        probe_arrays = build_arrays_for_matches(probe_ms, cat_maps, cfg.mode, cfg.max_goals_class)
-        probe_inputs = probe_arrays[:-1]
-
     callbacks_common: List[Callback] = [tb]
+    probe_inputs = None
     if cfg.enable_branch_diagnostics and probe_inputs is not None:
         drift_names = []
-        if cfg.use_team_ids:
-            drift_names.append("team_embedding")
-        if cfg.use_comp_embedding:
-            drift_names.append("competition_embedding")
-        if cfg.use_team_strength and cfg.use_position_embedding:
-            drift_names.append("position_embedding")
-        if cfg.use_team_strength:
-            drift_names.extend(["strength_dense_1", "strength_dense_2", "strength_projection"])
+
+        if cfg.model_version == "v1":
+            if cfg.use_team_ids:
+                drift_names.append("team_embedding")
+            if cfg.use_comp_embedding:
+                drift_names.append("competition_embedding")
+            if cfg.use_team_strength and cfg.use_position_embedding:
+                drift_names.append("position_embedding")
+            if cfg.use_team_strength:
+                drift_names.extend(["strength_dense_1", "strength_dense_2", "strength_projection"])
+
+            branch_probe_layers = [
+                "home_embedding_flat" if cfg.use_team_ids else "home_embedding_zero",
+                "competition_embedding_flat" if cfg.use_comp_embedding else "competition_embedding_zero",
+                "home_strength_embedding" if cfg.use_team_strength else "home_strength_embedding_zero",
+            ]
+
+        elif cfg.model_version == "v2":
+            drift_names.extend(
+                [
+                    "team_embedding",
+                    "competition_embedding",
+                    "position_embedding",
+                    "home_row_dense_1",
+                    "home_row_dense_2",
+                    "home_team_repr",
+                    "team_branch_proj",
+                ]
+            )
+
+            branch_probe_layers = [
+                "home_embedding_flat",
+                "competition_embedding_flat",
+                "home_team_repr",
+                "team_branch_proj",
+            ]
 
         if drift_names:
             callbacks_common.append(LayerDriftLogger(drift_names, tb_writer))
 
-        branch_probe_layers = [
-            "home_embedding_flat" if cfg.use_team_ids else "home_embedding_zero",
-            "competition_embedding_flat" if cfg.use_comp_embedding else "competition_embedding_zero",
-            "home_strength_embedding" if cfg.use_team_strength else "home_strength_embedding_zero",
-        ]
-        callbacks_common.append(BranchProbeLogger(probe_inputs, tb_writer, branch_probe_layers))
+        if branch_probe_layers:
+            callbacks_common.append(BranchProbeLogger(probe_inputs, tb_writer, branch_probe_layers))
 
     for i in range(cfg.window_rounds, len(rounds) - 1):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
@@ -371,34 +717,46 @@ def train_rolling(
         X = build_arrays_for_matches(train_ms, cat_maps, cfg.mode, cfg.max_goals_class)
         V = build_arrays_for_matches(val_ms, cat_maps, cfg.mode, cfg.max_goals_class)
 
+        y_train = _make_train_targets(train_ms, X[-1], cfg)
+        y_val = _make_train_targets(val_ms, V[-1], cfg)
+
         print(f"[train] round {i+1}/{len(rounds)} train={len(train_ms)} val={len(val_ms)}")
 
         if len(val_ms) < cfg.min_warning_val_size:
             print(f"[warn] round {i+1} has small validation size: {len(val_ms)}")
 
+        monitor_name = (
+            "val_output_main_loss"
+            if (cfg.model_version == "v2" and cfg.use_team_aux_head and cfg.aux_task is not None)
+            else "val_loss"
+        )
+
         early = EarlyStopping(
             patience=2,
             restore_best_weights=True,
-            monitor="val_loss",
+            monitor=monitor_name,
             mode="min",
         )
 
         model.fit(
             X[:-1],
-            X[-1],
-            validation_data=(V[:-1], V[-1]),
+            y_train,
+            validation_data=(V[:-1], y_val),
             epochs=cfg.epochs_per_step,
             batch_size=cfg.batch_size,
             callbacks=[early] + callbacks_common,
             verbose=1,
         )
 
-        val_metrics = model.evaluate(V[:-1], V[-1], verbose=0)
+        val_metrics = model.evaluate(V[:-1], y_val, verbose=0, return_dict=True)
         round_step = int(i + 1)  # 1-based round index for readability in TensorBoard
 
         if cfg.mode == "binary_u25":
-            val_loss, val_acc = val_metrics
-            val_prob = model.predict(V[:-1], verbose=0).ravel().astype(np.float32)
+            val_loss = float(val_metrics.get("output_main_loss", val_metrics.get("loss")))
+            val_acc = float(val_metrics.get("output_main_accuracy", val_metrics.get("accuracy")))
+
+            raw_pred = model.predict(V[:-1], verbose=0)
+            val_prob = _extract_main_predictions(raw_pred).ravel().astype(np.float32)
             y_true = V[-1].astype(np.float32)
 
             auc_metric = AUC(curve="ROC")
@@ -442,8 +800,11 @@ def train_rolling(
                 tb_writer.flush()
 
         elif cfg.mode == "goals_dist":
-            val_loss, val_acc = val_metrics
-            probabilities = model.predict(V[:-1], verbose=0)
+            val_loss = float(val_metrics.get("output_main_loss", val_metrics.get("loss")))
+            val_acc = float(val_metrics.get("output_main_accuracy", val_metrics.get("accuracy")))
+
+            raw_pred = model.predict(V[:-1], verbose=0)
+            probabilities = _extract_main_predictions(raw_pred)
             expected = (probabilities * np.arange(cfg.max_goals_class + 1)).sum(axis=1)
             mae = np.mean(np.abs(expected - V[-1]))
 
@@ -468,8 +829,11 @@ def train_rolling(
                 tb_writer.flush()
 
         elif cfg.mode == "goals_reg":
-            val_loss, val_mae = val_metrics
-            predictions = model.predict(V[:-1], verbose=0).ravel()
+            val_loss = float(val_metrics.get("output_main_loss", val_metrics.get("loss")))
+            val_mae = float(val_metrics.get("output_main_mae", val_metrics.get("mae")))
+
+            raw_pred = model.predict(V[:-1], verbose=0)
+            predictions = _extract_main_predictions(raw_pred).ravel()
             rmse = float(np.sqrt(np.mean((predictions - V[-1]) ** 2)))
 
             round_records.append(
@@ -537,5 +901,9 @@ def train_rolling(
         json.dump(summary, f, indent=2)
     print(f"[metrics] saved summary to {summary_path}")
     print(f"[summary] {summary}")
+
+    cfg_json_path = Path(log_dir) / "train_config.json"
+    with cfg_json_path.open("w", encoding="utf-8") as f:
+        json.dump(asdict(cfg), f, indent=2)
 
     return model

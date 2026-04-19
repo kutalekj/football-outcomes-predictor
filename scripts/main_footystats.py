@@ -134,16 +134,17 @@ evaluate_baseline_rolling(
 # ------------------------------------------------------------
 cfg = TrainConfig(
     mode="binary_u25",
-    run_name="mlp_binary_u25_diag_no_positions",
-    enable_branch_diagnostics=True,
-    use_team_strength=True,
-    use_team_ids=True,
-    use_comp_embedding=True,
-    use_position_embedding=False,
+    model_version="v2",
+    use_team_aux_head=False,
+    learning_rate=0.0001,
+    batch_size=64,
+    window_rounds=25,
+    epochs_per_step=5,
+    seed=42,
 )
 
 model = train_rolling(league_matches_sorted, cat_maps, cfg)
-model.save("mlp_binary_u25_diag_no_positions.keras")
+model.save("mlp_full_v2_binary_u25.keras")
 print("Model saved.")
 
 if sett.ALL_STORE:

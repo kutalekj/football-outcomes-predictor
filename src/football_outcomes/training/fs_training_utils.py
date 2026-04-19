@@ -318,3 +318,34 @@ def build_flat_tabular_arrays_for_matches(
     )
 
     return X.astype(np.float32), y
+
+
+def build_aux_targets_for_matches(
+    matches: List[FSMatch],
+    aux_mode: str,
+    max_goals_class: int = 10,
+) -> np.ndarray:
+    """
+    Build auxiliary targets from raw match outcomes.
+
+    Supported:
+      - "binary_u25" : 1 if total goals <= 2 else 0
+      - "goals_reg"  : total goals as float
+      - "goals_dist" : clipped total-goals class
+    """
+    vals = []
+
+    for m in matches:
+        total_goals = (m.home_goals or 0) + (m.away_goals or 0)
+
+        if aux_mode == "binary_u25":
+            vals.append(1.0 if total_goals <= 2 else 0.0)
+        elif aux_mode == "goals_reg":
+            vals.append(float(total_goals))
+        elif aux_mode == "goals_dist":
+            vals.append(int(min(total_goals, max_goals_class)))
+        else:
+            raise ValueError(f"Unknown aux_mode: {aux_mode}")
+
+    dtype = np.float32 if aux_mode in ("binary_u25", "goals_reg") else np.int32
+    return np.asarray(vals, dtype=dtype)
