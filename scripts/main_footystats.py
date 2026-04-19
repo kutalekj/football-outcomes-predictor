@@ -7,6 +7,7 @@ from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import load_avg_team_strength, load_sofifa_players, save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
+from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
 from football_outcomes.training.fs_training_utils import build_categorical_maps
 from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
 from football_outcomes.utils import fs_common as utils
@@ -63,12 +64,10 @@ team_index_league = fu.build_team_match_index(league_matches_sorted)
 last_progress_month = None  # type: tuple[int,int] | None  # (year, month)
 processed = 0
 total = len(league_matches_sorted)
-
 skipped_matches = 0
 
 for match in league_matches_sorted:
     processed += 1
-
     dt = match.datetime  # datetime at 00:00
     year = dt.year
     month = dt.month
@@ -106,10 +105,42 @@ print(f"[features] usable matches for training: {len(league_matches_sorted)}")
 
 cat_maps = build_categorical_maps(league_matches_sorted)
 
-cfg = TrainConfig(mode="binary_u25")
+# ------------------------------------------------------------
+# Simple baselines first
+# ------------------------------------------------------------
+evaluate_baseline_rolling(
+    league_matches_sorted,
+    cat_maps,
+    BaselineConfig(mode="binary_u25", model_name="logreg", window_rounds=25),
+)
+
+evaluate_baseline_rolling(
+    league_matches_sorted,
+    cat_maps,
+    BaselineConfig(mode="binary_u25", model_name="rf", window_rounds=25),
+)
+
+evaluate_baseline_rolling(
+    league_matches_sorted,
+    cat_maps,
+    BaselineConfig(mode="goals_reg", model_name="ridge", window_rounds=25),
+)
+
+# ------------------------------------------------------------
+# Diagnosable MLP run
+# ------------------------------------------------------------
+cfg = TrainConfig(
+    mode="binary_u25",
+    run_name="mlp_binary_u25_diag_full",
+    enable_branch_diagnostics=True,
+    use_team_strength=True,
+    use_team_ids=True,
+    use_comp_embedding=True,
+    use_position_embedding=True,
+)
 
 model = train_rolling(league_matches_sorted, cat_maps, cfg)
-model.save("mlp_first_run.keras")
+model.save("mlp_binary_u25_diag_full.keras")
 print("Model saved.")
 
 if sett.ALL_STORE:
