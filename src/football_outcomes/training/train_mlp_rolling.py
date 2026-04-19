@@ -796,7 +796,7 @@ def train_rolling(
         )
 
         early = EarlyStopping(
-            patience=2,
+            patience=1,
             restore_best_weights=True,
             monitor=monitor_name,
             mode="min",

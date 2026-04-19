@@ -134,15 +134,15 @@ evaluate_baseline_rolling(
 # ------------------------------------------------------------
 cfg = TrainConfig(
     mode="binary_u25",
-    model_version="v2",
+    model_version="v1",
     use_team_aux_head=False,
     aux_task=None,
-    learning_rate=0.0001,
+    learning_rate=0.00005,
     batch_size=64,
     window_rounds=25,
-    epochs_per_step=4,
+    epochs_per_step=3,
     seed=42,
-    run_name="mlp_binary_u25_diag_v2-lite_26-04-19-17-20",
+    run_name="mlp_binary_u25_diag_v1_26-04-19-18-58",
 )
 
 model = train_rolling(league_matches_sorted, cat_maps, cfg)
