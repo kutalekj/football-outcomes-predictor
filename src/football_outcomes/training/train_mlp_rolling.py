@@ -194,12 +194,13 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         home_pos_e = position_emb_layer(x_hp)  # (batch, 11, position_emb_dim)
         away_pos_e = position_emb_layer(x_ap)  # (batch, 11, position_emb_dim)
     else:
+        pos_dim = int(cfg.position_emb_dim)
         home_pos_e = Lambda(
-            lambda t: tf.zeros((tf.shape(t)[0], 11, cfg.position_emb_dim), dtype=tf.float32),
+            lambda t, d=pos_dim: tf.zeros((tf.shape(t)[0], 11, d), dtype=tf.float32),
             name="home_position_zero",
         )(x_hp)
         away_pos_e = Lambda(
-            lambda t: tf.zeros((tf.shape(t)[0], 11, cfg.position_emb_dim), dtype=tf.float32),
+            lambda t, d=pos_dim: tf.zeros((tf.shape(t)[0], 11, d), dtype=tf.float32),
             name="away_position_zero",
         )(x_ap)
 
