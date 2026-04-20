@@ -84,6 +84,9 @@ class TrainConfig:
     team_l2: float = 5e-5
     fusion_l2: float = 5e-5
 
+    early_stopping_patience: int = 1
+    early_stopping_min_delta: float = 0.0
+
     # Logging and evaluation
     run_name: str | None = None
     min_warning_val_size: int = 20
@@ -796,7 +799,8 @@ def train_rolling(
         )
 
         early = EarlyStopping(
-            patience=1,
+            patience=cfg.early_stopping_patience,
+            min_delta=cfg.early_stopping_min_delta,
             restore_best_weights=True,
             monitor=monitor_name,
             mode="min",

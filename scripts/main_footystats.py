@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import csv
+import json
 import os
+from pathlib import Path
+
+import matplotlib
+import matplotlib.pyplot as plt
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -14,6 +20,8 @@ from football_outcomes.training.train_mlp_rolling import TrainConfig, train_roll
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
 from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
+
+matplotlib.use("Agg")
 
 
 def log_feature_error(msg: str) -> None:
@@ -132,22 +140,250 @@ evaluate_baseline_rolling(
 # ------------------------------------------------------------
 # Diagnosable MLP run
 # ------------------------------------------------------------
-cfg = TrainConfig(
-    mode="binary_u25",
-    model_version="v1",
-    use_team_aux_head=False,
-    aux_task=None,
-    learning_rate=0.00005,
-    batch_size=64,
-    window_rounds=25,
-    epochs_per_step=3,
-    seed=42,
-    run_name="mlp_binary_u25_diag_v1_26-04-19-18-58",
+# ------------------------------------------------------------
+# Focused sweep on training dynamics
+# ------------------------------------------------------------
+
+SWEEP_RUNS = [
+    # ------------------------------------------------------------
+    # v1 family: 15 runs
+    # epochs fixed to 3, batch fixed to 64
+    # sweep: learning_rate x window_rounds
+    # ------------------------------------------------------------
+    {"model_version": "v1", "learning_rate": 2e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 2e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 2e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 3e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 3e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 3e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 5e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 5e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 5e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 7e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 7e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 7e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 1e-4, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 1e-4, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
+    {"model_version": "v1", "learning_rate": 1e-4, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
+    # ------------------------------------------------------------
+    # v2-lite family: 15 runs
+    # epochs fixed to 2, batch fixed to 64
+    # sweep: learning_rate x window_rounds x regularization profile
+    # ------------------------------------------------------------
+    # Standard regularization
+    {"model_version": "v2", "learning_rate": 3e-5, "window_rounds": 20, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 3e-5, "window_rounds": 25, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 3e-5, "window_rounds": 30, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 5e-5, "window_rounds": 20, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 5e-5, "window_rounds": 25, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 5e-5, "window_rounds": 30, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 7e-5, "window_rounds": 20, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 7e-5, "window_rounds": 25, "epochs_per_step": 2, "batch_size": 64},
+    {"model_version": "v2", "learning_rate": 7e-5, "window_rounds": 30, "epochs_per_step": 2, "batch_size": 64},
+    # Stronger regularization around the most plausible area
+    {
+        "model_version": "v2",
+        "learning_rate": 3e-5,
+        "window_rounds": 25,
+        "epochs_per_step": 2,
+        "batch_size": 64,
+        "team_dropout": 0.30,
+        "fusion_dropout_1": 0.50,
+        "fusion_dropout_2": 0.35,
+        "team_l2": 7e-5,
+        "fusion_l2": 7e-5,
+    },
+    {
+        "model_version": "v2",
+        "learning_rate": 5e-5,
+        "window_rounds": 20,
+        "epochs_per_step": 2,
+        "batch_size": 64,
+        "team_dropout": 0.30,
+        "fusion_dropout_1": 0.50,
+        "fusion_dropout_2": 0.35,
+        "team_l2": 7e-5,
+        "fusion_l2": 7e-5,
+    },
+    {
+        "model_version": "v2",
+        "learning_rate": 5e-5,
+        "window_rounds": 25,
+        "epochs_per_step": 2,
+        "batch_size": 64,
+        "team_dropout": 0.30,
+        "fusion_dropout_1": 0.50,
+        "fusion_dropout_2": 0.35,
+        "team_l2": 7e-5,
+        "fusion_l2": 7e-5,
+    },
+    {
+        "model_version": "v2",
+        "learning_rate": 5e-5,
+        "window_rounds": 30,
+        "epochs_per_step": 2,
+        "batch_size": 64,
+        "team_dropout": 0.30,
+        "fusion_dropout_1": 0.50,
+        "fusion_dropout_2": 0.35,
+        "team_l2": 7e-5,
+        "fusion_l2": 7e-5,
+    },
+    {
+        "model_version": "v2",
+        "learning_rate": 7e-5,
+        "window_rounds": 25,
+        "epochs_per_step": 2,
+        "batch_size": 64,
+        "team_dropout": 0.30,
+        "fusion_dropout_1": 0.50,
+        "fusion_dropout_2": 0.35,
+        "team_l2": 7e-5,
+        "fusion_l2": 7e-5,
+    },
+    {
+        "model_version": "v2",
+        "learning_rate": 7e-5,
+        "window_rounds": 30,
+        "epochs_per_step": 2,
+        "batch_size": 64,
+        "team_dropout": 0.30,
+        "fusion_dropout_1": 0.50,
+        "fusion_dropout_2": 0.35,
+        "team_l2": 7e-5,
+        "fusion_l2": 7e-5,
+    },
+]
+
+sweep_root = Path(sett.DATA_DIR) / "sweeps"
+sweep_root.mkdir(parents=True, exist_ok=True)
+
+results = []
+
+for i, params in enumerate(SWEEP_RUNS, start=1):
+    run_name = (
+        f"{params['model_version']}"
+        f"_u25"
+        f"_lr{params['learning_rate']}"
+        f"_wr{params['window_rounds']}"
+        f"_ep{params['epochs_per_step']}"
+        f"_bs{params['batch_size']}"
+    ).replace(".", "p")
+
+    if "team_dropout" in params:
+        run_name += (
+            f"_td{params['team_dropout']}"
+            f"_fd1{params['fusion_dropout_1']}"
+            f"_fd2{params['fusion_dropout_2']}"
+            f"_tl2{params['team_l2']}"
+            f"_fl2{params['fusion_l2']}"
+        ).replace(".", "p")
+
+    print("\n" + "=" * 80)
+    print(f"[SWEEP {i}/{len(SWEEP_RUNS)}] {run_name}")
+    print("=" * 80)
+
+    base_cfg = {
+        "mode": "binary_u25",
+        "model_version": params["model_version"],
+        "use_team_aux_head": False,
+        "aux_task": None,
+        "seed": 42,
+        "run_name": run_name,
+        "enable_branch_diagnostics": False,  # keep sweep fast
+        "early_stopping_patience": 1,
+        "early_stopping_min_delta": 0.0,
+    }
+
+    # allow sweep params to override TrainConfig fields
+    cfg_kwargs = {**base_cfg, **params}
+
+    cfg = TrainConfig(**cfg_kwargs)
+
+    _ = train_rolling(league_matches_sorted, cat_maps, cfg)
+
+    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "summary.json"
+    config_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "train_config.json"
+
+    with summary_path.open("r", encoding="utf-8") as f:
+        summary = json.load(f)
+
+    with config_path.open("r", encoding="utf-8") as f:
+        saved_cfg = json.load(f)
+
+    row = {
+        "run_name": run_name,
+        "model_version": saved_cfg["model_version"],
+        "learning_rate": saved_cfg["learning_rate"],
+        "epochs_per_step": saved_cfg["epochs_per_step"],
+        "batch_size": saved_cfg["batch_size"],
+        "pooled_accuracy": summary.get("pooled_accuracy"),
+        "pooled_auc": summary.get("pooled_auc"),
+        "pooled_brier": summary.get("pooled_brier"),
+    }
+    results.append(row)
+
+# Sort: best AUC first, then best accuracy, then lowest Brier
+results.sort(
+    key=lambda r: (
+        -(r["pooled_auc"] if r["pooled_auc"] is not None else -999),
+        -(r["pooled_accuracy"] if r["pooled_accuracy"] is not None else -999),
+        (r["pooled_brier"] if r["pooled_brier"] is not None else 999),
+    )
 )
 
-model = train_rolling(league_matches_sorted, cat_maps, cfg)
-# model.save("mlp_full_v2_binary_u25.keras")
-# print("Model saved.")
+# Save CSV
+csv_path = sweep_root / "overnight_sweep_results.csv"
+with csv_path.open("w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
+    writer.writeheader()
+    writer.writerows(results)
+
+print(f"[SWEEP] Saved results CSV to {csv_path}")
+
+# Save simple text ranking
+txt_path = sweep_root / "overnight_sweep_ranking.txt"
+with txt_path.open("w", encoding="utf-8") as f:
+    for idx, r in enumerate(results, start=1):
+        f.write(
+            f"{idx}. {r['run_name']} | "
+            f"AUC={r['pooled_auc']:.6f} | "
+            f"ACC={r['pooled_accuracy']:.6f} | "
+            f"BRIER={r['pooled_brier']:.6f}\n"
+        )
+
+print(f"[SWEEP] Saved ranking to {txt_path}")
+
+# Make one compact comparison figure
+labels = [r["run_name"] for r in results]
+accs = [r["pooled_accuracy"] for r in results]
+aucs = [r["pooled_auc"] for r in results]
+briers = [r["pooled_brier"] for r in results]
+
+fig = plt.figure(figsize=(16, 10))
+
+ax1 = fig.add_subplot(3, 1, 1)
+ax1.plot(labels, accs, marker="o")
+ax1.tick_params(axis="x", rotation=45)
+
+ax2 = fig.add_subplot(3, 1, 2)
+ax2.plot(labels, aucs, marker="o")
+ax2.tick_params(axis="x", rotation=45)
+
+ax3 = fig.add_subplot(3, 1, 3)
+ax3.plot(labels, briers, marker="o")
+ax3.tick_params(axis="x", rotation=45)
+
+ax1.set_title("Overnight sweep: pooled accuracy")
+ax2.set_title("Overnight sweep: pooled AUC")
+ax3.set_title("Overnight sweep: pooled Brier (lower is better)")
+
+plt.tight_layout()
+plot_path = sweep_root / "overnight_sweep_overview.png"
+plt.savefig(plot_path, dpi=160, bbox_inches="tight")
+plt.close(fig)
+
+print(f"[SWEEP] Saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(
