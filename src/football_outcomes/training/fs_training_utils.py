@@ -349,3 +349,59 @@ def build_aux_targets_for_matches(
 
     dtype = np.float32 if aux_mode in ("binary_u25", "goals_reg") else np.int32
     return np.asarray(vals, dtype=dtype)
+
+
+def build_strength_only_arrays_for_matches(
+    matches: List[FSMatch],
+    mode: str,
+    max_goals_class: int = 10,
+):
+    """
+    Prepare only the lineup-based structured inputs:
+      - strength tensor: (N, 4, 11, 34)
+      - home positions:  (N, 11)
+      - away positions:  (N, 11)
+      - target y
+
+    This is intended for standalone pretraining of the structured branch.
+    """
+    X_s, X_hp, X_ap, y = [], [], [], []
+
+    for m in matches:
+        f = getattr(m, "features_before_match", None)
+        if f is None:
+            raise ValueError(f"Match {m.id} has no features")
+
+        hs_val, hs_mask = _strength_to_value_and_mask(f.home_team_strength)
+        aw_val, aw_mask = _strength_to_value_and_mask(f.away_team_strength)
+        X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))
+
+        home_pos = getattr(f, "home_player_positions", None) or getattr(f, "home_positions", None)
+        if home_pos is None:
+            home_pos = calculate_team_position_indices(m, m.home_team.id)
+
+        away_pos = getattr(f, "away_player_positions", None) or getattr(f, "away_positions", None)
+        if away_pos is None:
+            away_pos = calculate_team_position_indices(m, m.away_team.id)
+
+        X_hp.append(np.asarray(home_pos, dtype=np.int32))
+        X_ap.append(np.asarray(away_pos, dtype=np.int32))
+
+        total_goals = (m.home_goals or 0) + (m.away_goals or 0)
+        if mode == "binary_u25":
+            y.append(1.0 if total_goals <= 2 else 0.0)
+        elif mode == "goals_dist":
+            y.append(int(min(total_goals, max_goals_class)))
+        elif mode == "goals_reg":
+            y.append(float(total_goals))
+        else:
+            raise ValueError(f"Unknown mode: {mode}")
+
+    y_dtype = np.float32 if mode in ("binary_u25", "goals_reg") else np.int32
+
+    return (
+        np.asarray(X_s, np.float32),
+        np.asarray(X_hp, np.int32),
+        np.asarray(X_ap, np.int32),
+        np.asarray(y, y_dtype),
+    )

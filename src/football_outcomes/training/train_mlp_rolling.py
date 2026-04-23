@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import regularizers
@@ -34,10 +36,13 @@ from football_outcomes.training.fs_training_utils import (
     CatMaps,
     build_arrays_for_matches,
     build_aux_targets_for_matches,
+    build_strength_only_arrays_for_matches,
     distribute_matches_into_rounds,
     extract_numerical_features,
     summarize_rounds,
 )
+
+matplotlib.use("Agg")
 
 
 @dataclass
@@ -99,6 +104,42 @@ class TrainConfig:
     use_team_ids: bool = True
     use_comp_embedding: bool = True
     use_position_embedding: bool = True
+
+
+@dataclass
+class StrengthPretrainConfig:
+    branch_version: str = "v1"  # "v1" | "v2"
+    mode: str = "binary_u25"  # keep binary_u25 as the main use case now
+
+    window_rounds: int = 25
+    epochs_per_step: int = 3
+    learning_rate: float = 5e-5
+    batch_size: int = 64
+
+    max_goals_class: int = 10
+    seed: int | None = 42
+    run_name: str | None = None
+
+    early_stopping_patience: int = 1
+    early_stopping_min_delta: float = 0.0
+
+    # shared branch dimensions
+    strength_emb_dim: int = 16
+    position_emb_dim: int = 3
+
+    # v2 branch params
+    player_row_hidden_dim: int = 32
+    role_post_hidden_dim: int = 32
+    team_branch_dim: int = 32
+    team_dropout: float = 0.25
+    team_l2: float = 5e-5
+
+    # small standalone classifier head
+    compare_hidden_dim: int = 32
+    compare_dropout: float = 0.20
+
+    # logging
+    save_oos_predictions: bool = True
 
 
 def set_global_seed(seed: int) -> None:
@@ -261,7 +302,7 @@ def _build_team_repr_v2(
     team_mask,
     team_pos_ids,
     position_emb_layer,
-    cfg: TrainConfig,
+    cfg,
     prefix: str,
 ):
     """
@@ -640,6 +681,138 @@ def build_model(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     raise ValueError(f"Unknown model_version: {cfg.model_version}")
 
 
+def build_strength_pretrain_model_v1(cfg: StrengthPretrainConfig) -> Model:
+    """
+    Standalone pretraining model using the same structured branch design as v1:
+      position embedding + shared dense row encoder + global average pooling + projection
+    """
+    x_s = Input((4, 11, 34), name="strength")
+    x_hp = Input((11,), dtype="int32", name="home_positions")
+    x_ap = Input((11,), dtype="int32", name="away_positions")
+
+    position_emb_layer = Embedding(
+        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+        output_dim=cfg.position_emb_dim,
+        name="position_embedding",
+    )
+    home_pos_e = position_emb_layer(x_hp)
+    away_pos_e = position_emb_layer(x_ap)
+
+    home_vals = Lambda(lambda t: t[:, 0], name="home_strength_values")(x_s)
+    home_mask = Lambda(lambda t: t[:, 1], name="home_strength_mask")(x_s)
+    away_vals = Lambda(lambda t: t[:, 2], name="away_strength_values")(x_s)
+    away_mask = Lambda(lambda t: t[:, 3], name="away_strength_mask")(x_s)
+
+    home_team_input = Concatenate(axis=-1, name="home_strength_concat")([home_vals, home_mask, home_pos_e])
+    away_team_input = Concatenate(axis=-1, name="away_strength_concat")([away_vals, away_mask, away_pos_e])
+
+    strength_dense_1 = Dense(64, activation="relu", name="strength_dense_1")
+    strength_dense_2 = Dense(32, activation="relu", name="strength_dense_2")
+    strength_pool = GlobalAveragePooling1D(name="strength_pool")
+    strength_proj = Dense(cfg.strength_emb_dim, activation="relu", name="strength_projection")
+
+    def encode_team(team_tensor):
+        z = strength_dense_1(team_tensor)
+        z = strength_dense_2(z)
+        z = strength_pool(z)
+        z = strength_proj(z)
+        return z
+
+    home_s = Lambda(lambda t: t, name="home_strength_embedding")(encode_team(home_team_input))
+    away_s = Lambda(lambda t: t, name="away_strength_embedding")(encode_team(away_team_input))
+
+    diff = Lambda(lambda xs: xs[0] - xs[1], name="strength_diff")([home_s, away_s])
+    absdiff = Lambda(lambda xs: tf.abs(xs[0] - xs[1]), name="strength_absdiff")([home_s, away_s])
+
+    z = Concatenate(name="pretrain_fusion")([home_s, away_s, diff, absdiff])
+    z = Dense(cfg.compare_hidden_dim, activation="relu", name="pretrain_head_dense_1")(z)
+    z = Dropout(cfg.compare_dropout, name="pretrain_head_dropout")(z)
+
+    if cfg.mode == "binary_u25":
+        y = Dense(1, activation="sigmoid", name="output_binary")(z)
+        model = Model([x_s, x_hp, x_ap], y)
+        model.compile(
+            optimizer=Adam(learning_rate=cfg.learning_rate),
+            loss="binary_crossentropy",
+            metrics=["accuracy"],
+        )
+    else:
+        raise ValueError("Strength pretraining is currently intended for mode='binary_u25'.")
+
+    return model
+
+
+def build_strength_pretrain_model_v2(cfg: StrengthPretrainConfig) -> Model:
+    """
+    Standalone pretraining model using the role-aware v2/v2-lite branch design.
+    """
+    x_s = Input((4, 11, 34), name="strength")
+    x_hp = Input((11,), dtype="int32", name="home_positions")
+    x_ap = Input((11,), dtype="int32", name="away_positions")
+
+    home_vals, home_mask, away_vals, away_mask = _split_strength_tensor(x_s)
+
+    position_emb_layer = Embedding(
+        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+        output_dim=cfg.position_emb_dim,
+        name="position_embedding",
+    )
+
+    home_team_repr = _build_team_repr_v2(
+        home_vals,
+        home_mask,
+        x_hp,
+        position_emb_layer,
+        cfg,
+        prefix="home",
+    )
+
+    away_team_repr = _build_team_repr_v2(
+        away_vals,
+        away_mask,
+        x_ap,
+        position_emb_layer,
+        cfg,
+        prefix="away",
+    )
+
+    team_repr_diff = _vec_diff(home_team_repr, away_team_repr, "team_repr_diff")
+    team_repr_absdiff = _abs_diff(home_team_repr, away_team_repr, "team_repr_absdiff")
+
+    z = Concatenate(name="team_branch_concat")([home_team_repr, away_team_repr, team_repr_diff, team_repr_absdiff])
+    z = Dense(
+        cfg.team_branch_dim,
+        activation="relu",
+        kernel_regularizer=regularizers.l2(cfg.team_l2),
+        name="team_branch_proj",
+    )(z)
+    z = Dropout(cfg.team_dropout, name="team_branch_dropout")(z)
+
+    z = Dense(cfg.compare_hidden_dim, activation="relu", name="pretrain_head_dense_1")(z)
+    z = Dropout(cfg.compare_dropout, name="pretrain_head_dropout")(z)
+
+    if cfg.mode == "binary_u25":
+        y = Dense(1, activation="sigmoid", name="output_binary")(z)
+        model = Model([x_s, x_hp, x_ap], y)
+        model.compile(
+            optimizer=Adam(learning_rate=cfg.learning_rate),
+            loss="binary_crossentropy",
+            metrics=["accuracy", AUC(name="auc")],
+        )
+    else:
+        raise ValueError("Strength pretraining is currently intended for mode='binary_u25'.")
+
+    return model
+
+
+def build_strength_pretrain_model(cfg: StrengthPretrainConfig) -> Model:
+    if cfg.branch_version == "v1":
+        return build_strength_pretrain_model_v1(cfg)
+    if cfg.branch_version == "v2":
+        return build_strength_pretrain_model_v2(cfg)
+    raise ValueError(f"Unknown branch_version: {cfg.branch_version}")
+
+
 def _binary_summary(y_true: np.ndarray, y_prob: np.ndarray) -> Dict[str, float]:
     y_hat = (y_prob >= 0.5).astype(np.float32)
     acc = float(np.mean(y_hat == y_true))
@@ -654,6 +827,41 @@ def _reg_summary(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     mae = float(np.mean(np.abs(y_pred - y_true)))
     rmse = float(np.sqrt(np.mean((y_pred - y_true) ** 2)))
     return {"pooled_mae": mae, "pooled_rmse": rmse}
+
+
+def _save_pretrain_round_plot(log_dir: str, round_records: List[dict], title: str) -> None:
+    if not round_records:
+        return
+
+    xs = [r["round_idx"] for r in round_records]
+
+    fig = plt.figure(figsize=(12, 8))
+
+    if "val_accuracy" in round_records[0]:
+        ax1 = fig.add_subplot(2, 2, 1)
+        ax1.plot(xs, [r["val_accuracy"] for r in round_records])
+        ax1.set_title("Round val accuracy")
+
+    if "val_auc" in round_records[0]:
+        ax2 = fig.add_subplot(2, 2, 2)
+        ax2.plot(xs, [r["val_auc"] for r in round_records])
+        ax2.set_title("Round val AUC")
+
+    if "val_brier" in round_records[0]:
+        ax3 = fig.add_subplot(2, 2, 3)
+        ax3.plot(xs, [r["val_brier"] for r in round_records])
+        ax3.set_title("Round val Brier")
+
+    if "val_loss" in round_records[0]:
+        ax4 = fig.add_subplot(2, 2, 4)
+        ax4.plot(xs, [r["val_loss"] for r in round_records])
+        ax4.set_title("Round val loss")
+
+    fig.suptitle(title)
+    plt.tight_layout()
+    out_path = Path(log_dir) / "round_overview.png"
+    plt.savefig(out_path, dpi=160, bbox_inches="tight")
+    plt.close(fig)
 
 
 def _make_train_targets(matches: List[FSMatch], y_main: np.ndarray, cfg: TrainConfig):
@@ -975,3 +1183,203 @@ def train_rolling(
         json.dump(asdict(cfg), f, indent=2)
 
     return model
+
+
+def train_strength_pretrain_rolling(
+    matches_sorted: List[FSMatch],
+    cfg: StrengthPretrainConfig,
+) -> Model:
+    rounds = distribute_matches_into_rounds(matches_sorted)
+    round_info = summarize_rounds(rounds)
+    print(f"[pretrain-rounds] {round_info}")
+
+    if cfg.seed is not None:
+        set_global_seed(cfg.seed)
+        print(f"[pretrain-seed] Using seed={cfg.seed}")
+
+    model = build_strength_pretrain_model(cfg)
+
+    run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_name = cfg.run_name or f"strength_pretrain_{cfg.branch_version}_{cfg.mode}_{run_stamp}"
+
+    log_root = Path(sett.DATA_DIR) / "tensorboard_logs"
+    log_root.mkdir(parents=True, exist_ok=True)
+    log_dir = str(log_root / run_name)
+
+    tb = TensorBoard(
+        log_dir=log_dir,
+        histogram_freq=0,
+        write_graph=True,
+        write_images=False,
+    )
+    tb_writer = tf.summary.create_file_writer(log_dir)
+
+    print(f"[pretrain-tensorboard] logging to {log_dir}")
+
+    round_records = []
+    oos_rows = []
+
+    for i in range(cfg.window_rounds, len(rounds) - 1):
+        train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
+        val_ms = rounds[i]
+
+        Xs_train, Xhp_train, Xap_train, y_train = build_strength_only_arrays_for_matches(
+            train_ms, cfg.mode, cfg.max_goals_class
+        )
+        Xs_val, Xhp_val, Xap_val, y_val = build_strength_only_arrays_for_matches(val_ms, cfg.mode, cfg.max_goals_class)
+
+        print(
+            f"[pretrain] round {i+1}/{len(rounds)} "
+            f"train={len(train_ms)} val={len(val_ms)} branch={cfg.branch_version}"
+        )
+
+        early = EarlyStopping(
+            patience=cfg.early_stopping_patience,
+            min_delta=cfg.early_stopping_min_delta,
+            restore_best_weights=True,
+            monitor="val_loss",
+            mode="min",
+        )
+
+        model.fit(
+            [Xs_train, Xhp_train, Xap_train],
+            y_train,
+            validation_data=([Xs_val, Xhp_val, Xap_val], y_val),
+            epochs=cfg.epochs_per_step,
+            batch_size=cfg.batch_size,
+            callbacks=[early, tb],
+            verbose=1,
+        )
+
+        val_metrics = model.evaluate([Xs_val, Xhp_val, Xap_val], y_val, verbose=0, return_dict=True)
+        val_prob = model.predict([Xs_val, Xhp_val, Xap_val], verbose=0).ravel().astype(np.float32)
+
+        auc_metric = AUC(curve="ROC")
+        auc_metric.update_state(y_val.astype(np.float32), val_prob)
+        val_auc = float(auc_metric.result().numpy())
+        val_brier = float(np.mean((val_prob - y_val.astype(np.float32)) ** 2))
+        val_acc = float(np.mean((val_prob >= 0.5).astype(np.float32) == y_val.astype(np.float32)))
+        val_loss = float(val_metrics.get("loss", np.nan))
+
+        round_step = int(i + 1)
+
+        round_records.append(
+            {
+                "round_idx": round_step,
+                "train_size": len(train_ms),
+                "val_size": len(val_ms),
+                "positive_rate_val": float(np.mean(y_val)),
+                "val_loss": val_loss,
+                "val_accuracy": val_acc,
+                "val_auc": val_auc,
+                "val_brier": val_brier,
+                "branch_version": cfg.branch_version,
+            }
+        )
+
+        for m, yt, yp in zip(val_ms, y_val, val_prob):
+            oos_rows.append(
+                {
+                    "round_idx": round_step,
+                    "match_id": m.id,
+                    "season": m.season,
+                    "competition": m.comp_name,
+                    "y_true": float(yt),
+                    "y_prob_under25": float(yp),
+                    "branch_version": cfg.branch_version,
+                }
+            )
+
+        with tb_writer.as_default():
+            tf.summary.scalar("round/val_loss", val_loss, step=round_step)
+            tf.summary.scalar("round/val_accuracy", val_acc, step=round_step)
+            tf.summary.scalar("round/val_auc", val_auc, step=round_step)
+            tf.summary.scalar("round/val_brier", val_brier, step=round_step)
+            tf.summary.scalar("round/val_size", len(val_ms), step=round_step)
+            tf.summary.scalar("round/positive_rate_val", float(np.mean(y_val)), step=round_step)
+            tb_writer.flush()
+
+    csv_path = Path(log_dir) / "round_metrics.csv"
+    if round_records:
+        fieldnames = sorted({k for rec in round_records for k in rec.keys()})
+        with csv_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(round_records)
+
+    if cfg.save_oos_predictions and oos_rows:
+        pred_path = Path(log_dir) / "oos_predictions.csv"
+        fieldnames = sorted({k for rec in oos_rows for k in rec.keys()})
+        with pred_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(oos_rows)
+
+    summary = {"run_name": run_name, "branch_version": cfg.branch_version, "mode": cfg.mode, "round_stats": round_info}
+
+    if oos_rows:
+        y_true = np.asarray([r["y_true"] for r in oos_rows], dtype=np.float32)
+        y_prob = np.asarray([r["y_prob_under25"] for r in oos_rows], dtype=np.float32)
+        summary.update(_binary_summary(y_true, y_prob))
+
+    summary_path = Path(log_dir) / "summary.json"
+    with summary_path.open("w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2)
+
+    cfg_json_path = Path(log_dir) / "pretrain_config.json"
+    with cfg_json_path.open("w", encoding="utf-8") as f:
+        json.dump(asdict(cfg), f, indent=2)
+
+    _save_pretrain_round_plot(
+        log_dir=log_dir,
+        round_records=round_records,
+        title=f"Structured branch pretraining ({cfg.branch_version})",
+    )
+
+    model_path = Path(log_dir) / "pretrained_model.keras"
+    model.save(model_path)
+
+    print(f"[pretrain-summary] {summary}")
+    print(f"[pretrain] model saved to {model_path}")
+
+    return model
+
+
+def transfer_pretrained_strength_branch_weights(
+    pretrained_model: Model,
+    full_model: Model,
+    branch_version: str,
+) -> None:
+    """
+    Copy branch weights by layer name from standalone pretraining model
+    into the corresponding full model.
+    """
+    if branch_version == "v1":
+        layer_names = [
+            "position_embedding",
+            "strength_dense_1",
+            "strength_dense_2",
+            "strength_projection",
+        ]
+    elif branch_version == "v2":
+        layer_names = [
+            "position_embedding",
+            "home_row_dense_1",
+            "home_row_dense_2",
+            "home_role_post_dense_1",
+            "home_team_repr",
+            "away_row_dense_1",
+            "away_row_dense_2",
+            "away_role_post_dense_1",
+            "away_team_repr",
+            "team_branch_proj",
+        ]
+    else:
+        raise ValueError(f"Unknown branch_version: {branch_version}")
+
+    for name in layer_names:
+        src = pretrained_model.get_layer(name)
+        dst = full_model.get_layer(name)
+        dst.set_weights(src.get_weights())
+
+    print(f"[transfer] copied pretrained {branch_version} branch weights into full model")

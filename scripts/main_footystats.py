@@ -16,7 +16,10 @@ from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve
 
 # from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
 from football_outcomes.training.fs_training_utils import build_categorical_maps
-from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
+from football_outcomes.training.train_mlp_rolling import (  # TrainConfig,; train_rolling,
+    StrengthPretrainConfig,
+    train_strength_pretrain_rolling,
+)
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
 from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
@@ -92,8 +95,8 @@ for match in league_matches_sorted:
             team_index_all=team_index_all,
         )
 
-        if match.home_team.name == "KRC Genk" or match.away_team.name == "KRC Genk":
-            fu.debug_print_match_and_features(match)  # DEBUG
+        # if match.home_team.name == "KRC Genk" or match.away_team.name == "KRC Genk":
+        #     fu.debug_print_match_and_features(match)  # DEBUG
 
     except ValueError as e:
         skipped_matches += 1
@@ -138,192 +141,68 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# Diagnosable MLP run
-# ------------------------------------------------------------
-# ------------------------------------------------------------
-# Focused sweep on training dynamics
+# Structured-branch standalone pretraining comparison
 # ------------------------------------------------------------
 
-SWEEP_RUNS = [
-    # ------------------------------------------------------------
-    # v1 family: 15 runs
-    # epochs fixed to 3, batch fixed to 64
-    # sweep: learning_rate x window_rounds
-    # ------------------------------------------------------------
-    {"model_version": "v1", "learning_rate": 2e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 2e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 2e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 3e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 3e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 3e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 5e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 5e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 5e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 7e-5, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 7e-5, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 7e-5, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 1e-4, "window_rounds": 20, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 1e-4, "window_rounds": 25, "epochs_per_step": 3, "batch_size": 64},
-    {"model_version": "v1", "learning_rate": 1e-4, "window_rounds": 30, "epochs_per_step": 3, "batch_size": 64},
-    # ------------------------------------------------------------
-    # v2-lite family: 15 runs
-    # epochs fixed to 2, batch fixed to 64
-    # sweep: learning_rate x window_rounds x regularization profile
-    # ------------------------------------------------------------
-    # Standard regularization
-    {"model_version": "v2", "learning_rate": 3e-5, "window_rounds": 20, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 3e-5, "window_rounds": 25, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 3e-5, "window_rounds": 30, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 5e-5, "window_rounds": 20, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 5e-5, "window_rounds": 25, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 5e-5, "window_rounds": 30, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 7e-5, "window_rounds": 20, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 7e-5, "window_rounds": 25, "epochs_per_step": 2, "batch_size": 64},
-    {"model_version": "v2", "learning_rate": 7e-5, "window_rounds": 30, "epochs_per_step": 2, "batch_size": 64},
-    # Stronger regularization around the most plausible area
+PRETRAIN_RUNS = [
     {
-        "model_version": "v2",
-        "learning_rate": 3e-5,
+        "branch_version": "v1",
+        "mode": "binary_u25",
+        "window_rounds": 25,
+        "epochs_per_step": 3,
+        "learning_rate": 5e-5,
+        "batch_size": 64,
+        "strength_emb_dim": 16,
+        "position_emb_dim": 3,
+        "run_name": "strength_pretrain_v1_u25",
+    },
+    {
+        "branch_version": "v2",
+        "mode": "binary_u25",
         "window_rounds": 25,
         "epochs_per_step": 2,
-        "batch_size": 64,
-        "team_dropout": 0.30,
-        "fusion_dropout_1": 0.50,
-        "fusion_dropout_2": 0.35,
-        "team_l2": 7e-5,
-        "fusion_l2": 7e-5,
-    },
-    {
-        "model_version": "v2",
         "learning_rate": 5e-5,
-        "window_rounds": 20,
-        "epochs_per_step": 2,
         "batch_size": 64,
-        "team_dropout": 0.30,
-        "fusion_dropout_1": 0.50,
-        "fusion_dropout_2": 0.35,
-        "team_l2": 7e-5,
-        "fusion_l2": 7e-5,
-    },
-    {
-        "model_version": "v2",
-        "learning_rate": 5e-5,
-        "window_rounds": 25,
-        "epochs_per_step": 2,
-        "batch_size": 64,
-        "team_dropout": 0.30,
-        "fusion_dropout_1": 0.50,
-        "fusion_dropout_2": 0.35,
-        "team_l2": 7e-5,
-        "fusion_l2": 7e-5,
-    },
-    {
-        "model_version": "v2",
-        "learning_rate": 5e-5,
-        "window_rounds": 30,
-        "epochs_per_step": 2,
-        "batch_size": 64,
-        "team_dropout": 0.30,
-        "fusion_dropout_1": 0.50,
-        "fusion_dropout_2": 0.35,
-        "team_l2": 7e-5,
-        "fusion_l2": 7e-5,
-    },
-    {
-        "model_version": "v2",
-        "learning_rate": 7e-5,
-        "window_rounds": 25,
-        "epochs_per_step": 2,
-        "batch_size": 64,
-        "team_dropout": 0.30,
-        "fusion_dropout_1": 0.50,
-        "fusion_dropout_2": 0.35,
-        "team_l2": 7e-5,
-        "fusion_l2": 7e-5,
-    },
-    {
-        "model_version": "v2",
-        "learning_rate": 7e-5,
-        "window_rounds": 30,
-        "epochs_per_step": 2,
-        "batch_size": 64,
-        "team_dropout": 0.30,
-        "fusion_dropout_1": 0.50,
-        "fusion_dropout_2": 0.35,
-        "team_l2": 7e-5,
-        "fusion_l2": 7e-5,
+        "strength_emb_dim": 16,
+        "position_emb_dim": 3,
+        "player_row_hidden_dim": 32,
+        "role_post_hidden_dim": 32,
+        "team_branch_dim": 32,
+        "team_dropout": 0.25,
+        "team_l2": 5e-5,
+        "run_name": "strength_pretrain_v2_u25",
     },
 ]
 
-sweep_root = Path(sett.DATA_DIR) / "sweeps"
-sweep_root.mkdir(parents=True, exist_ok=True)
+pretrain_root = Path(sett.DATA_DIR) / "pretraining"
+pretrain_root.mkdir(parents=True, exist_ok=True)
 
 results = []
 
-for i, params in enumerate(SWEEP_RUNS, start=1):
-    run_name = (
-        f"{params['model_version']}"
-        f"_u25"
-        f"_lr{params['learning_rate']}"
-        f"_wr{params['window_rounds']}"
-        f"_ep{params['epochs_per_step']}"
-        f"_bs{params['batch_size']}"
-    ).replace(".", "p")
-
-    if "team_dropout" in params:
-        run_name += (
-            f"_td{params['team_dropout']}"
-            f"_fd1{params['fusion_dropout_1']}"
-            f"_fd2{params['fusion_dropout_2']}"
-            f"_tl2{params['team_l2']}"
-            f"_fl2{params['fusion_l2']}"
-        ).replace(".", "p")
-
+for i, params in enumerate(PRETRAIN_RUNS, start=1):
     print("\n" + "=" * 80)
-    print(f"[SWEEP {i}/{len(SWEEP_RUNS)}] {run_name}")
+    print(f"[PRETRAIN {i}/{len(PRETRAIN_RUNS)}] {params['run_name']}")
     print("=" * 80)
 
-    base_cfg = {
-        "mode": "binary_u25",
-        "model_version": params["model_version"],
-        "use_team_aux_head": False,
-        "aux_task": None,
-        "seed": 42,
-        "run_name": run_name,
-        "enable_branch_diagnostics": False,  # keep sweep fast
-        "early_stopping_patience": 1,
-        "early_stopping_min_delta": 0.0,
-    }
+    cfg = StrengthPretrainConfig(**params)
+    _ = train_strength_pretrain_rolling(league_matches_sorted, cfg)
 
-    # allow sweep params to override TrainConfig fields
-    cfg_kwargs = {**base_cfg, **params}
-
-    cfg = TrainConfig(**cfg_kwargs)
-
-    _ = train_rolling(league_matches_sorted, cat_maps, cfg)
-
-    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "summary.json"
-    config_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "train_config.json"
-
+    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "summary.json"
     with summary_path.open("r", encoding="utf-8") as f:
         summary = json.load(f)
 
-    with config_path.open("r", encoding="utf-8") as f:
-        saved_cfg = json.load(f)
-
     row = {
-        "run_name": run_name,
-        "model_version": saved_cfg["model_version"],
-        "learning_rate": saved_cfg["learning_rate"],
-        "epochs_per_step": saved_cfg["epochs_per_step"],
-        "batch_size": saved_cfg["batch_size"],
+        "run_name": params["run_name"],
+        "branch_version": params["branch_version"],
+        "learning_rate": params["learning_rate"],
+        "epochs_per_step": params["epochs_per_step"],
+        "window_rounds": params["window_rounds"],
         "pooled_accuracy": summary.get("pooled_accuracy"),
         "pooled_auc": summary.get("pooled_auc"),
         "pooled_brier": summary.get("pooled_brier"),
     }
     results.append(row)
 
-# Sort: best AUC first, then best accuracy, then lowest Brier
 results.sort(
     key=lambda r: (
         -(r["pooled_auc"] if r["pooled_auc"] is not None else -999),
@@ -332,17 +211,13 @@ results.sort(
     )
 )
 
-# Save CSV
-csv_path = sweep_root / "overnight_sweep_results.csv"
+csv_path = pretrain_root / "strength_pretraining_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
     writer.writeheader()
     writer.writerows(results)
 
-print(f"[SWEEP] Saved results CSV to {csv_path}")
-
-# Save simple text ranking
-txt_path = sweep_root / "overnight_sweep_ranking.txt"
+txt_path = pretrain_root / "strength_pretraining_ranking.txt"
 with txt_path.open("w", encoding="utf-8") as f:
     for idx, r in enumerate(results, start=1):
         f.write(
@@ -352,38 +227,36 @@ with txt_path.open("w", encoding="utf-8") as f:
             f"BRIER={r['pooled_brier']:.6f}\n"
         )
 
-print(f"[SWEEP] Saved ranking to {txt_path}")
-
-# Make one compact comparison figure
 labels = [r["run_name"] for r in results]
 accs = [r["pooled_accuracy"] for r in results]
 aucs = [r["pooled_auc"] for r in results]
 briers = [r["pooled_brier"] for r in results]
 
-fig = plt.figure(figsize=(16, 10))
+fig = plt.figure(figsize=(12, 8))
 
 ax1 = fig.add_subplot(3, 1, 1)
-ax1.plot(labels, accs, marker="o")
-ax1.tick_params(axis="x", rotation=45)
+ax1.bar(labels, accs)
+ax1.set_title("Standalone structured branch pretraining: pooled accuracy")
+ax1.tick_params(axis="x", rotation=30)
 
 ax2 = fig.add_subplot(3, 1, 2)
-ax2.plot(labels, aucs, marker="o")
-ax2.tick_params(axis="x", rotation=45)
+ax2.bar(labels, aucs)
+ax2.set_title("Standalone structured branch pretraining: pooled AUC")
+ax2.tick_params(axis="x", rotation=30)
 
 ax3 = fig.add_subplot(3, 1, 3)
-ax3.plot(labels, briers, marker="o")
-ax3.tick_params(axis="x", rotation=45)
-
-ax1.set_title("Overnight sweep: pooled accuracy")
-ax2.set_title("Overnight sweep: pooled AUC")
-ax3.set_title("Overnight sweep: pooled Brier (lower is better)")
+ax3.bar(labels, briers)
+ax3.set_title("Standalone structured branch pretraining: pooled Brier (lower is better)")
+ax3.tick_params(axis="x", rotation=30)
 
 plt.tight_layout()
-plot_path = sweep_root / "overnight_sweep_overview.png"
+plot_path = pretrain_root / "strength_pretraining_overview.png"
 plt.savefig(plot_path, dpi=160, bbox_inches="tight")
 plt.close(fig)
 
-print(f"[SWEEP] Saved overview plot to {plot_path}")
+print(f"[PRETRAIN] saved comparison CSV to {csv_path}")
+print(f"[PRETRAIN] saved ranking to {txt_path}")
+print(f"[PRETRAIN] saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(
