@@ -15,10 +15,15 @@ from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
 
 # from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
-from football_outcomes.training.fs_training_utils import build_categorical_maps
-from football_outcomes.training.train_mlp_rolling import (  # TrainConfig,; train_rolling,
+from football_outcomes.training.fs_training_utils import build_categorical_maps, extract_numerical_features
+from football_outcomes.training.train_mlp_rolling import (
     StrengthPretrainConfig,
+    TrainConfig,
+    build_model,
+    set_global_seed,
+    train_rolling,
     train_strength_pretrain_rolling,
+    transfer_pretrained_strength_branch_weights,
 )
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
@@ -141,170 +146,124 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# Structured-branch standalone pretraining comparison
+# Best standalone pretraining run (v1 branch)
 # ------------------------------------------------------------
 
-PRETRAIN_RUNS = [
+BEST_PRETRAIN_CFG = StrengthPretrainConfig(
+    branch_version="v1",
+    mode="binary_u25",
+    window_rounds=25,
+    epochs_per_step=3,
+    learning_rate=8e-5,
+    batch_size=64,
+    strength_emb_dim=16,
+    position_emb_dim=3,
+    run_name="strength_pretrain_v1_u25_best_for_transfer",
+)
+
+print("\n" + "=" * 80)
+print("[PRETRAIN] Best v1 structured-branch pretraining")
+print("=" * 80)
+
+pretrained_v1_model = train_strength_pretrain_rolling(league_matches_sorted, BEST_PRETRAIN_CFG)
+
+# ------------------------------------------------------------
+# Compare three full v1 strategies:
+#   1) scratch
+#   2) initialized from pretrained branch
+#   3) initialized + brief freeze/unfreeze warm-up
+# ------------------------------------------------------------
+
+sample_feat = league_matches_sorted[0].features_before_match
+num_num = extract_numerical_features(sample_feat).shape[0]
+num_teams = len(cat_maps.team_id_map)
+num_comps = len(cat_maps.comp_id_map)
+
+transfer_root = Path(sett.DATA_DIR) / "transfer_experiments"
+transfer_root.mkdir(parents=True, exist_ok=True)
+
+FULL_RUNS = [
     {
-        "branch_version": "v1",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 3,
-        "learning_rate": 2e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "run_name": "strength_pretrain_v1_u25_largeLR",
+        "label": "scratch",
+        "run_name": "mlp_v1_full_scratch_lr8e5",
+        "freeze_pretrained_branch_rounds": 0,
+        "use_pretrained_init": False,
     },
     {
-        "branch_version": "v1",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 3,
-        "learning_rate": 8e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "run_name": "strength_pretrain_v1_u25_smallLR",
+        "label": "pretrained_init",
+        "run_name": "mlp_v1_full_pretrained_init_lr8e5",
+        "freeze_pretrained_branch_rounds": 0,
+        "use_pretrained_init": True,
     },
     {
-        "branch_version": "v1",
-        "mode": "binary_u25",
-        "window_rounds": 18,
-        "epochs_per_step": 3,
-        "learning_rate": 5e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "run_name": "strength_pretrain_v1_u25_smallWindow",
-    },
-    {
-        "branch_version": "v1",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 3,
-        "learning_rate": 5e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 24,
-        "position_emb_dim": 3,
-        "run_name": "strength_pretrain_v1_u25_largeStrength",
-    },
-    {
-        "branch_version": "v1",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 3,
-        "learning_rate": 5e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 6,
-        "run_name": "strength_pretrain_v1_u25_largePosition",
-    },
-    {
-        "branch_version": "v2",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 3,
-        "learning_rate": 5e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "player_row_hidden_dim": 32,
-        "role_post_hidden_dim": 32,
-        "team_branch_dim": 32,
-        "team_dropout": 0.25,
-        "team_l2": 5e-5,
-        "run_name": "strength_pretrain_v2_u25_3epochs",
-    },
-    {
-        "branch_version": "v2",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 2,
-        "learning_rate": 2e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "player_row_hidden_dim": 32,
-        "role_post_hidden_dim": 32,
-        "team_branch_dim": 32,
-        "team_dropout": 0.25,
-        "team_l2": 5e-5,
-        "run_name": "strength_pretrain_v2_u25_largeLR",
-    },
-    {
-        "branch_version": "v2",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 2,
-        "learning_rate": 8e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "player_row_hidden_dim": 32,
-        "role_post_hidden_dim": 32,
-        "team_branch_dim": 32,
-        "team_dropout": 0.25,
-        "team_l2": 5e-5,
-        "run_name": "strength_pretrain_v2_u25_smallLR",
-    },
-    {
-        "branch_version": "v2",
-        "mode": "binary_u25",
-        "window_rounds": 18,
-        "epochs_per_step": 2,
-        "learning_rate": 5e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "player_row_hidden_dim": 32,
-        "role_post_hidden_dim": 32,
-        "team_branch_dim": 32,
-        "team_dropout": 0.25,
-        "team_l2": 5e-5,
-        "run_name": "strength_pretrain_v2_u25_smallWindow",
-    },
-    {
-        "branch_version": "v2",
-        "mode": "binary_u25",
-        "window_rounds": 25,
-        "epochs_per_step": 2,
-        "learning_rate": 5e-5,
-        "batch_size": 64,
-        "strength_emb_dim": 16,
-        "position_emb_dim": 3,
-        "player_row_hidden_dim": 32,
-        "role_post_hidden_dim": 32,
-        "team_branch_dim": 32,
-        "team_dropout": 0.1,
-        "team_l2": 5e-5,
-        "run_name": "strength_pretrain_v2_u25_lowDropout",
+        "label": "pretrained_init_freeze3",
+        "run_name": "mlp_v1_full_pretrained_init_freeze3_lr8e5",
+        "freeze_pretrained_branch_rounds": 3,
+        "use_pretrained_init": True,
     },
 ]
 
-pretrain_root = Path(sett.DATA_DIR) / "pretraining"
-pretrain_root.mkdir(parents=True, exist_ok=True)
-
 results = []
 
-for i, params in enumerate(PRETRAIN_RUNS, start=1):
+for i, spec in enumerate(FULL_RUNS, start=1):
     print("\n" + "=" * 80)
-    print(f"[PRETRAIN {i}/{len(PRETRAIN_RUNS)}] {params['run_name']}")
+    print(f"[FULL {i}/{len(FULL_RUNS)}] {spec['run_name']}")
     print("=" * 80)
 
-    cfg = StrengthPretrainConfig(**params)
-    _ = train_strength_pretrain_rolling(league_matches_sorted, cfg)
+    cfg = TrainConfig(
+        mode="binary_u25",
+        model_version="v1",
+        learning_rate=8e-5,
+        batch_size=64,
+        window_rounds=25,
+        epochs_per_step=3,
+        early_stopping_patience=1,
+        early_stopping_min_delta=0.0,
+        freeze_pretrained_branch_rounds=spec["freeze_pretrained_branch_rounds"],
+        seed=42,
+        run_name=spec["run_name"],
+        enable_branch_diagnostics=False,
+    )
 
-    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "summary.json"
+    if spec["use_pretrained_init"]:
+        if cfg.seed is not None:
+            set_global_seed(cfg.seed)
+
+        model = build_model(
+            num_num=num_num,
+            num_teams=num_teams,
+            num_comps=num_comps,
+            cfg=cfg,
+        )
+        transfer_pretrained_strength_branch_weights(
+            pretrained_model=pretrained_v1_model,
+            full_model=model,
+            branch_version="v1",
+        )
+
+        _ = train_rolling(
+            league_matches_sorted,
+            cat_maps,
+            cfg,
+            model=model,
+            pretrained_branch_version="v1",
+        )
+    else:
+        _ = train_rolling(
+            league_matches_sorted,
+            cat_maps,
+            cfg,
+        )
+
+    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / spec["run_name"] / "summary.json"
     with summary_path.open("r", encoding="utf-8") as f:
         summary = json.load(f)
 
     row = {
-        "run_name": params["run_name"],
-        "branch_version": params["branch_version"],
-        "learning_rate": params["learning_rate"],
-        "epochs_per_step": params["epochs_per_step"],
-        "window_rounds": params["window_rounds"],
+        "run_name": spec["run_name"],
+        "label": spec["label"],
+        "freeze_pretrained_branch_rounds": spec["freeze_pretrained_branch_rounds"],
+        "use_pretrained_init": spec["use_pretrained_init"],
         "pooled_accuracy": summary.get("pooled_accuracy"),
         "pooled_auc": summary.get("pooled_auc"),
         "pooled_brier": summary.get("pooled_brier"),
@@ -319,13 +278,13 @@ results.sort(
     )
 )
 
-csv_path = pretrain_root / "strength_pretraining_results.csv"
+csv_path = transfer_root / "transfer_experiment_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
     writer.writeheader()
     writer.writerows(results)
 
-txt_path = pretrain_root / "strength_pretraining_ranking.txt"
+txt_path = transfer_root / "transfer_experiment_ranking.txt"
 with txt_path.open("w", encoding="utf-8") as f:
     for idx, r in enumerate(results, start=1):
         f.write(
@@ -344,27 +303,27 @@ fig = plt.figure(figsize=(12, 8))
 
 ax1 = fig.add_subplot(3, 1, 1)
 ax1.bar(labels, accs)
-ax1.set_title("Standalone structured branch pretraining: pooled accuracy")
-ax1.tick_params(axis="x", rotation=30)
+ax1.set_title("Transfer comparison: pooled accuracy")
+ax1.tick_params(axis="x", rotation=20)
 
 ax2 = fig.add_subplot(3, 1, 2)
 ax2.bar(labels, aucs)
-ax2.set_title("Standalone structured branch pretraining: pooled AUC")
-ax2.tick_params(axis="x", rotation=30)
+ax2.set_title("Transfer comparison: pooled AUC")
+ax2.tick_params(axis="x", rotation=20)
 
 ax3 = fig.add_subplot(3, 1, 3)
 ax3.bar(labels, briers)
-ax3.set_title("Standalone structured branch pretraining: pooled Brier (lower is better)")
-ax3.tick_params(axis="x", rotation=30)
+ax3.set_title("Transfer comparison: pooled Brier (lower is better)")
+ax3.tick_params(axis="x", rotation=20)
 
 plt.tight_layout()
-plot_path = pretrain_root / "strength_pretraining_overview.png"
+plot_path = transfer_root / "transfer_experiment_overview.png"
 plt.savefig(plot_path, dpi=160, bbox_inches="tight")
 plt.close(fig)
 
-print(f"[PRETRAIN] saved comparison CSV to {csv_path}")
-print(f"[PRETRAIN] saved ranking to {txt_path}")
-print(f"[PRETRAIN] saved overview plot to {plot_path}")
+print(f"[TRANSFER] saved comparison CSV to {csv_path}")
+print(f"[TRANSFER] saved ranking to {txt_path}")
+print(f"[TRANSFER] saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(

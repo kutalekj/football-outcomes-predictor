@@ -91,6 +91,7 @@ class TrainConfig:
 
     early_stopping_patience: int = 1
     early_stopping_min_delta: float = 0.0
+    freeze_pretrained_branch_rounds: int = 0
 
     # Logging and evaluation
     run_name: str | None = None
@@ -890,6 +891,8 @@ def train_rolling(
     matches_sorted: List[FSMatch],
     cat_maps: CatMaps,
     cfg: TrainConfig,
+    model: Model | None = None,
+    pretrained_branch_version: str | None = None,
 ) -> Model:
     rounds = distribute_matches_into_rounds(matches_sorted)
     round_info = summarize_rounds(rounds)
@@ -902,12 +905,16 @@ def train_rolling(
         set_global_seed(cfg.seed)
         print(f"[seed] Using seed={cfg.seed}")
 
-    model = build_model(
-        num_num=num_num,
-        num_teams=len(cat_maps.team_id_map),
-        num_comps=len(cat_maps.comp_id_map),
-        cfg=cfg,
-    )
+    if model is None:
+        model = build_model(
+            num_num=num_num,
+            num_teams=len(cat_maps.team_id_map),
+            num_comps=len(cat_maps.comp_id_map),
+            cfg=cfg,
+        )
+        print("[model] built fresh model")
+    else:
+        print("[model] using externally prepared model")
 
     run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = cfg.run_name or f"mlp_{cfg.mode}_{run_stamp}"
@@ -985,6 +992,17 @@ def train_rolling(
         if branch_probe_layers:
             callbacks_common.append(BranchProbeLogger(probe_inputs, tb_writer, branch_probe_layers))
 
+    frozen_branch_layer_names = None
+    if cfg.freeze_pretrained_branch_rounds > 0:
+        branch_version = pretrained_branch_version or cfg.model_version
+        frozen_branch_layer_names = get_strength_branch_layer_names(branch_version)
+        set_layers_trainable(model, frozen_branch_layer_names, False)
+        compile_model_for_cfg(model, cfg)
+        print(
+            f"[freeze] froze pretrained branch ({branch_version}) "
+            f"for first {cfg.freeze_pretrained_branch_rounds} rolling rounds"
+        )
+
     for i in range(cfg.window_rounds, len(rounds) - 1):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
@@ -1013,6 +1031,12 @@ def train_rolling(
             monitor=monitor_name,
             mode="min",
         )
+
+        if frozen_branch_layer_names is not None and i == cfg.window_rounds + cfg.freeze_pretrained_branch_rounds:
+            set_layers_trainable(model, frozen_branch_layer_names, True)
+            compile_model_for_cfg(model, cfg)
+            print("[freeze] unfroze pretrained branch and recompiled model")
+            frozen_branch_layer_names = None
 
         model.fit(
             X[:-1],
@@ -1345,24 +1369,16 @@ def train_strength_pretrain_rolling(
     return model
 
 
-def transfer_pretrained_strength_branch_weights(
-    pretrained_model: Model,
-    full_model: Model,
-    branch_version: str,
-) -> None:
-    """
-    Copy branch weights by layer name from standalone pretraining model
-    into the corresponding full model.
-    """
+def get_strength_branch_layer_names(branch_version: str) -> List[str]:
     if branch_version == "v1":
-        layer_names = [
+        return [
             "position_embedding",
             "strength_dense_1",
             "strength_dense_2",
             "strength_projection",
         ]
     elif branch_version == "v2":
-        layer_names = [
+        return [
             "position_embedding",
             "home_row_dense_1",
             "home_row_dense_2",
@@ -1377,9 +1393,88 @@ def transfer_pretrained_strength_branch_weights(
     else:
         raise ValueError(f"Unknown branch_version: {branch_version}")
 
+
+def transfer_pretrained_strength_branch_weights(
+    pretrained_model: Model,
+    full_model: Model,
+    branch_version: str,
+) -> None:
+    """
+    Copy branch weights by layer name from standalone pretraining model
+    into the corresponding full model.
+    """
+    layer_names = get_strength_branch_layer_names(branch_version)
+
     for name in layer_names:
         src = pretrained_model.get_layer(name)
         dst = full_model.get_layer(name)
         dst.set_weights(src.get_weights())
 
     print(f"[transfer] copied pretrained {branch_version} branch weights into full model")
+
+
+def set_layers_trainable(model: Model, layer_names: List[str], trainable: bool) -> None:
+    for name in layer_names:
+        try:
+            layer = model.get_layer(name)
+            layer.trainable = trainable
+        except ValueError:
+            continue
+
+
+def compile_model_for_cfg(model: Model, cfg: TrainConfig) -> None:
+    """
+    Recompile an existing model after changing trainable flags.
+    Mirrors the compilation logic used by build_model_v1/build_model_v2.
+    """
+    if cfg.model_version == "v1":
+        if cfg.mode == "binary_u25":
+            model.compile(
+                optimizer=Adam(learning_rate=cfg.learning_rate),
+                loss="binary_crossentropy",
+                metrics=["accuracy"],
+            )
+        elif cfg.mode == "goals_dist":
+            model.compile(
+                optimizer=Adam(learning_rate=cfg.learning_rate),
+                loss="sparse_categorical_crossentropy",
+                metrics=["accuracy"],
+            )
+        elif cfg.mode == "goals_reg":
+            model.compile(
+                optimizer=Adam(learning_rate=cfg.learning_rate),
+                loss="mae",
+                metrics=["mae"],
+            )
+        else:
+            raise ValueError(f"Unknown mode: {cfg.mode}")
+
+    elif cfg.model_version == "v2":
+        main_loss, main_metrics = _main_loss_and_metrics_for_mode(cfg)
+
+        if cfg.use_team_aux_head and cfg.aux_task is not None:
+            aux_loss, aux_metrics = _aux_loss_and_metrics_for_task(cfg.aux_task)
+
+            model.compile(
+                optimizer=Adam(learning_rate=cfg.learning_rate),
+                loss={
+                    "output_main": main_loss,
+                    "output_team_aux": aux_loss,
+                },
+                loss_weights={
+                    "output_main": 1.0,
+                    "output_team_aux": cfg.aux_weight,
+                },
+                metrics={
+                    "output_main": main_metrics,
+                    "output_team_aux": aux_metrics,
+                },
+            )
+        else:
+            model.compile(
+                optimizer=Adam(learning_rate=cfg.learning_rate),
+                loss={"output_main": main_loss},
+                metrics={"output_main": main_metrics},
+            )
+    else:
+        raise ValueError(f"Unknown model_version: {cfg.model_version}")
