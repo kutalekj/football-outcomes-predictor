@@ -7,6 +7,7 @@ from pathlib import Path
 
 import matplotlib
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -146,33 +147,43 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# Best standalone pretraining run (v1 branch)
+# v2-lite transfer test:
+#   1) full v2-lite from scratch
+#   2) full v2-lite initialized from best pretrained v2 branch
 # ------------------------------------------------------------
 
-BEST_PRETRAIN_CFG = StrengthPretrainConfig(
-    branch_version="v1",
+BEST_V2_PRETRAIN_CFG = StrengthPretrainConfig(
+    branch_version="v2",
     mode="binary_u25",
     window_rounds=25,
-    epochs_per_step=3,
+    epochs_per_step=2,
     learning_rate=8e-5,
     batch_size=64,
     strength_emb_dim=16,
     position_emb_dim=3,
-    run_name="strength_pretrain_v1_u25_best_for_transfer",
+    player_row_hidden_dim=32,
+    role_post_hidden_dim=32,
+    team_branch_dim=32,
+    team_dropout=0.25,
+    team_l2=5e-5,
+    compare_hidden_dim=32,
+    compare_dropout=0.2,
+    run_name="strength_pretrain_v2_u25_smallLR",
 )
 
-print("\n" + "=" * 80)
-print("[PRETRAIN] Best v1 structured-branch pretraining")
-print("=" * 80)
+pretrained_path = Path(sett.DATA_DIR) / "tensorboard_logs" / BEST_V2_PRETRAIN_CFG.run_name / "pretrained_model.keras"
 
-pretrained_v1_model = train_strength_pretrain_rolling(league_matches_sorted, BEST_PRETRAIN_CFG)
-
-# ------------------------------------------------------------
-# Compare three full v1 strategies:
-#   1) scratch
-#   2) initialized from pretrained branch
-#   3) initialized + brief freeze/unfreeze warm-up
-# ------------------------------------------------------------
+if pretrained_path.exists():
+    print(f"[PRETRAIN] loading existing pretrained v2 model from {pretrained_path}")
+    pretrained_v2_model = tf.keras.models.load_model(pretrained_path)
+else:
+    print("\n" + "=" * 80)
+    print("[PRETRAIN] Best v2 structured-branch pretraining")
+    print("=" * 80)
+    pretrained_v2_model = train_strength_pretrain_rolling(
+        league_matches_sorted,
+        BEST_V2_PRETRAIN_CFG,
+    )
 
 sample_feat = league_matches_sorted[0].features_before_match
 num_num = extract_numerical_features(sample_feat).shape[0]
@@ -184,21 +195,13 @@ transfer_root.mkdir(parents=True, exist_ok=True)
 
 FULL_RUNS = [
     {
-        "label": "scratch",
-        "run_name": "mlp_v1_full_scratch_lr8e5",
-        "freeze_pretrained_branch_rounds": 0,
+        "label": "v2lite_scratch",
+        "run_name": "mlp_v2lite_full_scratch_lr5e5",
         "use_pretrained_init": False,
     },
     {
-        "label": "pretrained_init",
-        "run_name": "mlp_v1_full_pretrained_init_lr8e5",
-        "freeze_pretrained_branch_rounds": 0,
-        "use_pretrained_init": True,
-    },
-    {
-        "label": "pretrained_init_freeze3",
-        "run_name": "mlp_v1_full_pretrained_init_freeze3_lr8e5",
-        "freeze_pretrained_branch_rounds": 3,
+        "label": "v2lite_pretrained_init",
+        "run_name": "mlp_v2lite_full_pretrained_v2_init_lr5e5",
         "use_pretrained_init": True,
     },
 ]
@@ -207,22 +210,44 @@ results = []
 
 for i, spec in enumerate(FULL_RUNS, start=1):
     print("\n" + "=" * 80)
-    print(f"[FULL {i}/{len(FULL_RUNS)}] {spec['run_name']}")
+    print(f"[FULL V2-LITE {i}/{len(FULL_RUNS)}] {spec['run_name']}")
     print("=" * 80)
 
     cfg = TrainConfig(
         mode="binary_u25",
-        model_version="v1",
-        learning_rate=8e-5,
+        model_version="v2",
+        learning_rate=5e-5,
         batch_size=64,
         window_rounds=25,
-        epochs_per_step=3,
+        epochs_per_step=2,
         early_stopping_patience=1,
         early_stopping_min_delta=0.0,
-        freeze_pretrained_branch_rounds=spec["freeze_pretrained_branch_rounds"],
         seed=42,
         run_name=spec["run_name"],
         enable_branch_diagnostics=False,
+        # v2-lite architecture settings
+        strength_emb_dim=16,
+        position_emb_dim=3,
+        team_emb_dim=8,
+        comp_emb_dim=5,
+        num_branch_dim=48,
+        cat_branch_dim=32,
+        team_branch_dim=32,
+        player_row_hidden_dim=32,
+        role_post_hidden_dim=32,
+        fusion_hidden_dim_1=64,
+        fusion_hidden_dim_2=32,
+        tabular_dropout=0.20,
+        cat_dropout=0.15,
+        team_dropout=0.25,
+        fusion_dropout_1=0.45,
+        fusion_dropout_2=0.30,
+        num_l2=1e-5,
+        cat_l2=1e-5,
+        team_l2=5e-5,
+        fusion_l2=5e-5,
+        use_team_aux_head=False,
+        aux_task=None,
     )
 
     if spec["use_pretrained_init"]:
@@ -235,10 +260,11 @@ for i, spec in enumerate(FULL_RUNS, start=1):
             num_comps=num_comps,
             cfg=cfg,
         )
+
         transfer_pretrained_strength_branch_weights(
-            pretrained_model=pretrained_v1_model,
+            pretrained_model=pretrained_v2_model,
             full_model=model,
-            branch_version="v1",
+            branch_version="v2",
         )
 
         _ = train_rolling(
@@ -246,7 +272,7 @@ for i, spec in enumerate(FULL_RUNS, start=1):
             cat_maps,
             cfg,
             model=model,
-            pretrained_branch_version="v1",
+            pretrained_branch_version="v2",
         )
     else:
         _ = train_rolling(
@@ -259,16 +285,16 @@ for i, spec in enumerate(FULL_RUNS, start=1):
     with summary_path.open("r", encoding="utf-8") as f:
         summary = json.load(f)
 
-    row = {
-        "run_name": spec["run_name"],
-        "label": spec["label"],
-        "freeze_pretrained_branch_rounds": spec["freeze_pretrained_branch_rounds"],
-        "use_pretrained_init": spec["use_pretrained_init"],
-        "pooled_accuracy": summary.get("pooled_accuracy"),
-        "pooled_auc": summary.get("pooled_auc"),
-        "pooled_brier": summary.get("pooled_brier"),
-    }
-    results.append(row)
+    results.append(
+        {
+            "run_name": spec["run_name"],
+            "label": spec["label"],
+            "use_pretrained_init": spec["use_pretrained_init"],
+            "pooled_accuracy": summary.get("pooled_accuracy"),
+            "pooled_auc": summary.get("pooled_auc"),
+            "pooled_brier": summary.get("pooled_brier"),
+        }
+    )
 
 results.sort(
     key=lambda r: (
@@ -278,13 +304,13 @@ results.sort(
     )
 )
 
-csv_path = transfer_root / "transfer_experiment_results.csv"
+csv_path = transfer_root / "v2lite_transfer_experiment_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
     writer.writeheader()
     writer.writerows(results)
 
-txt_path = transfer_root / "transfer_experiment_ranking.txt"
+txt_path = transfer_root / "v2lite_transfer_experiment_ranking.txt"
 with txt_path.open("w", encoding="utf-8") as f:
     for idx, r in enumerate(results, start=1):
         f.write(
@@ -294,36 +320,33 @@ with txt_path.open("w", encoding="utf-8") as f:
             f"BRIER={r['pooled_brier']:.6f}\n"
         )
 
-labels = [r["run_name"] for r in results]
+labels = [r["label"] for r in results]
 accs = [r["pooled_accuracy"] for r in results]
 aucs = [r["pooled_auc"] for r in results]
 briers = [r["pooled_brier"] for r in results]
 
-fig = plt.figure(figsize=(12, 8))
+fig = plt.figure(figsize=(10, 8))
 
 ax1 = fig.add_subplot(3, 1, 1)
 ax1.bar(labels, accs)
-ax1.set_title("Transfer comparison: pooled accuracy")
-ax1.tick_params(axis="x", rotation=20)
+ax1.set_title("v2-lite transfer comparison: pooled accuracy")
 
 ax2 = fig.add_subplot(3, 1, 2)
 ax2.bar(labels, aucs)
-ax2.set_title("Transfer comparison: pooled AUC")
-ax2.tick_params(axis="x", rotation=20)
+ax2.set_title("v2-lite transfer comparison: pooled AUC")
 
 ax3 = fig.add_subplot(3, 1, 3)
 ax3.bar(labels, briers)
-ax3.set_title("Transfer comparison: pooled Brier (lower is better)")
-ax3.tick_params(axis="x", rotation=20)
+ax3.set_title("v2-lite transfer comparison: pooled Brier (lower is better)")
 
 plt.tight_layout()
-plot_path = transfer_root / "transfer_experiment_overview.png"
+plot_path = transfer_root / "v2lite_transfer_experiment_overview.png"
 plt.savefig(plot_path, dpi=160, bbox_inches="tight")
 plt.close(fig)
 
-print(f"[TRANSFER] saved comparison CSV to {csv_path}")
-print(f"[TRANSFER] saved ranking to {txt_path}")
-print(f"[TRANSFER] saved overview plot to {plot_path}")
+print(f"[V2-LITE TRANSFER] saved comparison CSV to {csv_path}")
+print(f"[V2-LITE TRANSFER] saved ranking to {txt_path}")
+print(f"[V2-LITE TRANSFER] saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(
