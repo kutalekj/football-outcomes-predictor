@@ -17,6 +17,44 @@ from football_outcomes.utils import fs_feature_utils as fu
 matplotlib.use("Agg")
 
 
+# ---------------------------------------------------------------------
+# Figure style
+# ---------------------------------------------------------------------
+# Alternative subtle palettes:
+#   1) Muted teal:       bar="#5f9ea0", line="#2f5f73"
+#   2) Muted slate blue: bar="#6f8fbf", line="#334e68"
+#   3) Muted purple:     bar="#8f7aa8", line="#5e4b73"
+#   4) Warm gray:        bar="#9a948c", line="#5f5a54"
+#
+# The default below uses muted teal because it is softer than matplotlib's
+# default blue while remaining clearly readable in print.
+BAR_COLOR = "#6f8fbf"
+EDGE_COLOR = "#334e68"
+MEAN_COLOR = "#2f5f73"
+MEDIAN_COLOR = "#7a7a7a"
+GRID_COLOR = "#d9d9d9"
+
+TITLE_SIZE = 15
+LABEL_SIZE = 13
+TICK_SIZE = 10.5
+LEGEND_SIZE = 10.5
+
+
+def apply_axis_style(ax) -> None:
+    """Apply a consistent thesis-friendly visual style to one axis."""
+    ax.tick_params(axis="both", labelsize=TICK_SIZE)
+    ax.grid(axis="y", linestyle=":", linewidth=0.8, alpha=0.6, color=GRID_COLOR)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+
+def set_tight_y_limits(ax, values: list[int], padding_ratio: float = 0.08) -> None:
+    """Set a compact but safe y-axis range for count plots."""
+    max_value = max(values)
+    padding = max(5, max_value * padding_ratio)
+    ax.set_ylim(0, max_value + padding)
+
+
 def main() -> None:
     cache = try_load_snapshot()
     if cache is None:
@@ -58,36 +96,78 @@ def main() -> None:
     fig, axes = plt.subplots(
         nrows=2,
         ncols=1,
-        figsize=(10, 9),
-        gridspec_kw={"height_ratios": [1, 1.2]},
-        constrained_layout=True,
+        figsize=(10.5, 8.4),
+        gridspec_kw={"height_ratios": [1, 1.25], "hspace": 0.5},
+        constrained_layout=False,
     )
 
     # --- Top: histogram
     ax = axes[0]
-    ax.hist(round_sizes, bins=20, edgecolor="black")
-    ax.set_title("Distribution of matches per training round")
-    ax.set_xlabel("Number of matches in training round")
-    ax.set_ylabel("Frequency")
-    ax.axvline(mean_size, linestyle="--", label=f"Mean = {mean_size:.2f}")
-    ax.axvline(median_size, linestyle=":", label=f"Median = {median_size:.2f}")
-    ax.legend()
+    ax.hist(
+        round_sizes,
+        bins=20,
+        color=BAR_COLOR,
+        edgecolor=EDGE_COLOR,
+        linewidth=0.6,
+        alpha=0.88,
+    )
+    ax.set_title("Distribution of training-round sizes", fontsize=TITLE_SIZE, pad=10)
+    ax.set_xlabel("Number of matches in a training round", fontsize=LABEL_SIZE)
+    ax.set_ylabel("Frequency", fontsize=LABEL_SIZE)
+    ax.axvline(
+        mean_size,
+        color=MEAN_COLOR,
+        linestyle="--",
+        linewidth=1.6,
+        label=f"Mean = {mean_size:.2f}",
+    )
+    ax.axvline(
+        median_size,
+        color=MEDIAN_COLOR,
+        linestyle=":",
+        linewidth=1.8,
+        label=f"Median = {median_size:.2f}",
+    )
+    ax.legend(frameon=True, fontsize=LEGEND_SIZE)
+    apply_axis_style(ax)
 
     # --- Bottom: chronological round sizes
     ax = axes[1]
     round_indices = list(range(1, num_rounds + 1))
-    ax.bar(round_indices, round_sizes, width=0.9)
-    ax.set_title("Training round sizes in chronological order")
-    ax.set_xlabel("Training round index")
-    ax.set_ylabel("Number of matches")
-    ax.axhline(mean_size, linestyle="--", label=f"Mean = {mean_size:.2f}")
-    ax.axhline(median_size, linestyle=":", label=f"Median = {median_size:.2f}")
-    ax.legend()
+    ax.bar(
+        round_indices,
+        round_sizes,
+        width=0.88,
+        color=BAR_COLOR,
+        edgecolor=BAR_COLOR,
+        linewidth=0.25,
+        alpha=0.78,
+    )
+    ax.set_title("Training-round sizes in chronological order", fontsize=TITLE_SIZE, pad=10)
+    ax.set_xlabel("Training round index", fontsize=LABEL_SIZE)
+    ax.set_ylabel("Number of matches", fontsize=LABEL_SIZE)
+    ax.axhline(
+        mean_size,
+        color=MEAN_COLOR,
+        linestyle="--",
+        linewidth=1.6,
+        label=f"Mean = {mean_size:.2f}",
+    )
+    ax.axhline(
+        median_size,
+        color=MEDIAN_COLOR,
+        linestyle=":",
+        linewidth=1.8,
+        label=f"Median = {median_size:.2f}",
+    )
+    ax.legend(frameon=True, fontsize=LEGEND_SIZE)
+    apply_axis_style(ax)
+    set_tight_y_limits(ax, round_sizes)
 
     combined_png_path = out_dir / "round_size_analysis_combined.png"
     combined_pdf_path = out_dir / "round_size_analysis_combined.pdf"
-    fig.savefig(combined_png_path, dpi=200)
-    fig.savefig(combined_pdf_path)
+    fig.savefig(combined_png_path, dpi=300, bbox_inches="tight")
+    fig.savefig(combined_pdf_path, bbox_inches="tight")
     plt.close(fig)
 
     print(f"Saved combined PNG figure to: {combined_png_path}")
@@ -96,19 +176,41 @@ def main() -> None:
     # --------------------------------------------------
     # Optional: separate chronological-only plot
     # --------------------------------------------------
-    fig, ax = plt.subplots(figsize=(10, 4.5), constrained_layout=True)
-    ax.bar(round_indices, round_sizes, width=0.9)
-    ax.set_title("Training round sizes in chronological order")
-    ax.set_xlabel("Training round index")
-    ax.set_ylabel("Number of matches")
-    ax.axhline(mean_size, linestyle="--", label=f"Mean = {mean_size:.2f}")
-    ax.axhline(median_size, linestyle=":", label=f"Median = {median_size:.2f}")
-    ax.legend()
+    fig, ax = plt.subplots(figsize=(10.5, 4.8), constrained_layout=True)
+    ax.bar(
+        round_indices,
+        round_sizes,
+        width=0.88,
+        color=BAR_COLOR,
+        edgecolor=BAR_COLOR,
+        linewidth=0.25,
+        alpha=0.78,
+    )
+    ax.set_title("Training-round sizes in chronological order", fontsize=TITLE_SIZE, pad=10)
+    ax.set_xlabel("Training round index", fontsize=LABEL_SIZE)
+    ax.set_ylabel("Number of matches", fontsize=LABEL_SIZE)
+    ax.axhline(
+        mean_size,
+        color=MEAN_COLOR,
+        linestyle="--",
+        linewidth=1.6,
+        label=f"Mean = {mean_size:.2f}",
+    )
+    ax.axhline(
+        median_size,
+        color=MEDIAN_COLOR,
+        linestyle=":",
+        linewidth=1.8,
+        label=f"Median = {median_size:.2f}",
+    )
+    ax.legend(frameon=True, fontsize=LEGEND_SIZE)
+    apply_axis_style(ax)
+    set_tight_y_limits(ax, round_sizes)
 
     chrono_png_path = out_dir / "round_size_chronological.png"
     chrono_pdf_path = out_dir / "round_size_chronological.pdf"
-    fig.savefig(chrono_png_path, dpi=200)
-    fig.savefig(chrono_pdf_path)
+    fig.savefig(chrono_png_path, dpi=300, bbox_inches="tight")
+    fig.savefig(chrono_pdf_path, bbox_inches="tight")
     plt.close(fig)
 
     print(f"Saved chronological PNG figure to: {chrono_png_path}")
