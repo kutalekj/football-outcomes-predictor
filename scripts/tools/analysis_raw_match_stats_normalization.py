@@ -32,9 +32,19 @@ CLIP_PERCENTILE = 99.0
 # Keep this aligned with your missingness analysis style.
 APPLY_CLEAN_FILTER = True
 
+# Thesis plot style shared with related analysis figures.
+BAR_COLOR = "#6f8fbf"
+EDGE_COLOR = "#334e68"
+MEAN_COLOR = "#2f5f73"
+MEDIAN_COLOR = "#7a7a7a"
+GRID_COLOR = "#d9d9d9"
+TITLE_SIZE = 15
+LABEL_SIZE = 13
+TICK_SIZE = 10.5
+
 TEAM_LEVEL_STAT_SPECS: List[Tuple[str, Optional[str], Tuple[str, str]]] = [
     ("goals scored", "GOALS_NORM_COEFFICIENT", ("home_goals", "away_goals")),
-    ("shots on target", "SOG_NORM_COEFFICIENT", ("home_shots_on_target", "away_shots_on_target")),
+    ("shots on target", "SHOTS_ON_G_NORM_COEFFICIENT", ("home_shots_on_target", "away_shots_on_target")),
     ("shots off target", "SHOTS_OFF_G_NORM_COEFFICIENT", ("home_shots_off_target", "away_shots_off_target")),
     ("total shots", "TOTAL_SHOTS_NORM_COEFFICIENT", ("home_total_shots", "away_total_shots")),
     ("corner kicks", "CORNER_KICKS_NORM_COEFFICIENT", ("home_corners", "away_corners")),
@@ -53,7 +63,7 @@ TOTAL_LEVEL_STAT_SPECS: List[Tuple[str, str, Tuple[str, str]]] = [
 
 NAME_TO_SETTING = {
     "goals scored": "GOALS_NORM_COEFFICIENT",
-    "shots on target": "SOG_NORM_COEFFICIENT",
+    "shots on target": "SHOTS_ON_G_NORM_COEFFICIENT",
     "shots off target": "SHOTS_OFF_G_NORM_COEFFICIENT",
     "total shots": "TOTAL_SHOTS_NORM_COEFFICIENT",
     "corner kicks": "CORNER_KICKS_NORM_COEFFICIENT",
@@ -410,49 +420,56 @@ def make_distribution_plot(league_matches_sorted: List[FSMatch], out_png: Path, 
     compact_df = compact_df.sort_values("stat")
     large_df = large_df.sort_values("stat")
 
+    # Rotated thesis version: the two value-range groups are placed side by side,
+    # and each distribution is drawn vertically (statistic on x-axis, raw value on y-axis).
     fig, (ax1, ax2) = plt.subplots(
-        2,
         1,
-        figsize=(13.5, 9.5),
-        gridspec_kw={"height_ratios": [3.2, 1.5]},
-        sharex=False,
+        2,
+        figsize=(15.5, 8.8),
+        gridspec_kw={"width_ratios": [3.2, 1.5], "wspace": 0.22},
+        sharey=False,
+    )
+
+    common_boxen_kwargs = dict(
+        y="value",
+        x="stat",
+        orient="v",
+        color=BAR_COLOR,
+        linewidth=0.9,
+        linecolor=EDGE_COLOR,
+        k_depth="trustworthy",
+        showfliers=False,
     )
 
     sns.boxenplot(
         data=compact_df,
-        y="stat",
-        x="value",
         order=compact_order,
-        orient="h",
-        linewidth=0.8,
-        k_depth="trustworthy",
-        showfliers=False,
         ax=ax1,
+        **common_boxen_kwargs,
     )
 
-    ax1.set_title("Distributions of raw match statistics across all league matches")
-    ax1.set_xlabel("Raw value")
-    ax1.set_ylabel("")
-    ax1.grid(axis="x", linestyle="--", alpha=0.3)
+    ax1.set_title("Distributions of raw match statistics across all league matches", fontsize=TITLE_SIZE, pad=12)
+    ax1.set_xlabel("Match statistic", fontsize=LABEL_SIZE)
+    ax1.set_ylabel("Raw value", fontsize=LABEL_SIZE)
+    ax1.tick_params(axis="both", labelsize=TICK_SIZE)
+    ax1.tick_params(axis="x", rotation=35)
+    ax1.grid(axis="y", linestyle="--", color=GRID_COLOR, alpha=0.8)
     ax1.set_axisbelow(True)
     ax1.spines["top"].set_visible(False)
     ax1.spines["right"].set_visible(False)
 
     sns.boxenplot(
         data=large_df,
-        y="stat",
-        x="value",
         order=large_order,
-        orient="h",
-        linewidth=0.8,
-        k_depth="trustworthy",
-        showfliers=False,
         ax=ax2,
+        **common_boxen_kwargs,
     )
 
-    ax2.set_xlabel("Raw value")
-    ax2.set_ylabel("")
-    ax2.grid(axis="x", linestyle="--", alpha=0.3)
+    ax2.set_xlabel("Match statistic", fontsize=LABEL_SIZE)
+    ax2.set_ylabel("Raw value", fontsize=LABEL_SIZE)
+    ax2.tick_params(axis="both", labelsize=TICK_SIZE)
+    ax2.tick_params(axis="x", rotation=35)
+    ax2.grid(axis="y", linestyle="--", color=GRID_COLOR, alpha=0.8)
     ax2.set_axisbelow(True)
     ax2.spines["top"].set_visible(False)
     ax2.spines["right"].set_visible(False)
@@ -460,14 +477,14 @@ def make_distribution_plot(league_matches_sorted: List[FSMatch], out_png: Path, 
     ax2.set_facecolor("#fafafa")
 
     if not compact_df.empty:
-        compact_xmax = float(np.nanpercentile(compact_df["value"], 99.5))
-        ax1.set_xlim(left=0, right=max(1.0, compact_xmax * 1.03))
+        compact_ymax = float(np.nanpercentile(compact_df["value"], 99.5))
+        ax1.set_ylim(bottom=0, top=max(1.0, compact_ymax * 1.03))
 
     if not large_df.empty:
-        large_xmax = float(np.nanpercentile(large_df["value"], 99.5))
-        ax2.set_xlim(left=0, right=max(1.0, large_xmax * 1.03))
+        large_ymax = float(np.nanpercentile(large_df["value"], 99.5))
+        ax2.set_ylim(bottom=0, top=max(1.0, large_ymax * 1.03))
 
-    fig.tight_layout(h_pad=2.0)
+    fig.tight_layout()
     fig.savefig(out_png, dpi=250, bbox_inches="tight")
     fig.savefig(out_pdf, bbox_inches="tight")
     plt.close(fig)

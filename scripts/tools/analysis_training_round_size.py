@@ -20,14 +20,6 @@ matplotlib.use("Agg")
 # ---------------------------------------------------------------------
 # Figure style
 # ---------------------------------------------------------------------
-# Alternative subtle palettes:
-#   1) Muted teal:       bar="#5f9ea0", line="#2f5f73"
-#   2) Muted slate blue: bar="#6f8fbf", line="#334e68"
-#   3) Muted purple:     bar="#8f7aa8", line="#5e4b73"
-#   4) Warm gray:        bar="#9a948c", line="#5f5a54"
-#
-# The default below uses muted teal because it is softer than matplotlib's
-# default blue while remaining clearly readable in print.
 BAR_COLOR = "#6f8fbf"
 EDGE_COLOR = "#334e68"
 MEAN_COLOR = "#2f5f73"
