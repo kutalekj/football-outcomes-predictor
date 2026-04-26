@@ -23,6 +23,13 @@ matplotlib.use("Agg")
 APPLY_CLEAN_FILTER = True
 ONLY_AFFECTED_SEASONS_FOR_ROUND_PLOTS = True
 
+TITLE_SIZE = 15
+LABEL_SIZE = 13
+TICK_SIZE = 10.5
+ANNOTATION_SIZE = 9.5
+LEGEND_SIZE = 10.5
+GRID_COLOR = "#d9d9d9"
+
 
 def _ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
@@ -344,18 +351,19 @@ def _make_stacked_bar(df_comp: pd.DataFrame, out_png: Path, out_pdf: Path) -> No
     ymax = max(df_comp["total_matches"]) if len(df_comp) else 0
     for i, (r, p) in enumerate(zip(regular, non_regular)):
         total = r + p
-        ax.text(i, total + ymax * 0.01, str(int(total)), ha="center", va="bottom", fontsize=9)
+        ax.text(i, total + ymax * 0.01, str(int(total)), ha="center", va="bottom", fontsize=ANNOTATION_SIZE)
         if p > 0:
             ax.text(i, r + p / 2.0, str(int(p)), ha="center", va="center", fontsize=8)
 
     ax.set_title("League matches per competition (2021/2022–2024/2025): regular season vs non-regular")
-    ax.set_xlabel("Competition")
-    ax.set_ylabel("Number of matches")
+    ax.set_xlabel("Competition", fontsize=LABEL_SIZE)
+    ax.set_ylabel("Number of matches", fontsize=LABEL_SIZE)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=45, ha="right")
-    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=TICK_SIZE)
+    ax.tick_params(axis="y", labelsize=TICK_SIZE)
+    ax.grid(axis="y", linestyle="--", color=GRID_COLOR, alpha=0.8)
     ax.set_axisbelow(True)
-    ax.legend()
+    ax.legend(fontsize=LEGEND_SIZE)
     fig.tight_layout()
     fig.savefig(out_png, dpi=250, bbox_inches="tight")
     fig.savefig(out_pdf, bbox_inches="tight")
@@ -381,7 +389,8 @@ def _make_non_regular_share_plot(df_comp: pd.DataFrame, out_png: Path, out_pdf: 
     ax.set_xlabel("Competition")
     ax.set_ylabel("Non-regular share [%]")
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=45, ha="right")
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=TICK_SIZE)
+    ax.tick_params(axis="y", labelsize=TICK_SIZE)
     ax.grid(axis="y", linestyle="--", alpha=0.3)
     ax.set_axisbelow(True)
     fig.tight_layout()
@@ -474,7 +483,7 @@ def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, o
             color=base_color,
             edgecolor="black",
             linewidth=0.6,
-            label="Regular matches kept" if first_regular else None,
+            label="Regular season matches kept" if first_regular else None,
         )
         first_regular = False
 
@@ -486,7 +495,7 @@ def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, o
             edgecolor="black",
             linewidth=0.6,
             hatch="///",
-            label="Non-regular matches kept" if first_kept else None,
+            label="Non-regular season matches kept" if first_kept else None,
         )
         first_kept = False
 
@@ -497,13 +506,13 @@ def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, o
             color="black",
             edgecolor="black",
             linewidth=0.6,
-            label="Non-regular matches filtered out" if first_filtered else None,
+            label="Non-regular season matches filtered out" if first_filtered else None,
         )
         first_filtered = False
 
     ymax = max(totals) if totals else 0
     for i, total in enumerate(totals):
-        ax.text(i, total + ymax * 0.01, str(int(total)), ha="center", va="bottom", fontsize=9)
+        ax.text(i, total + ymax * 0.01, str(int(total)), ha="center", va="bottom", fontsize=ANNOTATION_SIZE)
 
         filtered = nonreg_filtered[i]
         if total > 0 and filtered > 0:
@@ -520,17 +529,20 @@ def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, o
             )
 
     ax.set_title(
-        "League matches per competition (2021/2022–2024/2025): kept regular, kept non-regular, "
-        "and filtered-out non-regular"
+        "League matches per competition (2021/2022–2024/2025): "
+        "regular-season matches and retained/filtered non-regular matches",
+        fontsize=TITLE_SIZE,
+        pad=12,
     )
     ax.set_ylim(0, ymax * 1.12 if ymax > 0 else 1)
-    ax.set_xlabel("Competition")
-    ax.set_ylabel("Number of matches")
+    ax.set_xlabel("Competition", fontsize=LABEL_SIZE)
+    ax.set_ylabel("Number of matches", fontsize=LABEL_SIZE)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=45, ha="right")
-    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=TICK_SIZE)
+    ax.tick_params(axis="y", labelsize=TICK_SIZE)
+    ax.grid(axis="y", linestyle="--", color=GRID_COLOR, alpha=0.8)
     ax.set_axisbelow(True)
-    ax.legend()
+    ax.legend(fontsize=LEGEND_SIZE)
     fig.tight_layout()
     fig.savefig(out_png, dpi=250, bbox_inches="tight")
     fig.savefig(out_pdf, bbox_inches="tight")
