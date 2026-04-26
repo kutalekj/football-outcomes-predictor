@@ -58,7 +58,13 @@ THESIS_PAIR_CBAR_LABEL_FONTSIZE = 20
 THESIS_PAIR_CBAR_TICK_FONTSIZE = 16
 
 THESIS_PAIR_SUPXLABEL_Y = 0.065
-THESIS_PAIR_SUPYLABEL_X = 0.065
+THESIS_PAIR_SUPYLABEL_X = 0.025
+
+BAR_TITLE_SIZE = 15
+BAR_LABEL_SIZE = 13
+BAR_TICK_SIZE = 10.5
+BAR_ANNOTATION_SIZE = 9.5
+BAR_GRID_COLOR = "#d9d9d9"
 
 
 def _get_comp_colors() -> Dict[str, str]:
@@ -262,8 +268,11 @@ def plot_thesis_pair_heatmaps(
     n_rows = max(len(left_plot.index), len(right_plot.index))
     n_cols = max(len(left_plot.columns), len(right_plot.columns))
 
-    fig_w = max(10.5, 0.28 * n_cols * 2 + (2.1 if show_cbar else 0.0))
-    fig_h = max(4.8, 0.18 * n_rows + 1.35)
+    # Thesis-only heatmaps are intentionally stretched horizontally and compressed vertically.
+    # The goal is to show missingness patterns/trends on portrait-oriented thesis pages,
+    # not to make every individual cell label-readable.
+    fig_w = max(15.5, 0.46 * n_cols * 2 + (2.6 if show_cbar else 0.0))
+    fig_h = max(4.2, 0.105 * n_rows + 1.25)
 
     if show_cbar:
         fig, axes = plt.subplots(
@@ -432,13 +441,16 @@ def plot_match_counts_per_comp(league_matches: List[FSMatch], out_dir: Path) -> 
 
     ax.set_title(
         f"Number of league matches per competition ({sett.FIRST_SEASON}/{sett.FIRST_SEASON + 1}–"
-        f"{sett.LAST_SEASON - 1}/{sett.LAST_SEASON})"
+        f"{sett.LAST_SEASON - 1}/{sett.LAST_SEASON})",
+        fontsize=BAR_TITLE_SIZE,
+        pad=12,
     )
-    ax.set_xlabel("Competition")
-    ax.set_ylabel("Number of matches")
+    ax.set_xlabel("Competition", fontsize=BAR_LABEL_SIZE)
+    ax.set_ylabel("Number of matches", fontsize=BAR_LABEL_SIZE)
     ax.set_xticks(x)
-    ax.set_xticklabels(df["competition"], rotation=45, ha="right")
-    ax.grid(axis="y", linestyle="--", alpha=0.35)
+    ax.set_xticklabels(df["competition"], rotation=45, ha="right", fontsize=BAR_TICK_SIZE)
+    ax.tick_params(axis="y", labelsize=BAR_TICK_SIZE)
+    ax.grid(axis="y", linestyle="--", color=BAR_GRID_COLOR, alpha=0.8)
     ax.set_axisbelow(True)
 
     y_max = max(df["n_matches"].max(), 1)
@@ -450,7 +462,7 @@ def plot_match_counts_per_comp(league_matches: List[FSMatch], out_dir: Path) -> 
             f"{int(n)}",
             ha="center",
             va="bottom",
-            fontsize=8,
+            fontsize=BAR_ANNOTATION_SIZE,
             rotation=0,
         )
 
