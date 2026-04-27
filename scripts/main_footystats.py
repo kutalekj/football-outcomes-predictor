@@ -7,7 +7,6 @@ from pathlib import Path
 
 import matplotlib
 import matplotlib.pyplot as plt
-import tensorflow as tf
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -16,19 +15,19 @@ from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
 
 # from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
-from football_outcomes.training.fs_training_utils import build_categorical_maps, extract_numerical_features
-from football_outcomes.training.train_mlp_rolling import (
+from football_outcomes.training.fs_training_utils import build_categorical_maps  # extract_numerical_features
+
+# from football_outcomes.training.train_mlp_rolling import transfer_pretrained_strength_branch_weights
+from football_outcomes.training.train_mlp_rolling import (  # TrainConfig; build_model; set_global_seed; train_rolling
     StrengthPretrainConfig,
-    TrainConfig,
-    build_model,
-    set_global_seed,
-    train_rolling,
     train_strength_pretrain_rolling,
-    transfer_pretrained_strength_branch_weights,
 )
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
 from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
+
+# import tensorflow as tf
+
 
 matplotlib.use("Agg")
 
@@ -147,154 +146,121 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# v2-lite transfer test:
-#   1) full v2-lite from scratch
-#   2) full v2-lite initialized from best pretrained v2 branch
+# Structured-branch representation sweep:
+#   branch versions: v1, v2
+#   representations: full, no_positions, no_masks, skills_only
+#   learning rates: 5e-5, 8e-5
 # ------------------------------------------------------------
 
-BEST_V2_PRETRAIN_CFG = StrengthPretrainConfig(
-    branch_version="v2",
-    mode="binary_u25",
-    window_rounds=25,
-    epochs_per_step=2,
-    learning_rate=8e-5,
-    batch_size=64,
-    strength_emb_dim=16,
-    position_emb_dim=3,
-    player_row_hidden_dim=32,
-    role_post_hidden_dim=32,
-    team_branch_dim=32,
-    team_dropout=0.25,
-    team_l2=5e-5,
-    compare_hidden_dim=32,
-    compare_dropout=0.2,
-    run_name="strength_pretrain_v2_u25_smallLR",
-)
-
-pretrained_path = Path(sett.DATA_DIR) / "tensorboard_logs" / BEST_V2_PRETRAIN_CFG.run_name / "pretrained_model.keras"
-
-if pretrained_path.exists():
-    print(f"[PRETRAIN] loading existing pretrained v2 model from {pretrained_path}")
-    pretrained_v2_model = tf.keras.models.load_model(pretrained_path)
-else:
-    print("\n" + "=" * 80)
-    print("[PRETRAIN] Best v2 structured-branch pretraining")
-    print("=" * 80)
-    pretrained_v2_model = train_strength_pretrain_rolling(
-        league_matches_sorted,
-        BEST_V2_PRETRAIN_CFG,
-    )
-
-sample_feat = league_matches_sorted[0].features_before_match
-num_num = extract_numerical_features(sample_feat).shape[0]
-num_teams = len(cat_maps.team_id_map)
-num_comps = len(cat_maps.comp_id_map)
-
-transfer_root = Path(sett.DATA_DIR) / "transfer_experiments"
-transfer_root.mkdir(parents=True, exist_ok=True)
-
-FULL_RUNS = [
-    {
-        "label": "v2lite_scratch",
-        "run_name": "mlp_v2lite_full_scratch_lr5e5",
-        "use_pretrained_init": False,
+REPRESENTATIONS = {
+    "full": {
+        "use_strength_masks": True,
+        "use_position_embedding": True,
+        "label": "skills_masks_positions",
     },
-    {
-        "label": "v2lite_pretrained_init",
-        "run_name": "mlp_v2lite_full_pretrained_v2_init_lr5e5",
-        "use_pretrained_init": True,
+    "no_positions": {
+        "use_strength_masks": True,
+        "use_position_embedding": False,
+        "label": "skills_masks",
     },
-]
+    "no_masks": {
+        "use_strength_masks": False,
+        "use_position_embedding": True,
+        "label": "skills_positions",
+    },
+    "skills_only": {
+        "use_strength_masks": False,
+        "use_position_embedding": False,
+        "label": "skills_only",
+    },
+}
+
+LEARNING_RATES = [5e-5, 8e-5]
+BRANCH_VERSIONS = ["v1", "v2"]
+
+PRETRAIN_RUNS = []
+
+for branch_version in BRANCH_VERSIONS:
+    for rep_name, rep_cfg in REPRESENTATIONS.items():
+        for lr in LEARNING_RATES:
+            lr_tag = f"{lr:.0e}".replace("-", "m").replace("+", "").replace("e", "e")
+            run_name = f"strength_pretrain_{branch_version}_u25_{rep_name}_lr{lr_tag}"
+
+            base = {
+                "branch_version": branch_version,
+                "mode": "binary_u25",
+                "window_rounds": 25,
+                "learning_rate": lr,
+                "batch_size": 64,
+                "strength_emb_dim": 16,
+                "position_emb_dim": 3,
+                "representation": rep_name,
+                "use_strength_masks": rep_cfg["use_strength_masks"],
+                "use_position_embedding": rep_cfg["use_position_embedding"],
+                "run_name": run_name,
+            }
+
+            if branch_version == "v1":
+                base.update(
+                    {
+                        "epochs_per_step": 3,
+                    }
+                )
+            else:
+                base.update(
+                    {
+                        "epochs_per_step": 2,
+                        "player_row_hidden_dim": 32,
+                        "role_post_hidden_dim": 32,
+                        "team_branch_dim": 32,
+                        "team_dropout": 0.25,
+                        "team_l2": 5e-5,
+                        "compare_hidden_dim": 32,
+                        "compare_dropout": 0.20,
+                    }
+                )
+
+            PRETRAIN_RUNS.append(base)
+
+pretrain_root = Path(sett.DATA_DIR) / "pretraining_representation_sweep"
+pretrain_root.mkdir(parents=True, exist_ok=True)
 
 results = []
 
-for i, spec in enumerate(FULL_RUNS, start=1):
+for i, params in enumerate(PRETRAIN_RUNS, start=1):
     print("\n" + "=" * 80)
-    print(f"[FULL V2-LITE {i}/{len(FULL_RUNS)}] {spec['run_name']}")
+    print(f"[REP-SWEEP {i}/{len(PRETRAIN_RUNS)}] {params['run_name']}")
     print("=" * 80)
 
-    cfg = TrainConfig(
-        mode="binary_u25",
-        model_version="v2",
-        learning_rate=5e-5,
-        batch_size=64,
-        window_rounds=25,
-        epochs_per_step=2,
-        early_stopping_patience=1,
-        early_stopping_min_delta=0.0,
-        seed=42,
-        run_name=spec["run_name"],
-        enable_branch_diagnostics=False,
-        # v2-lite architecture settings
-        strength_emb_dim=16,
-        position_emb_dim=3,
-        team_emb_dim=8,
-        comp_emb_dim=5,
-        num_branch_dim=48,
-        cat_branch_dim=32,
-        team_branch_dim=32,
-        player_row_hidden_dim=32,
-        role_post_hidden_dim=32,
-        fusion_hidden_dim_1=64,
-        fusion_hidden_dim_2=32,
-        tabular_dropout=0.20,
-        cat_dropout=0.15,
-        team_dropout=0.25,
-        fusion_dropout_1=0.45,
-        fusion_dropout_2=0.30,
-        num_l2=1e-5,
-        cat_l2=1e-5,
-        team_l2=5e-5,
-        fusion_l2=5e-5,
-        use_team_aux_head=False,
-        aux_task=None,
-    )
+    cfg = StrengthPretrainConfig(**params)
+    _ = train_strength_pretrain_rolling(league_matches_sorted, cfg)
 
-    if spec["use_pretrained_init"]:
-        if cfg.seed is not None:
-            set_global_seed(cfg.seed)
+    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "summary.json"
+    config_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "pretrain_config.json"
 
-        model = build_model(
-            num_num=num_num,
-            num_teams=num_teams,
-            num_comps=num_comps,
-            cfg=cfg,
-        )
-
-        transfer_pretrained_strength_branch_weights(
-            pretrained_model=pretrained_v2_model,
-            full_model=model,
-            branch_version="v2",
-        )
-
-        _ = train_rolling(
-            league_matches_sorted,
-            cat_maps,
-            cfg,
-            model=model,
-            pretrained_branch_version="v2",
-        )
-    else:
-        _ = train_rolling(
-            league_matches_sorted,
-            cat_maps,
-            cfg,
-        )
-
-    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / spec["run_name"] / "summary.json"
     with summary_path.open("r", encoding="utf-8") as f:
         summary = json.load(f)
 
-    results.append(
-        {
-            "run_name": spec["run_name"],
-            "label": spec["label"],
-            "use_pretrained_init": spec["use_pretrained_init"],
-            "pooled_accuracy": summary.get("pooled_accuracy"),
-            "pooled_auc": summary.get("pooled_auc"),
-            "pooled_brier": summary.get("pooled_brier"),
-        }
-    )
+    with config_path.open("r", encoding="utf-8") as f:
+        saved_cfg = json.load(f)
+
+    row = {
+        "run_name": params["run_name"],
+        "branch_version": saved_cfg["branch_version"],
+        "representation": saved_cfg["representation"],
+        "use_strength_masks": saved_cfg["use_strength_masks"],
+        "use_position_embedding": saved_cfg["use_position_embedding"],
+        "learning_rate": saved_cfg["learning_rate"],
+        "epochs_per_step": saved_cfg["epochs_per_step"],
+        "window_rounds": saved_cfg["window_rounds"],
+        "batch_size": saved_cfg["batch_size"],
+        "strength_emb_dim": saved_cfg["strength_emb_dim"],
+        "position_emb_dim": saved_cfg["position_emb_dim"],
+        "pooled_accuracy": summary.get("pooled_accuracy"),
+        "pooled_auc": summary.get("pooled_auc"),
+        "pooled_brier": summary.get("pooled_brier"),
+    }
+    results.append(row)
 
 results.sort(
     key=lambda r: (
@@ -304,49 +270,62 @@ results.sort(
     )
 )
 
-csv_path = transfer_root / "v2lite_transfer_experiment_results.csv"
+csv_path = pretrain_root / "representation_pretraining_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
     writer.writeheader()
     writer.writerows(results)
 
-txt_path = transfer_root / "v2lite_transfer_experiment_ranking.txt"
+json_path = pretrain_root / "representation_pretraining_results.json"
+with json_path.open("w", encoding="utf-8") as f:
+    json.dump(results, f, indent=2)
+
+txt_path = pretrain_root / "representation_pretraining_ranking.txt"
 with txt_path.open("w", encoding="utf-8") as f:
     for idx, r in enumerate(results, start=1):
         f.write(
             f"{idx}. {r['run_name']} | "
+            f"branch={r['branch_version']} | "
+            f"repr={r['representation']} | "
+            f"lr={r['learning_rate']} | "
             f"AUC={r['pooled_auc']:.6f} | "
             f"ACC={r['pooled_accuracy']:.6f} | "
             f"BRIER={r['pooled_brier']:.6f}\n"
         )
 
-labels = [r["label"] for r in results]
+print(f"[REP-SWEEP] saved CSV to {csv_path}")
+print(f"[REP-SWEEP] saved JSON to {json_path}")
+print(f"[REP-SWEEP] saved ranking to {txt_path}")
+
+# Compact overview plot, sorted by AUC
+labels = [f"{r['branch_version']}-{r['representation']}-lr{r['learning_rate']:.0e}" for r in results]
 accs = [r["pooled_accuracy"] for r in results]
 aucs = [r["pooled_auc"] for r in results]
 briers = [r["pooled_brier"] for r in results]
 
-fig = plt.figure(figsize=(10, 8))
+fig = plt.figure(figsize=(18, 10))
 
 ax1 = fig.add_subplot(3, 1, 1)
 ax1.bar(labels, accs)
-ax1.set_title("v2-lite transfer comparison: pooled accuracy")
+ax1.set_title("Representation sweep: pooled accuracy")
+ax1.tick_params(axis="x", rotation=60)
 
 ax2 = fig.add_subplot(3, 1, 2)
 ax2.bar(labels, aucs)
-ax2.set_title("v2-lite transfer comparison: pooled AUC")
+ax2.set_title("Representation sweep: pooled AUC")
+ax2.tick_params(axis="x", rotation=60)
 
 ax3 = fig.add_subplot(3, 1, 3)
 ax3.bar(labels, briers)
-ax3.set_title("v2-lite transfer comparison: pooled Brier (lower is better)")
+ax3.set_title("Representation sweep: pooled Brier (lower is better)")
+ax3.tick_params(axis="x", rotation=60)
 
 plt.tight_layout()
-plot_path = transfer_root / "v2lite_transfer_experiment_overview.png"
+plot_path = pretrain_root / "representation_pretraining_overview.png"
 plt.savefig(plot_path, dpi=160, bbox_inches="tight")
 plt.close(fig)
 
-print(f"[V2-LITE TRANSFER] saved comparison CSV to {csv_path}")
-print(f"[V2-LITE TRANSFER] saved ranking to {txt_path}")
-print(f"[V2-LITE TRANSFER] saved overview plot to {plot_path}")
+print(f"[REP-SWEEP] saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(

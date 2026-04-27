@@ -142,6 +142,15 @@ class StrengthPretrainConfig:
     # logging
     save_oos_predictions: bool = True
 
+    # Structured input representation variant:
+    # "full"        = skills + masks + positions
+    # "no_positions"= skills + masks
+    # "no_masks"    = skills + positions
+    # "skills_only" = skills only
+    representation: str = "full"
+    use_strength_masks: bool = True
+    use_position_embedding: bool = True
+
 
 def set_global_seed(seed: int) -> None:
     os.environ["PYTHONHASHSEED"] = str(seed)
@@ -254,6 +263,57 @@ def _split_strength_tensor(x_s):
     return home_vals, home_mask, away_vals, away_mask
 
 
+def _zero_mask_like(values, name: str):
+    return Lambda(
+        lambda t: tf.zeros_like(t),
+        name=name,
+    )(values)
+
+
+def _position_embedding_or_zero(pos_ids, cfg, name_prefix: str):
+    if cfg.use_position_embedding:
+        position_emb_layer = Embedding(
+            input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+            output_dim=cfg.position_emb_dim,
+            name="position_embedding",
+        )
+        return position_emb_layer(pos_ids), position_emb_layer
+
+    pos_dim = int(cfg.position_emb_dim)
+    zero_pos = Lambda(
+        lambda p, d=pos_dim: tf.zeros((tf.shape(p)[0], 11, d), dtype=tf.float32),
+        name=f"{name_prefix}_position_zero",
+    )(pos_ids)
+    return zero_pos, None
+
+
+def _apply_strength_representation_v1(home_vals, home_mask, away_vals, away_mask, x_hp, x_ap, cfg):
+    if not cfg.use_strength_masks:
+        home_mask = _zero_mask_like(home_vals, "home_strength_mask_zero")
+        away_mask = _zero_mask_like(away_vals, "away_strength_mask_zero")
+
+    if cfg.use_position_embedding:
+        position_emb_layer = Embedding(
+            input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+            output_dim=cfg.position_emb_dim,
+            name="position_embedding",
+        )
+        home_pos_e = position_emb_layer(x_hp)
+        away_pos_e = position_emb_layer(x_ap)
+    else:
+        pos_dim = int(cfg.position_emb_dim)
+        home_pos_e = Lambda(
+            lambda p, d=pos_dim: tf.zeros((tf.shape(p)[0], 11, d), dtype=tf.float32),
+            name="home_position_zero",
+        )(x_hp)
+        away_pos_e = Lambda(
+            lambda p, d=pos_dim: tf.zeros((tf.shape(p)[0], 11, d), dtype=tf.float32),
+            name="away_position_zero",
+        )(x_ap)
+
+    return home_mask, away_mask, home_pos_e, away_pos_e
+
+
 def _row_valid_mask(mask_tensor, prefix: str):
     # Convert (B,11,34) -> (B,11,1): row is valid if at least one skill is observed.
     return Lambda(
@@ -317,7 +377,14 @@ def _build_team_repr_v2(
     role_hidden = int(cfg.role_post_hidden_dim)
     out_dim = int(cfg.strength_emb_dim)
 
-    team_pos_e = position_emb_layer(team_pos_ids)  # (B,11,pos_dim)
+    if position_emb_layer is not None:
+        team_pos_e = position_emb_layer(team_pos_ids)
+    else:
+        pos_dim = int(cfg.position_emb_dim)
+        team_pos_e = Lambda(
+            lambda p, d=pos_dim: tf.zeros((tf.shape(p)[0], 11, d), dtype=tf.float32),
+            name=f"{prefix}_position_zero",
+        )(team_pos_ids)
     team_input = Concatenate(axis=-1, name=f"{prefix}_strength_concat")([team_vals, team_mask, team_pos_e])
 
     row_h1 = Dense(
@@ -335,17 +402,21 @@ def _build_team_repr_v2(
 
     row_valid = _row_valid_mask(team_mask, prefix)
 
-    gk_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Goalkeeper"])
-    def_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Defender"])
-    mid_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Midfielder"])
-    fwd_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Forward"])
+    if cfg.use_position_embedding:
+        gk_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Goalkeeper"])
+        def_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Defender"])
+        mid_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Midfielder"])
+        fwd_idx = int(sett.FS_PLAYER_POSITION_TO_IDX["Forward"])
 
-    gk_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, gk_idx, prefix)
-    def_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, def_idx, prefix)
-    mid_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, mid_idx, prefix)
-    fwd_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, fwd_idx, prefix)
+        gk_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, gk_idx, prefix)
+        def_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, def_idx, prefix)
+        mid_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, mid_idx, prefix)
+        fwd_pool = _role_average_pool(row_h2, team_pos_ids, row_valid, fwd_idx, prefix)
 
-    role_cat = Concatenate(name=f"{prefix}_role_concat")([gk_pool, def_pool, mid_pool, fwd_pool])
+        role_cat = Concatenate(name=f"{prefix}_role_concat")([gk_pool, def_pool, mid_pool, fwd_pool])
+    else:
+        # fallback to global pooling if no positions in use
+        role_cat = GlobalAveragePooling1D(name=f"{prefix}_global_pool_no_positions")(row_h2)
 
     z = Dense(
         role_hidden,
@@ -691,19 +762,14 @@ def build_strength_pretrain_model_v1(cfg: StrengthPretrainConfig) -> Model:
     x_hp = Input((11,), dtype="int32", name="home_positions")
     x_ap = Input((11,), dtype="int32", name="away_positions")
 
-    position_emb_layer = Embedding(
-        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
-        output_dim=cfg.position_emb_dim,
-        name="position_embedding",
-    )
-    home_pos_e = position_emb_layer(x_hp)
-    away_pos_e = position_emb_layer(x_ap)
-
     home_vals = Lambda(lambda t: t[:, 0], name="home_strength_values")(x_s)
     home_mask = Lambda(lambda t: t[:, 1], name="home_strength_mask")(x_s)
     away_vals = Lambda(lambda t: t[:, 2], name="away_strength_values")(x_s)
     away_mask = Lambda(lambda t: t[:, 3], name="away_strength_mask")(x_s)
 
+    home_mask, away_mask, home_pos_e, away_pos_e = _apply_strength_representation_v1(
+        home_vals, home_mask, away_vals, away_mask, x_hp, x_ap, cfg
+    )
     home_team_input = Concatenate(axis=-1, name="home_strength_concat")([home_vals, home_mask, home_pos_e])
     away_team_input = Concatenate(axis=-1, name="away_strength_concat")([away_vals, away_mask, away_pos_e])
 
@@ -753,11 +819,18 @@ def build_strength_pretrain_model_v2(cfg: StrengthPretrainConfig) -> Model:
 
     home_vals, home_mask, away_vals, away_mask = _split_strength_tensor(x_s)
 
-    position_emb_layer = Embedding(
-        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
-        output_dim=cfg.position_emb_dim,
-        name="position_embedding",
-    )
+    if not cfg.use_strength_masks:
+        home_mask = Lambda(lambda t: tf.ones_like(t), name="home_strength_mask_constant")(home_vals)
+        away_mask = Lambda(lambda t: tf.ones_like(t), name="away_strength_mask_constant")(away_vals)
+
+    if cfg.use_position_embedding:
+        position_emb_layer = Embedding(
+            input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+            output_dim=cfg.position_emb_dim,
+            name="position_embedding",
+        )
+    else:
+        position_emb_layer = None
 
     home_team_repr = _build_team_repr_v2(
         home_vals,
@@ -1298,6 +1371,9 @@ def train_strength_pretrain_rolling(
                 "val_auc": val_auc,
                 "val_brier": val_brier,
                 "branch_version": cfg.branch_version,
+                "representation": cfg.representation,
+                "use_strength_masks": bool(cfg.use_strength_masks),
+                "use_position_embedding": bool(cfg.use_position_embedding),
             }
         )
 
@@ -1311,6 +1387,7 @@ def train_strength_pretrain_rolling(
                     "y_true": float(yt),
                     "y_prob_under25": float(yp),
                     "branch_version": cfg.branch_version,
+                    "representation": cfg.representation,
                 }
             )
 
@@ -1339,7 +1416,15 @@ def train_strength_pretrain_rolling(
             writer.writeheader()
             writer.writerows(oos_rows)
 
-    summary = {"run_name": run_name, "branch_version": cfg.branch_version, "mode": cfg.mode, "round_stats": round_info}
+    summary = {
+        "run_name": run_name,
+        "branch_version": cfg.branch_version,
+        "mode": cfg.mode,
+        "representation": cfg.representation,
+        "use_strength_masks": bool(cfg.use_strength_masks),
+        "use_position_embedding": bool(cfg.use_position_embedding),
+        "round_stats": round_info,
+    }
 
     if oos_rows:
         y_true = np.asarray([r["y_true"] for r in oos_rows], dtype=np.float32)
