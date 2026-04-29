@@ -106,6 +106,9 @@ class TrainConfig:
     use_comp_embedding: bool = True
     use_position_embedding: bool = True
 
+    representation: str = "full"
+    use_strength_masks: bool = True
+
 
 @dataclass
 class StrengthPretrainConfig:
@@ -511,6 +514,10 @@ def build_model_v1(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
         home_mask = Lambda(lambda t: t[:, 1], name="home_strength_mask")(x_s)  # (batch, 11, 34)
         away_vals = Lambda(lambda t: t[:, 2], name="away_strength_values")(x_s)  # (batch, 11, 34)
         away_mask = Lambda(lambda t: t[:, 3], name="away_strength_mask")(x_s)  # (batch, 11, 34)
+
+        if not cfg.use_strength_masks:
+            home_mask = _zero_mask_like(home_vals, "home_strength_mask_zero")
+            away_mask = _zero_mask_like(away_vals, "away_strength_mask_zero")
 
         # Concatenate values + mask + position embedding per team
         home_team_input = Concatenate(axis=-1, name="home_strength_concat")([home_vals, home_mask, home_pos_e])
@@ -1491,9 +1498,15 @@ def transfer_pretrained_strength_branch_weights(
     layer_names = get_strength_branch_layer_names(branch_version)
 
     for name in layer_names:
-        src = pretrained_model.get_layer(name)
-        dst = full_model.get_layer(name)
+        try:
+            src = pretrained_model.get_layer(name)
+            dst = full_model.get_layer(name)
+        except ValueError:
+            print(f"[transfer] skipping missing layer: {name}")
+            continue
+
         dst.set_weights(src.get_weights())
+        print(f"[transfer] copied layer: {name}")
 
     print(f"[transfer] copied pretrained {branch_version} branch weights into full model")
 
