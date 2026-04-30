@@ -158,18 +158,21 @@ TOP_REPRESENTATIONS = [
         "use_strength_masks": False,
         "use_position_embedding": True,
         "pretrain_run_name": "strength_pretrain_v1_u25_no_masks_lr8em05",
-    },
-    {
-        "representation": "skills_only",
-        "use_strength_masks": False,
-        "use_position_embedding": False,
-        "pretrain_run_name": "strength_pretrain_v1_u25_skills_only_lr8em05",
+        "use_pretrained": True,
     },
     {
         "representation": "full",
         "use_strength_masks": True,
         "use_position_embedding": True,
         "pretrain_run_name": "strength_pretrain_v1_u25_full_lr8em05",
+        "use_pretrained": False,
+    },
+    {
+        "representation": "full",
+        "use_strength_masks": True,
+        "use_position_embedding": True,
+        "pretrain_run_name": "strength_pretrain_v1_u25_full_lr8em05",
+        "use_pretrained": True,
     },
 ]
 
@@ -184,105 +187,103 @@ transfer_root.mkdir(parents=True, exist_ok=True)
 results = []
 
 for rep in TOP_REPRESENTATIONS:
-    for use_pretrained in [False, True]:
-        label = "pretrained" if use_pretrained else "scratch"
-        run_name = f"mlp_v1_{rep['representation']}_{label}_lr8em05"
+    use_pretrained = rep["use_pretrained"]
+    label = "pretrained" if use_pretrained else "scratch"
+    run_name = f"mlp_v1_{rep['representation']}_{label}_lr8em05_diag"
 
-        print("\n" + "=" * 80)
-        print(f"[TRANSFER] {run_name}")
-        print("=" * 80)
+    print("\n" + "=" * 80)
+    print(f"[TRANSFER] {run_name}")
+    print("=" * 80)
 
-        cfg = TrainConfig(
-            mode="binary_u25",
-            model_version="v1",
-            learning_rate=8e-5,
-            batch_size=64,
-            window_rounds=25,
-            epochs_per_step=3,
-            early_stopping_patience=1,
-            early_stopping_min_delta=0.0,
-            seed=42,
-            run_name=run_name,
-            enable_branch_diagnostics=False,
-            representation=rep["representation"],
-            use_strength_masks=rep["use_strength_masks"],
-            use_position_embedding=rep["use_position_embedding"],
-            strength_emb_dim=16,
-            position_emb_dim=3,
-        )
+    cfg = TrainConfig(
+        mode="binary_u25",
+        model_version="v1",
+        learning_rate=8e-5,
+        batch_size=64,
+        window_rounds=25,
+        epochs_per_step=3,
+        early_stopping_patience=1,
+        early_stopping_min_delta=0.0,
+        seed=42,
+        run_name=run_name,
+        enable_branch_diagnostics=True,
+        representation=rep["representation"],
+        use_strength_masks=rep["use_strength_masks"],
+        use_position_embedding=rep["use_position_embedding"],
+        strength_emb_dim=16,
+        position_emb_dim=3,
+    )
 
-        if use_pretrained:
-            pretrained_path = (
-                Path(sett.DATA_DIR) / "tensorboard_logs" / rep["pretrain_run_name"] / "pretrained_model.keras"
-            )
+    if use_pretrained:
+        pretrained_path = Path(sett.DATA_DIR) / "tensorboard_logs" / rep["pretrain_run_name"] / "pretrained_model.keras"
 
-            if pretrained_path.exists():
-                print(f"[transfer] loading pretrained model: {pretrained_path}")
-                pretrained_model = tf.keras.models.load_model(pretrained_path)
-            else:
-                print(f"[transfer] pretrained model missing, rerunning: {rep['pretrain_run_name']}")
-                pre_cfg = StrengthPretrainConfig(
-                    branch_version="v1",
-                    mode="binary_u25",
-                    window_rounds=25,
-                    epochs_per_step=3,
-                    learning_rate=8e-5,
-                    batch_size=64,
-                    strength_emb_dim=16,
-                    position_emb_dim=3,
-                    representation=rep["representation"],
-                    use_strength_masks=rep["use_strength_masks"],
-                    use_position_embedding=rep["use_position_embedding"],
-                    run_name=rep["pretrain_run_name"],
-                )
-                pretrained_model = train_strength_pretrain_rolling(league_matches_sorted, pre_cfg)
-
-            if cfg.seed is not None:
-                set_global_seed(cfg.seed)
-
-            model = build_model(
-                num_num=num_num,
-                num_teams=num_teams,
-                num_comps=num_comps,
-                cfg=cfg,
-            )
-
-            transfer_pretrained_strength_branch_weights(
-                pretrained_model=pretrained_model,
-                full_model=model,
-                branch_version="v1",
-            )
-
-            _ = train_rolling(
-                league_matches_sorted,
-                cat_maps,
-                cfg,
-                model=model,
-                pretrained_branch_version="v1",
-            )
+        if pretrained_path.exists():
+            print(f"[transfer] loading pretrained model: {pretrained_path}")
+            pretrained_model = tf.keras.models.load_model(pretrained_path)
         else:
-            _ = train_rolling(
-                league_matches_sorted,
-                cat_maps,
-                cfg,
+            print(f"[transfer] pretrained model missing, rerunning: {rep['pretrain_run_name']}")
+            pre_cfg = StrengthPretrainConfig(
+                branch_version="v1",
+                mode="binary_u25",
+                window_rounds=25,
+                epochs_per_step=3,
+                learning_rate=8e-5,
+                batch_size=64,
+                strength_emb_dim=16,
+                position_emb_dim=3,
+                representation=rep["representation"],
+                use_strength_masks=rep["use_strength_masks"],
+                use_position_embedding=rep["use_position_embedding"],
+                run_name=rep["pretrain_run_name"],
             )
+            pretrained_model = train_strength_pretrain_rolling(league_matches_sorted, pre_cfg)
 
-        summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "summary.json"
-        with summary_path.open("r", encoding="utf-8") as f:
-            summary = json.load(f)
+        if cfg.seed is not None:
+            set_global_seed(cfg.seed)
 
-        results.append(
-            {
-                "run_name": run_name,
-                "representation": rep["representation"],
-                "use_strength_masks": rep["use_strength_masks"],
-                "use_position_embedding": rep["use_position_embedding"],
-                "use_pretrained_init": use_pretrained,
-                "pooled_accuracy": summary.get("pooled_accuracy"),
-                "pooled_auc": summary.get("pooled_auc"),
-                "pooled_brier": summary.get("pooled_brier"),
-            }
+        model = build_model(
+            num_num=num_num,
+            num_teams=num_teams,
+            num_comps=num_comps,
+            cfg=cfg,
         )
+
+        transfer_pretrained_strength_branch_weights(
+            pretrained_model=pretrained_model,
+            full_model=model,
+            branch_version="v1",
+        )
+
+        _ = train_rolling(
+            league_matches_sorted,
+            cat_maps,
+            cfg,
+            model=model,
+            pretrained_branch_version="v1",
+        )
+    else:
+        _ = train_rolling(
+            league_matches_sorted,
+            cat_maps,
+            cfg,
+        )
+
+    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "summary.json"
+    with summary_path.open("r", encoding="utf-8") as f:
+        summary = json.load(f)
+
+    results.append(
+        {
+            "run_name": run_name,
+            "representation": rep["representation"],
+            "use_strength_masks": rep["use_strength_masks"],
+            "use_position_embedding": rep["use_position_embedding"],
+            "use_pretrained_init": use_pretrained,
+            "pooled_accuracy": summary.get("pooled_accuracy"),
+            "pooled_auc": summary.get("pooled_auc"),
+            "pooled_brier": summary.get("pooled_brier"),
+        }
+    )
 
 results.sort(
     key=lambda r: (
