@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 import matplotlib
-import tensorflow as tf
+import matplotlib.pyplot as plt
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
@@ -15,19 +15,19 @@ from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
 
 # from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
-from football_outcomes.training.fs_training_utils import build_categorical_maps, extract_numerical_features
+from football_outcomes.training.fs_training_utils import build_categorical_maps  # extract_numerical_features
 from football_outcomes.training.train_mlp_rolling import (
-    StrengthPretrainConfig,
     TrainConfig,
-    build_model,
-    set_global_seed,
     train_rolling,
-    train_strength_pretrain_rolling,
-    transfer_pretrained_strength_branch_weights,
 )
+
+# StrengthPretrainConfig,; build_model,; set_global_seed,; train_strength_pretrain_rolling,;
+# transfer_pretrained_strength_branch_weights,
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
 from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
+
+# import tensorflow as tf
 
 # import matplotlib.pyplot as plt
 
@@ -149,175 +149,201 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# Transfer top-3 v1 pretrained branch representations
+# HPO Stage 1: v1 full scratch training dynamics
 # ------------------------------------------------------------
 
-TOP_REPRESENTATIONS = [
-    {
-        "representation": "no_masks",
-        "use_strength_masks": False,
-        "use_position_embedding": True,
-        "pretrain_run_name": "strength_pretrain_v1_u25_no_masks_lr8em05",
-        "use_pretrained": True,
-    },
-    {
-        "representation": "full",
-        "use_strength_masks": True,
-        "use_position_embedding": True,
-        "pretrain_run_name": "strength_pretrain_v1_u25_full_lr8em05",
-        "use_pretrained": False,
-    },
-    {
-        "representation": "full",
-        "use_strength_masks": True,
-        "use_position_embedding": True,
-        "pretrain_run_name": "strength_pretrain_v1_u25_full_lr8em05",
-        "use_pretrained": True,
-    },
-]
+HPO_STAGE = "stage1_v1_full_scratch"
 
-sample_feat = league_matches_sorted[0].features_before_match
-num_num = extract_numerical_features(sample_feat).shape[0]
-num_teams = len(cat_maps.team_id_map)
-num_comps = len(cat_maps.comp_id_map)
+HPO_RUNS = []
 
-transfer_root = Path(sett.DATA_DIR) / "transfer_top3_representations"
-transfer_root.mkdir(parents=True, exist_ok=True)
+learning_rates = [5e-5, 8e-5, 1e-4, 1.5e-4]
+epochs_per_step_values = [2, 5]
+lr_schedules = ["constant", "exponential"]
+window_rounds_values = [25, 35]
+
+for lr in learning_rates:
+    for eps in epochs_per_step_values:
+        for sched in lr_schedules:
+            for window_rounds in window_rounds_values:
+                lr_tag = f"{lr:.1e}".replace(".", "p").replace("-", "m")
+                run_name = f"hpo1_v1_full_lr{lr_tag}_ep{eps}_{sched}_w{window_rounds}"
+
+                HPO_RUNS.append(
+                    {
+                        "run_name": run_name,
+                        "learning_rate": lr,
+                        "epochs_per_step": eps,
+                        "lr_schedule": sched,
+                        "window_rounds": window_rounds,
+                        "batch_size": 64,
+                        "early_stopping_patience": 1,
+                        "early_stopping_min_delta": 0.0,
+                        "mlp_hidden_1": 128,
+                        "mlp_hidden_2": 64,
+                        "mlp_hidden_3": 32,
+                        "mlp_dropout_1": 0.50,
+                        "mlp_dropout_2": 0.40,
+                    }
+                )
+
+hpo_root = Path(sett.DATA_DIR) / "hpo" / HPO_STAGE
+hpo_root.mkdir(parents=True, exist_ok=True)
 
 results = []
 
-for rep in TOP_REPRESENTATIONS:
-    use_pretrained = rep["use_pretrained"]
-    label = "pretrained" if use_pretrained else "scratch"
-    run_name = f"mlp_v1_{rep['representation']}_{label}_lr8em05_diag"
-
+for idx, params in enumerate(HPO_RUNS, start=1):
     print("\n" + "=" * 80)
-    print(f"[TRANSFER] {run_name}")
+    print(f"[HPO {idx}/{len(HPO_RUNS)}] {params['run_name']}")
     print("=" * 80)
 
     cfg = TrainConfig(
         mode="binary_u25",
         model_version="v1",
-        learning_rate=8e-5,
-        batch_size=64,
-        window_rounds=25,
-        epochs_per_step=3,
-        early_stopping_patience=1,
-        early_stopping_min_delta=0.0,
-        seed=42,
-        run_name=run_name,
-        enable_branch_diagnostics=True,
-        representation=rep["representation"],
-        use_strength_masks=rep["use_strength_masks"],
-        use_position_embedding=rep["use_position_embedding"],
+        # v1 full scratch
+        representation="full",
+        use_strength_masks=True,
+        use_position_embedding=True,
+        use_team_strength=True,
+        use_team_ids=True,
+        use_comp_embedding=True,
+        # training params
+        learning_rate=params["learning_rate"],
+        lr_schedule=params["lr_schedule"],
+        lr_decay_rate=0.997,
+        min_learning_rate=2e-5,
+        batch_size=params["batch_size"],
+        window_rounds=params["window_rounds"],
+        epochs_per_step=params["epochs_per_step"],
+        early_stopping_patience=params["early_stopping_patience"],
+        early_stopping_min_delta=params["early_stopping_min_delta"],
+        # current v1 architecture
+        team_emb_dim=8,
+        comp_emb_dim=5,
         strength_emb_dim=16,
         position_emb_dim=3,
+        mlp_hidden_1=params["mlp_hidden_1"],
+        mlp_hidden_2=params["mlp_hidden_2"],
+        mlp_hidden_3=params["mlp_hidden_3"],
+        mlp_dropout_1=params["mlp_dropout_1"],
+        mlp_dropout_2=params["mlp_dropout_2"],
+        seed=42,
+        run_name=params["run_name"],
+        enable_branch_diagnostics=False,
+        save_oos_predictions=True,
     )
 
-    if use_pretrained:
-        pretrained_path = Path(sett.DATA_DIR) / "tensorboard_logs" / rep["pretrain_run_name"] / "pretrained_model.keras"
+    _ = train_rolling(
+        league_matches_sorted,
+        cat_maps,
+        cfg,
+    )
 
-        if pretrained_path.exists():
-            print(f"[transfer] loading pretrained model: {pretrained_path}")
-            pretrained_model = tf.keras.models.load_model(pretrained_path)
-        else:
-            print(f"[transfer] pretrained model missing, rerunning: {rep['pretrain_run_name']}")
-            pre_cfg = StrengthPretrainConfig(
-                branch_version="v1",
-                mode="binary_u25",
-                window_rounds=25,
-                epochs_per_step=3,
-                learning_rate=8e-5,
-                batch_size=64,
-                strength_emb_dim=16,
-                position_emb_dim=3,
-                representation=rep["representation"],
-                use_strength_masks=rep["use_strength_masks"],
-                use_position_embedding=rep["use_position_embedding"],
-                run_name=rep["pretrain_run_name"],
-            )
-            pretrained_model = train_strength_pretrain_rolling(league_matches_sorted, pre_cfg)
+    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "summary.json"
+    config_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "train_config.json"
+    round_metrics_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "round_metrics.csv"
 
-        if cfg.seed is not None:
-            set_global_seed(cfg.seed)
-
-        model = build_model(
-            num_num=num_num,
-            num_teams=num_teams,
-            num_comps=num_comps,
-            cfg=cfg,
-        )
-
-        transfer_pretrained_strength_branch_weights(
-            pretrained_model=pretrained_model,
-            full_model=model,
-            branch_version="v1",
-        )
-
-        _ = train_rolling(
-            league_matches_sorted,
-            cat_maps,
-            cfg,
-            model=model,
-            pretrained_branch_version="v1",
-        )
-    else:
-        _ = train_rolling(
-            league_matches_sorted,
-            cat_maps,
-            cfg,
-        )
-
-    summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "summary.json"
     with summary_path.open("r", encoding="utf-8") as f:
         summary = json.load(f)
 
-    results.append(
-        {
-            "run_name": run_name,
-            "representation": rep["representation"],
-            "use_strength_masks": rep["use_strength_masks"],
-            "use_position_embedding": rep["use_position_embedding"],
-            "use_pretrained_init": use_pretrained,
-            "pooled_accuracy": summary.get("pooled_accuracy"),
-            "pooled_auc": summary.get("pooled_auc"),
-            "pooled_brier": summary.get("pooled_brier"),
-        }
-    )
+    with config_path.open("r", encoding="utf-8") as f:
+        saved_cfg = json.load(f)
 
+    row = {
+        "rank": None,
+        "run_name": params["run_name"],
+        "stage": HPO_STAGE,
+        "model_version": saved_cfg["model_version"],
+        "mode": saved_cfg["mode"],
+        "learning_rate": saved_cfg["learning_rate"],
+        "lr_schedule": saved_cfg["lr_schedule"],
+        "lr_decay_rate": saved_cfg["lr_decay_rate"],
+        "min_learning_rate": saved_cfg["min_learning_rate"],
+        "epochs_per_step": saved_cfg["epochs_per_step"],
+        "window_rounds": saved_cfg["window_rounds"],
+        "batch_size": saved_cfg["batch_size"],
+        "mlp_hidden_1": saved_cfg["mlp_hidden_1"],
+        "mlp_hidden_2": saved_cfg["mlp_hidden_2"],
+        "mlp_hidden_3": saved_cfg["mlp_hidden_3"],
+        "mlp_dropout_1": saved_cfg["mlp_dropout_1"],
+        "mlp_dropout_2": saved_cfg["mlp_dropout_2"],
+        "pooled_accuracy": summary.get("pooled_accuracy"),
+        "pooled_auc": summary.get("pooled_auc"),
+        "pooled_brier": summary.get("pooled_brier"),
+        "summary_path": str(summary_path),
+        "config_path": str(config_path),
+        "round_metrics_path": str(round_metrics_path),
+    }
+
+    results.append(row)
+
+# Ranking priority:
+# 1) AUC high
+# 2) Brier low
+# 3) Accuracy high
 results.sort(
     key=lambda r: (
         -(r["pooled_auc"] if r["pooled_auc"] is not None else -999),
-        -(r["pooled_accuracy"] if r["pooled_accuracy"] is not None else -999),
         (r["pooled_brier"] if r["pooled_brier"] is not None else 999),
+        -(r["pooled_accuracy"] if r["pooled_accuracy"] is not None else -999),
     )
 )
 
-csv_path = transfer_root / "top3_transfer_results.csv"
+for i, row in enumerate(results, start=1):
+    row["rank"] = i
+
+csv_path = hpo_root / "hpo_stage1_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
     writer.writeheader()
     writer.writerows(results)
 
-json_path = transfer_root / "top3_transfer_results.json"
+json_path = hpo_root / "hpo_stage1_results.json"
 with json_path.open("w", encoding="utf-8") as f:
     json.dump(results, f, indent=2)
 
-txt_path = transfer_root / "top3_transfer_ranking.txt"
+txt_path = hpo_root / "hpo_stage1_ranking.txt"
 with txt_path.open("w", encoding="utf-8") as f:
-    for idx, r in enumerate(results, start=1):
+    for r in results:
         f.write(
-            f"{idx}. {r['run_name']} | "
-            f"repr={r['representation']} | "
-            f"pretrained={r['use_pretrained_init']} | "
+            f"{r['rank']}. {r['run_name']} | "
+            f"lr={r['learning_rate']} | "
+            f"sched={r['lr_schedule']} | "
+            f"ep={r['epochs_per_step']} | "
             f"AUC={r['pooled_auc']:.6f} | "
             f"ACC={r['pooled_accuracy']:.6f} | "
             f"BRIER={r['pooled_brier']:.6f}\n"
         )
 
-print(f"[TRANSFER] saved CSV to {csv_path}")
-print(f"[TRANSFER] saved JSON to {json_path}")
-print(f"[TRANSFER] saved ranking to {txt_path}")
+# Overview plot
+top = results[: min(12, len(results))]
+labels = [f"{r['rank']}. lr{r['learning_rate']:.0e}_{r['lr_schedule']}_ep{r['epochs_per_step']}" for r in top]
+
+fig = plt.figure(figsize=(16, 10))
+
+ax1 = fig.add_subplot(3, 1, 1)
+ax1.bar(labels, [r["pooled_auc"] for r in top])
+ax1.set_title("HPO Stage 1: pooled AUC")
+ax1.tick_params(axis="x", rotation=45)
+
+ax2 = fig.add_subplot(3, 1, 2)
+ax2.bar(labels, [r["pooled_accuracy"] for r in top])
+ax2.set_title("HPO Stage 1: pooled accuracy")
+ax2.tick_params(axis="x", rotation=45)
+
+ax3 = fig.add_subplot(3, 1, 3)
+ax3.bar(labels, [r["pooled_brier"] for r in top])
+ax3.set_title("HPO Stage 1: pooled Brier (lower is better)")
+ax3.tick_params(axis="x", rotation=45)
+
+plt.tight_layout()
+plot_path = hpo_root / "hpo_stage1_top_runs_overview.png"
+plt.savefig(plot_path, dpi=160, bbox_inches="tight")
+plt.close(fig)
+
+print(f"[HPO] saved CSV to {csv_path}")
+print(f"[HPO] saved JSON to {json_path}")
+print(f"[HPO] saved ranking to {txt_path}")
+print(f"[HPO] saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(

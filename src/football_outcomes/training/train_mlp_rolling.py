@@ -109,6 +109,18 @@ class TrainConfig:
     representation: str = "full"
     use_strength_masks: bool = True
 
+    # v1 MLP architecture
+    mlp_hidden_1: int = 128
+    mlp_hidden_2: int = 64
+    mlp_hidden_3: int = 32
+    mlp_dropout_1: float = 0.50
+    mlp_dropout_2: float = 0.40
+
+    # Learning-rate schedule across rolling rounds
+    lr_schedule: str = "constant"  # "constant" | "exponential" | "cosine"
+    lr_decay_rate: float = 0.997
+    min_learning_rate: float = 2e-5
+
 
 @dataclass
 class StrengthPretrainConfig:
@@ -544,11 +556,11 @@ def build_model_v1(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
 
     z = Concatenate(name="fusion")([x_num, home_e, away_e, comp_e, home_s, away_s])
 
-    z = Dense(128, activation="relu", name="mlp_dense_1")(z)
-    z = Dropout(0.5, name="mlp_dropout_1")(z)
-    z = Dense(64, activation="relu", name="mlp_dense_2")(z)
-    z = Dropout(0.4, name="mlp_dropout_2")(z)
-    z = Dense(32, activation="relu", name="mlp_dense_3")(z)
+    z = Dense(cfg.mlp_hidden_1, activation="relu", name="mlp_dense_1")(z)
+    z = Dropout(cfg.mlp_dropout_1, name="mlp_dropout_1")(z)
+    z = Dense(cfg.mlp_hidden_2, activation="relu", name="mlp_dense_2")(z)
+    z = Dropout(cfg.mlp_dropout_2, name="mlp_dropout_2")(z)
+    z = Dense(cfg.mlp_hidden_3, activation="relu", name="mlp_dense_3")(z)
 
     inputs = [x_num, x_h, x_a, x_c, x_s, x_hp, x_ap]
 
@@ -967,6 +979,33 @@ def _extract_main_predictions(pred):
     return pred
 
 
+def _lr_for_round(cfg: TrainConfig, round_offset: int, total_rounds: int) -> float:
+    base = float(cfg.learning_rate)
+
+    if cfg.lr_schedule == "constant":
+        return base
+
+    if cfg.lr_schedule == "exponential":
+        lr = base * (float(cfg.lr_decay_rate) ** int(round_offset))
+        return max(float(cfg.min_learning_rate), float(lr))
+
+    if cfg.lr_schedule == "cosine":
+        if total_rounds <= 1:
+            return base
+        progress = min(1.0, max(0.0, round_offset / float(total_rounds - 1)))
+        lr = cfg.min_learning_rate + 0.5 * (base - cfg.min_learning_rate) * (1.0 + np.cos(np.pi * progress))
+        return float(lr)
+
+    raise ValueError(f"Unknown lr_schedule: {cfg.lr_schedule}")
+
+
+def _set_optimizer_lr(model: Model, lr: float) -> None:
+    try:
+        model.optimizer.learning_rate.assign(float(lr))
+    except Exception:
+        tf.keras.backend.set_value(model.optimizer.learning_rate, float(lr))
+
+
 def train_rolling(
     matches_sorted: List[FSMatch],
     cat_maps: CatMaps,
@@ -1014,6 +1053,9 @@ def train_rolling(
     tb_writer = tf.summary.create_file_writer(log_dir)
 
     print(f"[tensorboard] logging to {log_dir}")
+    cfg_json_path = Path(log_dir) / "train_config.json"
+    with cfg_json_path.open("w", encoding="utf-8") as f:
+        json.dump(asdict(cfg), f, indent=2)
 
     round_records = []
     oos_rows = []
@@ -1118,6 +1160,11 @@ def train_rolling(
             print("[freeze] unfroze pretrained branch and recompiled model")
             frozen_branch_layer_names = None
 
+        round_offset = i - cfg.window_rounds
+        total_train_rounds = max(1, (len(rounds) - 1) - cfg.window_rounds)
+        current_lr = _lr_for_round(cfg, round_offset, total_train_rounds)
+        _set_optimizer_lr(model, current_lr)
+
         model.fit(
             X[:-1],
             y_train,
@@ -1155,6 +1202,8 @@ def train_rolling(
                     "val_accuracy": float(val_acc),
                     "val_auc": val_auc,
                     "val_brier": val_brier,
+                    "learning_rate": float(current_lr),
+                    "lr_schedule": cfg.lr_schedule,
                 }
             )
 
@@ -1177,6 +1226,7 @@ def train_rolling(
                 tf.summary.scalar("round/val_brier", val_brier, step=round_step)
                 tf.summary.scalar("round/val_size", len(val_ms), step=round_step)
                 tf.summary.scalar("round/positive_rate_val", float(np.mean(y_true)), step=round_step)
+                tf.summary.scalar("round/learning_rate", float(current_lr), step=round_step)
                 tb_writer.flush()
 
         elif cfg.mode == "goals_dist":
