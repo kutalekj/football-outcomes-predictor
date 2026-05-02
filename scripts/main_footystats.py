@@ -149,40 +149,73 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# HPO Stage 1: v1 full scratch training dynamics
+# HPO Stage 2: v1 full scratch architecture/regularization
 # ------------------------------------------------------------
 
-HPO_STAGE = "stage1_v1_full_scratch"
+HPO_STAGE = "stage2_v1_full_scratch_arch"
+
+BASE_TRAINING_SETTINGS = [
+    {
+        "base_label": "s1_rank1",
+        "learning_rate": 8e-5,
+        "lr_schedule": "exponential",
+        "epochs_per_step": 5,
+        "window_rounds": 25,
+    },
+    {
+        "base_label": "s1_rank2",
+        "learning_rate": 8e-5,
+        "lr_schedule": "exponential",
+        "epochs_per_step": 2,
+        "window_rounds": 35,
+    },
+    {
+        "base_label": "s1_rank3",
+        "learning_rate": 8e-5,
+        "lr_schedule": "exponential",
+        "epochs_per_step": 2,
+        "window_rounds": 25,
+    },
+]
+
+MLP_VARIANTS = [
+    {"mlp_label": "mlp128_64_32", "mlp_hidden_1": 128, "mlp_hidden_2": 64, "mlp_hidden_3": 32},
+    {"mlp_label": "mlp96_48_24", "mlp_hidden_1": 96, "mlp_hidden_2": 48, "mlp_hidden_3": 24},
+]
+
+DROPOUT_VARIANTS = [
+    {"drop_label": "drop50_40", "mlp_dropout_1": 0.50, "mlp_dropout_2": 0.40},
+    {"drop_label": "drop30_20", "mlp_dropout_1": 0.30, "mlp_dropout_2": 0.20},
+]
+
+STRENGTH_DIMS = [
+    {"strength_label": "str16", "strength_emb_dim": 16},
+    {"strength_label": "str24", "strength_emb_dim": 24},
+]
 
 HPO_RUNS = []
 
-learning_rates = [5e-5, 8e-5, 1e-4, 1.5e-4]
-epochs_per_step_values = [2, 5]
-lr_schedules = ["constant", "exponential"]
-window_rounds_values = [25, 35]
-
-for lr in learning_rates:
-    for eps in epochs_per_step_values:
-        for sched in lr_schedules:
-            for window_rounds in window_rounds_values:
-                lr_tag = f"{lr:.1e}".replace(".", "p").replace("-", "m")
-                run_name = f"hpo1_v1_full_lr{lr_tag}_ep{eps}_{sched}_w{window_rounds}"
+for base in BASE_TRAINING_SETTINGS:
+    for mlp in MLP_VARIANTS:
+        for drop in DROPOUT_VARIANTS:
+            for strength in STRENGTH_DIMS:
+                lr_tag = f"{base['learning_rate']:.1e}".replace(".", "p").replace("-", "m")
+                run_name = (
+                    f"hpo2_{base['base_label']}_lr{lr_tag}_"
+                    f"ep{base['epochs_per_step']}_w{base['window_rounds']}_"
+                    f"{mlp['mlp_label']}_{drop['drop_label']}_{strength['strength_label']}"
+                )
 
                 HPO_RUNS.append(
                     {
                         "run_name": run_name,
-                        "learning_rate": lr,
-                        "epochs_per_step": eps,
-                        "lr_schedule": sched,
-                        "window_rounds": window_rounds,
+                        **base,
+                        **mlp,
+                        **drop,
+                        **strength,
                         "batch_size": 64,
                         "early_stopping_patience": 1,
                         "early_stopping_min_delta": 0.0,
-                        "mlp_hidden_1": 128,
-                        "mlp_hidden_2": 64,
-                        "mlp_hidden_3": 32,
-                        "mlp_dropout_1": 0.50,
-                        "mlp_dropout_2": 0.40,
                     }
                 )
 
@@ -193,20 +226,18 @@ results = []
 
 for idx, params in enumerate(HPO_RUNS, start=1):
     print("\n" + "=" * 80)
-    print(f"[HPO {idx}/{len(HPO_RUNS)}] {params['run_name']}")
+    print(f"[HPO2 {idx}/{len(HPO_RUNS)}] {params['run_name']}")
     print("=" * 80)
 
     cfg = TrainConfig(
         mode="binary_u25",
         model_version="v1",
-        # v1 full scratch
         representation="full",
         use_strength_masks=True,
         use_position_embedding=True,
         use_team_strength=True,
         use_team_ids=True,
         use_comp_embedding=True,
-        # training params
         learning_rate=params["learning_rate"],
         lr_schedule=params["lr_schedule"],
         lr_decay_rate=0.997,
@@ -216,10 +247,9 @@ for idx, params in enumerate(HPO_RUNS, start=1):
         epochs_per_step=params["epochs_per_step"],
         early_stopping_patience=params["early_stopping_patience"],
         early_stopping_min_delta=params["early_stopping_min_delta"],
-        # current v1 architecture
         team_emb_dim=8,
         comp_emb_dim=5,
-        strength_emb_dim=16,
+        strength_emb_dim=params["strength_emb_dim"],
         position_emb_dim=3,
         mlp_hidden_1=params["mlp_hidden_1"],
         mlp_hidden_2=params["mlp_hidden_2"],
@@ -232,11 +262,7 @@ for idx, params in enumerate(HPO_RUNS, start=1):
         save_oos_predictions=True,
     )
 
-    _ = train_rolling(
-        league_matches_sorted,
-        cat_maps,
-        cfg,
-    )
+    _ = train_rolling(league_matches_sorted, cat_maps, cfg)
 
     summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "summary.json"
     config_path = Path(sett.DATA_DIR) / "tensorboard_logs" / params["run_name"] / "train_config.json"
@@ -248,38 +274,35 @@ for idx, params in enumerate(HPO_RUNS, start=1):
     with config_path.open("r", encoding="utf-8") as f:
         saved_cfg = json.load(f)
 
-    row = {
-        "rank": None,
-        "run_name": params["run_name"],
-        "stage": HPO_STAGE,
-        "model_version": saved_cfg["model_version"],
-        "mode": saved_cfg["mode"],
-        "learning_rate": saved_cfg["learning_rate"],
-        "lr_schedule": saved_cfg["lr_schedule"],
-        "lr_decay_rate": saved_cfg["lr_decay_rate"],
-        "min_learning_rate": saved_cfg["min_learning_rate"],
-        "epochs_per_step": saved_cfg["epochs_per_step"],
-        "window_rounds": saved_cfg["window_rounds"],
-        "batch_size": saved_cfg["batch_size"],
-        "mlp_hidden_1": saved_cfg["mlp_hidden_1"],
-        "mlp_hidden_2": saved_cfg["mlp_hidden_2"],
-        "mlp_hidden_3": saved_cfg["mlp_hidden_3"],
-        "mlp_dropout_1": saved_cfg["mlp_dropout_1"],
-        "mlp_dropout_2": saved_cfg["mlp_dropout_2"],
-        "pooled_accuracy": summary.get("pooled_accuracy"),
-        "pooled_auc": summary.get("pooled_auc"),
-        "pooled_brier": summary.get("pooled_brier"),
-        "summary_path": str(summary_path),
-        "config_path": str(config_path),
-        "round_metrics_path": str(round_metrics_path),
-    }
+    results.append(
+        {
+            "rank": None,
+            "run_name": params["run_name"],
+            "stage": HPO_STAGE,
+            "base_label": params["base_label"],
+            "learning_rate": saved_cfg["learning_rate"],
+            "lr_schedule": saved_cfg["lr_schedule"],
+            "lr_decay_rate": saved_cfg["lr_decay_rate"],
+            "min_learning_rate": saved_cfg["min_learning_rate"],
+            "epochs_per_step": saved_cfg["epochs_per_step"],
+            "window_rounds": saved_cfg["window_rounds"],
+            "batch_size": saved_cfg["batch_size"],
+            "early_stopping_patience": saved_cfg["early_stopping_patience"],
+            "mlp_hidden_1": saved_cfg["mlp_hidden_1"],
+            "mlp_hidden_2": saved_cfg["mlp_hidden_2"],
+            "mlp_hidden_3": saved_cfg["mlp_hidden_3"],
+            "mlp_dropout_1": saved_cfg["mlp_dropout_1"],
+            "mlp_dropout_2": saved_cfg["mlp_dropout_2"],
+            "strength_emb_dim": saved_cfg["strength_emb_dim"],
+            "pooled_accuracy": summary.get("pooled_accuracy"),
+            "pooled_auc": summary.get("pooled_auc"),
+            "pooled_brier": summary.get("pooled_brier"),
+            "summary_path": str(summary_path),
+            "config_path": str(config_path),
+            "round_metrics_path": str(round_metrics_path),
+        }
+    )
 
-    results.append(row)
-
-# Ranking priority:
-# 1) AUC high
-# 2) Brier low
-# 3) Accuracy high
 results.sort(
     key=lambda r: (
         -(r["pooled_auc"] if r["pooled_auc"] is not None else -999),
@@ -291,59 +314,65 @@ results.sort(
 for i, row in enumerate(results, start=1):
     row["rank"] = i
 
-csv_path = hpo_root / "hpo_stage1_results.csv"
+csv_path = hpo_root / "hpo_stage2_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
     writer.writeheader()
     writer.writerows(results)
 
-json_path = hpo_root / "hpo_stage1_results.json"
+json_path = hpo_root / "hpo_stage2_results.json"
 with json_path.open("w", encoding="utf-8") as f:
     json.dump(results, f, indent=2)
 
-txt_path = hpo_root / "hpo_stage1_ranking.txt"
+txt_path = hpo_root / "hpo_stage2_ranking.txt"
 with txt_path.open("w", encoding="utf-8") as f:
     for r in results:
         f.write(
             f"{r['rank']}. {r['run_name']} | "
+            f"base={r['base_label']} | "
             f"lr={r['learning_rate']} | "
             f"sched={r['lr_schedule']} | "
             f"ep={r['epochs_per_step']} | "
+            f"w={r['window_rounds']} | "
+            f"mlp=[{r['mlp_hidden_1']},{r['mlp_hidden_2']},{r['mlp_hidden_3']}] | "
+            f"drop=[{r['mlp_dropout_1']},{r['mlp_dropout_2']}] | "
+            f"str={r['strength_emb_dim']} | "
             f"AUC={r['pooled_auc']:.6f} | "
             f"ACC={r['pooled_accuracy']:.6f} | "
             f"BRIER={r['pooled_brier']:.6f}\n"
         )
 
-# Overview plot
 top = results[: min(12, len(results))]
-labels = [f"{r['rank']}. lr{r['learning_rate']:.0e}_{r['lr_schedule']}_ep{r['epochs_per_step']}" for r in top]
+labels = [
+    f"{r['rank']}. {r['base_label']}_{r['mlp_hidden_1']}_{r['mlp_dropout_1']}_s{r['strength_emb_dim']}" for r in top
+]
 
 fig = plt.figure(figsize=(16, 10))
 
 ax1 = fig.add_subplot(3, 1, 1)
 ax1.bar(labels, [r["pooled_auc"] for r in top])
-ax1.set_title("HPO Stage 1: pooled AUC")
+ax1.set_title("HPO Stage 2: pooled AUC")
 ax1.tick_params(axis="x", rotation=45)
 
 ax2 = fig.add_subplot(3, 1, 2)
 ax2.bar(labels, [r["pooled_accuracy"] for r in top])
-ax2.set_title("HPO Stage 1: pooled accuracy")
+ax2.set_title("HPO Stage 2: pooled accuracy")
 ax2.tick_params(axis="x", rotation=45)
 
 ax3 = fig.add_subplot(3, 1, 3)
 ax3.bar(labels, [r["pooled_brier"] for r in top])
-ax3.set_title("HPO Stage 1: pooled Brier (lower is better)")
+ax3.set_title("HPO Stage 2: pooled Brier (lower is better)")
 ax3.tick_params(axis="x", rotation=45)
 
 plt.tight_layout()
-plot_path = hpo_root / "hpo_stage1_top_runs_overview.png"
+plot_path = hpo_root / "hpo_stage2_top_runs_overview.png"
 plt.savefig(plot_path, dpi=160, bbox_inches="tight")
 plt.close(fig)
 
-print(f"[HPO] saved CSV to {csv_path}")
-print(f"[HPO] saved JSON to {json_path}")
-print(f"[HPO] saved ranking to {txt_path}")
-print(f"[HPO] saved overview plot to {plot_path}")
+print(f"[HPO2] saved CSV to {csv_path}")
+print(f"[HPO2] saved JSON to {json_path}")
+print(f"[HPO2] saved ranking to {txt_path}")
+print(f"[HPO2] saved overview plot to {plot_path}")
 
 if sett.ALL_STORE:
     save_snapshot(
