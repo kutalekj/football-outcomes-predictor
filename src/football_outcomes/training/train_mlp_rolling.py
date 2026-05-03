@@ -922,6 +922,28 @@ def _reg_summary(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     return {"pooled_mae": mae, "pooled_rmse": rmse}
 
 
+def _multiclass_summary(y_true: np.ndarray, y_prob: np.ndarray, max_goals_class: int) -> Dict[str, float]:
+    y_true = y_true.astype(np.int32)
+    y_pred = np.argmax(y_prob, axis=1).astype(np.int32)
+    classes = np.arange(max_goals_class + 1)
+
+    expected_goals = (y_prob * classes[None, :]).sum(axis=1)
+    acc = float(np.mean(y_pred == y_true))
+    mae = float(np.mean(np.abs(expected_goals - y_true.astype(np.float32))))
+
+    eps = 1e-8
+    clipped = np.clip(y_prob, eps, 1.0)
+    clipped = clipped / clipped.sum(axis=1, keepdims=True)
+    nll = -np.log(clipped[np.arange(len(y_true)), y_true])
+    logloss = float(np.mean(nll))
+
+    return {
+        "pooled_accuracy": acc,
+        "pooled_expected_goals_mae": mae,
+        "pooled_log_loss": logloss,
+    }
+
+
 def _save_pretrain_round_plot(log_dir: str, round_records: List[dict], title: str) -> None:
     if not round_records:
         return
@@ -1235,8 +1257,22 @@ def train_rolling(
 
             raw_pred = model.predict(V[:-1], verbose=0)
             probabilities = _extract_main_predictions(raw_pred)
+            pred_cls = np.argmax(probabilities, axis=1)
             expected = (probabilities * np.arange(cfg.max_goals_class + 1)).sum(axis=1)
             mae = np.mean(np.abs(expected - V[-1]))
+
+            for m, yt, yp, eg in zip(val_ms, V[-1], pred_cls, expected):
+                oos_rows.append(
+                    {
+                        "round_idx": round_step,
+                        "match_id": m.id,
+                        "season": m.season,
+                        "competition": m.comp_name,
+                        "y_true_class": int(yt),
+                        "y_pred_class": int(yp),
+                        "y_pred_expected_goals": float(eg),
+                    }
+                )
 
             round_records.append(
                 {
@@ -1325,6 +1361,18 @@ def train_rolling(
         y_true = np.asarray([r["y_true_goals"] for r in oos_rows], dtype=np.float32)
         y_pred = np.asarray([r["y_pred_goals"] for r in oos_rows], dtype=np.float32)
         summary.update(_reg_summary(y_true, y_pred))
+
+    if cfg.mode == "goals_dist" and oos_rows:
+        y_true = np.asarray([r["y_true_class"] for r in oos_rows], dtype=np.int32)
+        y_pred_cls = np.asarray([r["y_pred_class"] for r in oos_rows], dtype=np.int32)
+        y_exp = np.asarray([r["y_pred_expected_goals"] for r in oos_rows], dtype=np.float32)
+
+        summary.update(
+            {
+                "pooled_accuracy": float(np.mean(y_pred_cls == y_true)),
+                "pooled_expected_goals_mae": float(np.mean(np.abs(y_exp - y_true.astype(np.float32)))),
+            }
+        )
 
     summary_path = Path(log_dir) / "summary.json"
     with summary_path.open("w", encoding="utf-8") as f:

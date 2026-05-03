@@ -7,29 +7,24 @@ from pathlib import Path
 
 import matplotlib
 
-# import matplotlib.pyplot as plt
-import tensorflow as tf
-
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import load_avg_team_strength, load_sofifa_players, save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
-
-# from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
-from football_outcomes.training.fs_training_utils import build_categorical_maps, extract_numerical_features
+from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
+from football_outcomes.training.fs_training_utils import build_categorical_maps  # extract_numerical_features
 from football_outcomes.training.train_mlp_rolling import (
-    StrengthPretrainConfig,
     TrainConfig,
-    build_model,
-    set_global_seed,
     train_rolling,
-    train_strength_pretrain_rolling,
-    transfer_pretrained_strength_branch_weights,
 )
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
 from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
+
+# import matplotlib.pyplot as plt
+# import tensorflow as tf
+
 
 matplotlib.use("Agg")
 
@@ -148,12 +143,15 @@ evaluate_baseline_rolling(
 """
 
 # ------------------------------------------------------------
-# Final pretraining check: best scratch config vs pretrained init
+# Baseline comparison across objectives
 # ------------------------------------------------------------
 
-HPO_STAGE = "final_pretrain_check_v1_full"
+EXPERIMENT_STAGE = "baseline_comparison_selected_model"
 
-BEST_CFG = {
+comparison_root = Path(sett.DATA_DIR) / "comparison" / EXPERIMENT_STAGE
+comparison_root.mkdir(parents=True, exist_ok=True)
+
+SELECTED_CFG = {
     "learning_rate": 8e-5,
     "lr_schedule": "exponential",
     "epochs_per_step": 2,
@@ -167,51 +165,59 @@ BEST_CFG = {
     "seed": 123,
 }
 
-PRETRAIN_RUN_NAME = "strength_pretrain_v1_u25_full_lr8em05_str24"
-
-hpo_root = Path(sett.DATA_DIR) / "hpo" / HPO_STAGE
-hpo_root.mkdir(parents=True, exist_ok=True)
-
-sample_feat = league_matches_sorted[0].features_before_match
-num_num = extract_numerical_features(sample_feat).shape[0]
-num_teams = len(cat_maps.team_id_map)
-num_comps = len(cat_maps.comp_id_map)
-
-pretrained_path = Path(sett.DATA_DIR) / "tensorboard_logs" / PRETRAIN_RUN_NAME / "pretrained_model.keras"
-
-if pretrained_path.exists():
-    print(f"[PRETRAIN] loading existing pretrained model: {pretrained_path}")
-    pretrained_model = tf.keras.models.load_model(pretrained_path)
-else:
-    print("[PRETRAIN] pretrained model missing; rerunning v1 full pretraining")
-    pre_cfg = StrengthPretrainConfig(
-        branch_version="v1",
-        mode="binary_u25",
-        window_rounds=25,
-        epochs_per_step=3,
-        learning_rate=8e-5,
-        batch_size=64,
-        strength_emb_dim=24,
-        position_emb_dim=3,
-        representation="full",
-        use_strength_masks=True,
-        use_position_embedding=True,
-        run_name=PRETRAIN_RUN_NAME,
-    )
-    pretrained_model = train_strength_pretrain_rolling(league_matches_sorted, pre_cfg)
-
-RUNS = [
-    {"label": "scratch", "use_pretrained": False},
-    {"label": "pretrained_init", "use_pretrained": True},
-]
-
 results = []
 
-for spec in RUNS:
-    run_name = f"final_best_v1_full_{spec['label']}_seed{BEST_CFG['seed']}"
+BASELINE_RUNS = [
+    BaselineConfig(mode="binary_u25", model_name="majority", window_rounds=25, run_name="baseline_binary_majority"),
+    BaselineConfig(mode="binary_u25", model_name="logreg", window_rounds=25, run_name="baseline_binary_logreg"),
+    BaselineConfig(mode="binary_u25", model_name="rf", window_rounds=25, run_name="baseline_binary_rf"),
+    BaselineConfig(mode="goals_reg", model_name="majority", window_rounds=25, run_name="baseline_reg_mean_goals"),
+    BaselineConfig(mode="goals_reg", model_name="ridge", window_rounds=25, run_name="baseline_reg_ridge"),
+    BaselineConfig(mode="goals_dist", model_name="majority", window_rounds=25, run_name="baseline_multiclass_majority"),
+    BaselineConfig(
+        mode="goals_dist", model_name="multinomial_logreg", window_rounds=25, run_name="baseline_multiclass_logreg"
+    ),
+]
+
+for cfg in BASELINE_RUNS:
+    print("\n" + "=" * 80)
+    print(f"[BASELINE] {cfg.run_name}")
+    print("=" * 80)
+
+    summary = evaluate_baseline_rolling(league_matches_sorted, cat_maps, cfg)
+    results.append(
+        {
+            "group": "baseline",
+            "run_name": summary["run_name"],
+            "model_name": summary["model_name"],
+            "mode": summary["mode"],
+            "pooled_accuracy": summary.get("pooled_accuracy"),
+            "pooled_auc": summary.get("pooled_auc"),
+            "pooled_brier": summary.get("pooled_brier"),
+            "pooled_mae": summary.get("pooled_mae"),
+            "pooled_rmse": summary.get("pooled_rmse"),
+            "pooled_expected_goals_mae": summary.get("pooled_expected_goals_mae"),
+            "pooled_log_loss": summary.get("pooled_log_loss"),
+            "summary_path": summary.get("summary_path"),
+            "round_metrics_path": summary.get("round_metrics_path"),
+            "oos_predictions_path": summary.get("oos_predictions_path"),
+        }
+    )
+
+
+MLP_MODES = [
+    ("binary_u25", "selected_mlp_binary_u25"),
+    ("goals_reg", "selected_mlp_goals_reg"),
+    ("goals_dist", "selected_mlp_goals_dist"),
+]
+
+for mode, run_name in MLP_MODES:
+    print("\n" + "=" * 80)
+    print(f"[SELECTED MLP] {run_name}")
+    print("=" * 80)
 
     cfg = TrainConfig(
-        mode="binary_u25",
+        mode=mode,
         model_version="v1",
         representation="full",
         use_strength_masks=True,
@@ -219,96 +225,78 @@ for spec in RUNS:
         use_team_strength=True,
         use_team_ids=True,
         use_comp_embedding=True,
-        learning_rate=BEST_CFG["learning_rate"],
-        lr_schedule=BEST_CFG["lr_schedule"],
+        learning_rate=SELECTED_CFG["learning_rate"],
+        lr_schedule=SELECTED_CFG["lr_schedule"],
         lr_decay_rate=0.997,
         min_learning_rate=2e-5,
         batch_size=64,
-        window_rounds=BEST_CFG["window_rounds"],
-        epochs_per_step=BEST_CFG["epochs_per_step"],
+        window_rounds=SELECTED_CFG["window_rounds"],
+        epochs_per_step=SELECTED_CFG["epochs_per_step"],
         early_stopping_patience=1,
         early_stopping_min_delta=0.0,
         team_emb_dim=8,
         comp_emb_dim=5,
-        strength_emb_dim=BEST_CFG["strength_emb_dim"],
+        strength_emb_dim=SELECTED_CFG["strength_emb_dim"],
         position_emb_dim=3,
-        mlp_hidden_1=BEST_CFG["mlp_hidden_1"],
-        mlp_hidden_2=BEST_CFG["mlp_hidden_2"],
-        mlp_hidden_3=BEST_CFG["mlp_hidden_3"],
-        mlp_dropout_1=BEST_CFG["mlp_dropout_1"],
-        mlp_dropout_2=BEST_CFG["mlp_dropout_2"],
-        seed=BEST_CFG["seed"],
+        mlp_hidden_1=SELECTED_CFG["mlp_hidden_1"],
+        mlp_hidden_2=SELECTED_CFG["mlp_hidden_2"],
+        mlp_hidden_3=SELECTED_CFG["mlp_hidden_3"],
+        mlp_dropout_1=SELECTED_CFG["mlp_dropout_1"],
+        mlp_dropout_2=SELECTED_CFG["mlp_dropout_2"],
+        seed=SELECTED_CFG["seed"],
         run_name=run_name,
         enable_branch_diagnostics=False,
         save_oos_predictions=True,
     )
 
-    if spec["use_pretrained"]:
-        set_global_seed(BEST_CFG["seed"])
-        model = build_model(num_num, num_teams, num_comps, cfg)
-        transfer_pretrained_strength_branch_weights(
-            pretrained_model=pretrained_model,
-            full_model=model,
-            branch_version="v1",
-        )
-        _ = train_rolling(
-            league_matches_sorted,
-            cat_maps,
-            cfg,
-            model=model,
-            pretrained_branch_version="v1",
-        )
-    else:
-        _ = train_rolling(league_matches_sorted, cat_maps, cfg)
+    _ = train_rolling(league_matches_sorted, cat_maps, cfg)
 
     summary_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "summary.json"
-    config_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "train_config.json"
     round_metrics_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "round_metrics.csv"
+    oos_path = Path(sett.DATA_DIR) / "tensorboard_logs" / run_name / "oos_predictions.csv"
 
     with summary_path.open("r", encoding="utf-8") as f:
         summary = json.load(f)
 
     results.append(
         {
+            "group": "selected_mlp",
             "run_name": run_name,
-            "label": spec["label"],
-            "use_pretrained": spec["use_pretrained"],
-            "seed": BEST_CFG["seed"],
+            "model_name": "selected_mlp",
+            "mode": mode,
             "pooled_accuracy": summary.get("pooled_accuracy"),
             "pooled_auc": summary.get("pooled_auc"),
             "pooled_brier": summary.get("pooled_brier"),
+            "pooled_mae": summary.get("pooled_mae"),
+            "pooled_rmse": summary.get("pooled_rmse"),
+            "pooled_expected_goals_mae": summary.get("pooled_expected_goals_mae"),
+            "pooled_log_loss": summary.get("pooled_log_loss"),
             "summary_path": str(summary_path),
-            "config_path": str(config_path),
             "round_metrics_path": str(round_metrics_path),
+            "oos_predictions_path": str(oos_path),
         }
     )
 
-results.sort(
-    key=lambda r: (
-        -(r["pooled_auc"] if r["pooled_auc"] is not None else -999),
-        (r["pooled_brier"] if r["pooled_brier"] is not None else 999),
-        -(r["pooled_accuracy"] if r["pooled_accuracy"] is not None else -999),
-    )
-)
 
-csv_path = hpo_root / "final_pretrain_check_results.csv"
+csv_path = comparison_root / "baseline_comparison_results.csv"
 with csv_path.open("w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=list(results[0].keys()))
+    fieldnames = sorted({k for r in results for k in r.keys()})
+    writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(results)
 
-txt_path = hpo_root / "final_pretrain_check_ranking.txt"
-with txt_path.open("w", encoding="utf-8") as f:
-    for i, r in enumerate(results, start=1):
-        f.write(
-            f"{i}. {r['run_name']} | pretrained={r['use_pretrained']} | "
-            f"AUC={r['pooled_auc']:.6f} | "
-            f"ACC={r['pooled_accuracy']:.6f} | "
-            f"BRIER={r['pooled_brier']:.6f}\n"
-        )
+json_path = comparison_root / "baseline_comparison_results.json"
+with json_path.open("w", encoding="utf-8") as f:
+    json.dump(results, f, indent=2)
 
-print(f"[FINAL] saved CSV to {csv_path}")
-print(f"[FINAL] saved ranking to {txt_path}")
+txt_path = comparison_root / "baseline_comparison_summary.txt"
+with txt_path.open("w", encoding="utf-8") as f:
+    for r in results:
+        f.write(json.dumps(r, indent=2) + "\n\n")
+
+print(f"[COMPARISON] saved CSV to {csv_path}")
+print(f"[COMPARISON] saved JSON to {json_path}")
+print(f"[COMPARISON] saved text summary to {txt_path}")
 
 if sett.ALL_STORE:
     save_snapshot(
