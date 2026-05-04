@@ -39,7 +39,6 @@ from football_outcomes.training.fs_training_utils import (
     build_strength_only_arrays_for_matches,
     distribute_matches_into_rounds,
     extract_numerical_features,
-    fit_position_skill_imputer,
     summarize_rounds,
 )
 
@@ -121,8 +120,6 @@ class TrainConfig:
     lr_schedule: str = "constant"  # "constant" | "exponential" | "cosine"
     lr_decay_rate: float = 0.997
     min_learning_rate: float = 2e-5
-
-    missing_skill_strategy: str = "zero_mask"  # "zero_mask" | "position_mean"
 
 
 @dataclass
@@ -1154,26 +1151,8 @@ def train_rolling(
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 
-        skill_imputer = None
-        if cfg.missing_skill_strategy == "position_mean":
-            skill_imputer = fit_position_skill_imputer(train_ms)
-        elif cfg.missing_skill_strategy != "zero_mask":
-            raise ValueError(f"Unknown missing_skill_strategy: {cfg.missing_skill_strategy}")
-
-        X = build_arrays_for_matches(
-            train_ms,
-            cat_maps,
-            cfg.mode,
-            cfg.max_goals_class,
-            skill_imputation_stats=skill_imputer,
-        )
-        V = build_arrays_for_matches(
-            val_ms,
-            cat_maps,
-            cfg.mode,
-            cfg.max_goals_class,
-            skill_imputation_stats=skill_imputer,
-        )
+        X = build_arrays_for_matches(train_ms, cat_maps, cfg.mode, cfg.max_goals_class)
+        V = build_arrays_for_matches(val_ms, cat_maps, cfg.mode, cfg.max_goals_class)
 
         y_train = _make_train_targets(train_ms, X[-1], cfg)
         y_val = _make_train_targets(val_ms, V[-1], cfg)
