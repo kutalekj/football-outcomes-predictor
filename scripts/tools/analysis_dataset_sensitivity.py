@@ -29,6 +29,14 @@ LABELS = {
     "less_restricted": "Less-restricted variant",
 }
 
+VARIANT_COLORS = {
+    "clean": "#6f8fbf",
+    "less_restricted": "#8a7fa6",
+}
+
+BAR_EDGE_COLOR = "#000000"
+BAR_EDGE_WIDTH = 0.6
+
 
 def read_oos(path: Path) -> list[dict]:
     with (path / "oos_predictions.csv").open("r", encoding="utf-8", newline="") as f:
@@ -76,10 +84,17 @@ def main() -> None:
 
     global_metrics = {variant: metrics_from_rows(rows) for variant, rows in rows_by_variant.items()}
 
-    with (OUT_DIR / "dataset_sensitivity_global_metrics.json").open("w", encoding="utf-8") as f:
+    with (OUT_DIR / "dataset_sensitivity_global_metrics.json").open(
+        "w",
+        encoding="utf-8",
+    ) as f:
         json.dump(global_metrics, f, indent=2)
 
-    with (OUT_DIR / "dataset_sensitivity_global_metrics.csv").open("w", encoding="utf-8", newline="") as f:
+    with (OUT_DIR / "dataset_sensitivity_global_metrics.csv").open(
+        "w",
+        encoding="utf-8",
+        newline="",
+    ) as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["variant", "auc", "accuracy", "brier", "num_predictions"],
@@ -99,18 +114,37 @@ def main() -> None:
     )
 
     metric_names = ["auc", "accuracy", "brier"]
+    metric_labels = ["AUC", "Accuracy", "Brier score"]
     x = np.arange(len(metric_names))
     width = 0.34
 
     clean_vals = [global_metrics["clean"][m] for m in metric_names]
     less_vals = [global_metrics["less_restricted"][m] for m in metric_names]
 
-    ax_bar.bar(x - width / 2, clean_vals, width=width, label=LABELS["clean"])
-    ax_bar.bar(x + width / 2, less_vals, width=width, label=LABELS["less_restricted"])
+    ax_bar.bar(
+        x - width / 2,
+        clean_vals,
+        width=width,
+        label=LABELS["clean"],
+        color=VARIANT_COLORS["clean"],
+        edgecolor=BAR_EDGE_COLOR,
+        linewidth=BAR_EDGE_WIDTH,
+    )
+    ax_bar.bar(
+        x + width / 2,
+        less_vals,
+        width=width,
+        label=LABELS["less_restricted"],
+        color=VARIANT_COLORS["less_restricted"],
+        edgecolor=BAR_EDGE_COLOR,
+        linewidth=BAR_EDGE_WIDTH,
+    )
 
-    ax_bar.set_title("Dataset sensitivity: pooled metrics")
+    ax_bar.set_title("Dataset sensitivity: pooled metrics", fontsize=16)
+    ax_bar.set_xlabel("Metric", fontsize=13)
+    ax_bar.set_ylabel("Metric value", fontsize=13)
     ax_bar.set_xticks(x)
-    ax_bar.set_xticklabels(["AUC", "Accuracy", "Brier score"])
+    ax_bar.set_xticklabels(metric_labels)
     ax_bar.set_ylim(0.0, max(max(clean_vals), max(less_vals)) + 0.08)
     ax_bar.grid(axis="y", linestyle=":", alpha=0.5)
     ax_bar.legend()
@@ -119,28 +153,53 @@ def main() -> None:
 
     for offset, vals in [(-width / 2, clean_vals), (width / 2, less_vals)]:
         for i, v in enumerate(vals):
-            ax_bar.text(i + offset, v + 0.01, f"{v:.3f}", ha="center", fontsize=9)
+            ax_bar.text(
+                i + offset,
+                v + 0.01,
+                f"{v:.3f}",
+                ha="center",
+                fontsize=9,
+            )
 
     for variant, round_rows in round_by_variant.items():
         xs = [int(float(r["round_idx"])) for r in round_rows]
         ys = [float(r["val_auc"]) for r in round_rows]
-        ys_smooth = moving_average(ys, window=17)
+        ys_smooth = moving_average(ys, window=25)
 
-        ax_line.plot(xs, ys, alpha=0.12, linewidth=0.7)
-        ax_line.plot(xs, ys_smooth, linewidth=2.0, label=LABELS[variant])
+        ax_line.plot(
+            xs,
+            ys,
+            color=VARIANT_COLORS[variant],
+            alpha=0.12,
+            linewidth=0.7,
+        )
+        ax_line.plot(
+            xs,
+            ys_smooth,
+            color=VARIANT_COLORS[variant],
+            linewidth=2.0,
+            label=LABELS[variant],
+        )
 
     ax_line.axhline(0.5, linestyle="--", color="#555555", linewidth=1.0, alpha=0.75)
-    ax_line.set_title("Round-level validation AUC")
-    ax_line.set_xlabel("Rolling validation round")
-    ax_line.set_ylabel("Validation AUC")
+    ax_line.set_title("Round-level validation AUC", fontsize=16)
+    ax_line.set_xlabel("Rolling validation round", fontsize=13)
+    ax_line.set_ylabel("Validation AUC", fontsize=13)
     ax_line.set_ylim(0.45, 0.65)
     ax_line.grid(axis="y", linestyle=":", alpha=0.5)
     ax_line.legend()
     ax_line.spines["top"].set_visible(False)
     ax_line.spines["right"].set_visible(False)
 
-    fig.savefig(OUT_DIR / "dataset_sensitivity_global_and_round_auc.pdf", bbox_inches="tight")
-    fig.savefig(OUT_DIR / "dataset_sensitivity_global_and_round_auc.png", dpi=300, bbox_inches="tight")
+    fig.savefig(
+        OUT_DIR / "dataset_sensitivity_global_and_round_auc.pdf",
+        bbox_inches="tight",
+    )
+    fig.savefig(
+        OUT_DIR / "dataset_sensitivity_global_and_round_auc.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
     plt.close(fig)
 
     # ------------------------------------------------------------
@@ -180,9 +239,13 @@ def main() -> None:
             }
         )
 
-    delta_rows.sort(key=lambda r: (np.nan_to_num(r["delta_auc"], nan=-999.0)))
+    delta_rows.sort(key=lambda r: np.nan_to_num(r["delta_auc"], nan=-999.0))
 
-    with (OUT_DIR / "dataset_sensitivity_per_competition_delta_auc.csv").open("w", encoding="utf-8", newline="") as f:
+    with (OUT_DIR / "dataset_sensitivity_per_competition_delta_auc.csv").open(
+        "w",
+        encoding="utf-8",
+        newline="",
+    ) as f:
         writer = csv.DictWriter(f, fieldnames=list(delta_rows[0].keys()))
         writer.writeheader()
         writer.writerows(delta_rows)
@@ -191,12 +254,18 @@ def main() -> None:
     vals = [r["delta_auc"] for r in delta_rows if not np.isnan(r["delta_auc"])]
 
     fig, ax = plt.subplots(figsize=(14.5, 5.8))
-    ax.bar(range(len(comps)), vals, color=[sett.COMPS_LEAGUE_COLORS.get(c, "#bdbdbd") for c in comps])
+    ax.bar(
+        range(len(comps)),
+        vals,
+        color=[sett.COMPS_LEAGUE_COLORS.get(c, "#bdbdbd") for c in comps],
+        edgecolor=BAR_EDGE_COLOR,
+        linewidth=BAR_EDGE_WIDTH,
+    )
     ax.axhline(0.0, linestyle="--", color="#555555", linewidth=1.0)
 
-    ax.set_title("Dataset sensitivity: per-competition AUC change")
-    ax.set_ylabel("AUC less-restricted - AUC cleaned")
-    ax.set_xlabel("Competition")
+    ax.set_title("Dataset sensitivity: per-competition AUC change", fontsize=16)
+    ax.set_ylabel("AUC less-restricted - AUC cleaned", fontsize=13)
+    ax.set_xlabel("Competition", fontsize=13)
     ax.set_xticks(range(len(comps)))
     ax.set_xticklabels(comps, rotation=55, ha="right")
     ax.grid(axis="y", linestyle=":", alpha=0.5)
@@ -204,8 +273,15 @@ def main() -> None:
     ax.spines["right"].set_visible(False)
 
     fig.tight_layout()
-    fig.savefig(OUT_DIR / "dataset_sensitivity_per_competition_delta_auc.pdf", bbox_inches="tight")
-    fig.savefig(OUT_DIR / "dataset_sensitivity_per_competition_delta_auc.png", dpi=300, bbox_inches="tight")
+    fig.savefig(
+        OUT_DIR / "dataset_sensitivity_per_competition_delta_auc.pdf",
+        bbox_inches="tight",
+    )
+    fig.savefig(
+        OUT_DIR / "dataset_sensitivity_per_competition_delta_auc.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
     plt.close(fig)
 
     print(f"Saved outputs to {OUT_DIR}")
