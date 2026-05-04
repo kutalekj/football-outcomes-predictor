@@ -190,11 +190,122 @@ def extract_numerical_features(f: FSMatchFeatures) -> np.ndarray:
     return np.asarray(vals, dtype=np.float32)
 
 
-def _strength_to_value_and_mask(mat) -> Tuple[np.ndarray, np.ndarray]:
+@dataclass
+class SkillImputationStats:
+    position_skill_means: np.ndarray  # shape: (num_positions, 34), raw scale 0..100
+    global_skill_means: np.ndarray  # shape: (34,), raw scale 0..100
+    position_counts: np.ndarray  # shape: (num_positions, 34)
+    global_counts: np.ndarray  # shape: (34,)
+
+
+def _positions_for_match_side(m: FSMatch, f: FSMatchFeatures, side: str) -> np.ndarray:
+    if side == "home":
+        pos = getattr(f, "home_player_positions", None) or getattr(f, "home_positions", None)
+        if pos is None:
+            pos = calculate_team_position_indices(m, m.home_team.id)
+    else:
+        pos = getattr(f, "away_player_positions", None) or getattr(f, "away_positions", None)
+        if pos is None:
+            pos = calculate_team_position_indices(m, m.away_team.id)
+
+    return np.asarray(pos, dtype=np.int32)
+
+
+def fit_position_skill_imputer(matches: List[FSMatch]) -> SkillImputationStats:
     """
-    Convert 11x34 list -> (values, mask)
-      values: float32 in [0,1], missing cells filled with 0.0
-      mask:   float32 in {0,1}, 1=observed, 0=missing
+    Fit simple position-specific skill means from the current rolling training window only.
+
+    Missing values are represented by -1 in the raw team-strength matrices.
+    Means are kept on the raw 0..100 scale and converted to [0,1] later.
+    """
+    num_positions = len(sett.FS_PLAYER_POSITION_TO_IDX)
+    num_skills = sett.TEAM_STRENGTH_NUM_SKILLS
+
+    pos_sums = np.zeros((num_positions, num_skills), dtype=np.float64)
+    pos_counts = np.zeros((num_positions, num_skills), dtype=np.float64)
+    global_sums = np.zeros((num_skills,), dtype=np.float64)
+    global_counts = np.zeros((num_skills,), dtype=np.float64)
+
+    def consume(mat, pos_ids):
+        if mat is None:
+            return
+
+        arr = np.asarray(mat, dtype=np.float32)
+        if arr.shape != (sett.TEAM_STRENGTH_NUM_PLAYERS, num_skills):
+            return
+
+        pos_ids = np.asarray(pos_ids, dtype=np.int32)
+        if pos_ids.shape[0] != sett.TEAM_STRENGTH_NUM_PLAYERS:
+            return
+
+        observed = arr >= 0.0
+
+        for row_idx in range(sett.TEAM_STRENGTH_NUM_PLAYERS):
+            p = int(pos_ids[row_idx])
+            if p < 0 or p >= num_positions:
+                continue
+
+            obs = observed[row_idx]
+            vals = arr[row_idx]
+
+            pos_sums[p, obs] += vals[obs]
+            pos_counts[p, obs] += 1.0
+
+            global_sums[obs] += vals[obs]
+            global_counts[obs] += 1.0
+
+    for m in matches:
+        f = getattr(m, "features_before_match", None)
+        if f is None:
+            continue
+
+        home_pos = _positions_for_match_side(m, f, "home")
+        away_pos = _positions_for_match_side(m, f, "away")
+
+        consume(f.home_team_strength, home_pos)
+        consume(f.away_team_strength, away_pos)
+
+    # Default neutral value if a skill is never observed in the window.
+    global_means = np.divide(
+        global_sums,
+        np.maximum(global_counts, 1.0),
+        out=np.full_like(global_sums, 50.0),
+        where=global_counts > 0,
+    )
+
+    position_means = np.zeros_like(pos_sums)
+    for p in range(num_positions):
+        position_means[p] = np.divide(
+            pos_sums[p],
+            np.maximum(pos_counts[p], 1.0),
+            out=global_means.copy(),
+            where=pos_counts[p] > 0,
+        )
+
+    return SkillImputationStats(
+        position_skill_means=position_means.astype(np.float32),
+        global_skill_means=global_means.astype(np.float32),
+        position_counts=pos_counts.astype(np.float32),
+        global_counts=global_counts.astype(np.float32),
+    )
+
+
+def _strength_to_value_and_mask(
+    mat,
+    position_ids: np.ndarray | None = None,
+    skill_imputation_stats: SkillImputationStats | None = None,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Convert 11x34 list -> (values, mask).
+
+    values: float32 in [0,1]
+    mask:   float32 in {0,1}, 1=observed, 0=missing
+
+    If skill_imputation_stats is provided, missing cells are filled with
+    training-window position-specific skill means, while the mask remains
+    unchanged. This allows comparing:
+      - zero + mask
+      - position-mean imputation + mask
     """
     if mat is None:
         values = np.zeros((11, 34), dtype=np.float32)
@@ -213,9 +324,33 @@ def _strength_to_value_and_mask(mat) -> Tuple[np.ndarray, np.ndarray]:
 
     mask = (arr >= 0.0).astype(np.float32)
 
-    values = arr.copy()
+    values_raw = arr.copy()
+
+    if skill_imputation_stats is not None:
+        if position_ids is None:
+            position_ids = np.zeros((11,), dtype=np.int32)
+
+        position_ids = np.asarray(position_ids, dtype=np.int32)
+        if position_ids.shape[0] != 11:
+            position_ids = np.zeros((11,), dtype=np.int32)
+
+        for row_idx in range(11):
+            p = int(position_ids[row_idx])
+            if p < 0 or p >= skill_imputation_stats.position_skill_means.shape[0]:
+                fill = skill_imputation_stats.global_skill_means
+            else:
+                fill = skill_imputation_stats.position_skill_means[p]
+
+            missing = mask[row_idx] == 0.0
+            values_raw[row_idx, missing] = fill[missing]
+
+    values = values_raw.copy()
     values[mask == 1.0] = np.clip(values[mask == 1.0] / 100.0, 0.0, 1.0)
-    values[mask == 0.0] = 0.0
+
+    if skill_imputation_stats is None:
+        values[mask == 0.0] = 0.0
+    else:
+        values[mask == 0.0] = np.clip(values[mask == 0.0] / 100.0, 0.0, 1.0)
 
     return values.astype(np.float32), mask.astype(np.float32)
 
@@ -225,6 +360,7 @@ def build_arrays_for_matches(
     cat_maps: CatMaps,
     mode: str,
     max_goals_class: int = 10,
+    skill_imputation_stats: SkillImputationStats | None = None,
 ):
     """
     Prepare model inputs and labels.
@@ -244,17 +380,20 @@ def build_arrays_for_matches(
         X_a.append(cat_maps.team_id_map[m.away_team.id])
         X_c.append(comp_name_to_id[m.comp_name])
 
-        hs_val, hs_mask = _strength_to_value_and_mask(f.home_team_strength)
-        aw_val, aw_mask = _strength_to_value_and_mask(f.away_team_strength)
+        home_pos = _positions_for_match_side(m, f, "home")
+        away_pos = _positions_for_match_side(m, f, "away")
+
+        hs_val, hs_mask = _strength_to_value_and_mask(
+            f.home_team_strength,
+            position_ids=home_pos,
+            skill_imputation_stats=skill_imputation_stats,
+        )
+        aw_val, aw_mask = _strength_to_value_and_mask(
+            f.away_team_strength,
+            position_ids=away_pos,
+            skill_imputation_stats=skill_imputation_stats,
+        )
         X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))
-
-        home_pos = getattr(f, "home_player_positions", None) or getattr(f, "home_positions", None)
-        if home_pos is None:
-            home_pos = calculate_team_position_indices(m, m.home_team.id)
-
-        away_pos = getattr(f, "away_player_positions", None) or getattr(f, "away_positions", None)
-        if away_pos is None:
-            away_pos = calculate_team_position_indices(m, m.away_team.id)
 
         X_hp.append(np.asarray(home_pos, dtype=np.int32))
         X_ap.append(np.asarray(away_pos, dtype=np.int32))
