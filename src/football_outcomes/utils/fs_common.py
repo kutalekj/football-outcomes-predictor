@@ -224,6 +224,63 @@ def filter_clean_league_matches(matches):
     ]
 
 
+def filter_league_matches_including_excluded_comp_seasons(matches):
+    """
+    Less-restricted league filter.
+
+    Keeps all configured league competitions, including the four competition-seasons
+    excluded from the cleaned dataset. This does NOT decide which round_ids are valid;
+    valid/postseason filtering is still handled separately.
+    """
+    return [m for m in matches if getattr(m, "comp_name", None) in sett.COMPS_LEAGUE]
+
+
+def infer_initial_phase_round_ids_for_missing_league_seasons(matches) -> dict[tuple[str, int], set[int]]:
+    """
+    Infer a conservative regular-season round_id fallback for league competition-seasons
+    missing from LEAGUE_VALID_ROUND_IDS_BY_SEASON.
+
+    This is intended only for the sensitivity experiment that restores excluded
+    competition-seasons. It keeps the initial chronological round_id phase only,
+    which avoids blindly including late playoff/promotion/relegation phases.
+    """
+    by_key: dict[tuple[str, int], list] = defaultdict(list)
+
+    for m in matches:
+        comp_name = getattr(m, "comp_name", None)
+        season = getattr(m, "season", None)
+
+        if comp_name not in sett.COMPS_LEAGUE:
+            continue
+        if season is None:
+            continue
+        if not (sett.FIRST_SEASON <= int(season) < sett.LAST_SEASON):
+            continue
+
+        key = (comp_name, int(season))
+        if key in sett.LEAGUE_VALID_ROUND_IDS_BY_SEASON:
+            continue
+
+        by_key[key].append(m)
+
+    inferred: dict[tuple[str, int], set[int]] = {}
+
+    for key, ms in sorted(by_key.items()):
+        ms = [m for m in ms if getattr(m, "datetime", None) is not None and getattr(m, "round_id", None) is not None]
+        if not ms:
+            continue
+
+        ms.sort(key=_match_sort_key_for_regular_season_flag)
+
+        initial_round_id = getattr(ms[0], "round_id", None)
+        if initial_round_id is None:
+            continue
+
+        inferred[key] = {int(initial_round_id)}
+
+    return inferred
+
+
 def filter_valid_round_matches(matches):
     """
     Keep only league matches whose rounds are valid.

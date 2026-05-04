@@ -64,6 +64,10 @@ def normalize_fouls(v: float) -> float:
     return min_max_scaling_with_clipping(v, sett.FOULS_NORM_COEFFICIENT)
 
 
+def normalize_offsides(v: float) -> float:
+    return min_max_scaling_with_clipping(v, sett.OFFSIDES_NORM_COEFFICIENT)
+
+
 def normalize_attacks(v: float) -> float:
     return min_max_scaling_with_clipping(v, sett.ATTACKS_NORM_COEFFICIENT)
 

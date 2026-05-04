@@ -795,6 +795,48 @@ class FSMatch:
             team_index_league, self.away_team.id, self, 20, "home_corners", "away_corners", fu.normalize_corners
         )
 
+        # ---- offsides
+        # Temporary sensitivity-study feature.
+        # Cleaned runs keep these as None/0 through INCLUDE_OFFSIDES_FEATURES=False.
+        # Less-restricted runs enable them and remove offsides from IGNORED_MATCH_STATS.
+        if getattr(sett, "INCLUDE_OFFSIDES_FEATURES", False):
+            mf.home_avg_offsides_last_5 = fu.avg_stat_last_n(
+                team_index_league,
+                self.home_team.id,
+                self,
+                5,
+                "home_offsides",
+                "away_offsides",
+                fu.normalize_offsides,
+            )
+            mf.home_avg_offsides_last_20 = fu.avg_stat_last_n(
+                team_index_league,
+                self.home_team.id,
+                self,
+                20,
+                "home_offsides",
+                "away_offsides",
+                fu.normalize_offsides,
+            )
+            mf.away_avg_offsides_last_5 = fu.avg_stat_last_n(
+                team_index_league,
+                self.away_team.id,
+                self,
+                5,
+                "home_offsides",
+                "away_offsides",
+                fu.normalize_offsides,
+            )
+            mf.away_avg_offsides_last_20 = fu.avg_stat_last_n(
+                team_index_league,
+                self.away_team.id,
+                self,
+                20,
+                "home_offsides",
+                "away_offsides",
+                fu.normalize_offsides,
+            )
+
         # possession/fouls/attacks/dang attacks are already in [0..100] or similar.
         # For now, we normalize by simple /100 for possession and /50 for fouls/attacks-ish later if needed.
         # To avoid inventing wrong caps, we keep them in [0..1] by clipping after /100 or /200 etc would be risky.
@@ -1077,6 +1119,11 @@ class FSMatchFeatures:
         self.home_team_strength = None
         self.away_team_strength = None
 
+        self.home_avg_offsides_last_5 = None
+        self.home_avg_offsides_last_20 = None
+        self.away_avg_offsides_last_5 = None
+        self.away_avg_offsides_last_20 = None
+
     @staticmethod
     def match_features_to_vector(f: "FSMatchFeatures") -> List[float]:
         """
@@ -1168,6 +1215,11 @@ class FSMatchFeatures:
         vec.append(v(f.home_avg_corner_kicks_last_20))
         vec.append(v(f.away_avg_corner_kicks_last_5))
         vec.append(v(f.away_avg_corner_kicks_last_20))
+
+        vec.append(v(f.home_avg_offsides_last_5))
+        vec.append(v(f.home_avg_offsides_last_20))
+        vec.append(v(f.away_avg_offsides_last_5))
+        vec.append(v(f.away_avg_offsides_last_20))
 
         vec.append(v(f.home_avg_ball_possession_last_5))
         vec.append(v(f.home_avg_ball_possession_last_20))
