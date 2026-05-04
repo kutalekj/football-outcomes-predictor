@@ -94,6 +94,7 @@ def patch_less_restricted_settings(all_matches_sorted: list) -> dict[str, Any]:
 
     sett.IGNORED_MATCH_STATS = set()
     sett.INCLUDE_OFFSIDES_FEATURES = True
+    # TODO: Will not work now, as the temporary changes adding offsides to feature computation were reverted
 
     return {
         "original_ignored": sorted(original_ignored),
@@ -103,7 +104,7 @@ def patch_less_restricted_settings(all_matches_sorted: list) -> dict[str, Any]:
         "inferred_valid_rounds": {
             f"{k[0]} {k[1]}": sorted(v) for k, v in inferred.items() if k in sett.EXCLUDED_COMP_SEASONS
         },
-    }
+    }  # TODO: Will not work now, as the temporary changes adding offsides to feature computation were reverted
 
 
 def select_matches_for_variant(all_matches_sorted: list, variant: str) -> list:

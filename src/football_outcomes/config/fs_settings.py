@@ -154,13 +154,6 @@ ELO_MIN_NORM_COEFFICIENT = 1352.5387
 ELO_MAX_NORM_COEFFICIENT = 1734.8060
 INIT_ELO = 1543.6724  # (ELO_MIN_NORM_COEFFICIENT + ELO_MAX_NORM_COEFFICIENT) / 2
 
-OFFSIDES_NORM_COEFFICIENT = 8.0
-
-# Temporary sensitivity-study flag.
-# Cleaned dataset: False
-# Less-restricted dataset: True
-INCLUDE_OFFSIDES_FEATURES = False
-
 # Competition seasons to exclude from cleaned league-only analyses/training
 EXCLUDED_COMP_SEASONS = {
     ("Italy Serie B", 2021),
