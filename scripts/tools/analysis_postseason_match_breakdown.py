@@ -23,11 +23,11 @@ matplotlib.use("Agg")
 APPLY_CLEAN_FILTER = True
 ONLY_AFFECTED_SEASONS_FOR_ROUND_PLOTS = True
 
-TITLE_SIZE = 15
-LABEL_SIZE = 13
-TICK_SIZE = 10.5
+TITLE_SIZE = 24
+LABEL_SIZE = 20
+TICK_SIZE = 12
 ANNOTATION_SIZE = 9.5
-LEGEND_SIZE = 10.5
+LEGEND_SIZE = 12
 GRID_COLOR = "#d9d9d9"
 
 
@@ -529,8 +529,7 @@ def _make_filtering_outcome_stacked_plot(df_comp: pd.DataFrame, out_png: Path, o
             )
 
     ax.set_title(
-        "League matches per competition (2021/2022–2024/2025): "
-        "regular-season matches and retained/filtered non-regular matches",
+        "League Matches per Competition: " "Regular-Season Matches and Retained/Filtered Non-Regular Matches",
         fontsize=TITLE_SIZE,
         pad=12,
     )
