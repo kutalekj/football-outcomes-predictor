@@ -38,9 +38,9 @@ EDGE_COLOR = "#334e68"
 MEAN_COLOR = "#2f5f73"
 MEDIAN_COLOR = "#7a7a7a"
 GRID_COLOR = "#d9d9d9"
-TITLE_SIZE = 15
-LABEL_SIZE = 13
-TICK_SIZE = 10.5
+TITLE_SIZE = 24
+LABEL_SIZE = 20
+TICK_SIZE = 16
 
 TEAM_LEVEL_STAT_SPECS: List[Tuple[str, Optional[str], Tuple[str, str]]] = [
     ("goals scored", "GOALS_NORM_COEFFICIENT", ("home_goals", "away_goals")),
@@ -448,8 +448,12 @@ def make_distribution_plot(league_matches_sorted: List[FSMatch], out_png: Path, 
         **common_boxen_kwargs,
     )
 
-    ax1.set_title("Distributions of raw match statistics across all league matches", fontsize=TITLE_SIZE, pad=12)
-    ax1.set_xlabel("Match statistic", fontsize=LABEL_SIZE)
+    fig.suptitle(
+        "Distributions of Raw Match Statistics Across All League Matches",
+        fontsize=TITLE_SIZE,
+        y=0.95,
+    )
+    ax1.set_xlabel("")
     ax1.set_ylabel("Raw value", fontsize=LABEL_SIZE)
     ax1.tick_params(axis="both", labelsize=TICK_SIZE)
     ax1.tick_params(axis="x", rotation=35)
@@ -465,7 +469,7 @@ def make_distribution_plot(league_matches_sorted: List[FSMatch], out_png: Path, 
         **common_boxen_kwargs,
     )
 
-    ax2.set_xlabel("Match statistic", fontsize=LABEL_SIZE)
+    ax2.set_xlabel("")
     ax2.set_ylabel("Raw value", fontsize=LABEL_SIZE)
     ax2.tick_params(axis="both", labelsize=TICK_SIZE)
     ax2.tick_params(axis="x", rotation=35)
@@ -484,7 +488,8 @@ def make_distribution_plot(league_matches_sorted: List[FSMatch], out_png: Path, 
         large_ymax = float(np.nanpercentile(large_df["value"], 99.5))
         ax2.set_ylim(bottom=0, top=max(1.0, large_ymax * 1.03))
 
-    fig.tight_layout()
+    fig.supxlabel("Match statistic", fontsize=LABEL_SIZE, y=-0.1)
+    fig.tight_layout(rect=[0.02, 0.10, 1, 0.95])
     fig.savefig(out_png, dpi=250, bbox_inches="tight")
     fig.savefig(out_pdf, bbox_inches="tight")
     plt.close(fig)

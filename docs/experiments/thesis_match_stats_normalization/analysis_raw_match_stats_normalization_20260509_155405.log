@@ -1,0 +1,93 @@
+Output directory: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_match_stats_normalization
+League matches analyzed: 30741
+Apply clean filter: True
+Season range: 2021..2024
+Chosen percentile rule: p99
+
+========================================================================================
+RAW MATCH STATISTICS NORMALIZATION ANALYSIS
+========================================================================================
+Chosen global rule for clip constants: empirical p99
+Reason: normalization constants are upper clipping scales in value/constant normalization,
+and with a dataset of more than 30,000 league matches, p99 remains robust while preserving more
+legitimate upper-tail variation than p95. The same less-strict philosophy is used for Elo by
+recommending p01/p99 bounds instead of p02/p98.
+
+[goals scored]
+n=61482, mean=1.3590, std=1.2163, min=0.0000, p50=1.0000, p90=3.0000, p95=4.0000, p97=4.0000, p99=5.0000, max=9.0000
+current=5.0000, recommended_p99=5.0000, mean+1.5std=3.1834
+
+[shots on target]
+n=61386, mean=5.0025, std=2.5136, min=0.0000, p50=5.0000, p90=8.0000, p95=9.0000, p97=10.0000, p99=12.0000, max=24.0000
+current=12.0000, recommended_p99=12.0000, mean+1.5std=8.7730
+
+[shots off target]
+n=61386, mean=6.5932, std=3.7345, min=0.0000, p50=6.0000, p90=12.0000, p95=14.0000, p97=15.0000, p99=18.0000, max=32.0000
+current=18.0000, recommended_p99=18.0000, mean+1.5std=12.1950
+
+[total shots]
+n=61388, mean=13.0233, std=5.5646, min=0.0000, p50=12.0000, p90=20.0000, p95=23.0000, p97=25.0000, p99=29.0000, max=50.0000
+current=29.0000, recommended_p99=29.0000, mean+1.5std=21.3703
+
+[corner kicks]
+n=61406, mean=4.9259, std=2.8046, min=0.0000, p50=5.0000, p90=9.0000, p95=10.0000, p97=11.0000, p99=13.0000, max=26.0000
+current=13.0000, recommended_p99=13.0000, mean+1.5std=9.1328
+
+[fouls committed]
+n=61336, mean=11.6880, std=4.0726, min=0.0000, p50=11.0000, p90=17.0000, p95=19.0000, p97=20.0000, p99=22.0000, max=34.0000
+current=22.0000, recommended_p99=22.0000, mean+1.5std=17.7969
+
+[ball possession]
+n=61398, mean=50.0000, std=10.8505, min=12.0000, p50=50.0000, p90=64.0000, p95=68.0000, p97=70.0000, p99=74.0000, max=88.0000
+recommended_p99=74.0000
+
+[attacks]
+n=61482, mean=98.0895, std=26.0525, min=0.0000, p50=98.0000, p90=130.0000, p95=140.0000, p97=147.0000, p99=161.0000, max=240.0000
+current=161.0000, recommended_p99=161.0000, mean+1.5std=137.1682
+
+[dangerous attacks]
+n=61482, mean=47.0154, std=18.7597, min=0.0000, p50=45.0000, p90=71.0000, p95=81.0000, p97=87.0000, p99=100.0000, max=168.0000
+current=100.0000, recommended_p99=100.0000, mean+1.5std=75.1549
+
+[in-match xG]
+n=61482, mean=1.4263, std=0.5175, min=0.0000, p50=1.3800, p90=2.1000, p95=2.3500, p97=2.5200, p99=2.8600, max=4.5800
+current=2.8600, recommended_p99=2.8600, mean+1.5std=2.2026
+
+[pre-match xG]
+n=61482, mean=1.3424, std=0.4487, min=0.0000, p50=1.3700, p90=1.8200, p95=1.9800, p97=2.0900, p99=2.3500, max=3.6900
+current=2.3500, recommended_p99=2.3500, mean+1.5std=2.0154
+
+[total in-match xG]
+n=30741, mean=2.8527, std=0.6331, min=0.0000, p50=2.8400, p90=3.6500, p95=3.8900, p97=4.0600, p99=4.3800, max=6.0900
+current=4.3800, recommended_p99=4.3800, mean+1.5std=3.8023
+
+[total pre-match xG]
+n=30741, mean=2.6848, std=0.7787, min=0.0000, p50=2.7700, p90=3.4200, p95=3.6300, p97=3.7800, p99=4.1060, max=6.4000
+current=4.1060, recommended_p99=4.1060, mean+1.5std=3.8529
+
+[match load per day]
+n=122964, mean=0.1079, std=0.0549, min=0.0000, p50=0.1000, p90=0.2000, p95=0.2000, p97=0.2000, p99=0.2400, max=0.3000
+current=0.2400, recommended_p99=0.2400, mean+1.5std=0.1903
+
+Suggested fs_settings.py replacements:
+GOALS_NORM_COEFFICIENT = 5.0000
+SHOTS_ON_G_NORM_COEFFICIENT = 12.0000
+SHOTS_OFF_G_NORM_COEFFICIENT = 18.0000
+TOTAL_SHOTS_NORM_COEFFICIENT = 29.0000
+CORNER_KICKS_NORM_COEFFICIENT = 13.0000
+FOULS_NORM_COEFFICIENT = 22.0000
+ATTACKS_NORM_COEFFICIENT = 161.0000
+DANG_ATTACKS_NORM_COEFFICIENT = 100.0000
+TEAM_XG_NORM_COEFFICIENT = 2.8600
+TEAM_PRE_MATCH_XG_NORM_COEFFICIENT = 2.3500
+TOTAL_XG_NORM_COEFFICIENT = 4.3800
+TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT = 4.1060
+MATCH_LOAD_NORM_COEFFICIENT = 0.2400
+
+Suggested Elo normalization bounds (keeping Elo dynamics constants unchanged):
+normalize_elo(raw_elo, min_elo=1396.0, max_elo=1776.5)
+Elo stats: n=61482, mean=1550.28, std=76.55, min=1311.85, p01=1396.00, p05=1438.50, p50=1541.50, p95=1692.81, p99=1776.45, max=1873.48
+Saved table: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_match_stats_normalization\normalization_constants_summary_20260509_155405.csv
+Saved table: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_match_stats_normalization\elo_normalization_summary_20260509_155405.csv
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_match_stats_normalization\raw_match_stat_distributions_20260509_155405.png
+Saved plot: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\experiments\thesis_match_stats_normalization\raw_match_stat_distributions_20260509_155405.pdf
