@@ -26,14 +26,14 @@ MEAN_COLOR = "#2f5f73"
 MEDIAN_COLOR = "#7a7a7a"
 GRID_COLOR = "#d9d9d9"
 
-TITLE_SIZE = 15
-LABEL_SIZE = 13
-TICK_SIZE = 10.5
-LEGEND_SIZE = 10.5
+TITLE_SIZE = 19
+LABEL_SIZE = 14
+TICK_SIZE = 10
+LEGEND_SIZE = 10
 
 
 def apply_axis_style(ax) -> None:
-    """Apply a consistent thesis-friendly visual style to one axis."""
+    """Apply a consistent visual style to one axis."""
     ax.tick_params(axis="both", labelsize=TICK_SIZE)
     ax.grid(axis="y", linestyle=":", linewidth=0.8, alpha=0.6, color=GRID_COLOR)
     ax.spines["top"].set_visible(False)
@@ -103,8 +103,8 @@ def main() -> None:
         linewidth=0.6,
         alpha=0.88,
     )
-    ax.set_title("Distribution of training-round sizes", fontsize=TITLE_SIZE, pad=10)
-    ax.set_xlabel("Number of matches in a training round", fontsize=LABEL_SIZE)
+    ax.set_title("Distribution of Training-Round Sizes", fontsize=TITLE_SIZE, pad=10)
+    ax.set_xlabel("Number of matches in a training Round", fontsize=LABEL_SIZE)
     ax.set_ylabel("Frequency", fontsize=LABEL_SIZE)
     ax.axvline(
         mean_size,
@@ -135,7 +135,7 @@ def main() -> None:
         linewidth=0.25,
         alpha=0.78,
     )
-    ax.set_title("Training-round sizes in chronological order", fontsize=TITLE_SIZE, pad=10)
+    ax.set_title("Training-Round Sizes in Chronological Order", fontsize=TITLE_SIZE, pad=10)
     ax.set_xlabel("Training round index", fontsize=LABEL_SIZE)
     ax.set_ylabel("Number of matches", fontsize=LABEL_SIZE)
     ax.axhline(
