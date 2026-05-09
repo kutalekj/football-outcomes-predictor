@@ -52,18 +52,18 @@ THESIS_PAIR_GRID_COLOR = "#3a3a3a"
 THESIS_PAIR_GRID_WIDTH = 0.14
 THESIS_PAIR_MASK_COLOR = "#504d4d"
 
-THESIS_PAIR_TITLE_FONTSIZE = 24
-THESIS_PAIR_AXIS_LABEL_FONTSIZE = 20
-THESIS_PAIR_CBAR_LABEL_FONTSIZE = 20
-THESIS_PAIR_CBAR_TICK_FONTSIZE = 16
+THESIS_PAIR_TITLE_FONTSIZE = 32
+THESIS_PAIR_AXIS_LABEL_FONTSIZE = 24
+THESIS_PAIR_CBAR_LABEL_FONTSIZE = 24
+THESIS_PAIR_CBAR_TICK_FONTSIZE = 20
 
 THESIS_PAIR_SUPXLABEL_Y = 0.065
 THESIS_PAIR_SUPYLABEL_X = 0.1
 
-BAR_TITLE_SIZE = 15
-BAR_LABEL_SIZE = 13
-BAR_TICK_SIZE = 10.5
-BAR_ANNOTATION_SIZE = 9.5
+BAR_TITLE_SIZE = 24
+BAR_LABEL_SIZE = 20
+BAR_TICK_SIZE = 12
+BAR_ANNOTATION_SIZE = 12
 BAR_GRID_COLOR = "#d9d9d9"
 
 
@@ -383,8 +383,8 @@ def plot_thesis_match_stats_before_after(
         mask_missing_shape=True,
         hide_ticks=True,
         show_cbar=True,
-        left_caption="Before cleaning",
-        right_caption="After cleaning",
+        left_caption="Before Cleaning",
+        right_caption="After Cleaning",
     )
 
 
@@ -421,8 +421,8 @@ def plot_thesis_sofifa_skill_raw_vs_persistent(
         mask_missing_shape=False,
         hide_ticks=True,
         show_cbar=True,
-        left_caption="Missing in raw snapshots",
-        right_caption="Persistently missing",
+        left_caption="Missing in Raw Snapshots",
+        right_caption="Persistently Missing",
     )
 
 
@@ -440,7 +440,7 @@ def plot_match_counts_per_comp(league_matches: List[FSMatch], out_dir: Path) -> 
     bars = ax.bar(x, df["n_matches"], color=bar_colors, edgecolor="black", linewidth=0.7)
 
     ax.set_title(
-        f"Number of league matches per competition ({sett.FIRST_SEASON}/{sett.FIRST_SEASON + 1}–"
+        f"Number of League Matches per Competition ({sett.FIRST_SEASON}/{sett.FIRST_SEASON + 1}–"
         f"{sett.LAST_SEASON - 1}/{sett.LAST_SEASON})",
         fontsize=BAR_TITLE_SIZE,
         pad=12,
