@@ -10,7 +10,7 @@ from football_outcomes.config import fs_settings as sett
 
 matplotlib.use("Agg")
 
-TITLE_SIZE = 15
+TITLE_SIZE = 18
 LABEL_SIZE = 12.5
 TICK_SIZE = 10.5
 LEGEND_SIZE = 10.5
@@ -106,19 +106,19 @@ RUNS = [
 METRIC_BY_MODE = {
     "binary_u25": {
         "aliases": ["val_auc"],
-        "title": "Binary Under/Over 2.5 prediction",
+        "title": "Binary Under/Over 2.5 Prediction",
         "ylabel": "Validation AUC per round",
         "higher_is_better": True,
     },
     "goals_reg": {
         "aliases": ["val_mae"],
-        "title": "Total-goals regression",
+        "title": "Total-Goals Regression",
         "ylabel": "Validation MAE per round",
         "higher_is_better": False,
     },
     "goals_dist": {
         "aliases": ["val_expected_goals_mae", "expected_goals_mae"],
-        "title": "Multiclass goal-count prediction",
+        "title": "Multiclass Goal-Count Prediction",
         "ylabel": "Expected-goals MAE per round",
         "higher_is_better": False,
     },
@@ -181,7 +181,7 @@ def plot_mode(ax, mode: str, runs: list[dict]) -> None:
         color = COLORS.get(run["model_name"], "#888888")
         linestyle = LINESTYLES.get(run["model_name"], "-")
 
-        ax.plot(x, y, color=color, linewidth=0.55, alpha=0.25)
+        ax.plot(x, y, color=color, linewidth=0.55, alpha=0.15)
         ax.plot(
             x,
             y_smooth,
@@ -193,7 +193,7 @@ def plot_mode(ax, mode: str, runs: list[dict]) -> None:
 
     ax.set_title(spec["title"], fontsize=TITLE_SIZE, pad=10)
     ax.set_ylabel(spec["ylabel"], fontsize=LABEL_SIZE)
-    ax.set_xlabel("Rolling validation round", fontsize=LABEL_SIZE)
+    ax.set_xlabel("Validation round", fontsize=LABEL_SIZE)
 
     # Manual y-axis scaling per subplot/mode.
     y_limits = Y_LIMITS.get(mode)
@@ -219,12 +219,6 @@ def main() -> None:
     for ax, mode in zip(axes, ["binary_u25", "goals_reg", "goals_dist"]):
         mode_runs = [r for r in RUNS if r["mode"] == mode]
         plot_mode(ax, mode, mode_runs)
-
-    fig.suptitle(
-        "Round-level comparison of selected MLP model with simple baselines",
-        fontsize=16,
-        y=0.995,
-    )
 
     png_path = out_dir / "baseline_comparison_round_curves.png"
     pdf_path = out_dir / "baseline_comparison_round_curves.pdf"
