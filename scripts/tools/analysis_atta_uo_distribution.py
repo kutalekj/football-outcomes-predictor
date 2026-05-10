@@ -91,13 +91,13 @@ def main() -> None:
         alpha=0.65,
     )
 
-    ax.set_title("Share of Over 2.5 matches by competition", fontsize=16)
-    ax.set_ylabel("Over 2.5 matches (%)", fontsize=13)
-    ax.set_xlabel("Competition", fontsize=13)
+    ax.set_title("Share of Over 2.5 Matches by Competition", fontsize=22)
+    ax.set_ylabel("Over 2.5 matches (%)", fontsize=16)
+    ax.set_xlabel("Competition", fontsize=16)
     ax.set_ylim(0, max(values) + 9)
 
     ax.set_xticks(range(len(records)))
-    ax.set_xticklabels(comps, rotation=55, ha="right")
+    ax.set_xticklabels(comps, rotation=55, ha="right", fontsize=10)
 
     ax.grid(axis="y", linestyle=":", alpha=0.55)
     ax.spines["top"].set_visible(False)
@@ -113,7 +113,7 @@ def main() -> None:
             label,
             ha="center",
             va="bottom",
-            fontsize=9.5,
+            fontsize=10,
             rotation=0,
             fontweight=fontweight,
         )
