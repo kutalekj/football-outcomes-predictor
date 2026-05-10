@@ -255,6 +255,222 @@ class BranchProbeLogger(Callback):
             self.writer.flush()
 
 
+class BranchDiagnosticsCsvLogger(Callback):
+    """
+    Writes diagnostics to CSV so thesis figures can be regenerated as vector plots.
+
+    One row is written per layer and epoch.
+    Drift rows store value=drift.
+    Probe rows store value=mean(abs(activation)) and probe_std=std(activation).
+    """
+
+    def __init__(
+        self,
+        csv_path: Path,
+        drift_layer_names: List[str],
+        probe_layer_names: List[str],
+        probe_inputs,
+    ):
+        super().__init__()
+        self.csv_path = Path(csv_path)
+        self.drift_layer_names = drift_layer_names
+        self.probe_layer_names = probe_layer_names
+        self.probe_inputs = probe_inputs
+
+        self._initial = {}
+        self._present_drift_names = []
+        self._submodels = {}
+
+        self._global_step = 0
+        self._round_idx = None
+        self._train_size = None
+        self._val_size = None
+
+        self.csv_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.csv_path.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "diag_step",
+                    "round_idx",
+                    "train_size",
+                    "val_size",
+                    "local_epoch",
+                    "metric_family",
+                    "layer",
+                    "value",
+                    "probe_std",
+                ],
+            )
+            writer.writeheader()
+
+    def set_round_context(
+        self,
+        round_idx: int,
+        train_size: int,
+        val_size: int,
+        learning_rate: float | None = None,
+    ) -> None:
+        self._round_idx = round_idx
+        self._train_size = train_size
+        self._val_size = val_size
+
+    def on_train_begin(self, logs=None):
+        self._initial = {}
+        self._present_drift_names = []
+
+        for name in self.drift_layer_names:
+            try:
+                layer = self.model.get_layer(name)
+            except ValueError:
+                continue
+
+            self._initial[name] = [w.numpy().copy() for w in layer.weights]
+            self._present_drift_names.append(name)
+
+        self._submodels = {}
+        for name in self.probe_layer_names:
+            try:
+                layer = self.model.get_layer(name)
+            except ValueError:
+                continue
+
+            self._submodels[name] = Model(self.model.inputs, layer.output)
+
+    def on_epoch_end(self, epoch, logs=None):
+        self._global_step += 1
+        rows = []
+
+        for name in self._present_drift_names:
+            layer = self.model.get_layer(name)
+            init_ws = self._initial[name]
+            curr_ws = layer.weights
+
+            sq = 0.0
+            for w0, w1 in zip(init_ws, curr_ws):
+                diff = w1.numpy() - w0
+                sq += float(np.sum(diff * diff))
+
+            rows.append(
+                {
+                    "diag_step": self._global_step,
+                    "round_idx": self._round_idx,
+                    "train_size": self._train_size,
+                    "val_size": self._val_size,
+                    "local_epoch": epoch + 1,
+                    "metric_family": "drift",
+                    "layer": name,
+                    "value": float(np.sqrt(sq)),
+                    "probe_std": "",
+                }
+            )
+
+        for name, sm in self._submodels.items():
+            out = sm.predict(self.probe_inputs, verbose=0)
+
+            rows.append(
+                {
+                    "diag_step": self._global_step,
+                    "round_idx": self._round_idx,
+                    "train_size": self._train_size,
+                    "val_size": self._val_size,
+                    "local_epoch": epoch + 1,
+                    "metric_family": "probe_meanabs",
+                    "layer": name,
+                    "value": float(np.mean(np.abs(out))),
+                    "probe_std": float(np.std(out)),
+                }
+            )
+
+        if rows:
+            with self.csv_path.open("a", encoding="utf-8", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+                writer.writerows(rows)
+
+
+class EpochMetricsCsvLogger(Callback):
+    """
+    Writes Keras per-epoch fit() metrics to CSV.
+
+    This is intended for thesis plots that need train/validation epoch-level
+    accuracy and loss curves, not only round-level validation metrics.
+    """
+
+    def __init__(self, csv_path: Path):
+        super().__init__()
+        self.csv_path = Path(csv_path)
+        self._global_epoch_step = 0
+        self._round_idx = None
+        self._train_size = None
+        self._val_size = None
+        self._learning_rate = None
+
+        self.fieldnames = [
+            "global_epoch_step",
+            "round_idx",
+            "train_size",
+            "val_size",
+            "local_epoch",
+            "learning_rate",
+            "loss",
+            "accuracy",
+            "auc",
+            "mae",
+            "val_loss",
+            "val_accuracy",
+            "val_auc",
+            "val_mae",
+            "output_main_loss",
+            "output_main_accuracy",
+            "output_main_auc",
+            "output_main_mae",
+            "val_output_main_loss",
+            "val_output_main_accuracy",
+            "val_output_main_auc",
+            "val_output_main_mae",
+        ]
+
+        self.csv_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.csv_path.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self.fieldnames)
+            writer.writeheader()
+
+    def set_round_context(
+        self,
+        round_idx: int,
+        train_size: int,
+        val_size: int,
+        learning_rate: float | None = None,
+    ) -> None:
+        self._round_idx = round_idx
+        self._train_size = train_size
+        self._val_size = val_size
+        self._learning_rate = learning_rate
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
+        self._global_epoch_step += 1
+
+        row = {
+            "global_epoch_step": self._global_epoch_step,
+            "round_idx": self._round_idx,
+            "train_size": self._train_size,
+            "val_size": self._val_size,
+            "local_epoch": epoch + 1,
+            "learning_rate": self._learning_rate,
+        }
+
+        for key in self.fieldnames:
+            if key in row:
+                continue
+            value = logs.get(key)
+            row[key] = "" if value is None else float(value)
+
+        with self.csv_path.open("a", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=self.fieldnames)
+            writer.writerow(row)
+
+
 def _abs_diff(a, b, name: str):
     return Lambda(lambda xs: tf.abs(xs[0] - xs[1]), name=name)([a, b])
 
@@ -1091,6 +1307,7 @@ def train_rolling(
         probe_inputs = None
 
     callbacks_common: List[Callback] = [tb]
+    callbacks_common.append(EpochMetricsCsvLogger(Path(log_dir) / "epoch_metrics.csv"))
     if cfg.enable_branch_diagnostics and probe_inputs is not None:
         drift_names = []
 
@@ -1135,6 +1352,14 @@ def train_rolling(
 
         if branch_probe_layers:
             callbacks_common.append(BranchProbeLogger(probe_inputs, tb_writer, branch_probe_layers))
+            callbacks_common.append(
+                BranchDiagnosticsCsvLogger(
+                    csv_path=Path(log_dir) / "diagnostics.csv",
+                    drift_layer_names=drift_names,
+                    probe_layer_names=branch_probe_layers,
+                    probe_inputs=probe_inputs,
+                )
+            )
 
     frozen_branch_layer_names = None
     if cfg.freeze_pretrained_branch_rounds > 0:
@@ -1186,6 +1411,15 @@ def train_rolling(
         total_train_rounds = max(1, (len(rounds) - 1) - cfg.window_rounds)
         current_lr = _lr_for_round(cfg, round_offset, total_train_rounds)
         _set_optimizer_lr(model, current_lr)
+
+        for cb in callbacks_common:
+            if hasattr(cb, "set_round_context"):
+                cb.set_round_context(
+                    round_idx=int(i + 1),
+                    train_size=len(train_ms),
+                    val_size=len(val_ms),
+                    learning_rate=float(current_lr),
+                )
 
         model.fit(
             X[:-1],
