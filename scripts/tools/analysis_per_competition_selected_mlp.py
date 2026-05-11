@@ -176,9 +176,9 @@ def plot_combined(
         bars.append(bar)
 
     ax_bar.axhline(0.5, linestyle="--", color="#555555", linewidth=1.0, alpha=0.75)
-    ax_bar.set_title("Selected MLP performance by competition", fontsize=16)
-    ax_bar.set_ylabel("Pooled AUC", fontsize=13)
-    ax_bar.set_xlabel("Competition", fontsize=13)
+    ax_bar.set_title("Selected MLP Performance by Competition", fontsize=20)
+    ax_bar.set_ylabel("Pooled AUC", fontsize=14)
+    ax_bar.set_xlabel("Competition", fontsize=14)
     ax_bar.set_ylim(0.40, max(aucs) + 0.045)
     ax_bar.set_xticks(range(len(comps)))
     ax_bar.set_xticklabels(comps, rotation=55, ha="right")
@@ -193,7 +193,7 @@ def plot_combined(
             f"{value:.3f}",
             ha="center",
             va="bottom",
-            fontsize=8.5,
+            fontsize=9,
             rotation=0,
             color="#000000" if comp in highlight_comps else "#222222",
             fontweight="bold" if comp in highlight_comps else "normal",
@@ -235,14 +235,14 @@ def plot_combined(
 
     ax_line.axhline(0.5, linestyle="--", color="#555555", linewidth=1.0, alpha=0.75)
     ax_line.set_title(
-        "Round-level AUC progression for highlighted competitions",
-        fontsize=16,
+        "Round-Level AUC Progression for Highlighted Competitions",
+        fontsize=20,
     )
-    ax_line.set_ylabel("Validation AUC per competition", fontsize=13)
-    ax_line.set_xlabel("Rolling validation round", fontsize=13)
+    ax_line.set_ylabel("Validation AUC per competition", fontsize=14)
+    ax_line.set_xlabel("Validation round", fontsize=14)
     ax_line.set_ylim(0.4, 0.75)
     ax_line.grid(axis="y", linestyle=":", alpha=0.55)
-    ax_line.legend(ncol=2, fontsize=8)
+    ax_line.legend(ncol=2, fontsize=9)
     ax_line.spines["top"].set_visible(False)
     ax_line.spines["right"].set_visible(False)
 
