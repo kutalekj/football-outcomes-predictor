@@ -140,9 +140,9 @@ def main() -> None:
         linewidth=BAR_EDGE_WIDTH,
     )
 
-    ax_bar.set_title("Dataset sensitivity: pooled metrics", fontsize=16)
-    ax_bar.set_xlabel("Metric", fontsize=13)
-    ax_bar.set_ylabel("Metric value", fontsize=13)
+    ax_bar.set_title("Dataset Sensitivity: Pooled Metrics", fontsize=20)
+    ax_bar.set_xlabel("Metric", fontsize=14)
+    ax_bar.set_ylabel("Metric value", fontsize=14)
     ax_bar.set_xticks(x)
     ax_bar.set_xticklabels(metric_labels)
     ax_bar.set_ylim(0.0, max(max(clean_vals), max(less_vals)) + 0.08)
@@ -158,7 +158,7 @@ def main() -> None:
                 v + 0.01,
                 f"{v:.3f}",
                 ha="center",
-                fontsize=9,
+                fontsize=10,
             )
 
     for variant, round_rows in round_by_variant.items():
@@ -182,9 +182,9 @@ def main() -> None:
         )
 
     ax_line.axhline(0.5, linestyle="--", color="#555555", linewidth=1.0, alpha=0.75)
-    ax_line.set_title("Round-level validation AUC", fontsize=16)
-    ax_line.set_xlabel("Rolling validation round", fontsize=13)
-    ax_line.set_ylabel("Validation AUC", fontsize=13)
+    ax_line.set_title("Round-Level Validation AUC", fontsize=20)
+    ax_line.set_xlabel("Rolling validation round", fontsize=14)
+    ax_line.set_ylabel("Validation AUC", fontsize=14)
     ax_line.set_ylim(0.45, 0.65)
     ax_line.grid(axis="y", linestyle=":", alpha=0.5)
     ax_line.legend()
@@ -263,9 +263,9 @@ def main() -> None:
     )
     ax.axhline(0.0, linestyle="--", color="#555555", linewidth=1.0)
 
-    ax.set_title("Dataset sensitivity: per-competition AUC change", fontsize=16)
-    ax.set_ylabel("AUC less-restricted - AUC cleaned", fontsize=13)
-    ax.set_xlabel("Competition", fontsize=13)
+    ax.set_title("Dataset Sensitivity: Per-Competition AUC Change", fontsize=20)
+    ax.set_ylabel("AUC less-restricted - AUC cleaned", fontsize=14)
+    ax.set_xlabel("Competition", fontsize=14)
     ax.set_xticks(range(len(comps)))
     ax.set_xticklabels(comps, rotation=55, ha="right")
     ax.grid(axis="y", linestyle=":", alpha=0.5)
