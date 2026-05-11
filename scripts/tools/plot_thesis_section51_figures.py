@@ -189,7 +189,7 @@ def set_labels(ax, xlabel=None, ylabel=None):
 
 def plot_fig51():
     fig, axes = plt.subplots(1, 3, figsize=(15.5, 4.8), sharex=True)
-    fig.suptitle("Branch Probe Diagnostics in the Initial v1 Ablation", fontsize=TITLE_FONTSIZE)
+    fig.suptitle("Branch Probe Diagnostics in the Initial-Branch Ablation", fontsize=TITLE_FONTSIZE)
 
     for ax, (title, layer_name) in zip(axes, FIG51_PROBE_LAYERS.items()):
         for label, (run_name, color_key) in FIG51_RUNS.items():
@@ -319,7 +319,7 @@ def plot_epoch_accuracy_loss(
 def plot_fig52():
     plot_epoch_accuracy_loss(
         runs=FIG52_RUNS,
-        title="Initial v1 Ablation: Epoch Accuracy and Loss",
+        title="Initial-Branch Ablation: Epoch Accuracy and Loss",
         stem="fig_5_2_exp_initial_ablation_curves",
         colors=ABLATION_COLORS,
         acc_ylim=FIG52_ACC_YLIM,
