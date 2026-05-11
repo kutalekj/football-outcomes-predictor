@@ -237,9 +237,9 @@ def plot_probability_comparison(metrics: dict) -> None:
         linewidth=BAR_EDGE_WIDTH,
     )
 
-    ax.set_title("Model vs bookmaker implied probabilities", fontsize=16)
-    ax.set_xlabel("Metric", fontsize=13)
-    ax.set_ylabel("Metric value", fontsize=13)
+    ax.set_title("Model vs Bookmaker Implied Probabilities", fontsize=20)
+    ax.set_xlabel("Metric", fontsize=14)
+    ax.set_ylabel("Metric value", fontsize=14)
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.set_ylim(0.0, max(max(model), max(book)) + 0.08)
@@ -255,7 +255,7 @@ def plot_probability_comparison(metrics: dict) -> None:
                 value + 0.01,
                 f"{value:.3f}",
                 ha="center",
-                fontsize=9,
+                fontsize=10,
             )
 
     fig.tight_layout()
@@ -290,9 +290,9 @@ def plot_betting_thresholds(betting_summaries: list[dict]) -> None:
         linewidth=1.0,
         alpha=0.75,
     )
-    ax1.set_title("Betting simulation by edge threshold", fontsize=16)
-    ax1.set_xlabel("Minimum model edge over break-even probability", fontsize=13)
-    ax1.set_ylabel("ROI per unit stake", fontsize=13)
+    ax1.set_title("Betting Simulation by Edge Threshold", fontsize=20)
+    ax1.set_xlabel("Minimum model edge over break-even probability", fontsize=14)
+    ax1.set_ylabel("ROI per unit stake", fontsize=14)
     ax1.grid(axis="y", linestyle=":", alpha=0.5)
     ax1.spines["top"].set_visible(False)
 
@@ -307,7 +307,7 @@ def plot_betting_thresholds(betting_summaries: list[dict]) -> None:
         linewidth=BAR_EDGE_WIDTH,
         label="Number of bets",
     )
-    ax2.set_ylabel("Number of bets", fontsize=13)
+    ax2.set_ylabel("Number of bets", fontsize=14)
     ax2.spines["top"].set_visible(False)
 
     lines, line_labels = ax1.get_legend_handles_labels()
