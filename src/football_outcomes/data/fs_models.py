@@ -109,7 +109,7 @@ class FSCompSeason:
         Table positions should be computed only from the filtered league dataset:
           - same competition season
           - complete datetime
-          - season in configured thesis window
+          - season in configured window
           - round_id whitelisted for this (comp_name, season)
         """
         if match is None:
