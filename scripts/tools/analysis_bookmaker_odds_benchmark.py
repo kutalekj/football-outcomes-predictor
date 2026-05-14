@@ -324,6 +324,123 @@ def plot_betting_thresholds(betting_summaries: list[dict]) -> None:
     plt.close(fig)
 
 
+def plot_combined_bookmaker_figure(metrics: dict, betting_summaries: list[dict]) -> None:
+    labels = ["AUC", "Accuracy", "Brier score"]
+    model = [metrics["model_auc"], metrics["model_accuracy"], metrics["model_brier"]]
+    book = [metrics["book_fair_auc"], metrics["book_fair_accuracy"], metrics["book_fair_brier"]]
+
+    thresholds = [r["threshold"] for r in betting_summaries]
+    roi = [r["roi"] for r in betting_summaries]
+    num_bets = [r["num_bets"] for r in betting_summaries]
+
+    fig, axes = plt.subplots(
+        2,
+        1,
+        figsize=(11.2, 8.6),
+        gridspec_kw={"height_ratios": [1.0, 1.05]},
+    )
+
+    # -------------------------------------------------------------------------
+    # Top subplot: probability comparison
+    # -------------------------------------------------------------------------
+    ax = axes[0]
+    x = np.arange(len(labels))
+    width = 0.34
+
+    ax.bar(
+        x - width / 2,
+        model,
+        width=width,
+        label="Selected MLP",
+        color=SERIES_COLORS["model"],
+        edgecolor=BAR_EDGE_COLOR,
+        linewidth=BAR_EDGE_WIDTH,
+    )
+    ax.bar(
+        x + width / 2,
+        book,
+        width=width,
+        label="Bookmaker implied probabilities",
+        color=SERIES_COLORS["bookmaker"],
+        edgecolor=BAR_EDGE_COLOR,
+        linewidth=BAR_EDGE_WIDTH,
+    )
+
+    ax.set_title("Model vs Bookmaker Implied Probabilities", fontsize=18)
+    ax.set_xlabel("Metric", fontsize=13)
+    ax.set_ylabel("Metric value", fontsize=13)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.set_ylim(0.0, max(max(model), max(book)) + 0.08)
+    ax.grid(axis="y", linestyle=":", alpha=0.5)
+    ax.legend(fontsize=10)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    for offset, vals in [(-width / 2, model), (width / 2, book)]:
+        for i, value in enumerate(vals):
+            ax.text(
+                i + offset,
+                value + 0.01,
+                f"{value:.3f}",
+                ha="center",
+                fontsize=9,
+            )
+
+    # -------------------------------------------------------------------------
+    # Bottom subplot: betting simulation
+    # -------------------------------------------------------------------------
+    ax1 = axes[1]
+
+    ax1.plot(
+        thresholds,
+        roi,
+        marker="o",
+        linewidth=2.0,
+        color=SERIES_COLORS["model"],
+        label="ROI",
+    )
+    ax1.axhline(
+        0.0,
+        linestyle="--",
+        color="#555555",
+        linewidth=1.0,
+        alpha=0.75,
+    )
+    ax1.set_title("Betting Simulation by Edge Threshold", fontsize=18)
+    ax1.set_xlabel("Minimum model edge over break-even probability", fontsize=13)
+    ax1.set_ylabel("ROI per unit stake", fontsize=13)
+    ax1.grid(axis="y", linestyle=":", alpha=0.5)
+    ax1.spines["top"].set_visible(False)
+
+    ax2 = ax1.twinx()
+    ax2.bar(
+        thresholds,
+        num_bets,
+        width=0.008,
+        alpha=0.45,
+        color=SERIES_COLORS["num_bets"],
+        edgecolor=BAR_EDGE_COLOR,
+        linewidth=BAR_EDGE_WIDTH,
+        label="Number of bets",
+    )
+    ax2.set_ylabel("Number of bets", fontsize=13)
+    ax2.spines["top"].set_visible(False)
+
+    lines, line_labels = ax1.get_legend_handles_labels()
+    bars, bar_labels = ax2.get_legend_handles_labels()
+    ax1.legend(lines + bars, line_labels + bar_labels, loc="best", fontsize=10)
+
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "bookmaker_combined_evaluation.pdf", bbox_inches="tight")
+    fig.savefig(
+        OUT_DIR / "bookmaker_combined_evaluation.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+
 def main() -> None:
     rows = read_joined_rows()
 
@@ -357,12 +474,15 @@ def main() -> None:
 
     plot_probability_comparison(metrics)
     plot_betting_thresholds(betting_summaries)
+    plot_combined_bookmaker_figure(metrics, betting_summaries)
 
     print("[saved]", OUT_DATA_DIR / "bookmaker_probability_metrics.json")
     print("[saved]", OUT_DATA_DIR / "bookmaker_betting_summary.csv")
     print("[saved]", OUT_DATA_DIR / "bookmaker_betting_bets.csv")
     print("[saved]", OUT_DIR / "bookmaker_probability_comparison.pdf")
     print("[saved]", OUT_DIR / "bookmaker_betting_thresholds.pdf")
+    print("[saved]", OUT_DIR / "bookmaker_combined_evaluation.pdf")
+    print("[saved]", OUT_DIR / "bookmaker_combined_evaluation.png")
 
 
 if __name__ == "__main__":
