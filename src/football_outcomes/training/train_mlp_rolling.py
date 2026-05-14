@@ -257,7 +257,7 @@ class BranchProbeLogger(Callback):
 
 class BranchDiagnosticsCsvLogger(Callback):
     """
-    Writes diagnostics to CSV so thesis figures can be regenerated as vector plots.
+    Writes diagnostics to CSV so figures can be regenerated as vector plots.
 
     One row is written per layer and epoch.
     Drift rows store value=drift.
@@ -392,7 +392,7 @@ class EpochMetricsCsvLogger(Callback):
     """
     Writes Keras per-epoch fit() metrics to CSV.
 
-    This is intended for thesis plots that need train/validation epoch-level
+    This is intended for plots that need train/validation epoch-level
     accuracy and loss curves, not only round-level validation metrics.
     """
 
@@ -819,9 +819,7 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     x_hp = Input((11,), dtype="int32", name="home_positions")
     x_ap = Input((11,), dtype="int32", name="away_positions")
 
-    # ------------------------------------------------------------
     # Branch 1: numerical/context branch
-    # ------------------------------------------------------------
     z_num = Dense(
         96,
         activation="relu",
@@ -837,9 +835,7 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     )(z_num)
     z_num = LayerNormalization(name="num_branch_ln")(z_num)
 
-    # ------------------------------------------------------------
     # Branch 2: categorical branch with explicit comparisons
-    # ------------------------------------------------------------
     team_emb = Embedding(num_teams, cfg.team_emb_dim, name="team_embedding")
     home_e = Flatten(name="home_embedding_flat")(team_emb(x_h))
     away_e = Flatten(name="away_embedding_flat")(team_emb(x_a))
@@ -860,9 +856,7 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     z_cat = Dropout(cfg.cat_dropout, name="cat_branch_dropout")(z_cat)
     z_cat = LayerNormalization(name="cat_branch_ln")(z_cat)
 
-    # ------------------------------------------------------------
     # Branch 3: structured team-strength branch
-    # ------------------------------------------------------------
     home_vals, home_mask, away_vals, away_mask = _split_strength_tensor(x_s)
 
     position_emb_layer = Embedding(
@@ -902,9 +896,7 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     z_team = Dropout(cfg.team_dropout, name="team_branch_dropout")(z_team)
     z_team = LayerNormalization(name="team_branch_ln")(z_team)
 
-    # ------------------------------------------------------------
     # Fusion
-    # ------------------------------------------------------------
     z = Concatenate(name="fusion")([z_num, z_cat, z_team])
     z = Dense(
         cfg.fusion_hidden_dim_1,

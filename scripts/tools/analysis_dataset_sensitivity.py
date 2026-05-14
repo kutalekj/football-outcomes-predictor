@@ -103,9 +103,7 @@ def main() -> None:
         for variant, metrics in global_metrics.items():
             writer.writerow({"variant": variant, **metrics})
 
-    # ------------------------------------------------------------
     # Figure 1: global metrics + round AUC curves
-    # ------------------------------------------------------------
     fig, (ax_bar, ax_line) = plt.subplots(
         nrows=2,
         ncols=1,
@@ -202,9 +200,7 @@ def main() -> None:
     )
     plt.close(fig)
 
-    # ------------------------------------------------------------
     # Figure 2: per-competition AUC delta
-    # ------------------------------------------------------------
     def per_comp_auc(rows: list[dict]) -> dict[str, dict]:
         out = {}
         comps = sorted({r["competition"] for r in rows})

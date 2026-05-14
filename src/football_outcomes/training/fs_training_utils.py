@@ -16,9 +16,7 @@ class CatMaps:
     comp_id_map: Dict[int, int]
 
 
-# ---------------------------------------------------------------------
 # Categorical mappings
-# ---------------------------------------------------------------------
 
 
 def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
@@ -50,9 +48,7 @@ def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
     return CatMaps(team_id_map=team_id_map, comp_id_map=comp_id_map)
 
 
-# ---------------------------------------------------------------------
 # Round distribution
-# ---------------------------------------------------------------------
 
 
 def distribute_matches_into_rounds(sorted_matches: List[FSMatch]) -> List[List[FSMatch]]:
@@ -93,9 +89,7 @@ def summarize_rounds(rounds: List[List[FSMatch]]) -> dict:
     }
 
 
-# ---------------------------------------------------------------------
 # Feature extraction
-# ---------------------------------------------------------------------
 
 
 def _v(x) -> float:

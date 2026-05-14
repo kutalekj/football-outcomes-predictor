@@ -171,7 +171,7 @@ def _plot_pct_heatmap_thesis(
     mask_color: str = THESIS_PAIR_MASK_COLOR,
 ) -> None:
     """
-    Minimal thesis-ready heatmap:
+    Heatmap:
       - no title
       - optional colorbar
       - optional hidden ticks
@@ -250,10 +250,10 @@ def plot_thesis_pair_heatmaps(
     right_caption: Optional[str] = None,
 ) -> None:
     """
-    Two aligned heatmaps side by side for thesis use.
+    Two aligned heatmaps side by side.
     """
     if left_pivot.empty or right_pivot.empty:
-        print(f"Skipping thesis pair heatmap {stem}: one side is empty.")
+        print(f"Skipping pair heatmap {stem}: one side is empty.")
         return
 
     if align_shapes:
@@ -268,7 +268,7 @@ def plot_thesis_pair_heatmaps(
     n_rows = max(len(left_plot.index), len(right_plot.index))
     n_cols = max(len(left_plot.columns), len(right_plot.columns))
 
-    # Thesis-only heatmaps are intentionally stretched horizontally and compressed vertically.
+    # Heatmaps are intentionally stretched horizontally and compressed vertically.
     # The goal is to show missingness patterns/trends on portrait-oriented thesis pages,
     # not to make every individual cell label-readable.
     fig_w = max(15.5, 0.46 * n_cols * 2 + (2.6 if show_cbar else 0.0))
@@ -1663,7 +1663,7 @@ def main() -> None:
         include_offsides_timelines=False,
     )
 
-    # Thesis-ready before vs after match-stat comparison
+    # Before vs after match-stat comparison
     if (
         before_results["df_match_strict"] is not None
         and not before_results["df_match_strict"].empty

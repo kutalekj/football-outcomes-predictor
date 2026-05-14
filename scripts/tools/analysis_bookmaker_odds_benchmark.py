@@ -340,9 +340,7 @@ def plot_combined_bookmaker_figure(metrics: dict, betting_summaries: list[dict])
         gridspec_kw={"height_ratios": [1.0, 1.05]},
     )
 
-    # -------------------------------------------------------------------------
     # Top subplot: probability comparison
-    # -------------------------------------------------------------------------
     ax = axes[0]
     x = np.arange(len(labels))
     width = 0.34
@@ -387,9 +385,7 @@ def plot_combined_bookmaker_figure(metrics: dict, betting_summaries: list[dict])
                 fontsize=9,
             )
 
-    # -------------------------------------------------------------------------
     # Bottom subplot: betting simulation
-    # -------------------------------------------------------------------------
     ax1 = axes[1]
 
     ax1.plot(

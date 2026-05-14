@@ -22,10 +22,6 @@ from football_outcomes.utils.fs_feature_utils import build_team_match_index, get
 
 matplotlib.use("Agg")
 
-# -----------------------------------------------------------------------------
-# Configuration
-# -----------------------------------------------------------------------------
-
 # One clean thesis-friendly rule for all clipping constants.
 CLIP_PERCENTILE = 99.0
 
@@ -76,11 +72,6 @@ NAME_TO_SETTING = {
     "total pre-match xG": "TOTAL_PRE_MATCH_XG_NORM_COEFFICIENT",
     "match load per day": "MATCH_LOAD_NORM_COEFFICIENT",
 }
-
-
-# -----------------------------------------------------------------------------
-# Helpers
-# -----------------------------------------------------------------------------
 
 
 def _ensure_dir(path: Path) -> None:

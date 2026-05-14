@@ -82,9 +82,7 @@ def main() -> None:
                 }
             )
 
-    # ------------------------------------------------------------
     # Figure: global metrics + round AUC curves
-    # ------------------------------------------------------------
     fig, (ax_bar, ax_line) = plt.subplots(
         nrows=2,
         ncols=1,

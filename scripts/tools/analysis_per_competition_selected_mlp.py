@@ -157,9 +157,7 @@ def plot_combined(
         gridspec_kw={"height_ratios": [1.0, 1.8], "hspace": 1.05},
     )
 
-    # ------------------------------------------------------------------
     # Bar chart: pooled AUC by competition
-    # ------------------------------------------------------------------
     bars = []
 
     for i, (comp, auc, color) in enumerate(zip(comps, aucs, colors)):
@@ -199,9 +197,7 @@ def plot_combined(
             fontweight="bold" if comp in highlight_comps else "normal",
         )
 
-    # ------------------------------------------------------------------
     # Line chart: selected competition AUC progression
-    # ------------------------------------------------------------------
     for comp in sorted(highlight_comps):
         round_indices = sorted(round_idx for (c, round_idx) in by_comp_round.keys() if c == comp)
 

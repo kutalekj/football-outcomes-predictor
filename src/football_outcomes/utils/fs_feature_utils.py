@@ -458,9 +458,7 @@ def debug_print_match_and_features(match):
             return "None"
         return f"{d:.{digits}f}"
 
-    # -------------------------
     # FEATURES BEFORE MATCH (Genk-side only)
-    # -------------------------
     print(f"\n\tFEATURES_BEFORE_MATCH: (pos. in season: {f.match_position_in_season:.2f})")
     TARGET_TEAM = "KRC Genk"
 
@@ -698,9 +696,7 @@ def debug_print_match_and_features(match):
     pos = pick(f.home_curr_position, f.away_curr_position)
     print(f"Table position {side}({side_team_name})={fmt(pos)}")
 
-    # -------------------------
     # MATCH STATISTICS
-    # -------------------------
     print("\n\tMATCH_STATISTICS:")
     print(f"{match.datetime} h={match.hour_utc}: {match.comp_name}, {match.season}, round_id={match.round_id}")
 

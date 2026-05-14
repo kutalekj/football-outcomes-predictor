@@ -17,9 +17,6 @@ from football_outcomes.utils import fs_feature_utils as fu
 matplotlib.use("Agg")
 
 
-# ---------------------------------------------------------------------
-# Figure style
-# ---------------------------------------------------------------------
 BAR_COLOR = "#6f8fbf"
 EDGE_COLOR = "#334e68"
 MEAN_COLOR = "#2f5f73"
@@ -82,9 +79,7 @@ def main() -> None:
     out_dir = Path(sett.PROJECT_ROOT) / "docs" / "experiments" / "thesis_round_sizes_analysis"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # --------------------------------------------------
     # Combined figure: histogram + chronological sizes
-    # --------------------------------------------------
     fig, axes = plt.subplots(
         nrows=2,
         ncols=1,
@@ -93,7 +88,7 @@ def main() -> None:
         constrained_layout=False,
     )
 
-    # --- Top: histogram
+    # Top: histogram
     ax = axes[0]
     ax.hist(
         round_sizes,
@@ -123,7 +118,7 @@ def main() -> None:
     ax.legend(frameon=True, fontsize=LEGEND_SIZE)
     apply_axis_style(ax)
 
-    # --- Bottom: chronological round sizes
+    # Bottom: chronological round sizes
     ax = axes[1]
     round_indices = list(range(1, num_rounds + 1))
     ax.bar(
@@ -165,9 +160,7 @@ def main() -> None:
     print(f"Saved combined PNG figure to: {combined_png_path}")
     print(f"Saved combined PDF figure to: {combined_pdf_path}")
 
-    # --------------------------------------------------
     # Optional: separate chronological-only plot
-    # --------------------------------------------------
     fig, ax = plt.subplots(figsize=(10.5, 4.8), constrained_layout=True)
     ax.bar(
         round_indices,

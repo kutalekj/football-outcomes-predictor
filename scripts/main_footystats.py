@@ -119,9 +119,7 @@ print(f"[features] usable matches for training: {len(league_matches_sorted)}")
 
 cat_maps = build_categorical_maps(league_matches_sorted)
 
-# ------------------------------------------------------------
-# Simple baselines first
-# ------------------------------------------------------------
+# Simple baselines test
 """
 evaluate_baseline_rolling(
     league_matches_sorted,
@@ -142,9 +140,7 @@ evaluate_baseline_rolling(
 )
 """
 
-# ------------------------------------------------------------
-# Limited contextual comparison with Atta Mills et al. leagues
-# ------------------------------------------------------------
+# Limited contextual comparison with Atta Mills et al. leagues  # TODO: Remove this
 
 EXPERIMENT_STAGE = "atta_mills_contextual_comparison"
 
@@ -211,9 +207,7 @@ SELECTED_CFG = {
 
 results = []
 
-# ------------------------------------------------------------
 # Binary baselines on the same three-league subset
-# ------------------------------------------------------------
 BASELINE_RUNS = [
     BaselineConfig(
         mode="binary_u25",
@@ -259,9 +253,7 @@ for cfg in BASELINE_RUNS:
         }
     )
 
-# ------------------------------------------------------------
 # Selected MLP on the same three-league subset
-# ------------------------------------------------------------
 mlp_run_name = "atta_selected_mlp_binary_u25"
 
 print("\n" + "=" * 80)
@@ -327,9 +319,7 @@ results.append(
     }
 )
 
-# ------------------------------------------------------------
 # Save comparison outputs
-# ------------------------------------------------------------
 results.sort(
     key=lambda r: (
         -(r["pooled_auc"] if r["pooled_auc"] is not None else -999),

@@ -188,10 +188,7 @@ def analyze_sofifa_positions(snapshot_dir: Path, out_dir: Path) -> None:
             for p in positions:
                 position_counter[p] += 1
 
-    # -------------------------
     # SAVE SUMMARY
-    # -------------------------
-
     summary_path = out_dir / "sofifa_positions_summary.txt"
     summary_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -207,20 +204,14 @@ def analyze_sofifa_positions(snapshot_dir: Path, out_dir: Path) -> None:
         for k, v in sorted(num_positions_per_player.items()):
             f.write(f"  {k} positions: {v}\n")
 
-    # -------------------------
     # SAVE CSV (GLOBAL COUNTS)
-    # -------------------------
-
     df_counts = pd.DataFrame([{"position": p, "count": c} for p, c in position_counter.items()]).sort_values(
         "count", ascending=False
     )
 
     df_counts.to_csv(out_dir / "sofifa_position_counts.csv", index=False)
 
-    # -------------------------
     # SAVE NORMALIZED DISTRIBUTION
-    # -------------------------
-
     total_positions = sum(position_counter.values())
     df_counts["percentage"] = df_counts["count"] / total_positions
 
