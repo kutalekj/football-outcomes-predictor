@@ -9,7 +9,7 @@ import matplotlib
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_io import load_avg_team_strength, load_sofifa_players, save_snapshot, try_load_snapshot
+from football_outcomes.data.fs_io import load_sofifa_players, save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
 from football_outcomes.training.fs_classical_baselines import BaselineConfig, evaluate_baseline_rolling
@@ -38,8 +38,6 @@ def log_feature_error(msg: str) -> None:
 
 ut = utils
 global_instance = Global.get_instance()
-
-load_avg_team_strength()  # TODO: Remove this currently unused averaging?
 
 cache = try_load_snapshot()
 if sett.ALL_LOAD and cache is not None:
