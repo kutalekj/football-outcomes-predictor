@@ -226,7 +226,8 @@ def build_arrays_for_matches(
 
     X_num, X_h, X_a, X_c, X_s, X_hp, X_ap, y = [], [], [], [], [], [], [], []
 
-    comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
+    # TODO: Revert this patch (added for submission)
+    comp_name_to_global_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
 
     for m in matches:
         f = getattr(m, "features_before_match", None)
@@ -236,11 +237,10 @@ def build_arrays_for_matches(
         X_num.append(extract_numerical_features(f))
         X_h.append(cat_maps.team_id_map[m.home_team.id])
         X_a.append(cat_maps.team_id_map[m.away_team.id])
-        X_c.append(comp_name_to_id[m.comp_name])
 
-        hs_val, hs_mask = _strength_to_value_and_mask(f.home_team_strength)
-        aw_val, aw_mask = _strength_to_value_and_mask(f.away_team_strength)
-        X_s.append(np.stack([hs_val, hs_mask, aw_val, aw_mask], axis=0))
+        # TODO: Revert this patch (added for submission)
+        global_comp_id = comp_name_to_global_id[m.comp_name]
+        X_c.append(cat_maps.comp_id_map[global_comp_id])
 
         home_pos = getattr(f, "home_player_positions", None) or getattr(f, "home_positions", None)
         if home_pos is None:
@@ -265,12 +265,20 @@ def build_arrays_for_matches(
 
     y_dtype = np.float32 if mode in ("binary_u25", "goals_reg") else np.int32
 
+    n = len(matches)  # TODO: Revert this patch (added for submission)
+
+    X_s_arr = np.asarray(X_s, np.float32)
+    if X_s_arr.size == 0:
+        X_s_arr = np.zeros((n, 4, 11, 34), dtype=np.float32)
+    else:
+        X_s_arr = X_s_arr.reshape((n, 4, 11, 34)).astype(np.float32)
+
     return (
         np.asarray(X_num, np.float32),
         np.asarray(X_h, np.int32)[:, None],
         np.asarray(X_a, np.int32)[:, None],
         np.asarray(X_c, np.int32)[:, None],
-        np.asarray(X_s, np.float32),
+        X_s_arr,
         np.asarray(X_hp, np.int32),
         np.asarray(X_ap, np.int32),
         np.asarray(y, y_dtype),
@@ -393,8 +401,16 @@ def build_strength_only_arrays_for_matches(
 
     y_dtype = np.float32 if mode in ("binary_u25", "goals_reg") else np.int32
 
+    n = len(matches)  # TODO: Revert this patch (added for submission)
+
+    X_s_arr = np.asarray(X_s, np.float32)
+    if X_s_arr.size == 0:
+        X_s_arr = np.zeros((n, 4, 11, 34), dtype=np.float32)
+    else:
+        X_s_arr = X_s_arr.reshape((n, 4, 11, 34)).astype(np.float32)
+
     return (
-        np.asarray(X_s, np.float32),
+        X_s_arr,
         np.asarray(X_hp, np.int32),
         np.asarray(X_ap, np.int32),
         np.asarray(y, y_dtype),

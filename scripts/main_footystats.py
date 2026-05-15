@@ -157,6 +157,15 @@ def prepare_matches():
     if len(league_matches_sorted) == 0:
         raise RuntimeError("No matches with computed features are available for training.")
 
+    num_with_strength = sum(
+        1
+        for m in league_matches_sorted
+        if getattr(m.features_before_match, "home_team_strength", None) is not None
+        and getattr(m.features_before_match, "away_team_strength", None) is not None
+    )
+
+    print(f"[features] matches with both team-strength tensors: {num_with_strength}/{len(league_matches_sorted)}")
+
     return league_matches_sorted
 
 
@@ -229,10 +238,10 @@ def main() -> None:
     print(f"[training] {run_name}")
     print("=" * 80)
 
-    summary = train_rolling(league_matches_sorted, cat_maps, cfg)
+    _ = train_rolling(league_matches_sorted, cat_maps, cfg)
 
     print("[done] training completed")
-    print(json.dumps(summary, indent=2))
+    print(f"[summary] saved outputs under: {Path(sett.DATA_DIR) / 'tensorboard_logs' / run_name}")
 
     maybe_store_snapshot()
 
