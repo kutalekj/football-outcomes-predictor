@@ -1,6 +1,9 @@
+import os
 from pathlib import Path
 
-FS_KEY = "9360c5f9b742b0177a1e42b1afee860151cab101673147456e60412da6d46b38"
+SUBMISSION_MODE = True
+
+FS_KEY = os.getenv("FOOTYSTATS_API_KEY", "")
 FS_HOST = "https://api.football-data-api.com"
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]  # .../football-outcomes-predictor
@@ -10,8 +13,19 @@ DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
-LOAD_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl"
-SAVE_SNAPSHOT_PATH = BASE_SRC_DIR / "data/cache" / "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl"
+LOAD_SNAPSHOT_PATH = Path(
+    os.getenv(
+        "FOP_LOAD_SNAPSHOT_PATH",
+        PROJECT_ROOT / "data" / "submission" / "epl_sample_snapshot.pkl",
+    )
+)
+SAVE_SNAPSHOT_PATH = Path(
+    os.getenv(
+        "FOP_SAVE_SNAPSHOT_PATH",
+        PROJECT_ROOT / "data" / "submission" / "epl_sample_snapshot.pkl",
+    )
+)
+
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
 
 ALL_LOAD = True
@@ -21,7 +35,7 @@ ALL_STORE = False
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
 
-SOFIFA_CSV_DIR = "C:\\Users\\kutalekj\\PycharmProjects\\sofifa-web-scraper\\output_optimized_phase7\\full"
+SOFIFA_CSV_DIR = os.getenv("FOP_SOFIFA_CSV_DIR", "")
 SOFIFA_FILENAME_DATE_FORMAT = "%Y-%m-%d"  # e.g. 2024-01-15.csv
 REBUILD_SOFIFA_FROM_CSV = False
 REBUILD_REGULAR_SEASON_FLAGS = False
