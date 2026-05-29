@@ -1,0 +1,119 @@
+{
+  "snapshot": "C:\\Users\\kutalekj\\PycharmProjects\\football-outcomes-predictor\\src\\football_outcomes\\data\\cache\\fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+  "competitions_checked": [
+    "Scotland Premiership",
+    "Belgium Pro League",
+    "Netherlands Eredivisie"
+  ],
+  "global_24_training": {
+    "run_name": "integrity_check_global_24_selected_mlp_binary_u25",
+    "saved_summary": {
+      "run_name": "integrity_check_global_24_selected_mlp_binary_u25",
+      "mode": "binary_u25",
+      "round_stats": {
+        "num_rounds": 320,
+        "min_round_size": 8,
+        "max_round_size": 200,
+        "mean_round_size": 95.2125,
+        "median_round_size": 76.0
+      },
+      "pooled_accuracy": 0.5557857142857143,
+      "pooled_brier": 0.2461073398590088,
+      "pooled_auc": 0.5759888887405396
+    },
+    "recomputed_from_oos": {
+      "n": 28000,
+      "positive_rate_under25": 0.48796428571428574,
+      "accuracy": 0.5557857142857143,
+      "brier": 0.24610732846444702,
+      "auc": 0.5761192106256712
+    },
+    "num_competitions_in_oos": 24,
+    "competitions_in_oos": [
+      "Australia A-League",
+      "Austria Bundesliga",
+      "Belgium Pro League",
+      "Denmark Superliga",
+      "England Championship",
+      "England EFL League One",
+      "England EFL League Two",
+      "England Premier League",
+      "France Ligue 1",
+      "France Ligue 2",
+      "Germany 2. Bundesliga",
+      "Germany Bundesliga",
+      "India Indian Super League",
+      "Italy Serie A",
+      "Italy Serie B",
+      "Netherlands Eredivisie",
+      "Poland Ekstraklasa",
+      "Portugal Liga NOS",
+      "Saudi Arabia Professional League",
+      "Scotland Premiership",
+      "Spain La Liga",
+      "Spain Segunda Divisi\u00f3n",
+      "Switzerland Super League",
+      "Turkey S\u00fcper Lig"
+    ]
+  },
+  "global_model_per_competition_slices": {
+    "Scotland Premiership": {
+      "n": 836,
+      "positive_rate_under25": 0.458133971291866,
+      "accuracy": 0.5633971291866029,
+      "brier": 0.24371103579596626,
+      "auc": 0.580107089954409
+    },
+    "Belgium Pro League": {
+      "n": 1086,
+      "positive_rate_under25": 0.4558011049723757,
+      "accuracy": 0.5791896869244936,
+      "brier": 0.24463467587860271,
+      "auc": 0.5729750978481943
+    },
+    "Netherlands Eredivisie": {
+      "n": 1118,
+      "positive_rate_under25": 0.4150268336314848,
+      "accuracy": 0.5948121645796064,
+      "brier": 0.2385404520402383,
+      "auc": 0.5849217019930402
+    }
+  },
+  "global_model_three_competitions_pooled_slice": {
+    "n": 3040,
+    "positive_rate_under25": 0.44144736842105264,
+    "accuracy": 0.5805921052631579,
+    "brier": 0.24213944385216338,
+    "auc": 0.5838202303402443
+  },
+  "atta3_training": {
+    "run_name": "integrity_check_atta3_selected_mlp_binary_u25",
+    "saved_summary": {
+      "run_name": "integrity_check_atta3_selected_mlp_binary_u25",
+      "mode": "binary_u25",
+      "round_stats": {
+        "num_rounds": 203,
+        "min_round_size": 1,
+        "max_round_size": 24,
+        "mean_round_size": 16.492610837438423,
+        "median_round_size": 18.0
+      },
+      "pooled_accuracy": 0.5559404225839972,
+      "pooled_brier": 0.24435406923294067,
+      "pooled_auc": 0.5526574850082397
+    },
+    "recomputed_from_oos": {
+      "n": 2887,
+      "positive_rate_under25": 0.43851749220644265,
+      "accuracy": 0.5559404225839972,
+      "brier": 0.244354063111139,
+      "auc": 0.5519519185882762
+    },
+    "num_competitions_in_oos": 3,
+    "competitions_in_oos": [
+      "Belgium Pro League",
+      "Netherlands Eredivisie",
+      "Scotland Premiership"
+    ]
+  }
+}
