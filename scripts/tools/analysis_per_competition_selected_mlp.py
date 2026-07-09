@@ -174,8 +174,8 @@ def plot_combined(
         bars.append(bar)
 
     ax_bar.axhline(0.5, linestyle="--", color="#555555", linewidth=1.0, alpha=0.75)
-    ax_bar.set_title("Selected MLP Performance by Competition", fontsize=20)
-    ax_bar.set_ylabel("Pooled AUC", fontsize=14)
+    ax_bar.set_title("My MLP Performance per Competition", fontsize=20)
+    ax_bar.set_ylabel("AUC", fontsize=14)
     ax_bar.set_xlabel("Competition", fontsize=14)
     ax_bar.set_ylim(0.40, max(aucs) + 0.045)
     ax_bar.set_xticks(range(len(comps)))
@@ -254,6 +254,58 @@ def plot_combined(
     print(f"Saved: {OUT_DIR / 'per_competition_auc_combined.png'}")
 
 
+def plot_bar_only(summary: list[dict], highlight_comps: set[str]) -> None:
+    comps = [r["competition"] for r in summary]
+    aucs = [r["auc"] for r in summary]
+    colors = [sett.COMPS_LEAGUE_COLORS.get(comp, "#bdbdbd") for comp in comps]
+
+    fig, ax_bar = plt.subplots(figsize=(15.5, 4.6))
+
+    bars = []
+    for i, (comp, auc, color) in enumerate(zip(comps, aucs, colors)):
+        bar = ax_bar.bar(
+            i,
+            auc,
+            color=color,
+            edgecolor="#555555",
+            linewidth=0.5,
+        )[0]
+        bars.append(bar)
+
+    ax_bar.axhline(0.5, linestyle="--", color="#555555", linewidth=1.0, alpha=0.75)
+    ax_bar.set_title("My MLP Performance by Competition", fontsize=20)
+    ax_bar.set_ylabel("AUC", fontsize=14)
+    ax_bar.set_xlabel("Competition", fontsize=14)
+    ax_bar.set_ylim(0.40, max(aucs) + 0.045)
+    ax_bar.set_xticks(range(len(comps)))
+    ax_bar.set_xticklabels(comps, rotation=55, ha="right")
+    ax_bar.grid(axis="y", linestyle=":", alpha=0.55)
+    ax_bar.spines["top"].set_visible(False)
+    ax_bar.spines["right"].set_visible(False)
+
+    for bar, value in zip(bars, aucs):
+        ax_bar.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.006,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+            color="black",
+        )
+
+    fig.savefig(OUT_DIR / "per_competition_auc_bar_only.pdf", bbox_inches="tight")
+    fig.savefig(
+        OUT_DIR / "per_competition_auc_bar_only.png",
+        dpi=300,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+    print(f"Saved: {OUT_DIR / 'per_competition_auc_bar_only.pdf'}")
+    print(f"Saved: {OUT_DIR / 'per_competition_auc_bar_only.png'}")
+
+
 def main() -> None:
     rows = read_oos_rows()
     summary, _by_comp, by_comp_round = build_summary(rows)
@@ -261,6 +313,7 @@ def main() -> None:
 
     write_summary(summary, highlight_comps)
     plot_combined(summary, by_comp_round, highlight_comps)
+    plot_bar_only(summary, highlight_comps)
 
     print("Highlighted competitions:")
     for comp in sorted(highlight_comps):

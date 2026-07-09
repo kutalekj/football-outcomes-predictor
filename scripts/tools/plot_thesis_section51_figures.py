@@ -56,9 +56,9 @@ TRAIN_STYLE = "-"
 VAL_STYLE = "-"
 
 FIG51_RUNS = {
-    "Full": ("thesis_fig51_diag_full", "full"),
-    "No strength": ("thesis_fig51_diag_no_strength", "no_strength"),
-    "No positions": ("thesis_fig51_diag_no_positions", "no_positions"),
+    "v1": ("thesis_fig51_diag_full", "full"),
+    "v1: w/o team strength": ("thesis_fig51_diag_no_strength", "no_strength"),
+    "v1: w/o player positions": ("thesis_fig51_diag_no_positions", "no_positions"),
 }
 FIG51_PROBE_LAYERS = {
     "Competition Embedding": "competition_embedding_flat",
@@ -189,7 +189,9 @@ def set_labels(ax, xlabel=None, ylabel=None):
 
 def plot_fig51():
     fig, axes = plt.subplots(1, 3, figsize=(15.5, 4.8), sharex=True)
-    fig.suptitle("Branch Probe Diagnostics in the Initial-Branch Ablation", fontsize=TITLE_FONTSIZE)
+    fig.suptitle(
+        "Initial Branch Ablation: Mean Absolute Activations of Embedding Representations", fontsize=TITLE_FONTSIZE
+    )
 
     for ax, (title, layer_name) in zip(axes, FIG51_PROBE_LAYERS.items()):
         for label, (run_name, color_key) in FIG51_RUNS.items():
