@@ -1,0 +1,14 @@
+﻿
+Virtualenv
+Python:         3.10.8
+Implementation: CPython
+Path:           C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\.venv
+Executable:     C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\.venv\Scripts\python.exe
+Valid:          True
+
+Base
+Platform:   win32
+OS:         nt
+Python:     3.10.8
+Path:       C:\Users\kutalekj\AppData\Local\Programs\Python\Python310
+Executable: C:\Users\kutalekj\AppData\Local\Programs\Python\Python310\python.exe

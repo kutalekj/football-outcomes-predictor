@@ -1,0 +1,9 @@
+﻿
+
+Algorithm : SHA256
+Hash      : 77191DBF23A512191F842BED30D71CF885440FA3B6EEF568FC71F66AE843BE41
+Path      : C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\docs\development\baseline\environment\stale-p
+            oetry-lock-2025-10-19.lock
+
+
+

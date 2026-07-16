@@ -1,0 +1,13 @@
+﻿poetry : Error: pyproject.toml changed significantly since poetry.lock was last generated. Run `poetry lock` to fix 
+the lock file.
+At line:1 char:1
++ poetry check *>&1 |
++ ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: pyprojec... the lock file.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Warning: [project.name] and [tool.poetry.name] are both set. The latter will be ignored.
+Warning: [project.version] and [tool.poetry.version] are both set. The latter will be ignored.
+If you want to set the version dynamically via `poetry build --local-version` or you are using a plugin, which sets 
+the version dynamically, you should define the version in [tool.poetry] and add 'version' to [project.dynamic].
+Warning: [project.scripts] is set and there are console scripts in [tool.poetry.scripts]. The latter will be ignored.

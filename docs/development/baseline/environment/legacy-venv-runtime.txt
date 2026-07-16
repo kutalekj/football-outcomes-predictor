@@ -1,0 +1,13 @@
+﻿Executable: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\venv\Scripts\python.exe
+Python: 3.10.8 (tags/v3.10.8:aaaf517, Oct 11 2022, 16:50:30) [MSC v.1933 64 bit (AMD64)]
+numpy: 1.25.2
+scikit-learn: 1.5.1
+tensorflow: 2.17.0
+tensorflow-intel: 2.17.0
+tensorflow-cpu: NOT INSTALLED
+tensorboard: 2.17.1
+tensorflow module available: True
+TensorFlow imported: 2.17.0
+Built with CUDA: False
+Visible GPUs: []
+Build info: OrderedDict([('is_cuda_build', False), ('is_rocm_build', False), ('is_tensorrt_build', False), ('msvcp_dll_names', 'msvcp140.dll,msvcp140_1.dll')])
