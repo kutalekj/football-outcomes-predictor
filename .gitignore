@@ -86,3 +86,23 @@ archive/
 # but keep these two small artifacts
 !/data/processed/avg_team_strengths.csv
 !/data/processed/records.csv
+
+# Local experiment outputs
+/data/baseline_logs/
+/data/comparison/
+/data/hpo/
+/data/pretraining/
+/data/pretraining_representation_sweep/
+/data/sweeps/
+/data/tensorboard_logs/
+/data/tmp_baseline_logs/
+/data/transfer_experiments/
+/data/transfer_top3_representations/
+
+# Local snapshot exports and caches
+/data/processed/snapshot_exports/
+/data/processed/*.fop
+/data/processed/tmp_flahscore_matches/
+/data/processed/tmp_flashscore_matches/
+/scripts/cache/
+/src/football_outcomes/data/cache/
