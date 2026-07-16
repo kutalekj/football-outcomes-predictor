@@ -1,4 +1,11 @@
-﻿Name: numpy
+﻿python.exe : WARNING: Package(s) not found: tensorflow-cpu
+At line:1 char:1
++ & $envB -m pip show `
++ ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: Packag... tensorflow-cpu:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Name: numpy
 Version: 1.25.2
 Summary: Fundamental package for array computing in Python
 Home-page: https://www.numpy.org
