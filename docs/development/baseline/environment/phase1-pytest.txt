@@ -1,0 +1,10 @@
+﻿Name: pytest
+Version: 7.4.4
+Summary: pytest: simple powerful testing with Python
+Home-page: https://docs.pytest.org/en/latest/
+Author: Holger Krekel, Bruno Oliveira, Ronny Pfannschmidt, Floris Bruynooghe, Brianna Laugher, Florian Bruhin and others
+Author-email: 
+License: MIT
+Location: c:\users\kutalekj\pycharmprojects\football-outcomes-predictor\.venv\lib\site-packages
+Requires: colorama, exceptiongroup, iniconfig, packaging, pluggy, tomli
+Required-by: 
