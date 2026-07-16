@@ -1,0 +1,38 @@
+﻿2026-07-16 13:11:16.730300: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-07-16 13:11:18.361682: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:From C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\venv\lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+System.Management.Automation.RemoteException
+2026-07-16 13:11:24.402732: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Executable: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\venv\Scripts\python.exe
+Python: 3.10.8 (tags/v3.10.8:aaaf517, Oct 11 2022, 16:50:30) [MSC v.1933 64 bit (AMD64)]
+Platform: Windows-10-10.0.26200-SP0
+NumPy: 1.25.2
+scikit-learn: 1.5.1
+TensorFlow: 2.17.0
+Built with CUDA: False
+Visible GPUs: []
+CLI parser: fop.main
+
+========================================================================
+Testing architecture: v1
+========================================================================
+v1: PASS
+v1: parameters=25578
+v1: inputs=['num', 'home_id', 'away_id', 'comp_id', 'strength', 'home_positions', 'away_positions']
+v1: outputs=['output_binary']
+v1: prediction_shape=(2, 1)
+v1: prediction_range=(0.529499, 0.532318)
+
+========================================================================
+Testing architecture: v2
+========================================================================
+v2: PASS
+v2: parameters=34474
+v2: inputs=['num', 'home_id', 'away_id', 'comp_id', 'strength', 'home_positions', 'away_positions']
+v2: outputs=['output_main']
+v2: prediction_shape=(2, 1)
+v2: prediction_range=(0.488724, 0.564606)
+
+Failures: 0
+exit_code=0

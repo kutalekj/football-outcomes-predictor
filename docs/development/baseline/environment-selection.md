@@ -8,8 +8,7 @@ Two usable local TensorFlow environments were discovered.
 - TensorFlow 2.10.1, CPU-only.
 - NumPy 1.23.5.
 - scikit-learn 1.7.2.
-- Contains one unrelated-looking `pip check` discrepancy involving
-  `mumin` and `python-dotenv`.
+- `pip check` reports no broken requirements.
 
 ## Environment B: `venv`
 
@@ -34,3 +33,20 @@ successfully executes the unchanged project with the fewest compatibility
 issues will be selected for characterization runs.
 
 Neither environment is currently CUDA-enabled.
+
+## Runtime smoke-test result
+
+Environment A successfully imported the project and performed forward
+passes through both the v1 and v2 models.
+
+Environment A is selected as the canonical runtime for Phase 0 and
+Phase 1 characterization.
+
+Environment B remains preserved only as a compatibility comparison.
+
+No environment packages were changed.
+
+Environment B also successfully built both models and performed finite
+forward passes after the smoke-test introspection was made compatible
+with newer Keras versions. It remains a secondary compatibility
+environment because it is not selected by Poetry or PyCharm.

@@ -1,0 +1,34 @@
+﻿2026-07-16 13:11:01.949632: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Executable: C:\Users\kutalekj\PycharmProjects\football-outcomes-predictor\.venv\Scripts\python.exe
+Python: 3.10.8 (tags/v3.10.8:aaaf517, Oct 11 2022, 16:50:30) [MSC v.1933 64 bit (AMD64)]
+Platform: Windows-10-10.0.26200-SP0
+NumPy: 1.23.5
+scikit-learn: 1.7.2
+TensorFlow: 2.10.1
+Built with CUDA: False
+Visible GPUs: []
+CLI parser: fop.main
+
+========================================================================
+Testing architecture: v1
+========================================================================
+v1: PASS
+v1: parameters=25578
+v1: inputs=['num', 'home_id', 'away_id', 'comp_id', 'strength', 'home_positions', 'away_positions']
+v1: outputs=['output_binary']
+v1: prediction_shape=(2, 1)
+v1: prediction_range=(0.452518, 0.453821)
+
+========================================================================
+Testing architecture: v2
+========================================================================
+v2: PASS
+v2: parameters=34474
+v2: inputs=['num', 'home_id', 'away_id', 'comp_id', 'strength', 'home_positions', 'away_positions']
+v2: outputs=['output_main']
+v2: prediction_shape=(2, 1)
+v2: prediction_range=(0.389732, 0.393290)
+
+Failures: 0
+exit_code=0
