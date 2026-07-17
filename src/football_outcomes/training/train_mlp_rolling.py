@@ -1364,7 +1364,7 @@ def train_rolling(
             f"for first {cfg.freeze_pretrained_branch_rounds} rolling rounds"
         )
 
-    for i in range(cfg.window_rounds, len(rounds) - 1):
+    for i in range(cfg.window_rounds, len(rounds)):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 
@@ -1400,7 +1400,7 @@ def train_rolling(
             frozen_branch_layer_names = None
 
         round_offset = i - cfg.window_rounds
-        total_train_rounds = max(1, (len(rounds) - 1) - cfg.window_rounds)
+        total_train_rounds = max(1, len(rounds) - cfg.window_rounds)
         current_lr = _lr_for_round(cfg, round_offset, total_train_rounds)
         _set_optimizer_lr(model, current_lr)
 
@@ -1647,7 +1647,7 @@ def train_strength_pretrain_rolling(
     round_records = []
     oos_rows = []
 
-    for i in range(cfg.window_rounds, len(rounds) - 1):
+    for i in range(cfg.window_rounds, len(rounds)):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 

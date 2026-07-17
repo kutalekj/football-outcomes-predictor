@@ -166,13 +166,6 @@ def rolling_range_stops(function) -> list[str]:
     return stops
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "The MLP, strength-pretraining, and classical rolling loops "
-        "currently stop at len(rounds) - 1 and omit the final round."
-    ),
-)
 def test_rolling_evaluators_include_final_round() -> None:
     functions = (
         train_rolling,
@@ -180,13 +173,16 @@ def test_rolling_evaluators_include_final_round() -> None:
         evaluate_baseline_rolling,
     )
 
-    offenders = {
-        function.__name__: rolling_range_stops(function)
-        for function in functions
-        if "len(rounds) - 1" in rolling_range_stops(function)
-    }
+    stops_by_function = {function.__name__: rolling_range_stops(function) for function in functions}
 
-    assert offenders == {}
+    for function_name, stops in stops_by_function.items():
+        assert "len(rounds)" in stops, f"{function_name} does not iterate through the final " f"round: {stops}"
+        assert "len(rounds) - 1" not in stops, f"{function_name} still omits the final round: {stops}"
+
+    train_source = textwrap.dedent(inspect.getsource(train_rolling))
+
+    assert "total_train_rounds = max(" in train_source
+    assert "len(rounds) - cfg.window_rounds" in train_source
 
 
 def model_prediction(

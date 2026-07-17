@@ -186,7 +186,7 @@ def evaluate_baseline_rolling(
     round_records = []
     oos_rows = []
 
-    for i in range(cfg.window_rounds, len(rounds) - 1):
+    for i in range(cfg.window_rounds, len(rounds)):
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 
