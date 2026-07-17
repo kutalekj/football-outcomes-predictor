@@ -486,6 +486,16 @@ def _safe_zero_vec(x, width: int, name: str):
     )(x)
 
 
+def _safe_zero_vec_from_inputs(inputs, width: int, name: str):
+    return Lambda(
+        lambda tensors, d=int(width): tf.zeros(
+            (tf.shape(tensors[0])[0], d),
+            dtype=tf.float32,
+        ),
+        name=name,
+    )(inputs)
+
+
 def _split_strength_tensor(x_s):
     home_vals = Lambda(lambda t: t[:, 0], name="home_strength_values")(x_s)  # (B,11,34)
     home_mask = Lambda(lambda t: t[:, 1], name="home_strength_mask")(x_s)  # (B,11,34)
@@ -836,12 +846,45 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     z_num = LayerNormalization(name="num_branch_ln")(z_num)
 
     # Branch 2: categorical branch with explicit comparisons
-    team_emb = Embedding(num_teams, cfg.team_emb_dim, name="team_embedding")
-    home_e = Flatten(name="home_embedding_flat")(team_emb(x_h))
-    away_e = Flatten(name="away_embedding_flat")(team_emb(x_a))
+    if cfg.use_team_ids:
+        team_emb = Embedding(
+            num_teams,
+            cfg.team_emb_dim,
+            name="team_embedding",
+        )
+        home_e = Flatten(
+            name="home_embedding_flat",
+        )(team_emb(x_h))
+        away_e = Flatten(
+            name="away_embedding_flat",
+        )(team_emb(x_a))
+    else:
+        home_e = _safe_zero_vec(
+            x_h,
+            cfg.team_emb_dim,
+            "home_embedding_zero",
+        )
+        away_e = _safe_zero_vec(
+            x_a,
+            cfg.team_emb_dim,
+            "away_embedding_zero",
+        )
 
-    comp_emb_layer = Embedding(num_comps, cfg.comp_emb_dim, name="competition_embedding")
-    comp_e = Flatten(name="competition_embedding_flat")(comp_emb_layer(x_c))
+    if cfg.use_comp_embedding:
+        comp_emb_layer = Embedding(
+            num_comps,
+            cfg.comp_emb_dim,
+            name="competition_embedding",
+        )
+        comp_e = Flatten(
+            name="competition_embedding_flat",
+        )(comp_emb_layer(x_c))
+    else:
+        comp_e = _safe_zero_vec(
+            x_c,
+            cfg.comp_emb_dim,
+            "competition_embedding_zero",
+        )
 
     team_diff = _vec_diff(home_e, away_e, "team_embedding_diff")
     team_absdiff = _abs_diff(home_e, away_e, "team_embedding_absdiff")
@@ -857,44 +900,86 @@ def build_model_v2(num_num, num_teams, num_comps, cfg: TrainConfig) -> Model:
     z_cat = LayerNormalization(name="cat_branch_ln")(z_cat)
 
     # Branch 3: structured team-strength branch
-    home_vals, home_mask, away_vals, away_mask = _split_strength_tensor(x_s)
+    if cfg.use_team_strength:
+        home_vals, home_mask, away_vals, away_mask = _split_strength_tensor(x_s)
 
-    position_emb_layer = Embedding(
-        input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
-        output_dim=cfg.position_emb_dim,
-        name="position_embedding",
-    )
+        if not cfg.use_strength_masks:
+            home_mask = Lambda(
+                lambda t: tf.ones_like(t),
+                name="home_strength_mask_constant",
+            )(home_vals)
+            away_mask = Lambda(
+                lambda t: tf.ones_like(t),
+                name="away_strength_mask_constant",
+            )(away_vals)
 
-    home_team_repr = _build_team_repr_v2(
-        home_vals,
-        home_mask,
-        x_hp,
-        position_emb_layer,
-        cfg,
-        prefix="home",
-    )
+        if cfg.use_position_embedding:
+            position_emb_layer = Embedding(
+                input_dim=len(sett.FS_PLAYER_POSITION_TO_IDX),
+                output_dim=cfg.position_emb_dim,
+                name="position_embedding",
+            )
+        else:
+            position_emb_layer = None
 
-    away_team_repr = _build_team_repr_v2(
-        away_vals,
-        away_mask,
-        x_ap,
-        position_emb_layer,
-        cfg,
-        prefix="away",
-    )
+        home_team_repr = _build_team_repr_v2(
+            home_vals,
+            home_mask,
+            x_hp,
+            position_emb_layer,
+            cfg,
+            prefix="home",
+        )
 
-    team_repr_diff = _vec_diff(home_team_repr, away_team_repr, "team_repr_diff")
-    team_repr_absdiff = _abs_diff(home_team_repr, away_team_repr, "team_repr_absdiff")
+        away_team_repr = _build_team_repr_v2(
+            away_vals,
+            away_mask,
+            x_ap,
+            position_emb_layer,
+            cfg,
+            prefix="away",
+        )
 
-    z_team = Concatenate(name="team_branch_concat")([home_team_repr, away_team_repr, team_repr_diff, team_repr_absdiff])
-    z_team = Dense(
-        cfg.team_branch_dim,
-        activation="relu",
-        kernel_regularizer=regularizers.l2(cfg.team_l2),
-        name="team_branch_proj",
-    )(z_team)
-    z_team = Dropout(cfg.team_dropout, name="team_branch_dropout")(z_team)
-    z_team = LayerNormalization(name="team_branch_ln")(z_team)
+        team_repr_diff = _vec_diff(
+            home_team_repr,
+            away_team_repr,
+            "team_repr_diff",
+        )
+        team_repr_absdiff = _abs_diff(
+            home_team_repr,
+            away_team_repr,
+            "team_repr_absdiff",
+        )
+
+        z_team = Concatenate(
+            name="team_branch_concat",
+        )(
+            [
+                home_team_repr,
+                away_team_repr,
+                team_repr_diff,
+                team_repr_absdiff,
+            ]
+        )
+        z_team = Dense(
+            cfg.team_branch_dim,
+            activation="relu",
+            kernel_regularizer=regularizers.l2(cfg.team_l2),
+            name="team_branch_proj",
+        )(z_team)
+        z_team = Dropout(
+            cfg.team_dropout,
+            name="team_branch_dropout",
+        )(z_team)
+        z_team = LayerNormalization(
+            name="team_branch_ln",
+        )(z_team)
+    else:
+        z_team = _safe_zero_vec_from_inputs(
+            [x_s, x_hp, x_ap],
+            cfg.team_branch_dim,
+            "team_branch_zero",
+        )
 
     # Fusion
     z = Concatenate(name="fusion")([z_num, z_cat, z_team])
@@ -1374,10 +1459,10 @@ def train_rolling(
         y_train = _make_train_targets(train_ms, X[-1], cfg)
         y_val = _make_train_targets(val_ms, V[-1], cfg)
 
-        print(f"[train] round {i+1}/{len(rounds)} train={len(train_ms)} val={len(val_ms)}")
+        print(f"[train] round {i + 1}/{len(rounds)} train={len(train_ms)} val={len(val_ms)}")
 
         if len(val_ms) < cfg.min_warning_val_size:
-            print(f"[warn] round {i+1} has small validation size: {len(val_ms)}")
+            print(f"[warn] round {i + 1} has small validation size: {len(val_ms)}")
 
         monitor_name = (
             "val_output_main_loss"
@@ -1657,7 +1742,7 @@ def train_strength_pretrain_rolling(
         Xs_val, Xhp_val, Xap_val, y_val = build_strength_only_arrays_for_matches(val_ms, cfg.mode, cfg.max_goals_class)
 
         print(
-            f"[pretrain] round {i+1}/{len(rounds)} "
+            f"[pretrain] round {i + 1}/{len(rounds)} "
             f"train={len(train_ms)} val={len(val_ms)} branch={cfg.branch_version}"
         )
 

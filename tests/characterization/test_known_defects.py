@@ -5,7 +5,6 @@ import inspect
 import textwrap
 
 import numpy as np
-import pytest
 import tensorflow as tf
 
 from football_outcomes.config import fs_settings as settings
@@ -197,42 +196,27 @@ def model_prediction(
     return np.asarray(output.numpy())
 
 
-def copy_inputs(inputs: list[np.ndarray]) -> list[np.ndarray]:
+def copy_inputs(
+    inputs: list[np.ndarray],
+) -> list[np.ndarray]:
     return [value.copy() for value in inputs]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=("The v2 model currently constructs and uses all branches even " "when its branch-disable flags are false."),
-)
-def test_v2_branch_disable_flags_make_inputs_irrelevant() -> None:
-    tf.keras.backend.clear_session()
-    tf.random.set_seed(123)
-    np.random.seed(123)
-
-    config = TrainConfig(
-        model_version="v2",
-        mode="binary_u25",
-        seed=123,
-        enable_branch_diagnostics=False,
-        use_team_strength=False,
-        use_team_ids=False,
-        use_comp_embedding=False,
-        use_position_embedding=False,
-        use_strength_masks=False,
-    )
-
-    model = build_model(
-        num_num=4,
-        num_teams=3,
-        num_comps=2,
-        cfg=config,
-    )
-
+def make_v2_inputs() -> list[np.ndarray]:
     numerical = np.zeros((2, 4), dtype=np.float32)
-    home_ids = np.asarray([[0], [1]], dtype=np.int32)
-    away_ids = np.asarray([[1], [2]], dtype=np.int32)
-    competition_ids = np.asarray([[0], [0]], dtype=np.int32)
+
+    home_ids = np.asarray(
+        [[0], [1]],
+        dtype=np.int32,
+    )
+    away_ids = np.asarray(
+        [[1], [2]],
+        dtype=np.int32,
+    )
+    competition_ids = np.asarray(
+        [[0], [0]],
+        dtype=np.int32,
+    )
 
     strength = np.zeros(
         (2, 4, 11, 34),
@@ -247,10 +231,16 @@ def test_v2_branch_disable_flags_make_inputs_irrelevant() -> None:
         [0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3],
         dtype=np.int32,
     )
-    home_positions = np.tile(position_row, (2, 1))
-    away_positions = np.tile(position_row, (2, 1))
+    home_positions = np.tile(
+        position_row,
+        (2, 1),
+    )
+    away_positions = np.tile(
+        position_row,
+        (2, 1),
+    )
 
-    base_inputs = [
+    return [
         numerical,
         home_ids,
         away_ids,
@@ -260,17 +250,71 @@ def test_v2_branch_disable_flags_make_inputs_irrelevant() -> None:
         away_positions,
     ]
 
-    base_prediction = model_prediction(model, base_inputs)
+
+def build_test_v2_model(
+    **config_overrides,
+) -> tf.keras.Model:
+    tf.keras.backend.clear_session()
+    tf.random.set_seed(123)
+    np.random.seed(123)
+
+    config_values = {
+        "model_version": "v2",
+        "mode": "binary_u25",
+        "seed": 123,
+        "enable_branch_diagnostics": False,
+        "use_team_aux_head": False,
+        "use_team_strength": True,
+        "use_team_ids": True,
+        "use_comp_embedding": True,
+        "use_position_embedding": True,
+        "use_strength_masks": True,
+    }
+    config_values.update(config_overrides)
+
+    config = TrainConfig(**config_values)
+
+    return build_model(
+        num_num=4,
+        num_teams=3,
+        num_comps=2,
+        cfg=config,
+    )
+
+
+def test_v2_branch_disable_flags_make_inputs_irrelevant() -> None:
+    model = build_test_v2_model(
+        use_team_strength=False,
+        use_team_ids=False,
+        use_comp_embedding=False,
+        use_position_embedding=False,
+        use_strength_masks=False,
+    )
+
+    base_inputs = make_v2_inputs()
+    base_prediction = model_prediction(
+        model,
+        base_inputs,
+    )
 
     altered_inputs: dict[str, list[np.ndarray]] = {}
 
     changed_team_ids = copy_inputs(base_inputs)
-    changed_team_ids[1] = np.asarray([[2], [0]], dtype=np.int32)
-    changed_team_ids[2] = np.asarray([[0], [1]], dtype=np.int32)
+    changed_team_ids[1] = np.asarray(
+        [[2], [0]],
+        dtype=np.int32,
+    )
+    changed_team_ids[2] = np.asarray(
+        [[0], [1]],
+        dtype=np.int32,
+    )
     altered_inputs["team IDs"] = changed_team_ids
 
     changed_competitions = copy_inputs(base_inputs)
-    changed_competitions[3] = np.asarray([[1], [1]], dtype=np.int32)
+    changed_competitions[3] = np.asarray(
+        [[1], [1]],
+        dtype=np.int32,
+    )
     altered_inputs["competition IDs"] = changed_competitions
 
     changed_strength = copy_inputs(base_inputs)
@@ -290,7 +334,10 @@ def test_v2_branch_disable_flags_make_inputs_irrelevant() -> None:
     altered_inputs["positions"] = changed_positions
 
     for input_name, variant in altered_inputs.items():
-        variant_prediction = model_prediction(model, variant)
+        variant_prediction = model_prediction(
+            model,
+            variant,
+        )
 
         np.testing.assert_allclose(
             variant_prediction,
@@ -299,3 +346,65 @@ def test_v2_branch_disable_flags_make_inputs_irrelevant() -> None:
             atol=1e-7,
             err_msg=(f"v2 predictions changed when disabled " f"{input_name} were altered"),
         )
+
+
+def test_v2_disabled_position_embedding_ignores_positions() -> None:
+    model = build_test_v2_model(
+        use_position_embedding=False,
+    )
+
+    base_inputs = make_v2_inputs()
+    base_prediction = model_prediction(
+        model,
+        base_inputs,
+    )
+
+    changed_inputs = copy_inputs(base_inputs)
+    changed_inputs[5] = np.flip(
+        changed_inputs[5],
+        axis=1,
+    ).copy()
+    changed_inputs[6] = np.flip(
+        changed_inputs[6],
+        axis=1,
+    ).copy()
+
+    changed_prediction = model_prediction(
+        model,
+        changed_inputs,
+    )
+
+    np.testing.assert_allclose(
+        changed_prediction,
+        base_prediction,
+        rtol=0.0,
+        atol=1e-7,
+    )
+
+
+def test_v2_disabled_strength_masks_ignore_mask_channels() -> None:
+    model = build_test_v2_model(
+        use_strength_masks=False,
+    )
+
+    base_inputs = make_v2_inputs()
+    base_prediction = model_prediction(
+        model,
+        base_inputs,
+    )
+
+    changed_inputs = copy_inputs(base_inputs)
+    changed_inputs[4][:, 1, :, :] = 0.0
+    changed_inputs[4][:, 3, :, :] = 0.0
+
+    changed_prediction = model_prediction(
+        model,
+        changed_inputs,
+    )
+
+    np.testing.assert_allclose(
+        changed_prediction,
+        base_prediction,
+        rtol=0.0,
+        atol=1e-7,
+    )

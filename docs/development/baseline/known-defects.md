@@ -31,3 +31,11 @@ Each issue has a `pytest.mark.xfail(strict=True)` test.
 While the issue exists, the test must be reported as `XFAIL`.
 After the issue is corrected, the marker must be removed in the same
 commit as the correction.
+
+## Resolution status
+
+All three recorded defects were corrected during overall Step 2.
+
+Their strict expected-failure markers were removed as each correction
+was committed. The tests now remain as ordinary passing regression
+tests.
