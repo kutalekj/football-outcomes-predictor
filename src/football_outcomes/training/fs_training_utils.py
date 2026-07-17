@@ -242,6 +242,21 @@ def build_arrays_for_matches(
         global_comp_id = comp_name_to_global_id[m.comp_name]
         X_c.append(cat_maps.comp_id_map[global_comp_id])
 
+        home_strength, home_strength_mask = _strength_to_value_and_mask(f.home_team_strength)
+        away_strength, away_strength_mask = _strength_to_value_and_mask(f.away_team_strength)
+
+        X_s.append(
+            np.stack(
+                [
+                    home_strength,
+                    home_strength_mask,
+                    away_strength,
+                    away_strength_mask,
+                ],
+                axis=0,
+            )
+        )
+
         home_pos = getattr(f, "home_player_positions", None) or getattr(f, "home_positions", None)
         if home_pos is None:
             home_pos = calculate_team_position_indices(m, m.home_team.id)

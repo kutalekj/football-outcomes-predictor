@@ -96,13 +96,6 @@ def make_match_with_strength() -> tuple[FSMatch, CatMaps]:
     return match, category_maps
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "The main input builder currently returns an all-zero strength "
-        "tensor instead of appending the match strength matrices."
-    ),
-)
 def test_main_array_builder_preserves_strength_tensor() -> None:
     match, category_maps = make_match_with_strength()
 
@@ -122,6 +115,25 @@ def test_main_array_builder_preserves_strength_tensor() -> None:
     np.testing.assert_array_equal(
         main_strength,
         reference_strength,
+    )
+
+    assert main_strength.shape == (1, 4, 11, 34)
+
+    np.testing.assert_allclose(
+        main_strength[0, 0],
+        0.8,
+    )
+    np.testing.assert_array_equal(
+        main_strength[0, 1],
+        np.ones((11, 34), dtype=np.float32),
+    )
+    np.testing.assert_allclose(
+        main_strength[0, 2],
+        0.6,
+    )
+    np.testing.assert_array_equal(
+        main_strength[0, 3],
+        np.ones((11, 34), dtype=np.float32),
     )
 
 
