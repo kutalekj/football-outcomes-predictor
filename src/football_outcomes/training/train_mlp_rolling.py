@@ -20,7 +20,6 @@ from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch
 from football_outcomes.datasets.arrays import (
     build_arrays_for_matches,
-    build_strength_only_arrays_for_matches,
     extract_numerical_features,
 )
 from football_outcomes.datasets.mappings import CatMaps
@@ -48,6 +47,7 @@ from football_outcomes.modeling.v1 import build_model_v1 as build_model_v1_impl
 from football_outcomes.modeling.v2 import build_model_v2 as build_model_v2_impl
 from football_outcomes.training import callbacks as _training_callbacks
 from football_outcomes.training import control as _control
+from football_outcomes.training import pretraining as _pretraining
 from football_outcomes.training import runtime as _training_runtime
 from football_outcomes.training.configs import (
     StrengthPretrainConfig,
@@ -72,6 +72,7 @@ set_global_seed = _training_runtime.set_global_seed
 _make_train_targets = _training_runtime.make_train_targets
 _extract_main_predictions = _training_runtime.extract_main_predictions
 _save_pretrain_round_plot = _evaluation_plots.save_pretrain_round_plot
+train_strength_pretrain_rolling = _pretraining.train_strength_pretrain_rolling
 
 
 def _position_embedding_or_zero(pos_ids, cfg, name_prefix: str):
@@ -549,181 +550,5 @@ def train_rolling(
         cfg_json_path,
         asdict(cfg),
     )
-
-    return model
-
-
-def train_strength_pretrain_rolling(
-    matches_sorted: List[FSMatch],
-    cfg: StrengthPretrainConfig,
-) -> Model:
-    rounds = distribute_matches_into_rounds(matches_sorted)
-    round_info = summarize_rounds(rounds)
-    print(f"[pretrain-rounds] {round_info}")
-
-    if cfg.seed is not None:
-        set_global_seed(cfg.seed)
-        print(f"[pretrain-seed] Using seed={cfg.seed}")
-
-    model = build_strength_pretrain_model(cfg)
-
-    run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_name = cfg.run_name or f"strength_pretrain_{cfg.branch_version}_{cfg.mode}_{run_stamp}"
-
-    log_root = Path(sett.DATA_DIR) / "tensorboard_logs"
-    log_root.mkdir(parents=True, exist_ok=True)
-    log_dir = str(log_root / run_name)
-
-    tb = TensorBoard(
-        log_dir=log_dir,
-        histogram_freq=0,
-        write_graph=True,
-        write_images=False,
-    )
-    tb_writer = tf.summary.create_file_writer(log_dir)
-
-    print(f"[pretrain-tensorboard] logging to {log_dir}")
-
-    round_records = []
-    oos_rows = []
-
-    for i in range(cfg.window_rounds, len(rounds)):
-        train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
-        val_ms = rounds[i]
-
-        Xs_train, Xhp_train, Xap_train, y_train = build_strength_only_arrays_for_matches(
-            train_ms, cfg.mode, cfg.max_goals_class
-        )
-        Xs_val, Xhp_val, Xap_val, y_val = build_strength_only_arrays_for_matches(val_ms, cfg.mode, cfg.max_goals_class)
-
-        print(
-            f"[pretrain] round {i + 1}/{len(rounds)} "
-            f"train={len(train_ms)} val={len(val_ms)} branch={cfg.branch_version}"
-        )
-
-        early = EarlyStopping(
-            patience=cfg.early_stopping_patience,
-            min_delta=cfg.early_stopping_min_delta,
-            restore_best_weights=True,
-            monitor="val_loss",
-            mode="min",
-        )
-
-        model.fit(
-            [Xs_train, Xhp_train, Xap_train],
-            y_train,
-            validation_data=([Xs_val, Xhp_val, Xap_val], y_val),
-            epochs=cfg.epochs_per_step,
-            batch_size=cfg.batch_size,
-            callbacks=[early, tb],
-            verbose=1,
-        )
-
-        val_metrics = model.evaluate([Xs_val, Xhp_val, Xap_val], y_val, verbose=0, return_dict=True)
-        val_prob = model.predict([Xs_val, Xhp_val, Xap_val], verbose=0).ravel().astype(np.float32)
-
-        auc_metric = AUC(curve="ROC")
-        auc_metric.update_state(y_val.astype(np.float32), val_prob)
-        val_auc = float(auc_metric.result().numpy())
-        val_brier = float(np.mean((val_prob - y_val.astype(np.float32)) ** 2))
-        val_acc = float(np.mean((val_prob >= 0.5).astype(np.float32) == y_val.astype(np.float32)))
-        val_loss = float(val_metrics.get("loss", np.nan))
-
-        round_step = int(i + 1)
-
-        round_records.append(
-            {
-                "round_idx": round_step,
-                "train_size": len(train_ms),
-                "val_size": len(val_ms),
-                "positive_rate_val": float(np.mean(y_val)),
-                "val_loss": val_loss,
-                "val_accuracy": val_acc,
-                "val_auc": val_auc,
-                "val_brier": val_brier,
-                "branch_version": cfg.branch_version,
-                "representation": cfg.representation,
-                "use_strength_masks": bool(cfg.use_strength_masks),
-                "use_position_embedding": bool(cfg.use_position_embedding),
-            }
-        )
-
-        for m, yt, yp in zip(val_ms, y_val, val_prob):
-            oos_rows.append(
-                {
-                    "round_idx": round_step,
-                    "match_id": m.id,
-                    "season": m.season,
-                    "competition": m.comp_name,
-                    "y_true": float(yt),
-                    "y_prob_under25": float(yp),
-                    "branch_version": cfg.branch_version,
-                    "representation": cfg.representation,
-                }
-            )
-
-        with tb_writer.as_default():
-            tf.summary.scalar("round/val_loss", val_loss, step=round_step)
-            tf.summary.scalar("round/val_accuracy", val_acc, step=round_step)
-            tf.summary.scalar("round/val_auc", val_auc, step=round_step)
-            tf.summary.scalar("round/val_brier", val_brier, step=round_step)
-            tf.summary.scalar("round/val_size", len(val_ms), step=round_step)
-            tf.summary.scalar("round/positive_rate_val", float(np.mean(y_val)), step=round_step)
-            tb_writer.flush()
-
-    csv_path = Path(log_dir) / "round_metrics.csv"
-
-    write_records_csv(
-        csv_path,
-        round_records,
-    )
-
-    if cfg.save_oos_predictions:
-        prediction_path = Path(log_dir) / "oos_predictions.csv"
-
-        if write_records_csv(
-            prediction_path,
-            oos_rows,
-        ):
-            print("[metrics] saved pooled OOS " "predictions to " f"{prediction_path}")
-
-    summary = {
-        "run_name": run_name,
-        "branch_version": cfg.branch_version,
-        "mode": cfg.mode,
-        "representation": cfg.representation,
-        "use_strength_masks": bool(cfg.use_strength_masks),
-        "use_position_embedding": bool(cfg.use_position_embedding),
-        "round_stats": round_info,
-    }
-
-    if oos_rows:
-        y_true = np.asarray([r["y_true"] for r in oos_rows], dtype=np.float32)
-        y_prob = np.asarray([r["y_prob_under25"] for r in oos_rows], dtype=np.float32)
-        summary.update(_binary_summary(y_true, y_prob))
-
-    summary_path = Path(log_dir) / "summary.json"
-    write_json(
-        summary_path,
-        summary,
-    )
-
-    cfg_json_path = Path(log_dir) / "pretrain_config.json"
-    write_json(
-        cfg_json_path,
-        asdict(cfg),
-    )
-
-    _save_pretrain_round_plot(
-        log_dir=log_dir,
-        round_records=round_records,
-        title=f"Structured branch pretraining ({cfg.branch_version})",
-    )
-
-    model_path = Path(log_dir) / "pretrained_model.keras"
-    model.save(model_path)
-
-    print(f"[pretrain-summary] {summary}")
-    print(f"[pretrain] model saved to {model_path}")
 
     return model

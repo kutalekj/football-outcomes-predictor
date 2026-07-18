@@ -102,23 +102,29 @@ def test_rolling_functions_delegate_csv_writes_once_per_artifact() -> None:
     from pathlib import Path
 
     project_root = Path(__file__).resolve().parents[2]
-    source_path = project_root / "src" / "football_outcomes" / "training" / "train_mlp_rolling.py"
 
-    tree = ast.parse(source_path.read_text(encoding="utf-8"))
+    targets = (
+        (
+            project_root / "src" / "football_outcomes" / "training" / "train_mlp_rolling.py",
+            "train_rolling",
+        ),
+        (
+            project_root / "src" / "football_outcomes" / "training" / "pretraining.py",
+            ("train_strength_" "pretrain_rolling"),
+        ),
+    )
 
-    functions = {
-        node.name: node
-        for node in tree.body
-        if isinstance(
-            node,
-            ast.FunctionDef,
-        )
-    }
+    for source_path, function_name in targets:
+        tree = ast.parse(source_path.read_text(encoding="utf-8"))
 
-    for function_name in (
-        "train_rolling",
-        "train_strength_pretrain_rolling",
-    ):
+        functions = {
+            node.name: node
+            for node in tree.body
+            if isinstance(
+                node,
+                ast.FunctionDef,
+            )
+        }
         function = functions[function_name]
 
         persistence_calls = [
