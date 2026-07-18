@@ -4,6 +4,7 @@ import csv
 import json
 import os
 import random
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -32,14 +33,18 @@ from tensorflow.keras.optimizers import Adam
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch
-from football_outcomes.training.fs_training_utils import (
-    CatMaps,
+from football_outcomes.datasets.arrays import (
     build_arrays_for_matches,
-    build_aux_targets_for_matches,
     build_strength_only_arrays_for_matches,
-    distribute_matches_into_rounds,
     extract_numerical_features,
+)
+from football_outcomes.datasets.mappings import CatMaps
+from football_outcomes.datasets.rounds import (
+    distribute_matches_into_rounds,
     summarize_rounds,
+)
+from football_outcomes.datasets.targets import (
+    build_targets_for_matches,
 )
 
 matplotlib.use("Agg")
@@ -1272,13 +1277,23 @@ def _save_pretrain_round_plot(log_dir: str, round_records: List[dict], title: st
     plt.close(fig)
 
 
-def _make_train_targets(matches: List[FSMatch], y_main: np.ndarray, cfg: TrainConfig):
+def _make_train_targets(
+    matches: List[FSMatch],
+    y_main: np.ndarray,
+    cfg: TrainConfig,
+):
     if cfg.model_version == "v2" and cfg.use_team_aux_head and cfg.aux_task is not None:
-        y_aux = build_aux_targets_for_matches(matches, cfg.aux_task, cfg.max_goals_class)
+        y_aux = build_targets_for_matches(
+            matches=matches,
+            mode=cfg.aux_task,
+            max_goals_class=(cfg.max_goals_class),
+        )
+
         return {
             "output_main": y_main,
             "output_team_aux": y_aux,
         }
+
     return y_main
 
 
@@ -1327,7 +1342,11 @@ def train_rolling(
     cfg: TrainConfig,
     model: Model | None = None,
     pretrained_branch_version: str | None = None,
+    competition_names: Sequence[str] | None = None,
 ) -> Model:
+    if competition_names is None:
+        competition_names = sett.COMPS_LEAGUE
+
     rounds = distribute_matches_into_rounds(matches_sorted)
     round_info = summarize_rounds(rounds)
     print(f"[rounds] {round_info}")
@@ -1378,7 +1397,13 @@ def train_rolling(
     # Build probe batch once (from first available training window)
     if cfg.enable_branch_diagnostics:
         probe_ms = matches_sorted[: cfg.probe_matches]
-        probe_arr = build_arrays_for_matches(probe_ms, cat_maps, cfg.mode, cfg.max_goals_class)
+        probe_arr = build_arrays_for_matches(
+            matches=probe_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
         probe_inputs = probe_arr[:-1]  # exclude targets
     else:
         probe_inputs = None
@@ -1453,8 +1478,20 @@ def train_rolling(
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 
-        X = build_arrays_for_matches(train_ms, cat_maps, cfg.mode, cfg.max_goals_class)
-        V = build_arrays_for_matches(val_ms, cat_maps, cfg.mode, cfg.max_goals_class)
+        X = build_arrays_for_matches(
+            matches=train_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
+        V = build_arrays_for_matches(
+            matches=val_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
 
         y_train = _make_train_targets(train_ms, X[-1], cfg)
         y_val = _make_train_targets(val_ms, V[-1], cfg)

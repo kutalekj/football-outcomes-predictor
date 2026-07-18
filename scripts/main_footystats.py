@@ -10,7 +10,12 @@ from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
-from football_outcomes.training.fs_training_utils import build_categorical_maps, distribute_matches_into_rounds
+from football_outcomes.datasets.mappings import (
+    build_categorical_maps,
+)
+from football_outcomes.datasets.rounds import (
+    distribute_matches_into_rounds,
+)
 from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
@@ -229,7 +234,10 @@ def main() -> None:
     league_matches_sorted = prepare_matches()
     write_dataset_summary(league_matches_sorted)
 
-    cat_maps = build_categorical_maps(league_matches_sorted)
+    cat_maps = build_categorical_maps(
+        matches=league_matches_sorted,
+        competition_names=(sett.COMPS_LEAGUE),
+    )
 
     run_name = "submission_epl_selected_mlp_binary_u25"
     cfg = selected_model_config(run_name=run_name)
@@ -238,7 +246,12 @@ def main() -> None:
     print(f"[training] {run_name}")
     print("=" * 80)
 
-    _ = train_rolling(league_matches_sorted, cat_maps, cfg)
+    _ = train_rolling(
+        matches_sorted=league_matches_sorted,
+        cat_maps=cat_maps,
+        cfg=cfg,
+        competition_names=(sett.COMPS_LEAGUE),
+    )
 
     print("[done] training completed")
     print(f"[summary] saved outputs under: {Path(sett.DATA_DIR) / 'tensorboard_logs' / run_name}")

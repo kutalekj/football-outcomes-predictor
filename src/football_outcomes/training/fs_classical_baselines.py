@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import List
@@ -16,9 +17,11 @@ from sklearn.preprocessing import StandardScaler
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch
-from football_outcomes.training.fs_training_utils import (
-    CatMaps,
+from football_outcomes.datasets.arrays import (
     build_flat_tabular_arrays_for_matches,
+)
+from football_outcomes.datasets.mappings import CatMaps
+from football_outcomes.datasets.rounds import (
     distribute_matches_into_rounds,
     summarize_rounds,
 )
@@ -171,7 +174,11 @@ def evaluate_baseline_rolling(
     matches_sorted: List[FSMatch],
     cat_maps: CatMaps,
     cfg: BaselineConfig,
+    competition_names: Sequence[str] | None = None,
 ) -> dict:
+    if competition_names is None:
+        competition_names = sett.COMPS_LEAGUE
+
     rounds = distribute_matches_into_rounds(matches_sorted)
     round_info = summarize_rounds(rounds)
 
@@ -190,8 +197,20 @@ def evaluate_baseline_rolling(
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 
-        X_train, y_train = build_flat_tabular_arrays_for_matches(train_ms, cat_maps, cfg.mode, cfg.max_goals_class)
-        X_val, y_val = build_flat_tabular_arrays_for_matches(val_ms, cat_maps, cfg.mode, cfg.max_goals_class)
+        X_train, y_train = build_flat_tabular_arrays_for_matches(
+            matches=train_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
+        X_val, y_val = build_flat_tabular_arrays_for_matches(
+            matches=val_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
 
         pred, score = _fit_predict_baseline(X_train, y_train, X_val, cfg)
         round_idx = int(i + 1)
