@@ -50,8 +50,16 @@ from football_outcomes.modeling.strength_pretraining import (
 from football_outcomes.modeling.v1 import build_model_v1 as build_model_v1_impl
 from football_outcomes.modeling.v2 import _aux_loss_and_metrics_for_task, _main_loss_and_metrics_for_mode
 from football_outcomes.modeling.v2 import build_model_v2 as build_model_v2_impl
+from football_outcomes.training import control as _control
 
 matplotlib.use("Agg")
+
+# Compatibility exports during the incremental refactor.
+_lr_for_round = _control.learning_rate_for_round
+_set_optimizer_lr = _control.set_optimizer_learning_rate
+get_strength_branch_layer_names = _control.get_strength_branch_layer_names
+transfer_pretrained_strength_branch_weights = _control.transfer_pretrained_strength_branch_weights
+set_layers_trainable = _control.set_layers_trainable
 
 
 @dataclass
@@ -653,33 +661,6 @@ def _extract_main_predictions(pred):
     return pred
 
 
-def _lr_for_round(cfg: TrainConfig, round_offset: int, total_rounds: int) -> float:
-    base = float(cfg.learning_rate)
-
-    if cfg.lr_schedule == "constant":
-        return base
-
-    if cfg.lr_schedule == "exponential":
-        lr = base * (float(cfg.lr_decay_rate) ** int(round_offset))
-        return max(float(cfg.min_learning_rate), float(lr))
-
-    if cfg.lr_schedule == "cosine":
-        if total_rounds <= 1:
-            return base
-        progress = min(1.0, max(0.0, round_offset / float(total_rounds - 1)))
-        lr = cfg.min_learning_rate + 0.5 * (base - cfg.min_learning_rate) * (1.0 + np.cos(np.pi * progress))
-        return float(lr)
-
-    raise ValueError(f"Unknown lr_schedule: {cfg.lr_schedule}")
-
-
-def _set_optimizer_lr(model: Model, lr: float) -> None:
-    try:
-        model.optimizer.learning_rate.assign(float(lr))
-    except Exception:
-        tf.keras.backend.set_value(model.optimizer.learning_rate, float(lr))
-
-
 def train_rolling(
     matches_sorted: List[FSMatch],
     cat_maps: CatMaps,
@@ -1249,65 +1230,6 @@ def train_strength_pretrain_rolling(
     print(f"[pretrain] model saved to {model_path}")
 
     return model
-
-
-def get_strength_branch_layer_names(branch_version: str) -> List[str]:
-    if branch_version == "v1":
-        return [
-            "position_embedding",
-            "strength_dense_1",
-            "strength_dense_2",
-            "strength_projection",
-        ]
-    elif branch_version == "v2":
-        return [
-            "position_embedding",
-            "home_row_dense_1",
-            "home_row_dense_2",
-            "home_role_post_dense_1",
-            "home_team_repr",
-            "away_row_dense_1",
-            "away_row_dense_2",
-            "away_role_post_dense_1",
-            "away_team_repr",
-            "team_branch_proj",
-        ]
-    else:
-        raise ValueError(f"Unknown branch_version: {branch_version}")
-
-
-def transfer_pretrained_strength_branch_weights(
-    pretrained_model: Model,
-    full_model: Model,
-    branch_version: str,
-) -> None:
-    """
-    Copy branch weights by layer name from standalone pretraining model
-    into the corresponding full model.
-    """
-    layer_names = get_strength_branch_layer_names(branch_version)
-
-    for name in layer_names:
-        try:
-            src = pretrained_model.get_layer(name)
-            dst = full_model.get_layer(name)
-        except ValueError:
-            print(f"[transfer] skipping missing layer: {name}")
-            continue
-
-        dst.set_weights(src.get_weights())
-        print(f"[transfer] copied layer: {name}")
-
-    print(f"[transfer] copied pretrained {branch_version} branch weights into full model")
-
-
-def set_layers_trainable(model: Model, layer_names: List[str], trainable: bool) -> None:
-    for name in layer_names:
-        try:
-            layer = model.get_layer(name)
-            layer.trainable = trainable
-        except ValueError:
-            continue
 
 
 def compile_model_for_cfg(model: Model, cfg: TrainConfig) -> None:
