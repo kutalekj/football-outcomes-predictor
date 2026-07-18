@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -37,6 +37,7 @@ from football_outcomes.datasets.rounds import (
 from football_outcomes.datasets.targets import (
     build_targets_for_matches,
 )
+from football_outcomes.evaluation import metrics as _evaluation_metrics
 from football_outcomes.modeling import compilation as _compilation
 from football_outcomes.modeling.strength_pretraining import (
     build_strength_pretrain_model as build_strength_pretrain_model_impl,
@@ -60,6 +61,9 @@ get_strength_branch_layer_names = _control.get_strength_branch_layer_names
 transfer_pretrained_strength_branch_weights = _control.transfer_pretrained_strength_branch_weights
 set_layers_trainable = _control.set_layers_trainable
 compile_model_for_cfg = _compilation.compile_model_for_config
+_binary_summary = _evaluation_metrics.binary_summary
+_reg_summary = _evaluation_metrics.regression_summary
+_multiclass_summary = _evaluation_metrics.multiclass_summary
 
 
 @dataclass
@@ -554,44 +558,6 @@ def build_strength_pretrain_model(
     cfg: StrengthPretrainConfig,
 ) -> Model:
     return build_strength_pretrain_model_impl(cfg)
-
-
-def _binary_summary(y_true: np.ndarray, y_prob: np.ndarray) -> Dict[str, float]:
-    y_hat = (y_prob >= 0.5).astype(np.float32)
-    acc = float(np.mean(y_hat == y_true))
-    brier = float(np.mean((y_prob - y_true) ** 2))
-    auc_metric = AUC(curve="ROC")
-    auc_metric.update_state(y_true.astype(np.float32), y_prob.astype(np.float32))
-    auc = float(auc_metric.result().numpy())
-    return {"pooled_accuracy": acc, "pooled_brier": brier, "pooled_auc": auc}
-
-
-def _reg_summary(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
-    mae = float(np.mean(np.abs(y_pred - y_true)))
-    rmse = float(np.sqrt(np.mean((y_pred - y_true) ** 2)))
-    return {"pooled_mae": mae, "pooled_rmse": rmse}
-
-
-def _multiclass_summary(y_true: np.ndarray, y_prob: np.ndarray, max_goals_class: int) -> Dict[str, float]:
-    y_true = y_true.astype(np.int32)
-    y_pred = np.argmax(y_prob, axis=1).astype(np.int32)
-    classes = np.arange(max_goals_class + 1)
-
-    expected_goals = (y_prob * classes[None, :]).sum(axis=1)
-    acc = float(np.mean(y_pred == y_true))
-    mae = float(np.mean(np.abs(expected_goals - y_true.astype(np.float32))))
-
-    eps = 1e-8
-    clipped = np.clip(y_prob, eps, 1.0)
-    clipped = clipped / clipped.sum(axis=1, keepdims=True)
-    nll = -np.log(clipped[np.arange(len(y_true)), y_true])
-    logloss = float(np.mean(nll))
-
-    return {
-        "pooled_accuracy": acc,
-        "pooled_expected_goals_mae": mae,
-        "pooled_log_loss": logloss,
-    }
 
 
 def _save_pretrain_round_plot(log_dir: str, round_records: List[dict], title: str) -> None:
