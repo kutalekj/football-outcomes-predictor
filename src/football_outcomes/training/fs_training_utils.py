@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 import numpy as np
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch, FSMatchFeatures
+from football_outcomes.datasets import mappings as _mappings
 from football_outcomes.datasets import rounds as _rounds
 from football_outcomes.datasets.targets import (
     target_dtype,
@@ -17,44 +17,21 @@ from football_outcomes.utils.fs_player_skill_utils import calculate_team_positio
 # Compatibility exports for callers using the legacy module path.
 distribute_matches_into_rounds = _rounds.distribute_matches_into_rounds
 summarize_rounds = _rounds.summarize_rounds
-
-
-@dataclass
-class CatMaps:
-    team_id_map: Dict[int, int]
-    comp_id_map: Dict[int, int]
+CatMaps = _mappings.CatMaps
 
 
 # Categorical mappings
 
 
-def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
-    """
-    Build dense index maps for:
-      - team_id
-      - comp_id (derived from comp_name via COMPS_LEAGUE)
-    """
+def build_categorical_maps(
+    league_matches_sorted: List[FSMatch],
+) -> CatMaps:
+    """Build mappings using the legacy competition ordering."""
 
-    team_ids = set()
-    comp_ids = set()
-
-    comp_name_to_id = {name: i for i, name in enumerate(sett.COMPS_LEAGUE)}
-
-    for m in league_matches_sorted:
-        team_ids.add(m.home_team.id)
-        team_ids.add(m.away_team.id)
-
-        if m.comp_name is None:
-            raise ValueError(f"Match {m.id} has comp_name=None")
-
-        if m.comp_name not in comp_name_to_id:
-            raise ValueError(f"Match {m.id} has comp_name '{m.comp_name}' which is not in COMPS_LEAGUE")
-
-        comp_ids.add(comp_name_to_id[m.comp_name])
-
-    team_id_map = {tid: i for i, tid in enumerate(sorted(team_ids))}
-    comp_id_map = {cid: i for i, cid in enumerate(sorted(comp_ids))}
-    return CatMaps(team_id_map=team_id_map, comp_id_map=comp_id_map)
+    return _mappings.build_categorical_maps(
+        league_matches_sorted,
+        sett.COMPS_LEAGUE,
+    )
 
 
 # Feature extraction
