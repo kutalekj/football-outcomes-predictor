@@ -6,8 +6,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.callbacks import Callback, EarlyStopping, TensorBoard
@@ -31,6 +29,7 @@ from football_outcomes.datasets.rounds import (
     summarize_rounds,
 )
 from football_outcomes.evaluation import metrics as _evaluation_metrics
+from football_outcomes.evaluation import plots as _evaluation_plots
 from football_outcomes.evaluation.persistence import (
     write_json,
     write_records_csv,
@@ -55,8 +54,6 @@ from football_outcomes.training.configs import (
     TrainConfig,
 )
 
-matplotlib.use("Agg")
-
 # Compatibility exports during the incremental refactor.
 _lr_for_round = _control.learning_rate_for_round
 _set_optimizer_lr = _control.set_optimizer_learning_rate
@@ -74,6 +71,7 @@ EpochMetricsCsvLogger = _training_callbacks.EpochMetricsCsvLogger
 set_global_seed = _training_runtime.set_global_seed
 _make_train_targets = _training_runtime.make_train_targets
 _extract_main_predictions = _training_runtime.extract_main_predictions
+_save_pretrain_round_plot = _evaluation_plots.save_pretrain_round_plot
 
 
 def _position_embedding_or_zero(pos_ids, cfg, name_prefix: str):
@@ -149,41 +147,6 @@ def build_strength_pretrain_model(
     cfg: StrengthPretrainConfig,
 ) -> Model:
     return build_strength_pretrain_model_impl(cfg)
-
-
-def _save_pretrain_round_plot(log_dir: str, round_records: List[dict], title: str) -> None:
-    if not round_records:
-        return
-
-    xs = [r["round_idx"] for r in round_records]
-
-    fig = plt.figure(figsize=(12, 8))
-
-    if "val_accuracy" in round_records[0]:
-        ax1 = fig.add_subplot(2, 2, 1)
-        ax1.plot(xs, [r["val_accuracy"] for r in round_records])
-        ax1.set_title("Round val accuracy")
-
-    if "val_auc" in round_records[0]:
-        ax2 = fig.add_subplot(2, 2, 2)
-        ax2.plot(xs, [r["val_auc"] for r in round_records])
-        ax2.set_title("Round val AUC")
-
-    if "val_brier" in round_records[0]:
-        ax3 = fig.add_subplot(2, 2, 3)
-        ax3.plot(xs, [r["val_brier"] for r in round_records])
-        ax3.set_title("Round val Brier")
-
-    if "val_loss" in round_records[0]:
-        ax4 = fig.add_subplot(2, 2, 4)
-        ax4.plot(xs, [r["val_loss"] for r in round_records])
-        ax4.set_title("Round val loss")
-
-    fig.suptitle(title)
-    plt.tight_layout()
-    out_path = Path(log_dir) / "round_overview.png"
-    plt.savefig(out_path, dpi=160, bbox_inches="tight")
-    plt.close(fig)
 
 
 def train_rolling(
