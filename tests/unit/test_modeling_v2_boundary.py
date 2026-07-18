@@ -3,6 +3,9 @@ from pathlib import Path
 
 import tensorflow as tf
 
+from football_outcomes.modeling import (
+    strength_pretraining,
+)
 from football_outcomes.modeling.team_strength import (
     abs_diff,
     build_team_repr_v2,
@@ -13,10 +16,6 @@ from football_outcomes.modeling.v2 import build_model_v2 as build_model_v2_impl
 from football_outcomes.training.train_mlp_rolling import (
     TrainConfig,
 )
-from football_outcomes.training.train_mlp_rolling import _abs_diff as legacy_abs_diff
-from football_outcomes.training.train_mlp_rolling import _build_team_repr_v2 as legacy_build_team_repr_v2
-from football_outcomes.training.train_mlp_rolling import _split_strength_tensor as legacy_split_strength_tensor
-from football_outcomes.training.train_mlp_rolling import _vec_diff as legacy_vec_diff
 from football_outcomes.training.train_mlp_rolling import build_model_v2 as legacy_build_model_v2
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -84,7 +83,7 @@ def test_legacy_v2_builder_matches_extracted_builder() -> None:
 
 
 def test_pretraining_uses_extracted_team_helpers() -> None:
-    assert legacy_abs_diff is abs_diff
-    assert legacy_vec_diff is vec_diff
-    assert legacy_split_strength_tensor is split_strength_tensor
-    assert legacy_build_team_repr_v2 is build_team_repr_v2
+    assert strength_pretraining.abs_diff is abs_diff
+    assert strength_pretraining.vec_diff is vec_diff
+    assert strength_pretraining.split_strength_tensor is split_strength_tensor
+    assert strength_pretraining.build_team_repr_v2 is build_team_repr_v2
