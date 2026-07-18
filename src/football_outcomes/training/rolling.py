@@ -1,0 +1,471 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
+from dataclasses import asdict
+from datetime import datetime
+from pathlib import Path
+from typing import List
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.callbacks import (
+    Callback,
+    EarlyStopping,
+    TensorBoard,
+)
+from tensorflow.keras.metrics import AUC
+from tensorflow.keras.models import Model
+
+from football_outcomes.config import fs_settings as sett
+from football_outcomes.data.fs_models import (
+    FSMatch,
+)
+from football_outcomes.datasets.arrays import (
+    build_arrays_for_matches,
+    extract_numerical_features,
+)
+from football_outcomes.datasets.mappings import (
+    CatMaps,
+)
+from football_outcomes.datasets.rounds import (
+    distribute_matches_into_rounds,
+    summarize_rounds,
+)
+from football_outcomes.evaluation.metrics import (
+    binary_summary,
+    regression_summary,
+)
+from football_outcomes.evaluation.persistence import (
+    write_json,
+    write_records_csv,
+)
+from football_outcomes.modeling.compilation import (
+    compile_model_for_config,
+)
+from football_outcomes.modeling.factory import (
+    build_model,
+)
+from football_outcomes.training.callbacks import (
+    BranchDiagnosticsCsvLogger,
+    BranchProbeLogger,
+    EpochMetricsCsvLogger,
+    LayerDriftLogger,
+)
+from football_outcomes.training.configs import (
+    TrainConfig,
+)
+from football_outcomes.training.control import (
+    get_strength_branch_layer_names,
+    learning_rate_for_round,
+    set_layers_trainable,
+    set_optimizer_learning_rate,
+)
+from football_outcomes.training.runtime import (
+    extract_main_predictions,
+    make_train_targets,
+    set_global_seed,
+)
+
+
+def train_rolling(
+    matches_sorted: List[FSMatch],
+    cat_maps: CatMaps,
+    cfg: TrainConfig,
+    model: Model | None = None,
+    pretrained_branch_version: str | None = None,
+    competition_names: Sequence[str] | None = None,
+) -> Model:
+    if competition_names is None:
+        competition_names = sett.COMPS_LEAGUE
+
+    rounds = distribute_matches_into_rounds(matches_sorted)
+    round_info = summarize_rounds(rounds)
+    print(f"[rounds] {round_info}")
+
+    sample_feat = matches_sorted[0].features_before_match
+    num_num = extract_numerical_features(sample_feat).shape[0]
+
+    if cfg.seed is not None:
+        set_global_seed(cfg.seed)
+        print(f"[seed] Using seed={cfg.seed}")
+
+    if model is None:
+        model = build_model(
+            num_num=num_num,
+            num_teams=len(cat_maps.team_id_map),
+            num_comps=len(cat_maps.comp_id_map),
+            cfg=cfg,
+        )
+        print("[model] built fresh model")
+    else:
+        print("[model] using externally prepared model")
+
+    run_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_name = cfg.run_name or f"mlp_{cfg.mode}_{run_stamp}"
+
+    # TensorBoard logging (always under sett.DATA_DIR)
+    log_root = Path(sett.DATA_DIR) / "tensorboard_logs"
+    log_root.mkdir(parents=True, exist_ok=True)
+    log_dir = str(log_root / run_name)
+
+    tb = TensorBoard(
+        log_dir=log_dir,
+        histogram_freq=0,
+        write_graph=True,
+        write_images=False,
+    )
+    # Extra per-round metrics: show in TensorBoard one point per rolling round
+    tb_writer = tf.summary.create_file_writer(log_dir)
+
+    print(f"[tensorboard] logging to {log_dir}")
+    cfg_json_path = Path(log_dir) / "train_config.json"
+    write_json(
+        cfg_json_path,
+        asdict(cfg),
+    )
+
+    round_records = []
+    oos_rows = []
+
+    # Build probe batch once (from first available training window)
+    if cfg.enable_branch_diagnostics:
+        probe_ms = matches_sorted[: cfg.probe_matches]
+        probe_arr = build_arrays_for_matches(
+            matches=probe_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
+        probe_inputs = probe_arr[:-1]  # exclude targets
+    else:
+        probe_inputs = None
+
+    callbacks_common: List[Callback] = [tb]
+    callbacks_common.append(EpochMetricsCsvLogger(Path(log_dir) / "epoch_metrics.csv"))
+    if cfg.enable_branch_diagnostics and probe_inputs is not None:
+        drift_names = []
+
+        if cfg.model_version == "v1":
+            if cfg.use_team_ids:
+                drift_names.append("team_embedding")
+            if cfg.use_comp_embedding:
+                drift_names.append("competition_embedding")
+            if cfg.use_team_strength and cfg.use_position_embedding:
+                drift_names.append("position_embedding")
+            if cfg.use_team_strength:
+                drift_names.extend(["strength_dense_1", "strength_dense_2", "strength_projection"])
+
+            branch_probe_layers = [
+                "home_embedding_flat" if cfg.use_team_ids else "home_embedding_zero",
+                "competition_embedding_flat" if cfg.use_comp_embedding else "competition_embedding_zero",
+                "home_strength_embedding" if cfg.use_team_strength else "home_strength_embedding_zero",
+            ]
+
+        elif cfg.model_version == "v2":
+            drift_names.extend(
+                [
+                    "team_embedding",
+                    "competition_embedding",
+                    "position_embedding",
+                    "home_row_dense_1",
+                    "home_row_dense_2",
+                    "home_team_repr",
+                    "team_branch_proj",
+                ]
+            )
+
+            branch_probe_layers = [
+                "home_embedding_flat",
+                "competition_embedding_flat",
+                "home_team_repr",
+                "team_branch_proj",
+            ]
+
+        if drift_names:
+            callbacks_common.append(LayerDriftLogger(drift_names, tb_writer))
+
+        if branch_probe_layers:
+            callbacks_common.append(BranchProbeLogger(probe_inputs, tb_writer, branch_probe_layers))
+            callbacks_common.append(
+                BranchDiagnosticsCsvLogger(
+                    csv_path=Path(log_dir) / "diagnostics.csv",
+                    drift_layer_names=drift_names,
+                    probe_layer_names=branch_probe_layers,
+                    probe_inputs=probe_inputs,
+                )
+            )
+
+    frozen_branch_layer_names = None
+    if cfg.freeze_pretrained_branch_rounds > 0:
+        branch_version = pretrained_branch_version or cfg.model_version
+        frozen_branch_layer_names = get_strength_branch_layer_names(branch_version)
+        set_layers_trainable(model, frozen_branch_layer_names, False)
+        compile_model_for_config(model, cfg)
+        print(
+            f"[freeze] froze pretrained branch ({branch_version}) "
+            f"for first {cfg.freeze_pretrained_branch_rounds} rolling rounds"
+        )
+
+    for i in range(cfg.window_rounds, len(rounds)):
+        train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
+        val_ms = rounds[i]
+
+        X = build_arrays_for_matches(
+            matches=train_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
+        V = build_arrays_for_matches(
+            matches=val_ms,
+            cat_maps=cat_maps,
+            competition_names=competition_names,
+            mode=cfg.mode,
+            max_goals_class=(cfg.max_goals_class),
+        )
+
+        y_train = make_train_targets(train_ms, X[-1], cfg)
+        y_val = make_train_targets(val_ms, V[-1], cfg)
+
+        print(f"[train] round {i + 1}/{len(rounds)} train={len(train_ms)} val={len(val_ms)}")
+
+        if len(val_ms) < cfg.min_warning_val_size:
+            print(f"[warn] round {i + 1} has small validation size: {len(val_ms)}")
+
+        monitor_name = (
+            "val_output_main_loss"
+            if (cfg.model_version == "v2" and cfg.use_team_aux_head and cfg.aux_task is not None)
+            else "val_loss"
+        )
+
+        early = EarlyStopping(
+            patience=cfg.early_stopping_patience,
+            min_delta=cfg.early_stopping_min_delta,
+            restore_best_weights=True,
+            monitor=monitor_name,
+            mode="min",
+        )
+
+        if frozen_branch_layer_names is not None and i == cfg.window_rounds + cfg.freeze_pretrained_branch_rounds:
+            set_layers_trainable(model, frozen_branch_layer_names, True)
+            compile_model_for_config(model, cfg)
+            print("[freeze] unfroze pretrained branch and recompiled model")
+            frozen_branch_layer_names = None
+
+        round_offset = i - cfg.window_rounds
+        total_train_rounds = max(1, len(rounds) - cfg.window_rounds)
+        current_lr = learning_rate_for_round(cfg, round_offset, total_train_rounds)
+        set_optimizer_learning_rate(model, current_lr)
+
+        for cb in callbacks_common:
+            if hasattr(cb, "set_round_context"):
+                cb.set_round_context(
+                    round_idx=int(i + 1),
+                    train_size=len(train_ms),
+                    val_size=len(val_ms),
+                    learning_rate=float(current_lr),
+                )
+
+        model.fit(
+            X[:-1],
+            y_train,
+            validation_data=(V[:-1], y_val),
+            epochs=cfg.epochs_per_step,
+            batch_size=cfg.batch_size,
+            callbacks=[early] + callbacks_common,
+            verbose=1,
+        )
+
+        val_metrics = model.evaluate(V[:-1], y_val, verbose=0, return_dict=True)
+        round_step = int(i + 1)  # 1-based round index for readability in TensorBoard
+
+        if cfg.mode == "binary_u25":
+            val_loss = float(val_metrics.get("output_main_loss", val_metrics.get("loss")))
+            val_acc = float(val_metrics.get("output_main_accuracy", val_metrics.get("accuracy")))
+
+            raw_pred = model.predict(V[:-1], verbose=0)
+            val_prob = extract_main_predictions(raw_pred).ravel().astype(np.float32)
+            y_true = V[-1].astype(np.float32)
+
+            auc_metric = AUC(curve="ROC")
+            auc_metric.update_state(y_true, val_prob)
+            val_auc = float(auc_metric.result().numpy())
+            val_brier = float(np.mean((val_prob - y_true) ** 2))
+
+            round_records.append(
+                {
+                    "round_idx": round_step,
+                    "train_size": len(train_ms),
+                    "val_size": len(val_ms),
+                    "positive_rate_val": float(np.mean(y_true)),
+                    "mode": cfg.mode,
+                    "val_loss": float(val_loss),
+                    "val_accuracy": float(val_acc),
+                    "val_auc": val_auc,
+                    "val_brier": val_brier,
+                    "learning_rate": float(current_lr),
+                    "lr_schedule": cfg.lr_schedule,
+                }
+            )
+
+            for m, yt, yp in zip(val_ms, y_true, val_prob):
+                oos_rows.append(
+                    {
+                        "round_idx": round_step,
+                        "match_id": m.id,
+                        "season": m.season,
+                        "competition": m.comp_name,
+                        "y_true": float(yt),
+                        "y_prob_under25": float(yp),
+                    }
+                )
+
+            with tb_writer.as_default():
+                tf.summary.scalar("round/val_loss", float(val_loss), step=round_step)
+                tf.summary.scalar("round/val_accuracy", float(val_acc), step=round_step)
+                tf.summary.scalar("round/val_auc", val_auc, step=round_step)
+                tf.summary.scalar("round/val_brier", val_brier, step=round_step)
+                tf.summary.scalar("round/val_size", len(val_ms), step=round_step)
+                tf.summary.scalar("round/positive_rate_val", float(np.mean(y_true)), step=round_step)
+                tf.summary.scalar("round/learning_rate", float(current_lr), step=round_step)
+                tb_writer.flush()
+
+        elif cfg.mode == "goals_dist":
+            val_loss = float(val_metrics.get("output_main_loss", val_metrics.get("loss")))
+            val_acc = float(val_metrics.get("output_main_accuracy", val_metrics.get("accuracy")))
+
+            raw_pred = model.predict(V[:-1], verbose=0)
+            probabilities = extract_main_predictions(raw_pred)
+            pred_cls = np.argmax(probabilities, axis=1)
+            expected = (probabilities * np.arange(cfg.max_goals_class + 1)).sum(axis=1)
+            mae = np.mean(np.abs(expected - V[-1]))
+
+            for m, yt, yp, eg in zip(val_ms, V[-1], pred_cls, expected):
+                oos_rows.append(
+                    {
+                        "round_idx": round_step,
+                        "match_id": m.id,
+                        "season": m.season,
+                        "competition": m.comp_name,
+                        "y_true_class": int(yt),
+                        "y_pred_class": int(yp),
+                        "y_pred_expected_goals": float(eg),
+                    }
+                )
+
+            round_records.append(
+                {
+                    "round_idx": round_step,
+                    "train_size": len(train_ms),
+                    "val_size": len(val_ms),
+                    "mode": cfg.mode,
+                    "val_loss": float(val_loss),
+                    "val_accuracy": float(val_acc),
+                    "expected_goals_mae": float(mae),
+                }
+            )
+
+            # Manual TensorBoard scalars (one point per round)
+            with tb_writer.as_default():
+                tf.summary.scalar("round/val_loss", float(val_loss), step=round_step)
+                tf.summary.scalar("round/val_accuracy", float(val_acc), step=round_step)
+                tf.summary.scalar("round/expected_goals_mae", float(mae), step=round_step)
+                tf.summary.scalar("round/val_size", len(val_ms), step=round_step)
+                tb_writer.flush()
+
+        elif cfg.mode == "goals_reg":
+            val_loss = float(val_metrics.get("output_main_loss", val_metrics.get("loss")))
+            val_mae = float(val_metrics.get("output_main_mae", val_metrics.get("mae")))
+
+            raw_pred = model.predict(V[:-1], verbose=0)
+            predictions = extract_main_predictions(raw_pred).ravel()
+            rmse = float(np.sqrt(np.mean((predictions - V[-1]) ** 2)))
+
+            round_records.append(
+                {
+                    "round_idx": round_step,
+                    "train_size": len(train_ms),
+                    "val_size": len(val_ms),
+                    "mode": cfg.mode,
+                    "val_mae": float(val_mae),
+                    "val_rmse": rmse,
+                }
+            )
+
+            for m, yt, yp in zip(val_ms, V[-1], predictions):
+                oos_rows.append(
+                    {
+                        "round_idx": round_step,
+                        "match_id": m.id,
+                        "season": m.season,
+                        "competition": m.comp_name,
+                        "y_true_goals": float(yt),
+                        "y_pred_goals": float(yp),
+                    }
+                )
+
+            # Manual TensorBoard scalars (one point per round)
+            with tb_writer.as_default():
+                tf.summary.scalar("round/val_mae", float(val_mae), step=round_step)
+                tf.summary.scalar("round/val_rmse", rmse, step=round_step)
+                tf.summary.scalar("round/val_size", len(val_ms), step=round_step)
+                tb_writer.flush()
+
+    csv_path = Path(log_dir) / "round_metrics.csv"
+
+    if write_records_csv(
+        csv_path,
+        round_records,
+    ):
+        print("[metrics] saved round-level " f"metrics to {csv_path}")
+
+    if cfg.save_oos_predictions:
+        prediction_path = Path(log_dir) / "oos_predictions.csv"
+
+        if write_records_csv(
+            prediction_path,
+            oos_rows,
+        ):
+            print("[metrics] saved pooled OOS " "predictions to " f"{prediction_path}")
+
+    summary = {"run_name": run_name, "mode": cfg.mode, "round_stats": round_info}
+
+    if cfg.mode == "binary_u25" and oos_rows:
+        y_true = np.asarray([r["y_true"] for r in oos_rows], dtype=np.float32)
+        y_prob = np.asarray([r["y_prob_under25"] for r in oos_rows], dtype=np.float32)
+        summary.update(binary_summary(y_true, y_prob))
+
+    if cfg.mode == "goals_reg" and oos_rows:
+        y_true = np.asarray([r["y_true_goals"] for r in oos_rows], dtype=np.float32)
+        y_pred = np.asarray([r["y_pred_goals"] for r in oos_rows], dtype=np.float32)
+        summary.update(regression_summary(y_true, y_pred))
+
+    if cfg.mode == "goals_dist" and oos_rows:
+        y_true = np.asarray([r["y_true_class"] for r in oos_rows], dtype=np.int32)
+        y_pred_cls = np.asarray([r["y_pred_class"] for r in oos_rows], dtype=np.int32)
+        y_exp = np.asarray([r["y_pred_expected_goals"] for r in oos_rows], dtype=np.float32)
+
+        summary.update(
+            {
+                "pooled_accuracy": float(np.mean(y_pred_cls == y_true)),
+                "pooled_expected_goals_mae": float(np.mean(np.abs(y_exp - y_true.astype(np.float32)))),
+            }
+        )
+
+    summary_path = Path(log_dir) / "summary.json"
+    write_json(
+        summary_path,
+        summary,
+    )
+    print(f"[metrics] saved summary to {summary_path}")
+    print(f"[summary] {summary}")
+
+    cfg_json_path = Path(log_dir) / "train_config.json"
+    write_json(
+        cfg_json_path,
+        asdict(cfg),
+    )
+
+    return model

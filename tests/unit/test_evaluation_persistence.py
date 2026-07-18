@@ -105,7 +105,7 @@ def test_rolling_functions_delegate_csv_writes_once_per_artifact() -> None:
 
     targets = (
         (
-            project_root / "src" / "football_outcomes" / "training" / "train_mlp_rolling.py",
+            project_root / "src" / "football_outcomes" / "training" / "rolling.py",
             "train_rolling",
         ),
         (

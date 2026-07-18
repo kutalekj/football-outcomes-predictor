@@ -4,7 +4,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 ACTIVE_MODULES = (
-    PROJECT_ROOT / "src" / "football_outcomes" / "training" / "train_mlp_rolling.py",
+    PROJECT_ROOT / "src" / "football_outcomes" / "training" / "rolling.py",
     PROJECT_ROOT / "src" / "football_outcomes" / "training" / "fs_classical_baselines.py",
     PROJECT_ROOT / "scripts" / "main_footystats.py",
 )
@@ -48,13 +48,13 @@ def test_active_modules_do_not_import_legacy_dataset_utilities() -> None:
 
 
 def test_active_dataset_calls_use_explicit_competition_order() -> None:
-    trainer_tree = parse_module(ACTIVE_MODULES[0])
+    rolling_tree = parse_module(ACTIVE_MODULES[0])
     baseline_tree = parse_module(ACTIVE_MODULES[1])
     main_tree = parse_module(ACTIVE_MODULES[2])
 
     assert_keyword_present(
         called_functions(
-            trainer_tree,
+            rolling_tree,
             "build_arrays_for_matches",
         ),
         "competition_names",
