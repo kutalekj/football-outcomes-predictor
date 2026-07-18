@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-import random
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -32,9 +30,6 @@ from football_outcomes.datasets.rounds import (
     distribute_matches_into_rounds,
     summarize_rounds,
 )
-from football_outcomes.datasets.targets import (
-    build_targets_for_matches,
-)
 from football_outcomes.evaluation import metrics as _evaluation_metrics
 from football_outcomes.evaluation.persistence import (
     write_json,
@@ -54,6 +49,7 @@ from football_outcomes.modeling.v1 import build_model_v1 as build_model_v1_impl
 from football_outcomes.modeling.v2 import build_model_v2 as build_model_v2_impl
 from football_outcomes.training import callbacks as _training_callbacks
 from football_outcomes.training import control as _control
+from football_outcomes.training import runtime as _training_runtime
 
 matplotlib.use("Agg")
 
@@ -71,6 +67,9 @@ LayerDriftLogger = _training_callbacks.LayerDriftLogger
 BranchProbeLogger = _training_callbacks.BranchProbeLogger
 BranchDiagnosticsCsvLogger = _training_callbacks.BranchDiagnosticsCsvLogger
 EpochMetricsCsvLogger = _training_callbacks.EpochMetricsCsvLogger
+set_global_seed = _training_runtime.set_global_seed
+_make_train_targets = _training_runtime.make_train_targets
+_extract_main_predictions = _training_runtime.extract_main_predictions
 
 
 @dataclass
@@ -195,17 +194,6 @@ class StrengthPretrainConfig:
     use_position_embedding: bool = True
 
 
-def set_global_seed(seed: int) -> None:
-    os.environ["PYTHONHASHSEED"] = str(seed)
-    random.seed(seed)
-    np.random.seed(seed)
-    tf.random.set_seed(seed)
-    try:
-        tf.config.experimental.enable_op_determinism()
-    except Exception:
-        pass
-
-
 def _position_embedding_or_zero(pos_ids, cfg, name_prefix: str):
     if cfg.use_position_embedding:
         position_emb_layer = Embedding(
@@ -314,38 +302,6 @@ def _save_pretrain_round_plot(log_dir: str, round_records: List[dict], title: st
     out_path = Path(log_dir) / "round_overview.png"
     plt.savefig(out_path, dpi=160, bbox_inches="tight")
     plt.close(fig)
-
-
-def _make_train_targets(
-    matches: List[FSMatch],
-    y_main: np.ndarray,
-    cfg: TrainConfig,
-):
-    if cfg.model_version == "v2" and cfg.use_team_aux_head and cfg.aux_task is not None:
-        y_aux = build_targets_for_matches(
-            matches=matches,
-            mode=cfg.aux_task,
-            max_goals_class=(cfg.max_goals_class),
-        )
-
-        return {
-            "output_main": y_main,
-            "output_team_aux": y_aux,
-        }
-
-    return y_main
-
-
-def _extract_main_predictions(pred):
-    """
-    model.predict(...) returns:
-      - ndarray for single-output
-      - list for multi-output
-    We always want the main output.
-    """
-    if isinstance(pred, list):
-        return pred[0]
-    return pred
 
 
 def train_rolling(
