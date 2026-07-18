@@ -95,3 +95,58 @@ def test_persistence_module_has_no_training_dependency() -> None:
     }
 
     assert not any(module.startswith("football_outcomes.training") for module in imported_modules)
+
+
+def test_rolling_functions_delegate_csv_writes_once_per_artifact() -> None:
+    import ast
+    from pathlib import Path
+
+    project_root = Path(__file__).resolve().parents[2]
+    source_path = project_root / "src" / "football_outcomes" / "training" / "train_mlp_rolling.py"
+
+    tree = ast.parse(source_path.read_text(encoding="utf-8"))
+
+    functions = {
+        node.name: node
+        for node in tree.body
+        if isinstance(
+            node,
+            ast.FunctionDef,
+        )
+    }
+
+    for function_name in (
+        "train_rolling",
+        "train_strength_pretrain_rolling",
+    ):
+        function = functions[function_name]
+
+        persistence_calls = [
+            node
+            for node in ast.walk(function)
+            if isinstance(node, ast.Call)
+            and isinstance(
+                node.func,
+                ast.Name,
+            )
+            and node.func.id == "write_records_csv"
+        ]
+
+        direct_csv_writers = [
+            node
+            for node in ast.walk(function)
+            if isinstance(node, ast.Call)
+            and isinstance(
+                node.func,
+                ast.Attribute,
+            )
+            and isinstance(
+                node.func.value,
+                ast.Name,
+            )
+            and node.func.value.id == "csv"
+            and node.func.attr == "DictWriter"
+        ]
+
+        assert len(persistence_calls) == 2
+        assert not direct_csv_writers

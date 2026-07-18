@@ -983,13 +983,6 @@ def train_rolling(
         round_records,
     ):
         print("[metrics] saved round-level " f"metrics to {csv_path}")
-    if round_records:
-        fieldnames = sorted({k for rec in round_records for k in rec.keys()})
-        with csv_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(round_records)
-        print(f"[metrics] saved round-level metrics to {csv_path}")
 
     if cfg.save_oos_predictions:
         prediction_path = Path(log_dir) / "oos_predictions.csv"
@@ -1160,22 +1153,11 @@ def train_strength_pretrain_rolling(
             tb_writer.flush()
 
     csv_path = Path(log_dir) / "round_metrics.csv"
+
     write_records_csv(
         csv_path,
         round_records,
     )
-
-    if write_records_csv(
-        csv_path,
-        round_records,
-    ):
-        print("[metrics] saved round-level " f"metrics to {csv_path}")
-    if round_records:
-        fieldnames = sorted({k for rec in round_records for k in rec.keys()})
-        with csv_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(round_records)
 
     if cfg.save_oos_predictions:
         prediction_path = Path(log_dir) / "oos_predictions.csv"
