@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-import json
 import os
 import random
 from collections.abc import Sequence
@@ -38,6 +37,10 @@ from football_outcomes.datasets.targets import (
     build_targets_for_matches,
 )
 from football_outcomes.evaluation import metrics as _evaluation_metrics
+from football_outcomes.evaluation.persistence import (
+    write_json,
+    write_records_csv,
+)
 from football_outcomes.modeling import compilation as _compilation
 from football_outcomes.modeling.strength_pretraining import (
     build_strength_pretrain_model as build_strength_pretrain_model_impl,
@@ -679,8 +682,10 @@ def train_rolling(
 
     print(f"[tensorboard] logging to {log_dir}")
     cfg_json_path = Path(log_dir) / "train_config.json"
-    with cfg_json_path.open("w", encoding="utf-8") as f:
-        json.dump(asdict(cfg), f, indent=2)
+    write_json(
+        cfg_json_path,
+        asdict(cfg),
+    )
 
     round_records = []
     oos_rows = []
@@ -972,6 +977,12 @@ def train_rolling(
                 tb_writer.flush()
 
     csv_path = Path(log_dir) / "round_metrics.csv"
+
+    if write_records_csv(
+        csv_path,
+        round_records,
+    ):
+        print("[metrics] saved round-level " f"metrics to {csv_path}")
     if round_records:
         fieldnames = sorted({k for rec in round_records for k in rec.keys()})
         with csv_path.open("w", newline="", encoding="utf-8") as f:
@@ -980,14 +991,14 @@ def train_rolling(
             writer.writerows(round_records)
         print(f"[metrics] saved round-level metrics to {csv_path}")
 
-    if cfg.save_oos_predictions and oos_rows:
-        pred_path = Path(log_dir) / "oos_predictions.csv"
-        fieldnames = sorted({k for rec in oos_rows for k in rec.keys()})
-        with pred_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(oos_rows)
-        print(f"[metrics] saved pooled OOS predictions to {pred_path}")
+    if cfg.save_oos_predictions:
+        prediction_path = Path(log_dir) / "oos_predictions.csv"
+
+        if write_records_csv(
+            prediction_path,
+            oos_rows,
+        ):
+            print("[metrics] saved pooled OOS " "predictions to " f"{prediction_path}")
 
     summary = {"run_name": run_name, "mode": cfg.mode, "round_stats": round_info}
 
@@ -1014,14 +1025,18 @@ def train_rolling(
         )
 
     summary_path = Path(log_dir) / "summary.json"
-    with summary_path.open("w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2)
+    write_json(
+        summary_path,
+        summary,
+    )
     print(f"[metrics] saved summary to {summary_path}")
     print(f"[summary] {summary}")
 
     cfg_json_path = Path(log_dir) / "train_config.json"
-    with cfg_json_path.open("w", encoding="utf-8") as f:
-        json.dump(asdict(cfg), f, indent=2)
+    write_json(
+        cfg_json_path,
+        asdict(cfg),
+    )
 
     return model
 
@@ -1145,6 +1160,16 @@ def train_strength_pretrain_rolling(
             tb_writer.flush()
 
     csv_path = Path(log_dir) / "round_metrics.csv"
+    write_records_csv(
+        csv_path,
+        round_records,
+    )
+
+    if write_records_csv(
+        csv_path,
+        round_records,
+    ):
+        print("[metrics] saved round-level " f"metrics to {csv_path}")
     if round_records:
         fieldnames = sorted({k for rec in round_records for k in rec.keys()})
         with csv_path.open("w", newline="", encoding="utf-8") as f:
@@ -1152,13 +1177,14 @@ def train_strength_pretrain_rolling(
             writer.writeheader()
             writer.writerows(round_records)
 
-    if cfg.save_oos_predictions and oos_rows:
-        pred_path = Path(log_dir) / "oos_predictions.csv"
-        fieldnames = sorted({k for rec in oos_rows for k in rec.keys()})
-        with pred_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(oos_rows)
+    if cfg.save_oos_predictions:
+        prediction_path = Path(log_dir) / "oos_predictions.csv"
+
+        if write_records_csv(
+            prediction_path,
+            oos_rows,
+        ):
+            print("[metrics] saved pooled OOS " "predictions to " f"{prediction_path}")
 
     summary = {
         "run_name": run_name,
@@ -1176,12 +1202,16 @@ def train_strength_pretrain_rolling(
         summary.update(_binary_summary(y_true, y_prob))
 
     summary_path = Path(log_dir) / "summary.json"
-    with summary_path.open("w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2)
+    write_json(
+        summary_path,
+        summary,
+    )
 
     cfg_json_path = Path(log_dir) / "pretrain_config.json"
-    with cfg_json_path.open("w", encoding="utf-8") as f:
-        json.dump(asdict(cfg), f, indent=2)
+    write_json(
+        cfg_json_path,
+        asdict(cfg),
+    )
 
     _save_pretrain_round_plot(
         log_dir=log_dir,
