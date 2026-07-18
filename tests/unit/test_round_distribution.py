@@ -2,8 +2,9 @@
 
 from types import SimpleNamespace
 
-from football_outcomes.training.fs_training_utils import (
+from football_outcomes.datasets.rounds import (
     distribute_matches_into_rounds,
+    summarize_rounds,
 )
 
 
@@ -48,3 +49,22 @@ def test_no_team_occurs_twice_within_a_round() -> None:
         ]
 
         assert len(team_ids) == len(set(team_ids))
+
+
+def test_round_summary_reports_expected_sizes() -> None:
+    matches = [
+        make_match(1, 2),
+        make_match(3, 4),
+        make_match(1, 5),
+    ]
+
+    rounds = distribute_matches_into_rounds(matches)
+    summary = summarize_rounds(rounds)
+
+    assert summary == {
+        "num_rounds": 2,
+        "min_round_size": 1,
+        "max_round_size": 2,
+        "mean_round_size": 1.5,
+        "median_round_size": 1.5,
+    }

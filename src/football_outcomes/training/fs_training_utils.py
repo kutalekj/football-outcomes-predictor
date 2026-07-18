@@ -7,7 +7,16 @@ import numpy as np
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch, FSMatchFeatures
+from football_outcomes.datasets import rounds as _rounds
+from football_outcomes.datasets.targets import (
+    target_dtype,
+    target_for_match,
+)
 from football_outcomes.utils.fs_player_skill_utils import calculate_team_position_indices
+
+# Compatibility exports for callers using the legacy module path.
+distribute_matches_into_rounds = _rounds.distribute_matches_into_rounds
+summarize_rounds = _rounds.summarize_rounds
 
 
 @dataclass
@@ -46,47 +55,6 @@ def build_categorical_maps(league_matches_sorted: List[FSMatch]) -> CatMaps:
     team_id_map = {tid: i for i, tid in enumerate(sorted(team_ids))}
     comp_id_map = {cid: i for i, cid in enumerate(sorted(comp_ids))}
     return CatMaps(team_id_map=team_id_map, comp_id_map=comp_id_map)
-
-
-# Round distribution
-
-
-def distribute_matches_into_rounds(sorted_matches: List[FSMatch]) -> List[List[FSMatch]]:
-    """
-    Chronological rounds where no team appears more than once per round.
-    """
-    rounds: List[List[FSMatch]] = []
-    current_round: List[FSMatch] = []
-    teams_in_round = set()
-
-    for match in sorted_matches:
-        h = match.home_team.id
-        a = match.away_team.id
-
-        if h in teams_in_round or a in teams_in_round:
-            rounds.append(current_round)
-            current_round = []
-            teams_in_round = set()
-
-        current_round.append(match)
-        teams_in_round.add(h)
-        teams_in_round.add(a)
-
-    if current_round:
-        rounds.append(current_round)
-
-    return rounds
-
-
-def summarize_rounds(rounds: List[List[FSMatch]]) -> dict:
-    sizes = np.asarray([len(r) for r in rounds], dtype=np.int32)
-    return {
-        "num_rounds": int(len(rounds)),
-        "min_round_size": int(sizes.min()) if sizes.size else 0,
-        "max_round_size": int(sizes.max()) if sizes.size else 0,
-        "mean_round_size": float(sizes.mean()) if sizes.size else 0.0,
-        "median_round_size": float(np.median(sizes)) if sizes.size else 0.0,
-    }
 
 
 # Feature extraction
@@ -268,17 +236,15 @@ def build_arrays_for_matches(
         X_hp.append(np.asarray(home_pos, dtype=np.int32))
         X_ap.append(np.asarray(away_pos, dtype=np.int32))
 
-        total_goals = (m.home_goals or 0) + (m.away_goals or 0)
-        if mode == "binary_u25":
-            y.append(1.0 if total_goals <= 2 else 0.0)
-        elif mode == "goals_dist":
-            y.append(int(min(total_goals, max_goals_class)))
-        elif mode == "goals_reg":
-            y.append(float(total_goals))
-        else:
-            raise ValueError(f"Unknown mode: {mode}")
+        y.append(
+            target_for_match(
+                m,
+                mode,
+                max_goals_class,
+            )
+        )
 
-    y_dtype = np.float32 if mode in ("binary_u25", "goals_reg") else np.int32
+    y_dtype = target_dtype(mode)
 
     n = len(matches)  # TODO: Revert this patch (added for submission)
 
@@ -352,20 +318,22 @@ def build_aux_targets_for_matches(
     """
     vals = []
 
-    for m in matches:
-        total_goals = (m.home_goals or 0) + (m.away_goals or 0)
+    for match in matches:
+        try:
+            value = target_for_match(
+                match,
+                aux_mode,
+                max_goals_class,
+            )
+        except ValueError:
+            raise ValueError(f"Unknown aux_mode: {aux_mode}") from None
 
-        if aux_mode == "binary_u25":
-            vals.append(1.0 if total_goals <= 2 else 0.0)
-        elif aux_mode == "goals_reg":
-            vals.append(float(total_goals))
-        elif aux_mode == "goals_dist":
-            vals.append(int(min(total_goals, max_goals_class)))
-        else:
-            raise ValueError(f"Unknown aux_mode: {aux_mode}")
+        vals.append(value)
 
-    dtype = np.float32 if aux_mode in ("binary_u25", "goals_reg") else np.int32
-    return np.asarray(vals, dtype=dtype)
+    return np.asarray(
+        vals,
+        dtype=target_dtype(aux_mode),
+    )
 
 
 def build_strength_only_arrays_for_matches(
@@ -404,17 +372,15 @@ def build_strength_only_arrays_for_matches(
         X_hp.append(np.asarray(home_pos, dtype=np.int32))
         X_ap.append(np.asarray(away_pos, dtype=np.int32))
 
-        total_goals = (m.home_goals or 0) + (m.away_goals or 0)
-        if mode == "binary_u25":
-            y.append(1.0 if total_goals <= 2 else 0.0)
-        elif mode == "goals_dist":
-            y.append(int(min(total_goals, max_goals_class)))
-        elif mode == "goals_reg":
-            y.append(float(total_goals))
-        else:
-            raise ValueError(f"Unknown mode: {mode}")
+        y.append(
+            target_for_match(
+                m,
+                mode,
+                max_goals_class,
+            )
+        )
 
-    y_dtype = np.float32 if mode in ("binary_u25", "goals_reg") else np.int32
+    y_dtype = target_dtype(mode)
 
     n = len(matches)  # TODO: Revert this patch (added for submission)
 
