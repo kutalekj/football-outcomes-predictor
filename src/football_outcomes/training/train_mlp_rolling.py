@@ -21,7 +21,6 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.metrics import AUC
 from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
 
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import FSMatch
@@ -38,6 +37,7 @@ from football_outcomes.datasets.rounds import (
 from football_outcomes.datasets.targets import (
     build_targets_for_matches,
 )
+from football_outcomes.modeling import compilation as _compilation
 from football_outcomes.modeling.strength_pretraining import (
     build_strength_pretrain_model as build_strength_pretrain_model_impl,
 )
@@ -48,7 +48,6 @@ from football_outcomes.modeling.strength_pretraining import (
     build_strength_pretrain_model_v2 as build_strength_pretrain_model_v2_impl,
 )
 from football_outcomes.modeling.v1 import build_model_v1 as build_model_v1_impl
-from football_outcomes.modeling.v2 import _aux_loss_and_metrics_for_task, _main_loss_and_metrics_for_mode
 from football_outcomes.modeling.v2 import build_model_v2 as build_model_v2_impl
 from football_outcomes.training import control as _control
 
@@ -60,6 +59,7 @@ _set_optimizer_lr = _control.set_optimizer_learning_rate
 get_strength_branch_layer_names = _control.get_strength_branch_layer_names
 transfer_pretrained_strength_branch_weights = _control.transfer_pretrained_strength_branch_weights
 set_layers_trainable = _control.set_layers_trainable
+compile_model_for_cfg = _compilation.compile_model_for_config
 
 
 @dataclass
@@ -1230,61 +1230,3 @@ def train_strength_pretrain_rolling(
     print(f"[pretrain] model saved to {model_path}")
 
     return model
-
-
-def compile_model_for_cfg(model: Model, cfg: TrainConfig) -> None:
-    """
-    Recompile an existing model after changing trainable flags.
-    Mirrors the compilation logic used by build_model_v1/build_model_v2.
-    """
-    if cfg.model_version == "v1":
-        if cfg.mode == "binary_u25":
-            model.compile(
-                optimizer=Adam(learning_rate=cfg.learning_rate),
-                loss="binary_crossentropy",
-                metrics=["accuracy"],
-            )
-        elif cfg.mode == "goals_dist":
-            model.compile(
-                optimizer=Adam(learning_rate=cfg.learning_rate),
-                loss="sparse_categorical_crossentropy",
-                metrics=["accuracy"],
-            )
-        elif cfg.mode == "goals_reg":
-            model.compile(
-                optimizer=Adam(learning_rate=cfg.learning_rate),
-                loss="mae",
-                metrics=["mae"],
-            )
-        else:
-            raise ValueError(f"Unknown mode: {cfg.mode}")
-
-    elif cfg.model_version == "v2":
-        main_loss, main_metrics = _main_loss_and_metrics_for_mode(cfg)
-
-        if cfg.use_team_aux_head and cfg.aux_task is not None:
-            aux_loss, aux_metrics = _aux_loss_and_metrics_for_task(cfg.aux_task)
-
-            model.compile(
-                optimizer=Adam(learning_rate=cfg.learning_rate),
-                loss={
-                    "output_main": main_loss,
-                    "output_team_aux": aux_loss,
-                },
-                loss_weights={
-                    "output_main": 1.0,
-                    "output_team_aux": cfg.aux_weight,
-                },
-                metrics={
-                    "output_main": main_metrics,
-                    "output_team_aux": aux_metrics,
-                },
-            )
-        else:
-            model.compile(
-                optimizer=Adam(learning_rate=cfg.learning_rate),
-                loss={"output_main": main_loss},
-                metrics={"output_main": main_metrics},
-            )
-    else:
-        raise ValueError(f"Unknown model_version: {cfg.model_version}")

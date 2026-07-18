@@ -12,11 +12,14 @@ from tensorflow.keras.layers import (
     Lambda,
     LayerNormalization,
 )
-from tensorflow.keras.metrics import AUC
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
 from football_outcomes.config import fs_settings as sett
+from football_outcomes.modeling.compilation import (
+    auxiliary_loss_and_metrics_for_task,
+    main_loss_and_metrics_for_mode,
+)
 from football_outcomes.modeling.team_strength import (
     abs_diff,
     build_team_repr_v2,
@@ -25,26 +28,6 @@ from football_outcomes.modeling.team_strength import (
     split_strength_tensor,
     vec_diff,
 )
-
-
-def _main_loss_and_metrics_for_mode(cfg):
-    if cfg.mode == "binary_u25":
-        return "binary_crossentropy", ["accuracy", AUC(name="auc")]
-    if cfg.mode == "goals_dist":
-        return "sparse_categorical_crossentropy", ["accuracy"]
-    if cfg.mode == "goals_reg":
-        return "mae", ["mae"]
-    raise ValueError(f"Unknown mode: {cfg.mode}")
-
-
-def _aux_loss_and_metrics_for_task(aux_task):
-    if aux_task == "binary_u25":
-        return "binary_crossentropy", ["accuracy"]
-    if aux_task == "goals_dist":
-        return "sparse_categorical_crossentropy", ["accuracy"]
-    if aux_task == "goals_reg":
-        return "mae", ["mae"]
-    raise ValueError(f"Unknown aux_task: {aux_task}")
 
 
 def build_model_v2(
@@ -259,10 +242,10 @@ def build_model_v2(
 
     model = Model(inputs=[x_num, x_h, x_a, x_c, x_s, x_hp, x_ap], outputs=outputs)
 
-    main_loss, main_metrics = _main_loss_and_metrics_for_mode(cfg)
+    main_loss, main_metrics = main_loss_and_metrics_for_mode(cfg)
 
     if cfg.use_team_aux_head and cfg.aux_task is not None:
-        aux_loss, aux_metrics = _aux_loss_and_metrics_for_task(cfg.aux_task)
+        aux_loss, aux_metrics = auxiliary_loss_and_metrics_for_task(cfg.aux_task)
 
         model.compile(
             optimizer=Adam(learning_rate=cfg.learning_rate),
