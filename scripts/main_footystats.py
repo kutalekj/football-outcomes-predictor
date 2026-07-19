@@ -8,8 +8,10 @@ import matplotlib
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import save_snapshot, try_load_snapshot
-from football_outcomes.data.fs_models import FSDataBundle
 from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
+from football_outcomes.data.state import (
+    bundle_from_global,
+)
 from football_outcomes.datasets.mappings import (
     build_categorical_maps,
 )
@@ -205,24 +207,7 @@ def maybe_store_snapshot() -> None:
     if not sett.ALL_STORE:
         return
 
-    g = Global.get_instance()
-    save_snapshot(
-        FSDataBundle(
-            comp_seasons=g.all_comp_seasons,
-            teams=g.all_teams,
-            players=g.all_players,
-            matches=g.all_matches,
-            leagues_list=g.leagues_list,
-            sofifa_snapshots=getattr(g, "sofifa_snapshots", []),
-            sofifa_player_occurrences=getattr(g, "sofifa_player_occurrences", {}),
-            sofifa_players_by_dob=getattr(g, "sofifa_players_by_dob", {}),
-            fs_to_sofifa_cache=getattr(g, "fs_to_sofifa_cache", {}),
-            sofifa_team_meta=getattr(g, "sofifa_team_meta", {}),
-            sofifa_players_by_team=getattr(g, "sofifa_players_by_team", {}),
-            sofifa_teams_by_league=getattr(g, "sofifa_teams_by_league", {}),
-            fs_team_to_sofifa_team=getattr(g, "fs_team_to_sofifa_team", {}),
-        )
-    )
+    save_snapshot(bundle_from_global())
 
 
 def main() -> None:
