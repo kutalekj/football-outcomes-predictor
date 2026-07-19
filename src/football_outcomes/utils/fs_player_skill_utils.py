@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from football_outcomes.data.fs_models import FSMatch
-
 import os
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -16,6 +11,7 @@ from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data import lineups as _lineups
 from football_outcomes.data import sofifa_skills as _sofifa_skills
+from football_outcomes.data import team_strength_matrix as _team_strength_matrix
 from football_outcomes.data.fs_models import FSPlayer
 
 # Compatibility exports during the
@@ -26,6 +22,9 @@ _select_and_sort_lineup = _lineups.select_and_sort_lineup
 _ordered_snapshot_candidates = _sofifa_skills.ordered_snapshot_candidates
 _merge_skills_from_snapshots = _sofifa_skills.merge_skills_from_snapshots
 calculate_team_position_indices = _lineups.calculate_team_position_indices
+_gk_role_score = _team_strength_matrix.goalkeeper_role_score
+_ensure_one_goalkeeper_row = _team_strength_matrix.ensure_one_goalkeeper_row
+calculate_team_strength = _team_strength_matrix.calculate_team_strength
 
 _debug_log_path: Optional[str] = None
 
@@ -619,158 +618,3 @@ def _match_fs_to_sofifa(
         res.sofifa_best_name,
     )
     return res
-
-
-# ---------- helpers: lineup handling ----------
-
-
-def _gk_role_score(skills: List[float]) -> float:
-    """Positive => looks like GK, negative => looks like outfield."""
-    if not skills or len(skills) < sett.GK_SKILL_END_INDEX:
-        return 0.0
-    gk = skills[sett.GK_SKILL_START_INDEX : sett.GK_SKILL_END_INDEX]
-    out = skills[: sett.GK_SKILL_START_INDEX]
-    # ignore -1 values
-    gk_vals = [x for x in gk if x != -1.0]
-    out_vals = [x for x in out if x != -1.0]
-    if not gk_vals or not out_vals:
-        return 0.0
-    return (sum(gk_vals) / len(gk_vals)) - (sum(out_vals) / len(out_vals))
-
-
-def _ensure_one_goalkeeper_row(rows: List[Tuple[FSPlayer, List[float]]]) -> List[Tuple[FSPlayer, List[float]]]:
-    """
-    Enforce exactly one GK row if sett.FORCE_EXACTLY_ONE_GK_ROW.
-
-    Strategy:
-      - Prefer FSPosition == Goalkeeper for GK slot.
-      - If none, choose the row with the highest GK role score.
-      - If still ambiguous or all missing, insert a missing GK row at front.
-      - Ensure other rows remain in stable order.
-    """
-    if not getattr(sett, "FORCE_EXACTLY_ONE_GK_ROW", True):
-        return rows
-
-    # Find candidate GK rows
-    gk_rows = [(i, p, s) for i, (p, s) in enumerate(rows) if (p.position == "Goalkeeper")]
-    if gk_rows:
-        # pick the first GK in order, others are treated as normal outfield rows (still kept)
-        best_i, _, _ = gk_rows[0]
-        # move best GK to front
-        chosen = rows.pop(best_i)
-        rows.insert(0, chosen)
-        return rows
-
-    # No explicit GK in FS lineup, choose by skill signature
-    scored = []
-    for i, (p, s) in enumerate(rows):
-        scored.append((i, _gk_role_score(s)))
-    scored.sort(key=lambda x: x[1], reverse=True)
-    if scored and scored[0][1] >= getattr(sett, "GK_ROLE_SCORE_MIN_GAP", 0.5):
-        best_i = scored[0][0]
-        chosen = rows.pop(best_i)
-        rows.insert(0, chosen)
-        return rows
-
-    # Cannot find a GK-like player: insert a missing GK row
-    missing_player = FSPlayer(-1, "MISSING_GK", "", "", "", "MISSING_GK")
-    missing_player.position = "Goalkeeper"
-    rows.insert(0, (missing_player, [-1.0] * len(sett.PLAYER_SKILLS)))
-    return rows
-
-
-# ---------- main: calculate_team_strength ----------
-
-
-def calculate_team_strength(curr_match: "FSMatch", team_id: int) -> list[list[float]]:
-    """
-    Returns 11x34 matrix of player skills for team_id in curr_match.
-
-    - Sort lineup by FS position group (GK/DEF/MID/FWD).
-    - Match FSPlayer to Sofifa:
-        * If DOB matches: accept if similarity >= LOWER threshold
-        * Else accept only if similarity >= HIGHER threshold
-    - Build skills vector:
-        * Start from the closest past snapshot, then fill missing from other snapshots
-        * Allow looking into near future snapshots (past-first), within +/- window
-    - Missing player or missing skills remain -1.
-    - Pad/truncate to exactly 11 players.
-    - Optionally enforce exactly one GK row (no imputation; missing GK becomes [-1]*34 GK row).
-    """
-    # --- pick lineup
-    # Adjust these attribute names to your FSMatch:
-    # I assume you now store actual FSPlayer objects lists.
-    if curr_match.home_team is not None and curr_match.home_team.id == team_id:
-        lineup = getattr(curr_match, "home_lineup", None)
-        side = "home"
-    elif curr_match.away_team is not None and curr_match.away_team.id == team_id:
-        lineup = getattr(curr_match, "away_lineup", None)
-        side = "away"
-    else:
-        raise ValueError(f"Team {team_id} not in match {curr_match.id}")
-
-    # Log None vs [] difference as you requested
-    if lineup is None:
-        if getattr(sett, "DEBUG_TEAM_STRENGTH", False):
-            _dbg(f"[team_strength] lineup=None for team_id={team_id} match={curr_match.id} ({side})")
-
-        lineup = []
-    elif isinstance(lineup, list) and len(lineup) == 0:
-        if getattr(sett, "DEBUG_TEAM_STRENGTH", False):
-            _dbg(f"[team_strength] lineup=[] for team_id={team_id} match={curr_match.id} ({side})")
-
-    if not isinstance(lineup, list):
-        raise TypeError(f"Lineup must be list[FSPlayer], got {type(lineup)}")
-
-    if len(lineup) > sett.TEAM_STRENGTH_NUM_PLAYERS:
-        # You can decide to truncate; but I’d rather fail fast because it indicates bad upstream data
-        raise ValueError(f"Lineup has >{sett.TEAM_STRENGTH_NUM_PLAYERS} players: {len(lineup)}")
-
-    # --- stable ordering
-    lineup_sorted = sorted(lineup, key=_pos_rank)
-
-    # --- match and pull skills
-    rows: List[Tuple[FSPlayer, List[float]]] = []
-
-    for p in lineup_sorted:
-        mr = _match_fs_to_sofifa(p, fs_team_id=team_id)
-
-        if mr.sofifa_id is None:
-            skills = [-1.0] * len(sett.PLAYER_SKILLS)
-            if getattr(sett, "DEBUG_TEAM_STRENGTH", False):
-                _dbg(
-                    f"[team_strength] UNMATCHED fs='{_player_display_name(p)}' "
-                    f"dob={getattr(p, 'birthday', None)} sf_name={mr.sofifa_best_name} score={mr.score_best:.1f} "
-                    f"reason={mr.reason}"
-                )
-        else:
-            skills, snapshots_used, delta_days = _merge_skills_from_snapshots(mr.sofifa_id, curr_match.datetime)
-            if getattr(sett, "DEBUG_TEAM_STRENGTH", False):
-                missing_cells = sum(1 for x in skills if x == -1.0)
-                _dbg(
-                    f"[team_strength] MATCH fs='{_player_display_name(p)}' -> sf_id={mr.sofifa_id} "
-                    f"score={mr.score_best:.1f} (2nd={mr.score_second:.1f}) "
-                    f"(sf_name={mr.sofifa_best_name}) "
-                    f"league={curr_match.comp_name.replace(' ', '_')} "
-                    f"match_dt={curr_match.datetime.isoformat()} "
-                    f"missing={missing_cells}/{len(skills)} "
-                    f"snapshots_used={snapshots_used} "
-                    f"delta_days={delta_days} "
-                    f"reason={mr.reason}"
-                )
-
-        rows.append((p, skills))
-
-    # --- enforce goalkeeper presence/slot (no imputation, only reordering / missing row)
-    rows = _ensure_one_goalkeeper_row(rows)
-
-    # --- pad/truncate to 11 rows (pad with missing players)
-    while len(rows) < sett.TEAM_STRENGTH_NUM_PLAYERS:
-        mp = FSPlayer(-1, "MISSING", "", "", "", "MISSING")
-        mp.position = "Unknown"
-        rows.append((mp, [-1.0] * len(sett.PLAYER_SKILLS)))
-
-    rows = rows[: sett.TEAM_STRENGTH_NUM_PLAYERS]
-
-    # return matrix only
-    return [skills for _, skills in rows]

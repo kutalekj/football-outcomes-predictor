@@ -6,10 +6,10 @@ from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import (
     Global,
 )
-from football_outcomes.utils import fs_feature_utils as fu
-from football_outcomes.utils.fs_player_skill_utils import (
+from football_outcomes.data.team_strength_matrix import (
     calculate_team_strength,
 )
+from football_outcomes.utils import fs_feature_utils as fu
 
 if TYPE_CHECKING:
     from football_outcomes.data.fs_models import (
