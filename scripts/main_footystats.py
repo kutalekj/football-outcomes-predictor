@@ -9,6 +9,9 @@ import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import save_snapshot, try_load_snapshot
 from football_outcomes.data.fs_retrieve import retrieve_new_data
+from football_outcomes.data.sofifa_team_matching import (
+    match_fs_teams_to_sofifa_teams,
+)
 from football_outcomes.data.state import (
     apply_bundle_to_global,
     bundle_from_global,
@@ -22,7 +25,6 @@ from football_outcomes.datasets.rounds import (
 from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
-from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
 
 matplotlib.use("Agg")
 

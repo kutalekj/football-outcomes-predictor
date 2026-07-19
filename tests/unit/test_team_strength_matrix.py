@@ -1,4 +1,3 @@
-import ast
 from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -73,31 +72,11 @@ def make_match(
 
 def test_matrix_module_has_no_legacy_matching_dependency() -> None:
     source_path = PROJECT_ROOT / "src" / "football_outcomes" / "data" / "team_strength_matrix.py"
-    tree = ast.parse(source_path.read_text(encoding="utf-8"))
+    source = source_path.read_text(encoding="utf-8")
 
-    imported_modules = {
-        node.module
-        for node in tree.body
-        if isinstance(
-            node,
-            ast.ImportFrom,
-        )
-        and node.module is not None
-    }
-
-    plain_imports = {
-        alias.name
-        for node in tree.body
-        if isinstance(
-            node,
-            ast.Import,
-        )
-        for alias in node.names
-    }
-
-    assert "football_outcomes.config." "fs_globals" not in imported_modules
-    assert "football_outcomes.utils." "fs_player_skill_utils" not in imported_modules
-    assert "rapidfuzz" not in plain_imports
+    assert "football_outcomes.utils." "fs_player_skill_utils" not in source
+    assert "fs_globals" not in source
+    assert "rapidfuzz" not in source
 
 
 def test_legacy_matrix_exports_are_direct_aliases() -> None:
