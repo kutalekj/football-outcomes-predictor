@@ -16,6 +16,9 @@ if TYPE_CHECKING:
         FSMatch,
     )
 
+from football_outcomes.data import sofifa_player_matching as _player_matching
+from football_outcomes.data import sofifa_skills as _sofifa_skills
+
 
 class PlayerMatchResult(Protocol):
     sofifa_id: int | None
@@ -344,21 +347,13 @@ def calculate_team_strength(
     curr_match: FSMatch,
     team_id: int,
 ) -> list[list[float]]:
-    """
-    Compatibility entry point using the current
-    matching and skill-retrieval services.
-
-    The local import is temporary until fuzzy
-    matching is extracted in the next increment.
-    """
-
-    from football_outcomes.utils import fs_player_skill_utils as legacy
+    """Build a matrix using extracted data services."""
 
     return build_team_strength_matrix(
         match=curr_match,
         team_id=team_id,
-        match_player=(legacy._match_fs_to_sofifa),
-        merge_skills=(legacy._merge_skills_from_snapshots),
-        debug_log=legacy._dbg,
-        player_display_name=(legacy._player_display_name),
+        match_player=(_player_matching.match_fs_to_sofifa),
+        merge_skills=(_sofifa_skills.merge_skills_from_snapshots),
+        debug_log=(_player_matching.debug_log),
+        player_display_name=(_player_matching.player_display_name),
     )

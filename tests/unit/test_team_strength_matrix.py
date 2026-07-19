@@ -7,6 +7,8 @@ import pytest
 
 from football_outcomes.config import fs_settings as settings
 from football_outcomes.data import (
+    sofifa_player_matching,
+    sofifa_skills,
     team_strength_matrix,
 )
 from football_outcomes.data.fs_models import (
@@ -69,7 +71,7 @@ def make_match(
     return match
 
 
-def test_matrix_module_has_no_top_level_matching_dependency() -> None:
+def test_matrix_module_has_no_legacy_matching_dependency() -> None:
     source_path = PROJECT_ROOT / "src" / "football_outcomes" / "data" / "team_strength_matrix.py"
     tree = ast.parse(source_path.read_text(encoding="utf-8"))
 
@@ -402,7 +404,7 @@ def test_explicit_core_sorts_matches_and_pads(
     ]
 
 
-def test_compatibility_entry_point_wires_legacy_dependencies(
+def test_compatibility_entry_point_wires_extracted_dependencies(
     monkeypatch,
 ) -> None:
     monkeypatch.setattr(
@@ -479,13 +481,13 @@ def test_compatibility_entry_point_wires_legacy_dependencies(
         )
 
     monkeypatch.setattr(
-        fs_player_skill_utils,
-        "_match_fs_to_sofifa",
+        sofifa_player_matching,
+        "match_fs_to_sofifa",
         fake_matcher,
     )
     monkeypatch.setattr(
-        fs_player_skill_utils,
-        "_merge_skills_from_snapshots",
+        sofifa_skills,
+        "merge_skills_from_snapshots",
         fake_loader,
     )
 
