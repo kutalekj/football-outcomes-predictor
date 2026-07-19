@@ -3,7 +3,6 @@ from types import SimpleNamespace
 
 import pytest
 
-from football_outcomes.config import fs_settings
 from football_outcomes.config.legacy import (
     experiment_config_from_legacy_settings,
 )
@@ -43,30 +42,12 @@ def make_legacy_settings(
     return SimpleNamespace(**values)
 
 
-def test_current_fs_settings_are_translated() -> None:
-    config = experiment_config_from_legacy_settings()
-
-    assert config.data.source == ("offline_snapshot")
-    assert config.data.allow_network is False
-    assert config.data.load_snapshot_path == Path(fs_settings.LOAD_SNAPSHOT_PATH)
-    assert config.data.save_snapshot_path == Path(fs_settings.SAVE_SNAPSHOT_PATH)
-
-    expected_sofifa_path = Path(fs_settings.SOFIFA_CSV_DIR) if fs_settings.SOFIFA_CSV_DIR else None
-    assert config.data.sofifa_csv_dir == expected_sofifa_path
-
-    expected_competitions = (
-        ("England Premier League",) if fs_settings.SUBMISSION_MODE else tuple(fs_settings.COMPS_LEAGUE)
-    )
-    assert config.selection.competitions == expected_competitions
-
-    assert config.selection.seasons == tuple(
-        range(
-            fs_settings.FIRST_SEASON,
-            fs_settings.LAST_SEASON,
-        )
-    )
-
-    assert config.output.root_dir == Path(fs_settings.DATA_DIR)
+def test_current_settings_are_not_treated_as_legacy() -> None:
+    with pytest.raises(
+        ValueError,
+        match=("enable neither snapshot loading " "nor FootyStats retrieval"),
+    ):
+        experiment_config_from_legacy_settings()
 
 
 def test_full_offline_settings_are_translated() -> None:

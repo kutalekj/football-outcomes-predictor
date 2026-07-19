@@ -42,8 +42,8 @@ class FailClient:
         raise AssertionError("Client must not be called.")
 
 
-def test_main_pipeline_uses_state_restoration() -> None:
-    source_path = PROJECT_ROOT / "scripts" / "main_footystats.py"
+def test_application_pipeline_uses_state_restoration() -> None:
+    source_path = PROJECT_ROOT / "src" / "football_outcomes" / "application" / "footystats_pipeline.py"
     tree = ast.parse(source_path.read_text(encoding="utf-8"))
 
     imported_names = {
@@ -70,9 +70,9 @@ def test_main_pipeline_uses_state_restoration() -> None:
     }
 
     assert "apply_bundle_to_global" in imported_names
-    assert "fill_globals_with_cache" not in imported_names
-
     assert "apply_bundle_to_global" in called_names
+
+    assert "fill_globals_with_cache" not in imported_names
     assert "fill_globals_with_cache" not in called_names
 
 

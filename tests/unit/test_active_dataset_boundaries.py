@@ -4,9 +4,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 ACTIVE_MODULES = (
-    PROJECT_ROOT / "src" / "football_outcomes" / "training" / "rolling.py",
-    PROJECT_ROOT / "src" / "football_outcomes" / "training" / "fs_classical_baselines.py",
-    PROJECT_ROOT / "scripts" / "main_footystats.py",
+    (PROJECT_ROOT / "src" / "football_outcomes" / "training" / "rolling.py"),
+    (PROJECT_ROOT / "src" / "football_outcomes" / "training" / "fs_classical_baselines.py"),
+    (PROJECT_ROOT / "src" / "football_outcomes" / "application" / "footystats_pipeline.py"),
 )
 
 LEGACY_DATASET_MODULE = "football_outcomes.training." "fs_training_utils"
@@ -50,7 +50,7 @@ def test_active_modules_do_not_import_legacy_dataset_utilities() -> None:
 def test_active_dataset_calls_use_explicit_competition_order() -> None:
     rolling_tree = parse_module(ACTIVE_MODULES[0])
     baseline_tree = parse_module(ACTIVE_MODULES[1])
-    main_tree = parse_module(ACTIVE_MODULES[2])
+    application_tree = parse_module(ACTIVE_MODULES[2])
 
     assert_keyword_present(
         called_functions(
@@ -68,14 +68,15 @@ def test_active_dataset_calls_use_explicit_competition_order() -> None:
     )
     assert_keyword_present(
         called_functions(
-            main_tree,
+            application_tree,
             "build_categorical_maps",
         ),
         "competition_names",
     )
+
     assert_keyword_present(
         called_functions(
-            main_tree,
+            application_tree,
             "train_rolling",
         ),
         "competition_names",

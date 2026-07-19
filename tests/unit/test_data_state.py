@@ -163,20 +163,34 @@ def test_global_adapters_preserve_all_references() -> None:
     assert bundle.sofifa_team_meta is state.sofifa_team_meta
 
 
-def test_main_pipeline_uses_bundle_adapter() -> None:
-    source_path = PROJECT_ROOT / "scripts" / "main_footystats.py"
+def test_application_pipeline_uses_bundle_adapter() -> None:
+    source_path = PROJECT_ROOT / "src" / "football_outcomes" / "application" / "footystats_pipeline.py"
     tree = ast.parse(source_path.read_text(encoding="utf-8"))
+
+    imported_names = {
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(
+            node,
+            ast.ImportFrom,
+        )
+        for alias in node.names
+    }
 
     called_names = {
         node.func.id
         for node in ast.walk(tree)
-        if isinstance(node, ast.Call)
+        if isinstance(
+            node,
+            ast.Call,
+        )
         and isinstance(
             node.func,
             ast.Name,
         )
     }
 
+    assert "bundle_from_global" in imported_names
     assert "bundle_from_global" in called_names
     assert "FSDataBundle" not in called_names
 

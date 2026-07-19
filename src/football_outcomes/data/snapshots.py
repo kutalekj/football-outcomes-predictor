@@ -4,7 +4,6 @@ import pickle
 from pathlib import Path
 from typing import Optional
 
-from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import (
     FSDataBundle,
 )
@@ -13,8 +12,13 @@ SNAPSHOT_VERSION = 1
 
 
 def load_snapshot(
-    path: Path = sett.LOAD_SNAPSHOT_PATH,
+    path: Path,
 ) -> FSDataBundle:
+    """
+    Load and validate one explicitly selected
+    snapshot.
+    """
+
     with path.open("rb") as file:
         bundle: FSDataBundle = pickle.load(file)
 
@@ -30,8 +34,13 @@ def load_snapshot(
 
 
 def try_load_snapshot(
-    path: Path = sett.LOAD_SNAPSHOT_PATH,
+    path: Path,
 ) -> Optional[FSDataBundle]:
+    """
+    Attempt to load one explicitly selected
+    snapshot.
+    """
+
     if not path.exists():
         return None
 
@@ -44,12 +53,17 @@ def try_load_snapshot(
 
 def save_snapshot(
     bundle: FSDataBundle,
-    path: Path = sett.SAVE_SNAPSHOT_PATH,
+    path: Path,
 ) -> None:
+    """
+    Store a bundle at one explicitly selected path.
+    """
+
     path.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
+
     bundle.meta["snapshot_version"] = SNAPSHOT_VERSION
 
     print("Saving snapshot to: " f"{path.resolve()}")

@@ -246,9 +246,10 @@ def test_manual_and_automatic_team_mapping_are_preserved(
     assert state.fs_team_to_sofifa_team[2] == 200
 
 
-def test_main_pipeline_uses_extracted_team_service() -> None:
-    source_path = PROJECT_ROOT / "scripts" / "main_footystats.py"
+def test_application_pipeline_uses_extracted_team_service() -> None:
+    source_path = PROJECT_ROOT / "src" / "football_outcomes" / "application" / "footystats_pipeline.py"
     source = source_path.read_text(encoding="utf-8")
 
     assert "football_outcomes.data." "sofifa_team_matching" in source
+    assert "match_fs_teams_to_sofifa_teams" in source
     assert "football_outcomes.utils." "fs_player_skill_utils" not in source
