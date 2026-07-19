@@ -2,10 +2,12 @@ import time
 import zoneinfo
 from datetime import datetime, timezone
 
-import requests
-
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
+from football_outcomes.data.footystats_client import (
+    FootyStatsClient,
+    create_default_client,
+)
 from football_outcomes.data.fs_models import (
     FSCompSeason,
     FSDataBundle,
@@ -21,6 +23,7 @@ from football_outcomes.data.state import (
 def fill_globals_with_cache(
     cache: FSDataBundle,
     update_leagues_list: bool = False,
+    client: FootyStatsClient | None = None,
 ) -> None:
     """
     Compatibility wrapper for historical callers.
@@ -36,14 +39,15 @@ def fill_globals_with_cache(
     if not update_leagues_list:
         return
 
-    request_string = sett.FS_HOST + "/league-list?key=" + sett.FS_KEY
-    response = requests.get(request_string)
-    response_data = response.json()
+    resolved_client = client if client is not None else create_default_client()
 
-    global_instance.leagues_list = response_data["data"]
+    global_instance.leagues_list = resolved_client.get_data("league-list")
 
 
-def retrieve_new_data() -> FSDataBundle:
+def retrieve_new_data(
+    client: FootyStatsClient | None = None,
+) -> FSDataBundle:
+    resolved_client = client if client is not None else create_default_client()
     global_instance = Global.get_instance()
 
     id_to_match: dict[int, FSMatch] = {}
@@ -73,34 +77,28 @@ def retrieve_new_data() -> FSDataBundle:
             global_instance.all_comp_seasons[new_comp_season.id] = new_comp_season
 
         # 1. League Stats
-        request_string = (
-            sett.FS_HOST
-            + "/league-season?key="
-            + sett.FS_KEY
-            + "&season_id="
-            + str(new_comp_season.id)
-            + "&include=stats"
+        res_data = resolved_client.get_data(
+            "league-season",
+            {
+                "season_id": (new_comp_season.id),
+                "include": "stats",
+            },
         )
-        res = requests.get(request_string)
-        res_data = res.json()["data"]
         new_comp_season.format = res_data["format"]  # e.g. "Domestic League"
         new_comp_season.domestic_scale = res_data["domestic_scale"]
         new_comp_season.division = res_data["division"]
         new_comp_season.total_game_week = res_data["total_game_week"]
 
         # 2. League Teams
-        request_string = (
-            sett.FS_HOST
-            + "/league-teams?key="
-            + sett.FS_KEY
-            + "&season_id="
-            + str(new_comp_season.id)
-            + "&include=stats"
+        team_rows = resolved_client.get_data(
+            "league-teams",
+            {
+                "season_id": (new_comp_season.id),
+                "include": "stats",
+            },
         )
-        res = requests.get(request_string)
-        res_data = res.json()
 
-        for t in res_data["data"]:
+        for t in team_rows:
             team_id = t["id"]
             if team_id not in global_instance.all_teams:
                 new_team = FSTeam(
@@ -114,27 +112,10 @@ def retrieve_new_data() -> FSDataBundle:
                 team.comp_seasons[t["competition_id"]] = []  # list of players in roster
 
         # 3. League Players
-        request_string = sett.FS_HOST + "/league-players?key=" + sett.FS_KEY + "&season_id=" + str(new_comp_season.id)
-        res = requests.get(request_string)
-        res_data = res.json()
-
-        all_rows = []
-        all_rows.extend(res_data["data"])
-        max_page = res_data["pager"]["max_page"]
-
-        for page in range(2, max_page + 1):
-            request_string = (
-                sett.FS_HOST
-                + "/league-players?key="
-                + sett.FS_KEY
-                + "&season_id="
-                + str(new_comp_season.id)
-                + "&page="
-                + str(page)
-            )
-            res = requests.get(request_string)
-            page_data = res.json()
-            all_rows.extend(page_data["data"])
+        all_rows = resolved_client.get_paginated_data(
+            "league-players",
+            {"season_id": (new_comp_season.id)},
+        )
 
         for player in all_rows:
             if player["id"] not in global_instance.all_players:
@@ -198,27 +179,10 @@ def retrieve_new_data() -> FSDataBundle:
         )
 
         # 4. League Matches
-        request_string = sett.FS_HOST + "/league-matches?key=" + sett.FS_KEY + "&season_id=" + str(new_comp_season.id)
-        res = requests.get(request_string)
-        res_data = res.json()
-
-        matches_data: list[dict] = []
-        matches_data.extend(res_data["data"])
-        pager = res_data.get("pager", {})
-        max_page = pager.get("max_page", 1)
-        for page in range(2, max_page + 1):
-            request_string = (
-                sett.FS_HOST
-                + "/league-matches?key="
-                + sett.FS_KEY
-                + "&season_id="
-                + str(new_comp_season.id)
-                + "&page="
-                + str(page)
-            )
-            res = requests.get(request_string)
-            page_data = res.json()
-            matches_data.extend(page_data["data"])
+        matches_data = resolved_client.get_paginated_data(
+            "league-matches",
+            {"season_id": (new_comp_season.id)},
+        )
         if not matches_data:
             raise ValueError(
                 f"For an unknown reason no matches were found "
@@ -336,9 +300,10 @@ def retrieve_new_data() -> FSDataBundle:
             new_match.odds["btts_yes"] = m["odds_btts_yes"]
             new_match.odds["btts_no"] = m["odds_btts_no"]
 
-            request_string = sett.FS_HOST + "/match?key=" + sett.FS_KEY + "&match_id=" + str(new_match.id)
-            res = requests.get(request_string)
-            res_data = res.json()["data"]
+            res_data = resolved_client.get_data(
+                "match",
+                {"match_id": (new_match.id)},
+            )
 
             if isinstance(res_data, list):  # normalize res_data so that it's dict with 'lineups'
                 if not res_data:

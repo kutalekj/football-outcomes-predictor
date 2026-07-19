@@ -10,6 +10,38 @@ from football_outcomes.data import (
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
+class FakeClient:
+    def __init__(
+        self,
+        league_rows,
+    ):
+        self.league_rows = league_rows
+        self.calls = []
+
+    def get_data(
+        self,
+        endpoint,
+        params=None,
+    ):
+        self.calls.append(
+            (
+                endpoint,
+                params,
+            )
+        )
+
+        return self.league_rows
+
+
+class FailClient:
+    def get_data(
+        self,
+        endpoint,
+        params=None,
+    ):
+        raise AssertionError("Client must not be called.")
+
+
 def test_main_pipeline_uses_state_restoration() -> None:
     source_path = PROJECT_ROOT / "scripts" / "main_footystats.py"
     tree = ast.parse(source_path.read_text(encoding="utf-8"))
@@ -27,7 +59,10 @@ def test_main_pipeline_uses_state_restoration() -> None:
     called_names = {
         node.func.id
         for node in ast.walk(tree)
-        if isinstance(node, ast.Call)
+        if isinstance(
+            node,
+            ast.Call,
+        )
         and isinstance(
             node.func,
             ast.Name,
@@ -54,23 +89,16 @@ def test_legacy_fill_delegates_without_network(
         applied.append(supplied_cache)
         return target
 
-    def fail_request(*args, **kwargs):
-        raise AssertionError("Network must not be used.")
-
     monkeypatch.setattr(
         fs_retrieve,
         "apply_bundle_to_global",
         fake_apply_bundle,
     )
-    monkeypatch.setattr(
-        fs_retrieve.requests,
-        "get",
-        fail_request,
-    )
 
     result = fs_retrieve.fill_globals_with_cache(
         cache,
         update_leagues_list=False,
+        client=FailClient(),
     )
 
     assert result is None
@@ -82,19 +110,6 @@ def test_legacy_fill_can_refresh_league_list(
     monkeypatch,
 ) -> None:
     target = SimpleNamespace(leagues_list=["cached"])
-    requested_urls = []
-
-    class Response:
-        @staticmethod
-        def json():
-            return {
-                "data": [
-                    {
-                        "id": 123,
-                        "name": "League",
-                    }
-                ]
-            }
 
     monkeypatch.setattr(
         fs_retrieve,
@@ -102,23 +117,30 @@ def test_legacy_fill_can_refresh_league_list(
         lambda cache: target,
     )
 
-    def fake_request(url):
-        requested_urls.append(url)
-        return Response()
-
-    monkeypatch.setattr(
-        fs_retrieve.requests,
-        "get",
-        fake_request,
+    client = FakeClient(
+        [
+            {
+                "id": 123,
+                "name": "League",
+            }
+        ]
     )
 
-    fs_retrieve.fill_globals_with_cache(
+    result = fs_retrieve.fill_globals_with_cache(
         object(),
         update_leagues_list=True,
+        client=client,
     )
 
-    assert len(requested_urls) == 1
-    assert "/league-list?" in (requested_urls[0])
+    assert result is None
+
+    assert client.calls == [
+        (
+            "league-list",
+            None,
+        )
+    ]
+
     assert target.leagues_list == [
         {
             "id": 123,
