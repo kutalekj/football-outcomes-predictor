@@ -8,8 +8,9 @@ import matplotlib
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data.fs_io import save_snapshot, try_load_snapshot
-from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
+from football_outcomes.data.fs_retrieve import retrieve_new_data
 from football_outcomes.data.state import (
+    apply_bundle_to_global,
     bundle_from_global,
 )
 from football_outcomes.datasets.mappings import (
@@ -77,15 +78,10 @@ def load_data_into_globals() -> None:
 
     cache = try_load_snapshot()
     if sett.ALL_LOAD and cache is not None:
-        fill_globals_with_cache(cache, update_leagues_list=False)
+        apply_bundle_to_global(cache)
     elif sett.ALL_GET_NEW:
         bundle = retrieve_new_data()
-        fill_globals_with_cache(bundle, update_leagues_list=False)
-    else:
-        raise RuntimeError(
-            "No snapshot could be loaded. For submission, place the sample snapshot at "
-            f"{sett.LOAD_SNAPSHOT_PATH} or set FOP_LOAD_SNAPSHOT_PATH."
-        )
+        apply_bundle_to_global(bundle)
 
     print(f"[data] matches loaded: {len(g.all_matches)}")
     print(f"[data] teams loaded: {len(g.all_teams)}")

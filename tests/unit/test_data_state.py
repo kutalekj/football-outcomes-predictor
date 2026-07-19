@@ -8,6 +8,7 @@ from football_outcomes.data.fs_models import (
 )
 from football_outcomes.data.state import (
     FSDataState,
+    apply_bundle_to_global,
     apply_state_to_global,
     bundle_from_global,
     bundle_from_state,
@@ -197,3 +198,36 @@ def test_empty_bundle_optional_fields_are_normalized() -> None:
     assert state.sofifa_snapshots == []
     assert state.sofifa_player_occurrences == {}
     assert state.fs_to_sofifa_cache == {}
+
+
+def test_bundle_application_preserves_average_strength() -> None:
+    state = build_state()
+    bundle = bundle_from_state(state)
+
+    preserved_average_strength = {
+        (
+            2023,
+            9,
+            "GK",
+        ): [68.0, 69.0]
+    }
+
+    target = SimpleNamespace(sf_avg_team_strength=(preserved_average_strength))
+
+    result = apply_bundle_to_global(
+        bundle,
+        target,
+    )
+
+    assert result is target
+
+    assert target.all_comp_seasons is state.comp_seasons
+    assert target.all_teams is state.teams
+    assert target.all_players is state.players
+    assert target.all_matches is state.matches
+    assert target.leagues_list is state.leagues_list
+
+    assert target.sf_avg_team_strength is preserved_average_strength
+
+    assert target.sofifa_snapshots is state.sofifa_snapshots
+    assert target.fs_to_sofifa_cache is state.fs_to_sofifa_cache

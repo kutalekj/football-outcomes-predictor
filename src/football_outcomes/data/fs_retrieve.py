@@ -13,39 +13,34 @@ from football_outcomes.data.fs_models import (
     FSPlayer,
     FSTeam,
 )
+from football_outcomes.data.state import (
+    apply_bundle_to_global,
+)
 
 
-def fill_globals_with_cache(cache: FSDataBundle, update_leagues_list: bool = False) -> None:
-    global_instance = Global.get_instance()
-    global_instance.all_comp_seasons = cache.comp_seasons
-    global_instance.all_teams = cache.teams
-    global_instance.all_players = cache.players
-    global_instance.all_matches = cache.matches
+def fill_globals_with_cache(
+    cache: FSDataBundle,
+    update_leagues_list: bool = False,
+) -> None:
+    """
+    Compatibility wrapper for historical callers.
 
-    print(f"{str(len(global_instance.all_comp_seasons))} comp seasons loaded from snapshot.")
-    print(f"{str(len(global_instance.all_teams))} teams loaded from snapshot.")
-    print(f"{str(len(global_instance.all_players))} players loaded from snapshot.")
-    print(f"{str(len(global_instance.all_matches))} matches loaded from snapshot.")
+    Offline state restoration is delegated to the
+    explicit state adapter. The optional network
+    refresh remains here until retrieval transport
+    is separated later in Step 5.
+    """
 
-    if update_leagues_list:
-        request_string = sett.FS_HOST + "/league-list?key=" + sett.FS_KEY
-        res = requests.get(request_string)
-        res_data = res.json()
-        global_instance.leagues_list = res_data["data"]
-    else:
-        global_instance.leagues_list = cache.leagues_list
+    global_instance = apply_bundle_to_global(cache)
 
-    global_instance.sofifa_snapshots = getattr(cache, "sofifa_snapshots", None) or []
-    global_instance.sofifa_player_occurrences = getattr(cache, "sofifa_player_occurrences", None) or {}
-    global_instance.sofifa_players_by_dob = getattr(cache, "sofifa_players_by_dob", None) or {}
-    global_instance.fs_to_sofifa_cache = getattr(cache, "fs_to_sofifa_cache", None) or {}
-    global_instance.sofifa_teams_by_league = getattr(cache, "sofifa_teams_by_league", None) or {}
-    global_instance.sofifa_team_meta = getattr(cache, "sofifa_team_meta", None) or {}
-    global_instance.sofifa_players_by_team = getattr(cache, "sofifa_players_by_team", None) or {}
-    global_instance.fs_team_to_sofifa_team = getattr(cache, "fs_team_to_sofifa_team", None) or {}
+    if not update_leagues_list:
+        return
 
-    print(f"{len(global_instance.sofifa_snapshots)} sofifa snapshots loaded from snapshot.")
-    print(f"{len(global_instance.fs_to_sofifa_cache)} fs->sofifa cached matches loaded from snapshot.")
+    request_string = sett.FS_HOST + "/league-list?key=" + sett.FS_KEY
+    response = requests.get(request_string)
+    response_data = response.json()
+
+    global_instance.leagues_list = response_data["data"]
 
 
 def retrieve_new_data() -> FSDataBundle:

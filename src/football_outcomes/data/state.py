@@ -243,6 +243,46 @@ def apply_state_to_global(
     return global_instance
 
 
+def apply_bundle_to_global(
+    bundle: FSDataBundle,
+    global_instance: Any | None = None,
+) -> Any:
+    """
+    Restore serialized bundle data into legacy
+    process-wide state.
+
+    Average team-strength data is preserved because
+    it is loaded independently and is not serialized
+    in FSDataBundle.
+    """
+
+    if global_instance is None:
+        global_instance = Global.get_instance()
+
+    average_team_strength = getattr(
+        global_instance,
+        "sf_avg_team_strength",
+        {},
+    )
+
+    state = state_from_bundle(bundle)
+    state.sf_avg_team_strength = average_team_strength
+
+    apply_state_to_global(
+        state,
+        global_instance,
+    )
+
+    print(f"{len(state.comp_seasons)} " "comp seasons loaded from snapshot.")
+    print(f"{len(state.teams)} " "teams loaded from snapshot.")
+    print(f"{len(state.players)} " "players loaded from snapshot.")
+    print(f"{len(state.matches)} " "matches loaded from snapshot.")
+    print(f"{len(state.sofifa_snapshots)} " "sofifa snapshots loaded from snapshot.")
+    print(f"{len(state.fs_to_sofifa_cache)} " "fs->sofifa cached matches " "loaded from snapshot.")
+
+    return global_instance
+
+
 def bundle_from_state(
     state: FSDataState,
     *,
