@@ -15,6 +15,7 @@ from rapidfuzz import fuzz
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
 from football_outcomes.data import lineups as _lineups
+from football_outcomes.data import sofifa_skills as _sofifa_skills
 from football_outcomes.data.fs_models import FSPlayer
 
 # Compatibility exports during the
@@ -22,6 +23,8 @@ from football_outcomes.data.fs_models import FSPlayer
 _FS_POS_ORDER = _lineups.FS_POSITION_ORDER
 _pos_rank = _lineups.position_rank
 _select_and_sort_lineup = _lineups.select_and_sort_lineup
+_ordered_snapshot_candidates = _sofifa_skills.ordered_snapshot_candidates
+_merge_skills_from_snapshots = _sofifa_skills.merge_skills_from_snapshots
 calculate_team_position_indices = _lineups.calculate_team_position_indices
 
 _debug_log_path: Optional[str] = None
@@ -616,93 +619,6 @@ def _match_fs_to_sofifa(
         res.sofifa_best_name,
     )
     return res
-
-
-# ---------- helpers: skill retrieval across snapshots ----------
-
-
-def _ordered_snapshot_candidates(occurrences: List[Tuple[int, date]], match_date: date) -> List[Tuple[int, date]]:
-    """
-    Order snapshots as:
-      1) past snapshots closest first (match_date - snap_date >= 0), by abs diff ascending
-      2) future snapshots closest first, by abs diff ascending
-    Keep only within +/- SF_MAX_TIMEDELTA_DAYS.
-    Limit to SF_MAX_SNAPSHOTS_TO_SCAN.
-    """
-    max_days = sett.SF_MAX_TIMEDELTA_DAYS
-
-    past = []
-    future = []
-    for idx, d in occurrences:
-        dd = (match_date - d).days
-        if abs(dd) > max_days:
-            continue
-        if dd >= 0:
-            past.append((abs(dd), idx, d))
-        else:
-            future.append((abs(dd), idx, d))
-
-    past.sort(key=lambda x: x[0])
-    future.sort(key=lambda x: x[0])
-
-    ordered = [(idx, d) for _, idx, d in past] + [(idx, d) for _, idx, d in future]
-    return ordered[: sett.SF_MAX_SNAPSHOTS_TO_SCAN]
-
-
-def _merge_skills_from_snapshots(
-    sofifa_id: int,
-    match_dt: datetime,
-) -> Tuple[List[float], int, int]:
-    """
-    Returns:
-      - skills: 34-length vector
-      - snapshots_used: number of snapshots that contributed ≥1 value
-      - closest_delta_days: (match_date - snapshot_date) of first contributing snapshot
-    """
-    g = Global.get_instance()
-
-    match_date = match_dt.date()
-    occ = g.sofifa_player_occurrences.get(sofifa_id, [])
-    if not occ:
-        return [-1.0] * len(sett.PLAYER_SKILLS), 0, 0
-
-    candidates = _ordered_snapshot_candidates(occ, match_date)
-    if not candidates:
-        return [-1.0] * len(sett.PLAYER_SKILLS), 0, 0
-
-    out = [-1.0] * len(sett.PLAYER_SKILLS)
-
-    snapshots_used = 0
-    closest_delta_days = None
-
-    for snap_idx, snap_date in candidates:
-        snap_players = g.sofifa_snapshots[snap_idx][1]  # (date, dict)
-        rec = snap_players.get(sofifa_id)
-        if rec is None:
-            continue
-
-        skills = rec.get("skills")
-        if not skills or len(skills) != len(sett.PLAYER_SKILLS):
-            continue
-
-        contributed = False
-        for i, v in enumerate(skills):
-            if out[i] == -1.0 and v is not None:
-                out[i] = float(v)
-                contributed = True
-
-        if contributed:
-            snapshots_used += 1
-            if closest_delta_days is None:
-                closest_delta_days = (match_date - snap_date).days
-
-        if -1.0 not in out:
-            break
-
-    if closest_delta_days is None:
-        closest_delta_days = 0
-
-    return out, snapshots_used, closest_delta_days
 
 
 # ---------- helpers: lineup handling ----------
