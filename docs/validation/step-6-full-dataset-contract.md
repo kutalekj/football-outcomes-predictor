@@ -108,3 +108,24 @@ These are warnings at the raw-snapshot boundary. Step 6.3 revalidates
 the selected model-development match scope and treats missing teams,
 invalid chronology, and other unusable selected-match fields as
 critical failures.
+
+## Step 6.3 selection and round findings
+
+The active model-development selection passed all critical checks.
+
+Selection metrics:
+
+- total snapshot matches: `43110`;
+- matches before round filtering: `30741`;
+- matches removed by round filtering: `272`;
+- selected matches: `30469`;
+- selected competitions: `24`;
+- selected competition-seasons: `92`;
+- constructed rounds: `320`;
+- minimum round size: `8`;
+- maximum round size: `200`;
+- final round size: `29`.
+
+The selected scope contained no missing teams, invalid goals, invalid
+dates, incomplete round whitelists, chronology violations, repeated
+teams within a round, or lost matches during round construction.
