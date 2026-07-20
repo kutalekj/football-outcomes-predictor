@@ -242,3 +242,41 @@ Every statistically imputed cell:
 
 The fitter receives its training samples explicitly and has no access to
 validation matches, targets, global state or mutable settings.
+
+## Step 7.5 rolling-array integration
+
+The past-only reconstruction and statistical imputation services are
+integrated through `football_outcomes.datasets.imputed_strength`.
+
+For each rolling step:
+
+1. the ordinary training and validation arrays are constructed;
+2. both windows are independently reconstructed from past-only SoFIFA
+   snapshots;
+3. the statistical imputer is fitted only on the rolling training
+   window;
+4. the fitted imputer is applied to both training and validation
+   matrices;
+5. only the strength tensor and aligned position arrays are replaced.
+
+Numerical features, categorical IDs and targets remain unchanged.
+
+The strength tensor retains its existing shape and channel order:
+
+1. normalized home values;
+2. home genuine-observation mask;
+3. normalized away values;
+4. away genuine-observation mask.
+
+Imputed values are supplied to the model, but their mask remains zero.
+Consequently, the current architecture can distinguish genuine past-only
+SoFIFA observations from statistical replacements without a model-input
+shape change.
+
+The integration is controlled by
+`TrainConfig.enable_strength_imputation` and is disabled by default.
+The active application may enable it explicitly with
+`FOP_ENABLE_STRENGTH_IMPUTATION=1`.
+
+When disabled, the original array builder and rolling-training path are
+used unchanged.

@@ -61,6 +61,11 @@ class TrainConfig:
     representation: str = "full"
     use_strength_masks: bool = True
 
+    # Leakage-safe SoFIFA strength path
+    enable_strength_imputation: bool = False
+    strength_imputation_minimum_support: int = 20
+    strength_imputation_neutral_value: float = 50.0
+
     mlp_hidden_1: int = 128
     mlp_hidden_2: int = 64
     mlp_hidden_3: int = 32

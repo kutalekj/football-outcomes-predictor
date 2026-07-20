@@ -1,6 +1,9 @@
 import ast
 import inspect
 from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
 
 from football_outcomes.modeling import (
     factory,
@@ -8,6 +11,9 @@ from football_outcomes.modeling import (
 from football_outcomes.training import (
     rolling,
     train_mlp_rolling,
+)
+from football_outcomes.training.configs import (
+    TrainConfig,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -77,3 +83,26 @@ def test_main_rolling_loop_includes_final_round() -> None:
 
     assert "len(rounds)" in range_stops
     assert "len(rounds) - 1" not in range_stops
+
+
+def test_enabled_imputation_requires_context() -> None:
+    config = TrainConfig(enable_strength_imputation=True)
+
+    with pytest.raises(
+        ValueError,
+        match=("no imputation context"),
+    ):
+        rolling.train_rolling(
+            matches_sorted=[],
+            cat_maps=SimpleNamespace(),
+            cfg=config,
+            competition_names=("Test League",),
+        )
+
+
+def test_rolling_contains_fold_local_imputation_boundary() -> None:
+    source = inspect.getsource(rolling.train_rolling)
+
+    assert "build_fold_imputed_arrays" in source
+    assert "training_matches=train_ms" in source
+    assert "validation_matches=val_ms" in source
