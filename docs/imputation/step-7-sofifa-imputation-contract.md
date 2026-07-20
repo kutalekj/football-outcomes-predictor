@@ -207,3 +207,38 @@ non-negative source age bounded by the configured past-only window.
 The service reconstructs both home and away matrices without modifying
 matches, persisted features, lineups, snapshot records, occurrence
 indexes or player-match cache records.
+
+## Step 7.4 fold-local statistical fallback
+
+A pure statistical imputation service is implemented in
+`football_outcomes.data.sofifa_imputation`.
+
+The service is separated into explicit fit and apply operations.
+
+Fitting accepts only past-only reconstructed training matrices.
+Statistically imputed values are rejected as fitting observations, which
+prevents recursively learning from generated values.
+
+Missing cells are resolved in this deterministic order:
+
+1. competition-and-position per-skill median;
+2. position per-skill median;
+3. global training-window per-skill median;
+4. fixed neutral value `50.0`.
+
+Competition-and-position and position medians require the configured
+minimum support. Global medians require at least one observed training
+value.
+
+Observed past-only values, provenance codes and source ages remain
+unchanged. Their observed mask remains `1`.
+
+Every statistically imputed cell:
+
+- retains observed mask `0`;
+- retains source age `-1`;
+- receives provenance code `3`, `4`, `5` or `6`;
+- is not written back to the frozen snapshot.
+
+The fitter receives its training samples explicitly and has no access to
+validation matches, targets, global state or mutable settings.
