@@ -179,3 +179,31 @@ The service:
 
 The complete provenance code range `0` through `6` is frozen here for
 later statistical-imputation increments.
+
+## Step 7.3 past-only team-strength reconstruction
+
+A transient team-strength reconstruction service is implemented in
+`football_outcomes.data.sofifa_strength`.
+
+For every selected match-team side, the service produces aligned:
+
+- `11 x 34` raw skill values;
+- `11 x 34` provenance codes;
+- `11 x 34` source-age values in days;
+- 11 FootyStats player IDs;
+- 11 matched SoFIFA player IDs or unresolved markers;
+- 11 deterministic position indices.
+
+Row ordering is delegated to the existing lineup service so the skill,
+provenance, source-age and position arrays share the same goalkeeper,
+defender, midfielder, forward and padding alignment.
+
+Only successful cached FootyStats-to-SoFIFA player mappings are used.
+Failed, absent or malformed mappings remain unresolved.
+
+Source age is `-1` for unresolved cells. Every observed cell has a
+non-negative source age bounded by the configured past-only window.
+
+The service reconstructs both home and away matrices without modifying
+matches, persisted features, lineups, snapshot records, occurrence
+indexes or player-match cache records.
