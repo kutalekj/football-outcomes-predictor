@@ -155,3 +155,27 @@ Step 7 is complete when:
 6. no snapshot object is mutated;
 7. all validation, unit and characterization tests pass;
 8. a deterministic full-dataset comparison report is produced.
+
+## Step 7.2 past-only skill retrieval
+
+A pure temporal retrieval service is implemented in
+`football_outcomes.data.sofifa_temporal`.
+
+The service:
+
+- accepts snapshots and player occurrences explicitly;
+- never reads global state or mutable settings;
+- uses the actual date attached to each snapshot as the temporal
+  authority;
+- rejects every snapshot dated after the prediction date;
+- orders eligible snapshots from nearest past to older past;
+- merges valid skills at cell level;
+- records one source date and provenance code per skill;
+- distinguishes nearest-past observations, older-past observations and
+  unresolved cells;
+- returns immutable results;
+- does not modify the legacy SoFIFA retrieval path or the frozen
+  snapshot.
+
+The complete provenance code range `0` through `6` is frozen here for
+later statistical-imputation increments.
