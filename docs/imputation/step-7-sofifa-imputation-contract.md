@@ -280,3 +280,38 @@ The active application may enable it explicitly with
 
 When disabled, the original array builder and rolling-training path are
 used unchanged.
+## Step 7.6 final acceptance
+
+Step 7 is validated by a deterministic full selected-scope temporal
+comparison and a deterministic audit of the production fold-local array
+path.
+
+The final validation compares:
+
+1. persisted legacy strength matrices;
+2. strict past-only reconstructed matrices;
+3. fold-local completed validation arrays fitted only on preceding
+   rolling training rounds.
+
+The full selected scope is used for the legacy-versus-past-only
+comparison. Five evenly spaced eligible rolling folds, including the
+first and final eligible folds, exercise the production imputation
+adapter without running model optimization.
+
+Acceptance requires:
+
+- no future-dated SoFIFA source cells;
+- no source cells older than the configured temporal window;
+- no invalid past-only observed values or matrix shapes;
+- no unresolved cells after fold-local completion in audited folds;
+- exact agreement between genuine-observation provenance and mask
+  channels;
+- unchanged numerical features, categorical IDs, positions and targets
+  at the integration boundary;
+- finite normalized strength values and binary masks;
+- deterministic JSON, CSV and Markdown reports;
+- all unit, characterization and runtime-smoke checks passing.
+
+The frozen snapshot is not modified. Leakage-safe strength imputation
+remains transient, explicit and disabled by default.
+
