@@ -6,7 +6,7 @@ from datetime import date
 from typing import Any, Dict, List, Optional, Tuple
 
 from football_outcomes.config import fs_settings as sett
-from football_outcomes.config.fs_globals import Global
+from football_outcomes.data import league_table as _league_table
 
 
 def _conn_host() -> str:
@@ -92,290 +92,100 @@ class FSCompSeason:
     # Helpers for table-eligible matches
     # ------------------------------------------------------------------
 
-    def _valid_round_ids_for_this_season(self) -> Optional[set[int]]:
-        """
-        Strict whitelist from settings.
-        Returns:
-          - set[int] for whitelisted seasons
-          - None if this competition season is not configured
-        """
-        valid = getattr(sett, "LEAGUE_VALID_ROUND_IDS_BY_SEASON", {}).get((self.name, self.season))
-        if valid is None:
-            return None
-        return {int(x) for x in valid}
+    def _valid_round_ids_for_this_season(
+        self,
+    ) -> Optional[set[int]]:
+        return _league_table.valid_round_ids_for_season(self)
 
-    def _is_match_table_eligible(self, match: "FSMatch") -> bool:
-        """
-        Table positions should be computed only from the filtered league dataset:
-          - same competition season
-          - complete datetime
-          - season in configured window
-          - round_id whitelisted for this (comp_name, season)
-        """
-        if match is None:
-            return False
+    def _is_match_table_eligible(
+        self,
+        match: FSMatch,
+    ) -> bool:
+        return _league_table.is_match_table_eligible(
+            self,
+            match,
+        )
 
-        if getattr(match, "datetime", None) is None:
-            return False
-
-        if getattr(match, "season", None) is None:
-            return False
-
-        if not (sett.FIRST_SEASON <= int(match.season) < sett.LAST_SEASON):
-            return False
-
-        if getattr(match, "comp_name", None) != self.name:
-            return False
-
-        if getattr(match, "comp_season_id", None) != self.id:
-            return False
-
-        valid_round_ids = self._valid_round_ids_for_this_season()
-        if valid_round_ids is None:
-            return False
-
-        round_id = getattr(match, "round_id", None)
-        if round_id is None:
-            return False
-
-        return int(round_id) in valid_round_ids
-
-    def _get_table_matches(self) -> List["FSMatch"]:
-        """
-        Return only the retained matches that define the competition-season table.
-        """
-        return [m for m in self.matches if self._is_match_table_eligible(m)]
+    def _get_table_matches(
+        self,
+    ) -> List[FSMatch]:
+        return _league_table.get_table_matches(self)
 
     @staticmethod
-    def _match_time_key(m: "FSMatch"):
-        """
-        Ordering key for pre-match table states.
-        datetime is UTC date at 00:00, hour_utc refines ordering within the date.
-        Missing hour_utc falls back to -1.
-        """
-        dt = getattr(m, "datetime", None)
-        hr = getattr(m, "hour_utc", None)
-        hr = int(hr) if isinstance(hr, int) else -1
-        return dt, hr, m.id
+    def _match_time_key(
+        match: FSMatch,
+    ):
+        return _league_table.match_time_key(match)
 
-    # ------------------------------------------------------------------
-    # League table core logic
-    # ------------------------------------------------------------------
+    def init_league_table(
+        self,
+    ) -> None:
+        _league_table.init_league_table(self)
 
-    def init_league_table(self) -> None:
-        """
-        Initialize teams + empty table stats for this competition season,
-        using only retained (table-eligible) matches.
-        """
-        table_matches = self._get_table_matches()
+    def _ensure_table(
+        self,
+    ) -> None:
+        _league_table.ensure_table(self)
 
-        team_by_id: Dict[int, "FSTeam"] = {}
-        for m in table_matches:
-            if m.home_team is not None:
-                team_by_id[m.home_team.id] = m.home_team
-            if m.away_team is not None:
-                team_by_id[m.away_team.id] = m.away_team
+    def reset_table(
+        self,
+    ) -> None:
+        _league_table.reset_table(self)
 
-        self.teams = sorted(team_by_id.values(), key=lambda t: t.id)
-        self.team_stats = {
-            t.id: {
-                "points": 0.0,
-                "games_played": 0.0,
-                "goals_for": 0.0,
-                "goals_against": 0.0,
-                "avg_points_per_game": 0.0,
-            }
-            for t in self.teams
-        }
-        self._pre_match_positions = {}
-        self._table_initialized = True
+    def _apply_match_to_table(
+        self,
+        match: FSMatch,
+    ) -> None:
+        _league_table.apply_match_to_table(
+            self,
+            match,
+        )
 
-    def _ensure_table(self) -> None:
-        if not self._table_initialized:
-            self.init_league_table()
+    def _recompute_avg_points(
+        self,
+    ) -> None:
+        (_league_table.recompute_average_points(self))
 
-    def reset_table(self) -> None:
-        self._ensure_table()
-        for tid in self.team_stats:
-            self.team_stats[tid].update(
-                points=0.0,
-                games_played=0.0,
-                goals_for=0.0,
-                goals_against=0.0,
-                avg_points_per_game=0.0,
-            )
-
-    def _apply_match_to_table(self, match: "FSMatch") -> None:
-        self._ensure_table()
-
-        if match.home_team is None or match.away_team is None:
-            raise ValueError("League table update failed: team not found.")
-        if match.home_goals is None or match.away_goals is None:
-            raise ValueError("League table update failed: goals not found.")
-
-        hid = match.home_team.id
-        aid = match.away_team.id
-
-        if hid not in self.team_stats or aid not in self.team_stats:
-            raise ValueError(
-                f"League table update failed: team id not found in current table "
-                f"for match {match.id} ({self.name} {self.season})."
-            )
-
-        hg = float(match.home_goals)
-        ag = float(match.away_goals)
-
-        self.team_stats[hid]["games_played"] += 1.0
-        self.team_stats[hid]["goals_for"] += hg
-        self.team_stats[hid]["goals_against"] += ag
-
-        self.team_stats[aid]["games_played"] += 1.0
-        self.team_stats[aid]["goals_for"] += ag
-        self.team_stats[aid]["goals_against"] += hg
-
-        if hg > ag:
-            self.team_stats[hid]["points"] += 3.0
-        elif hg < ag:
-            self.team_stats[aid]["points"] += 3.0
-        else:
-            self.team_stats[hid]["points"] += 1.0
-            self.team_stats[aid]["points"] += 1.0
-
-    def _recompute_avg_points(self) -> None:
-        self._ensure_table()
-        for s in self.team_stats.values():
-            gp = s["games_played"]
-            s["avg_points_per_game"] = (s["points"] / gp) if gp > 0 else 0.0
-
-    def _sorted_team_ids(self) -> List[int]:
-        """
-        Full-table ordering using your chosen 'normalized performance so far' logic:
-          1) avg_points_per_game
-          2) goal difference
-          3) goals scored
-          4) -team_id deterministic tie-break
-        """
-        self._ensure_table()
-        self._recompute_avg_points()
-
-        def key(tid: int):
-            s = self.team_stats[tid]
-            gd = s["goals_for"] - s["goals_against"]
-            return s["avg_points_per_game"], gd, s["goals_for"], -tid
-
-        return sorted(self.team_stats.keys(), key=key, reverse=True)
+    def _sorted_team_ids(
+        self,
+    ) -> List[int]:
+        return _league_table.sorted_team_ids(self)
 
     @staticmethod
-    def _rank_to_position01(rank_1based: int, n_teams: int) -> float:
-        """
-        Best team => 1.0, worst team => 0.0
-        """
-        if n_teams <= 1:
-            return 1.0
-        return float(1.0 - ((rank_1based - 1) / (n_teams - 1)))
+    def _rank_to_position01(
+        rank_1based: int,
+        n_teams: int,
+    ) -> float:
+        return _league_table.rank_to_position01(
+            rank_1based,
+            n_teams,
+        )
 
-    def build_pre_match_positions_cache(self) -> None:
-        """
-        Precompute positions for every retained match in this competition season.
+    def build_pre_match_positions_cache(
+        self,
+    ) -> None:
+        (_league_table.build_pre_match_positions_cache(self))
 
-        Important:
-        - uses only whitelisted round_ids for this (competition, season)
-        - computes one continuous table across all retained matches
-        - does NOT reset between retained round types
-        - does NOT use the old active-team heuristic
-        - same (date, hour_utc) matches are handled as one batch to avoid leakage
-        """
-        self._ensure_table()
-        self.reset_table()
+    def get_team_position_before_match(
+        self,
+        team_id: int,
+        match: FSMatch,
+    ) -> float:
+        return _league_table.get_team_position_before_match(
+            self,
+            team_id,
+            match,
+        )
 
-        matches_sorted = sorted(self._get_table_matches(), key=self._match_time_key)
-
-        self._pre_match_positions = {}
-
-        i = 0
-        while i < len(matches_sorted):
-            dt_i, hr_i, _ = self._match_time_key(matches_sorted[i])
-
-            batch: List["FSMatch"] = []
-            while i < len(matches_sorted):
-                dt_j, hr_j, _ = self._match_time_key(matches_sorted[i])
-                if dt_j != dt_i or hr_j != hr_i:
-                    break
-                batch.append(matches_sorted[i])
-                i += 1
-
-            ordered = self._sorted_team_ids()
-            n = len(ordered)
-            rank_by_team = {tid: r for r, tid in enumerate(ordered, start=1)}
-
-            for m in batch:
-                if m.home_team is None or m.away_team is None:
-                    continue
-
-                hid = m.home_team.id
-                aid = m.away_team.id
-
-                if hid not in rank_by_team or aid not in rank_by_team:
-                    raise ValueError(
-                        f"Team missing from pre-match ranking cache build for "
-                        f"{self.name} {self.season}, match_id={m.id}, round_id={m.round_id}."
-                    )
-
-                self._pre_match_positions[m.id] = {
-                    hid: self._rank_to_position01(rank_by_team[hid], n),
-                    aid: self._rank_to_position01(rank_by_team[aid], n),
-                }
-
-            for m in batch:
-                self._apply_match_to_table(m)
-
-        self._recompute_avg_points()
-
-    def get_team_position_before_match(self, team_id: int, match: "FSMatch") -> float:
-        """
-        O(1) cache lookup when available.
-        Slow fallback recomputes using the same whitelist and same time ordering.
-        """
-        self._ensure_table()
-
-        pos_map = self._pre_match_positions.get(match.id)
-        if pos_map is not None and team_id in pos_map:
-            return pos_map[team_id]
-
-        return self.get_team_position_up_to_match(team_id, match)
-
-    def get_team_position_up_to_match(self, team_id: int, match: "FSMatch") -> float:
-        """
-        Slow fallback: recompute from retained matches strictly before the given match time.
-        """
-        self._ensure_table()
-
-        if match is None or getattr(match, "datetime", None) is None:
-            return 0.0
-
-        if not self._is_match_table_eligible(match):
-            return 0.0
-
-        target_key = self._match_time_key(match)
-
-        self.reset_table()
-        matches_sorted = sorted(self._get_table_matches(), key=self._match_time_key)
-
-        for m in matches_sorted:
-            if self._match_time_key(m) >= target_key:
-                break
-            self._apply_match_to_table(m)
-
-        ordered = self._sorted_team_ids()
-        n = len(ordered)
-
-        for rank, tid in enumerate(ordered, start=1):
-            if tid == team_id:
-                return self._rank_to_position01(rank, n)
-
-        raise ValueError(
-            f"Team [{team_id}] not found in table for competition season "
-            f"[{self.name}, {self.season}] (id={self.id}), match_id={match.id}."
+    def get_team_position_up_to_match(
+        self,
+        team_id: int,
+        match: FSMatch,
+    ) -> float:
+        return _league_table.get_team_position_up_to_match(
+            self,
+            team_id,
+            match,
         )
 
 
@@ -512,450 +322,20 @@ class FSMatch:
     def __hash__(self) -> int:
         return hash(self.id)
 
-    def calculate_match_features(self, team_index_league, team_index_all) -> FSMatchFeatures:
-        from football_outcomes.config import fs_settings as sett
-        from football_outcomes.utils import fs_feature_utils as fu
-        from football_outcomes.utils.fs_player_skill_utils import calculate_team_strength
+    def calculate_match_features(
+        self,
+        team_index_league,
+        team_index_all,
+    ) -> FSMatchFeatures:
+        """Compatibility delegate to the feature service."""
 
-        if self.home_team is None or self.away_team is None:
-            raise ValueError("Match missing teams.")
+        from football_outcomes.data.match_features import calculate_match_features as build_match_features
 
-        comp_season_id = self.comp_season_id
-        if comp_season_id is None:
-            raise ValueError(f"Match {self.id} missing comp_season_id.")
-
-        # comp_id must be integer category index (stable)
-        comp_name = self.comp_name or ""
-        try:
-            comp_id = sett.COMPS_LEAGUE.index(comp_name)
-        except ValueError:
-            # non-league comps can still exist in globals; we just keep -1
-            comp_id = -1
-
-        hour = int(self.hour_utc or 0)
-        month = int(self.month or 1)
-        hs, hc, ms, mc = fu.hour_month_cyclic(hour, month)
-
-        mf = FSMatchFeatures(
-            comp_id=comp_id,
-            season=fu.normalize_season(self.season),
-            home_team_id=self.home_team.id,
-            away_team_id=self.away_team.id,
-            hours_sin=hs,
-            hours_cos=hc,
-            month_sin=ms,
-            month_cos=mc,
+        return build_match_features(
+            match=self,
+            team_index_league=(team_index_league),
+            team_index_all=(team_index_all),
         )
-
-        # ---- ELO (pre-match, computed from previous matches only, then stored on the match for next matches)
-        mf.home_elo, mf.away_elo = fu.calculate_elo_for_match(
-            team_index_league=team_index_league,
-            curr_match=self,
-        )
-
-        # ---- Match position in season (requires populated first/last dates)
-        g = Global.get_instance()
-        cs = g.all_comp_seasons.get(comp_season_id)
-        if cs is not None and cs.first_match_date is not None and cs.last_match_date is not None:
-            total_seconds = (cs.last_match_date - cs.first_match_date).total_seconds()
-            curr_seconds = (self.datetime - cs.first_match_date).total_seconds()
-            # hour-level tie-break
-            curr_seconds += float(hour) * 3600.0
-            mf.match_position_in_season = (
-                fu.clip01(curr_seconds / total_seconds) if total_seconds > 0 else sett.ALMOST_ZERO
-            )
-        else:
-            mf.match_position_in_season = sett.ALMOST_ZERO
-
-        # ---- xG averages
-        mf.home_avg_xg_last_5 = fu.avg_stat_last_n(
-            team_index_league, self.home_team.id, self, 5, "home_xg", "away_xg", fu.normalize_team_xg
-        )
-        mf.home_avg_xg_last_20 = fu.avg_stat_last_n(
-            team_index_league, self.home_team.id, self, 20, "home_xg", "away_xg", fu.normalize_team_xg
-        )
-        mf.away_avg_xg_last_5 = fu.avg_stat_last_n(
-            team_index_league, self.away_team.id, self, 5, "home_xg", "away_xg", fu.normalize_team_xg
-        )
-        mf.away_avg_xg_last_20 = fu.avg_stat_last_n(
-            team_index_league, self.away_team.id, self, 20, "home_xg", "away_xg", fu.normalize_team_xg
-        )
-
-        mf.home_avg_xg_total_last_5 = fu.avg_total_stat_last_n(
-            team_index_league, self.home_team.id, self, 5, fu.total_xg, fu.normalize_total_xg
-        )
-        mf.home_avg_xg_total_last_20 = fu.avg_total_stat_last_n(
-            team_index_league, self.home_team.id, self, 20, fu.total_xg, fu.normalize_total_xg
-        )
-        mf.away_avg_xg_total_last_5 = fu.avg_total_stat_last_n(
-            team_index_league, self.away_team.id, self, 5, fu.total_xg, fu.normalize_total_xg
-        )
-        mf.away_avg_xg_total_last_20 = fu.avg_total_stat_last_n(
-            team_index_league, self.away_team.id, self, 20, fu.total_xg, fu.normalize_total_xg
-        )
-
-        # ---- pre-match xG averages
-        mf.home_avg_pre_match_xg_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_prematch_xg",
-            "away_prematch_xg",
-            fu.normalize_team_pre_match_xg,
-        )
-        mf.home_avg_pre_match_xg_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_prematch_xg",
-            "away_prematch_xg",
-            fu.normalize_team_pre_match_xg,
-        )
-        mf.away_avg_pre_match_xg_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_prematch_xg",
-            "away_prematch_xg",
-            fu.normalize_team_pre_match_xg,
-        )
-        mf.away_avg_pre_match_xg_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_prematch_xg",
-            "away_prematch_xg",
-            fu.normalize_team_pre_match_xg,
-        )
-
-        mf.home_avg_pre_match_xg_total_last_5 = fu.avg_total_stat_last_n(
-            team_index_league, self.home_team.id, self, 5, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
-        )
-        mf.home_avg_pre_match_xg_total_last_20 = fu.avg_total_stat_last_n(
-            team_index_league, self.home_team.id, self, 20, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
-        )
-        mf.away_avg_pre_match_xg_total_last_5 = fu.avg_total_stat_last_n(
-            team_index_league, self.away_team.id, self, 5, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
-        )
-        mf.away_avg_pre_match_xg_total_last_20 = fu.avg_total_stat_last_n(
-            team_index_league, self.away_team.id, self, 20, fu.total_pre_match_xg, fu.normalize_total_pre_match_xg
-        )
-
-        # ---- match load
-        mf.home_match_load_per_day_last_10_days = fu.match_load_per_day_last_n_days(
-            team_index_all, self.home_team.id, self, 10
-        )
-        mf.home_match_load_per_day_last_25_days = fu.match_load_per_day_last_n_days(
-            team_index_all, self.home_team.id, self, 25
-        )
-        mf.away_match_load_per_day_last_10_days = fu.match_load_per_day_last_n_days(
-            team_index_all, self.away_team.id, self, 10
-        )
-        mf.away_match_load_per_day_last_25_days = fu.match_load_per_day_last_n_days(
-            team_index_all, self.away_team.id, self, 25
-        )
-
-        # ---- points/goals
-        mf.home_avg_points_last_5 = fu.avg_points_last_n(team_index_league, self.home_team.id, self, 5)
-        mf.home_avg_points_last_20 = fu.avg_points_last_n(team_index_league, self.home_team.id, self, 20)
-        mf.away_avg_points_last_5 = fu.avg_points_last_n(team_index_league, self.away_team.id, self, 5)
-        mf.away_avg_points_last_20 = fu.avg_points_last_n(team_index_league, self.away_team.id, self, 20)
-
-        mf.home_avg_goals_last_5 = fu.avg_goals_last_n(team_index_league, self.home_team.id, self, 5)
-        mf.home_avg_goals_last_20 = fu.avg_goals_last_n(team_index_league, self.home_team.id, self, 20)
-        mf.away_avg_goals_last_5 = fu.avg_goals_last_n(team_index_league, self.away_team.id, self, 5)
-        mf.away_avg_goals_last_20 = fu.avg_goals_last_n(team_index_league, self.away_team.id, self, 20)
-
-        # ---- shots/corners/etc.
-        mf.home_avg_shots_on_target_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_shots_on_target",
-            "away_shots_on_target",
-            fu.normalize_shots_on_g,
-        )
-        mf.home_avg_shots_on_target_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_shots_on_target",
-            "away_shots_on_target",
-            fu.normalize_shots_on_g,
-        )
-        mf.away_avg_shots_on_target_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_shots_on_target",
-            "away_shots_on_target",
-            fu.normalize_shots_on_g,
-        )
-        mf.away_avg_shots_on_target_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_shots_on_target",
-            "away_shots_on_target",
-            fu.normalize_shots_on_g,
-        )
-
-        mf.home_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_shots_off_target",
-            "away_shots_off_target",
-            fu.normalize_shots_off_g,
-        )
-        mf.home_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_shots_off_target",
-            "away_shots_off_target",
-            fu.normalize_shots_off_g,
-        )
-        mf.away_avg_shots_off_target_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_shots_off_target",
-            "away_shots_off_target",
-            fu.normalize_shots_off_g,
-        )
-        mf.away_avg_shots_off_target_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_shots_off_target",
-            "away_shots_off_target",
-            fu.normalize_shots_off_g,
-        )
-
-        mf.home_avg_total_shots_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_total_shots",
-            "away_total_shots",
-            fu.normalize_total_shots,
-        )
-        mf.home_avg_total_shots_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_total_shots",
-            "away_total_shots",
-            fu.normalize_total_shots,
-        )
-        mf.away_avg_total_shots_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_total_shots",
-            "away_total_shots",
-            fu.normalize_total_shots,
-        )
-        mf.away_avg_total_shots_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_total_shots",
-            "away_total_shots",
-            fu.normalize_total_shots,
-        )
-
-        mf.home_avg_corner_kicks_last_5 = fu.avg_stat_last_n(
-            team_index_league, self.home_team.id, self, 5, "home_corners", "away_corners", fu.normalize_corners
-        )
-        mf.home_avg_corner_kicks_last_20 = fu.avg_stat_last_n(
-            team_index_league, self.home_team.id, self, 20, "home_corners", "away_corners", fu.normalize_corners
-        )
-        mf.away_avg_corner_kicks_last_5 = fu.avg_stat_last_n(
-            team_index_league, self.away_team.id, self, 5, "home_corners", "away_corners", fu.normalize_corners
-        )
-        mf.away_avg_corner_kicks_last_20 = fu.avg_stat_last_n(
-            team_index_league, self.away_team.id, self, 20, "home_corners", "away_corners", fu.normalize_corners
-        )
-
-        # possession/fouls/attacks/dang attacks are already in [0..100] or similar.
-        # For now, we normalize by simple /100 for possession and /50 for fouls/attacks-ish later if needed.
-        # To avoid inventing wrong caps, we keep them in [0..1] by clipping after /100 or /200 etc would be risky.
-        # So: scale possession by /100; keep the rest min-max with conservative caps later (you can tune).
-        def poss_norm(x: float) -> float:
-            return fu.clip01(x / 100.0)
-
-        mf.home_avg_ball_possession_last_5 = fu.avg_stat_last_n(
-            team_index_league, self.home_team.id, self, 5, "home_possession", "away_possession", poss_norm
-        )
-        mf.home_avg_ball_possession_last_20 = fu.avg_stat_last_n(
-            team_index_league, self.home_team.id, self, 20, "home_possession", "away_possession", poss_norm
-        )
-        mf.away_avg_ball_possession_last_5 = fu.avg_stat_last_n(
-            team_index_league, self.away_team.id, self, 5, "home_possession", "away_possession", poss_norm
-        )
-        mf.away_avg_ball_possession_last_20 = fu.avg_stat_last_n(
-            team_index_league, self.away_team.id, self, 20, "home_possession", "away_possession", poss_norm
-        )
-
-        # fouls/attacks/dangerous attacks left as scaled by conservative caps (TODO: tune later)
-        mf.home_avg_fouls_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_fouls",
-            "away_fouls",
-            fu.normalize_fouls,
-        )
-        mf.home_avg_fouls_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_fouls",
-            "away_fouls",
-            fu.normalize_fouls,
-        )
-        mf.away_avg_fouls_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_fouls",
-            "away_fouls",
-            fu.normalize_fouls,
-        )
-        mf.away_avg_fouls_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_fouls",
-            "away_fouls",
-            fu.normalize_fouls,
-        )
-
-        mf.home_avg_attacks_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_attacks",
-            "away_attacks",
-            fu.normalize_attacks,
-        )
-        mf.home_avg_attacks_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_attacks",
-            "away_attacks",
-            fu.normalize_attacks,
-        )
-        mf.away_avg_attacks_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_attacks",
-            "away_attacks",
-            fu.normalize_attacks,
-        )
-        mf.away_avg_attacks_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_attacks",
-            "away_attacks",
-            fu.normalize_attacks,
-        )
-
-        mf.home_avg_dang_attacks_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            5,
-            "home_dangerous_attacks",
-            "away_dangerous_attacks",
-            fu.normalize_dang_attacks,
-        )
-        mf.home_avg_dang_attacks_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.home_team.id,
-            self,
-            20,
-            "home_dangerous_attacks",
-            "away_dangerous_attacks",
-            fu.normalize_dang_attacks,
-        )
-        mf.away_avg_dang_attacks_last_5 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            5,
-            "home_dangerous_attacks",
-            "away_dangerous_attacks",
-            fu.normalize_dang_attacks,
-        )
-        mf.away_avg_dang_attacks_last_20 = fu.avg_stat_last_n(
-            team_index_league,
-            self.away_team.id,
-            self,
-            20,
-            "home_dangerous_attacks",
-            "away_dangerous_attacks",
-            fu.normalize_dang_attacks,
-        )
-
-        # ---- League table positions (assumes the earlier table init exists on cs)
-        if cs is not None and hasattr(cs, "get_team_position_before_match"):
-            mf.home_curr_position = cs.get_team_position_before_match(self.home_team.id, self)
-            mf.away_curr_position = cs.get_team_position_before_match(self.away_team.id, self)
-        else:
-            mf.home_curr_position = sett.ALMOST_ZERO
-            mf.away_curr_position = sett.ALMOST_ZERO
-
-        # ---- Home/away-only scored/conceded features (from your old class)
-        # These should be computed using only matches where team was home/away.
-        mf.home_avg_goals_scored_home_last_5, mf.home_avg_goals_conceded_home_last_5 = (
-            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.home_team.id, self, 5, "home")
-        )
-        mf.home_avg_goals_scored_home_last_20, mf.home_avg_goals_conceded_home_last_20 = (
-            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.home_team.id, self, 20, "home")
-        )
-
-        mf.away_avg_goals_scored_away_last_5, mf.away_avg_goals_conceded_away_last_5 = (
-            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.away_team.id, self, 5, "away")
-        )
-        mf.away_avg_goals_scored_away_last_20, mf.away_avg_goals_conceded_away_last_20 = (
-            fu.avg_goals_scored_conceded_role_last_n(team_index_league, self.away_team.id, self, 20, "away")
-        )
-
-        # ---- Team strength calculation
-        mf.home_team_strength = calculate_team_strength(self, self.home_team.id)
-        mf.away_team_strength = calculate_team_strength(self, self.away_team.id)
-
-        return mf
 
 
 class FSMatchFeatures:

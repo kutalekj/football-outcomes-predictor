@@ -9,10 +9,15 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from football_outcomes.application.snapshot_selection import (
+    resolve_snapshot_path,
+)
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_io import try_load_snapshot
-from football_outcomes.data.fs_retrieve import fill_globals_with_cache
+from football_outcomes.data.snapshots import try_load_snapshot
+from football_outcomes.data.state import (
+    apply_bundle_to_global,
+)
 
 matplotlib.use("Agg")
 
@@ -62,11 +67,11 @@ def write_counter_csv(counter: Counter, out_path: Path, key_name: str, value_nam
 
 
 def analyze_fs_positions(out_dir: Path) -> None:
-    cache = try_load_snapshot()
+    cache = try_load_snapshot(resolve_snapshot_path())
     if cache is None:
         raise RuntimeError("No cached snapshot available.")
 
-    fill_globals_with_cache(cache, update_leagues_list=False)
+    apply_bundle_to_global(cache)
     g = Global.get_instance()
 
     # Try a few common collection names safely

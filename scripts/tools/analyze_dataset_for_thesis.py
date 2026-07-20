@@ -15,11 +15,16 @@ from matplotlib.axes import Axes
 from matplotlib.colors import PowerNorm
 
 import football_outcomes.utils.fs_common as utils
+from football_outcomes.application.snapshot_selection import (
+    resolve_snapshot_path,
+)
 from football_outcomes.config import fs_settings as sett
 from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_io import load_snapshot
 from football_outcomes.data.fs_models import FSMatch
-from football_outcomes.data.fs_retrieve import fill_globals_with_cache
+from football_outcomes.data.snapshots import load_snapshot
+from football_outcomes.data.state import (
+    apply_bundle_to_global,
+)
 
 matplotlib.use("Agg")
 
@@ -81,8 +86,8 @@ def _get_comp_colors() -> Dict[str, str]:
 
 
 def load_data_into_globals() -> None:
-    bundle = load_snapshot()
-    fill_globals_with_cache(bundle, update_leagues_list=False)
+    bundle = load_snapshot(resolve_snapshot_path())
+    apply_bundle_to_global(bundle)
     g = Global.get_instance()
 
     print(

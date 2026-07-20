@@ -10,8 +10,13 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, roc_auc_score
 
 import football_outcomes.config.fs_settings as sett
-from football_outcomes.data.fs_io import load_snapshot
-from football_outcomes.data.fs_retrieve import fill_globals_with_cache
+from football_outcomes.application.snapshot_selection import (
+    resolve_snapshot_path,
+)
+from football_outcomes.data.snapshots import load_snapshot
+from football_outcomes.data.state import (
+    apply_bundle_to_global,
+)
 from football_outcomes.training.fs_training_utils import build_categorical_maps
 from football_outcomes.training.train_mlp_rolling import train_rolling
 from scripts.main_footystats import prepare_matches, selected_model_config
@@ -35,14 +40,14 @@ ATTA_RUN_NAME = "integrity_check_atta3_selected_mlp_binary_u25"
 
 
 def _load_explicit_snapshot_into_globals(snapshot_path: Path) -> None:
-    snapshot_path = Path(snapshot_path)
+    snapshot_path = resolve_snapshot_path(snapshot_path)
 
     if not snapshot_path.exists():
         raise FileNotFoundError(f"Snapshot path does not exist: {snapshot_path}")
 
     print(f"[load explicit snapshot] {snapshot_path}")
     bundle = load_snapshot(snapshot_path)
-    fill_globals_with_cache(bundle, update_leagues_list=False)
+    apply_bundle_to_global(bundle)
 
 
 def _summary_from_predictions(df: pd.DataFrame) -> dict:
@@ -158,7 +163,7 @@ def main() -> None:
         "--snapshot",
         type=str,
         default=None,
-        help="Optional full snapshot path. If omitted, fs_settings.LOAD_SNAPSHOT_PATH is used.",
+        help=("Full snapshot path. When omitted, " "FOP_LOAD_SNAPSHOT_PATH is used."),
     )
     parser.add_argument(
         "--skip-global-training",
@@ -171,23 +176,15 @@ def main() -> None:
         help="Reuse existing three-league integrity-check log if present.",
     )
     args = parser.parse_args()
-
-    # Force full thesis mode, not submission EPL mode.
-    sett.SUBMISSION_MODE = False
-    sett.ALL_LOAD = True
-    sett.ALL_GET_NEW = False
-    sett.ALL_STORE = False
-
     if args.snapshot is not None:
-        sett.LOAD_SNAPSHOT_PATH = Path(args.snapshot)
+        snapshot_path = resolve_snapshot_path(args.snapshot)
 
     print("=" * 80)
     print("[AUC DISCREPANCY INTEGRITY CHECK]")
     print("=" * 80)
-    print(f"[snapshot] {sett.LOAD_SNAPSHOT_PATH}")
-    print(f"[submission mode] {sett.SUBMISSION_MODE}")
+    print(f"[snapshot] {snapshot_path}")
 
-    _load_explicit_snapshot_into_globals(sett.LOAD_SNAPSHOT_PATH)
+    _load_explicit_snapshot_into_globals(snapshot_path)
     all_matches = prepare_matches()
 
     from football_outcomes.config.fs_globals import Global
@@ -222,7 +219,7 @@ def main() -> None:
     atta_oos = _read_oos(ATTA_RUN_NAME)
 
     results = {
-        "snapshot": str(sett.LOAD_SNAPSHOT_PATH),
+        "snapshot": str(snapshot_path),
         "competitions_checked": ATTA_COMPETITIONS,
         "global_24_training": {
             "run_name": GLOBAL_RUN_NAME,

@@ -8,13 +8,13 @@ from football_outcomes.data.fs_models import (
     FSMatch,
     FSMatchFeatures,
 )
+from football_outcomes.data.lineups import (
+    calculate_team_position_indices,
+)
 from football_outcomes.datasets.mappings import CatMaps
 from football_outcomes.datasets.targets import (
     target_dtype,
     target_for_match,
-)
-from football_outcomes.utils.fs_player_skill_utils import (
-    calculate_team_position_indices,
 )
 
 

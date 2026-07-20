@@ -10,9 +10,14 @@ import numpy as np
 from sklearn.metrics import accuracy_score, brier_score_loss, roc_auc_score
 
 import football_outcomes.config.fs_settings as sett
+from football_outcomes.application.snapshot_selection import (
+    resolve_snapshot_path,
+)
 from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_io import try_load_snapshot
-from football_outcomes.data.fs_retrieve import fill_globals_with_cache
+from football_outcomes.data.snapshots import try_load_snapshot
+from football_outcomes.data.state import (
+    apply_bundle_to_global,
+)
 
 matplotlib.use("Agg")
 
@@ -46,11 +51,11 @@ def _safe_float(x) -> float | None:
 
 
 def load_match_odds_by_id() -> dict[int, dict]:
-    cache = try_load_snapshot()
+    cache = try_load_snapshot(resolve_snapshot_path())
     if cache is None:
         raise RuntimeError("Could not load snapshot. Odds benchmark requires cached FSMatch objects.")
 
-    fill_globals_with_cache(cache, update_leagues_list=False)
+    apply_bundle_to_global(cache)
     g = Global.get_instance()
 
     out = {}

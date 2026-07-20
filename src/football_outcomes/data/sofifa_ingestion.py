@@ -1,48 +1,19 @@
 from __future__ import annotations
 
 import csv
-import pickle
 from datetime import date, datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Tuple,
+)
 
-import football_outcomes.config.fs_settings as sett
-from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_models import FSDataBundle
-
-SNAPSHOT_VERSION = 1
-
-
-def load_snapshot(path: Path = sett.LOAD_SNAPSHOT_PATH) -> FSDataBundle:
-    with path.open("rb") as f:
-        bundle: FSDataBundle = pickle.load(f)
-
-    # Simple version check
-    version = bundle.meta.get("snapshot_version", 0)
-    if version != SNAPSHOT_VERSION:
-        raise RuntimeError(f"Incompatible snapshot version {version}; expected {SNAPSHOT_VERSION}.")
-
-    return bundle
-
-
-def try_load_snapshot(path: Path = sett.LOAD_SNAPSHOT_PATH) -> Optional[FSDataBundle]:
-    if not path.exists():
-        return None
-    try:
-        return load_snapshot(path)
-    except Exception as e:
-        print(f"Warning: failed to load snapshot ({e}). Rebuilding from API…")
-        return None
-
-
-def save_snapshot(bundle: FSDataBundle, path: Path = sett.SAVE_SNAPSHOT_PATH) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    bundle.meta["snapshot_version"] = SNAPSHOT_VERSION
-    print(f"Saving snapshot to: {path.resolve()}")
-
-    with path.open("wb") as f:
-        pickle.dump(bundle, f, protocol=pickle.HIGHEST_PROTOCOL)
-    print("Snapshot saved.")
+from football_outcomes.config import fs_settings as sett
+from football_outcomes.config.fs_globals import (
+    Global,
+)
 
 
 def load_avg_team_strength():
@@ -340,9 +311,9 @@ def load_sofifa_players(*, rebuild: bool = False, debug_shifts: bool = False) ->
         total_cells = max(1, total_rows * len(sett.PLAYER_SKILLS))
         print(
             f"[sofifa] Loaded {num_loaded} players from {path.name} "
-            f"(skipped {num_skipped}/{max(1, total_rows)} ({num_skipped/max(1, total_rows):.2%}), "
+            f"(skipped {num_skipped}/{max(1, total_rows)} ({num_skipped / max(1, total_rows):.2%}), "
             f"missing skill cells: {num_missing_cells}/{total_cells} "
-            f"({num_missing_cells/total_cells:.2%}), "
+            f"({num_missing_cells / total_cells:.2%}), "
             f"shifted-left-by-2 fixed rows: {num_shifted_left_2})."
         )
 

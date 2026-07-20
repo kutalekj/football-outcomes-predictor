@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-SUBMISSION_MODE = True
-
 FS_KEY = os.getenv("FOOTYSTATS_API_KEY", "")
 FS_HOST = "https://api.football-data-api.com"
 
@@ -13,24 +11,7 @@ DATA_DIR = PROJECT_ROOT / "data"  # .../football-outcomes-predictor/data
 PROCESSED_DIR = DATA_DIR / "processed"  # .../data/processed
 LOG_DIR = PROCESSED_DIR / "logs"  # .../data/processed/logs
 
-LOAD_SNAPSHOT_PATH = Path(
-    os.getenv(
-        "FOP_LOAD_SNAPSHOT_PATH",
-        PROJECT_ROOT / "data" / "submission" / "epl_sample_snapshot.pkl",
-    )
-)
-SAVE_SNAPSHOT_PATH = Path(
-    os.getenv(
-        "FOP_SAVE_SNAPSHOT_PATH",
-        PROJECT_ROOT / "data" / "submission" / "epl_sample_snapshot.pkl",
-    )
-)
-
 AVG_TEAM_STRENGTH_PATH = PROCESSED_DIR / "avg_team_strengths.csv"
-
-ALL_LOAD = True
-ALL_GET_NEW = False
-ALL_STORE = False
 
 FIRST_SEASON = 2021
 LAST_SEASON = 2025
