@@ -20,12 +20,18 @@ from football_outcomes.data.snapshots import (
     load_snapshot,
     save_snapshot,
 )
+from football_outcomes.data.sofifa_strength import (
+    PastOnlyStrengthConfig,
+)
 from football_outcomes.data.sofifa_team_matching import (
     match_fs_teams_to_sofifa_teams,
 )
 from football_outcomes.data.state import (
     apply_bundle_to_global,
     bundle_from_global,
+)
+from football_outcomes.datasets.imputed_strength import (
+    StrengthImputationContext,
 )
 from football_outcomes.datasets.mappings import (
     build_categorical_maps,
@@ -60,6 +66,7 @@ class FootyStatsPipelineConfig:
 
     validate_round_ids: bool
     rebuild_derived_state: bool
+    enable_strength_imputation: bool
 
     log_dir: Path
     summary_path: Path
@@ -92,6 +99,14 @@ def default_pipeline_config() -> FootyStatsPipelineConfig:
         == "1"
     )
 
+    enable_strength_imputation = (
+        os.getenv(
+            ("FOP_ENABLE_" "STRENGTH_IMPUTATION"),
+            "0",
+        )
+        == "1"
+    )
+
     output_dir = sett.DATA_DIR / "pipeline_outputs"
 
     return FootyStatsPipelineConfig(
@@ -108,6 +123,7 @@ def default_pipeline_config() -> FootyStatsPipelineConfig:
         log_dir=sett.LOG_DIR,
         summary_path=(output_dir / "dataset_summary.json"),
         run_name=("selected_mlp_binary_u25"),
+        enable_strength_imputation=(enable_strength_imputation),
     )
 
 
@@ -249,7 +265,11 @@ def log_feature_error(
         file.write(message.rstrip("\n") + "\n")
 
 
-def selected_model_config(run_name: str) -> TrainConfig:
+def selected_model_config(
+    run_name: str,
+    *,
+    enable_strength_imputation: bool = False,
+) -> TrainConfig:
     """
     Final selected v1-full scratch configuration used for the main binary U/O 2.5 model.
     """
@@ -284,6 +304,7 @@ def selected_model_config(run_name: str) -> TrainConfig:
         run_name=run_name,
         enable_branch_diagnostics=False,
         save_oos_predictions=True,
+        enable_strength_imputation=(enable_strength_imputation),
     )
 
 
@@ -430,6 +451,24 @@ def maybe_store_snapshot(
     )
 
 
+def build_strength_imputation_context() -> StrengthImputationContext:
+    global_instance = Global.get_instance()
+
+    return StrengthImputationContext(
+        snapshots=(global_instance.sofifa_snapshots),
+        player_occurrences=(global_instance.sofifa_player_occurrences),
+        fs_to_sofifa_cache=(global_instance.fs_to_sofifa_cache),
+        reconstruction_config=(
+            PastOnlyStrengthConfig(
+                player_count=(sett.TEAM_STRENGTH_NUM_PLAYERS),
+                skill_count=len(sett.PLAYER_SKILLS),
+                max_age_days=(sett.SF_MAX_TIMEDELTA_DAYS),
+                max_snapshots=(sett.SF_MAX_SNAPSHOTS_TO_SCAN),
+            )
+        ),
+    )
+
+
 def run_pipeline(
     config: FootyStatsPipelineConfig,
 ) -> None:
@@ -451,13 +490,19 @@ def run_pipeline(
         competition_names=(config.competitions),
     )
 
-    training_config = selected_model_config(run_name=config.run_name)
+    training_config = selected_model_config(
+        run_name=config.run_name,
+        enable_strength_imputation=(config.enable_strength_imputation),
+    )
+
+    strength_context = build_strength_imputation_context() if (training_config.enable_strength_imputation) else None
 
     train_rolling(
         matches_sorted=matches,
         cat_maps=category_maps,
         cfg=training_config,
         competition_names=(config.competitions),
+        strength_imputation_context=(strength_context),
     )
 
     maybe_store_snapshot(config)

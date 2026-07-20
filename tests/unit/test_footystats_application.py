@@ -43,6 +43,7 @@ def make_config(
         log_dir=tmp_path / "logs",
         summary_path=(tmp_path / "dataset_summary.json"),
         run_name="test-run",
+        enable_strength_imputation=False,
     )
 
 
@@ -158,3 +159,25 @@ def test_application_has_no_submission_mode() -> None:
     assert "SUBMISSION_MODE" not in source
     assert "submission_outputs" not in source
     assert "submission_epl" not in source
+
+
+def test_strength_imputation_is_disabled_by_default(
+    monkeypatch,
+) -> None:
+    monkeypatch.delenv(
+        ("FOP_ENABLE_" "STRENGTH_IMPUTATION"),
+        raising=False,
+    )
+
+    config = footystats_pipeline.default_pipeline_config()
+
+    assert config.enable_strength_imputation is False
+
+
+def test_selected_model_can_enable_imputation() -> None:
+    config = footystats_pipeline.selected_model_config(
+        "test",
+        enable_strength_imputation=(True),
+    )
+
+    assert config.enable_strength_imputation is True

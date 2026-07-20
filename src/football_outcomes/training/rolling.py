@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Sequence
 from dataclasses import asdict
 from datetime import datetime
@@ -20,9 +21,16 @@ from football_outcomes.config import fs_settings as sett
 from football_outcomes.data.fs_models import (
     FSMatch,
 )
+from football_outcomes.data.sofifa_imputation import (
+    StrengthImputationConfig,
+)
 from football_outcomes.datasets.arrays import (
     build_arrays_for_matches,
     extract_numerical_features,
+)
+from football_outcomes.datasets.imputed_strength import (
+    StrengthImputationContext,
+    build_fold_imputed_arrays,
 )
 from football_outcomes.datasets.mappings import (
     CatMaps,
@@ -67,6 +75,16 @@ from football_outcomes.training.runtime import (
 )
 
 
+def _strength_imputation_config(
+    cfg: TrainConfig,
+) -> StrengthImputationConfig:
+    return StrengthImputationConfig(
+        skill_count=34,
+        minimum_group_support=(cfg.strength_imputation_minimum_support),
+        neutral_value=(cfg.strength_imputation_neutral_value),
+    )
+
+
 def train_rolling(
     matches_sorted: List[FSMatch],
     cat_maps: CatMaps,
@@ -74,13 +92,19 @@ def train_rolling(
     model: Model | None = None,
     pretrained_branch_version: str | None = None,
     competition_names: Sequence[str] | None = None,
+    strength_imputation_context: StrengthImputationContext | None = None,
 ) -> Model:
+    if cfg.enable_strength_imputation and strength_imputation_context is None:
+        raise ValueError("Strength imputation is enabled " "but no imputation context was " "provided.")
+
     if competition_names is None:
         competition_names = sett.COMPS_LEAGUE
 
     rounds = distribute_matches_into_rounds(matches_sorted)
     round_info = summarize_rounds(rounds)
     print(f"[rounds] {round_info}")
+
+    imputation_config = _strength_imputation_config(cfg) if cfg.enable_strength_imputation else None
 
     sample_feat = matches_sorted[0].features_before_match
     num_num = extract_numerical_features(sample_feat).shape[0]
@@ -130,14 +154,37 @@ def train_rolling(
     # Build probe batch once (from first available training window)
     if cfg.enable_branch_diagnostics:
         probe_ms = matches_sorted[: cfg.probe_matches]
-        probe_arr = build_arrays_for_matches(
-            matches=probe_ms,
-            cat_maps=cat_maps,
-            competition_names=competition_names,
-            mode=cfg.mode,
-            max_goals_class=(cfg.max_goals_class),
-        )
-        probe_inputs = probe_arr[:-1]  # exclude targets
+
+        if cfg.enable_strength_imputation:
+            first_training_matches = [match for round_matches in rounds[: cfg.window_rounds] for match in round_matches]
+
+            assert strength_imputation_context is not None
+            assert imputation_config is not None
+
+            (
+                _,
+                probe_arr,
+                _,
+            ) = build_fold_imputed_arrays(
+                training_matches=(first_training_matches),
+                validation_matches=(probe_ms),
+                cat_maps=cat_maps,
+                competition_names=(competition_names),
+                mode=cfg.mode,
+                max_goals_class=(cfg.max_goals_class),
+                context=(strength_imputation_context),
+                imputation_config=(imputation_config),
+            )
+        else:
+            probe_arr = build_arrays_for_matches(
+                matches=probe_ms,
+                cat_maps=cat_maps,
+                competition_names=(competition_names),
+                mode=cfg.mode,
+                max_goals_class=(cfg.max_goals_class),
+            )
+
+        probe_inputs = probe_arr[:-1]
     else:
         probe_inputs = None
 
@@ -211,20 +258,49 @@ def train_rolling(
         train_ms = [m for r in rounds[i - cfg.window_rounds : i] for m in r]
         val_ms = rounds[i]
 
-        X = build_arrays_for_matches(
-            matches=train_ms,
-            cat_maps=cat_maps,
-            competition_names=competition_names,
-            mode=cfg.mode,
-            max_goals_class=(cfg.max_goals_class),
-        )
-        V = build_arrays_for_matches(
-            matches=val_ms,
-            cat_maps=cat_maps,
-            competition_names=competition_names,
-            mode=cfg.mode,
-            max_goals_class=(cfg.max_goals_class),
-        )
+        imputation_diagnostics = None
+
+        if cfg.enable_strength_imputation:
+            assert strength_imputation_context is not None
+            assert imputation_config is not None
+
+            (
+                X,
+                V,
+                imputation_diagnostics,
+            ) = build_fold_imputed_arrays(
+                training_matches=train_ms,
+                validation_matches=val_ms,
+                cat_maps=cat_maps,
+                competition_names=(competition_names),
+                mode=cfg.mode,
+                max_goals_class=(cfg.max_goals_class),
+                context=(strength_imputation_context),
+                imputation_config=(imputation_config),
+            )
+
+            print(
+                "[imputation] "
+                + json.dumps(
+                    imputation_diagnostics.to_dict(),
+                    sort_keys=True,
+                )
+            )
+        else:
+            X = build_arrays_for_matches(
+                matches=train_ms,
+                cat_maps=cat_maps,
+                competition_names=(competition_names),
+                mode=cfg.mode,
+                max_goals_class=(cfg.max_goals_class),
+            )
+            V = build_arrays_for_matches(
+                matches=val_ms,
+                cat_maps=cat_maps,
+                competition_names=(competition_names),
+                mode=cfg.mode,
+                max_goals_class=(cfg.max_goals_class),
+            )
 
         y_train = make_train_targets(train_ms, X[-1], cfg)
         y_val = make_train_targets(val_ms, V[-1], cfg)

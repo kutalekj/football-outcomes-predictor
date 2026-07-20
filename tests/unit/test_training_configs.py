@@ -78,6 +78,9 @@ def test_train_config_defaults_are_preserved() -> None:
         "use_position_embedding": True,
         "representation": "full",
         "use_strength_masks": True,
+        "enable_strength_imputation": False,
+        "strength_imputation_minimum_support": 20,
+        "strength_imputation_neutral_value": 50.0,
         "mlp_hidden_1": 128,
         "mlp_hidden_2": 64,
         "mlp_hidden_3": 32,
@@ -87,6 +90,10 @@ def test_train_config_defaults_are_preserved() -> None:
         "lr_decay_rate": 0.997,
         "min_learning_rate": 2e-5,
     }
+
+    assert config.enable_strength_imputation is False
+    assert config.strength_imputation_minimum_support == 20
+    assert config.strength_imputation_neutral_value == 50.0
 
 
 def test_strength_pretrain_defaults_are_preserved() -> None:
