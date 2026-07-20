@@ -211,3 +211,32 @@ Temporary SoFIFA imputation must:
 6. report imputation rates by competition, season, player role and skill;
 7. leave the original snapshot unchanged;
 8. remain removable when improved SoFIFA source data becomes available.
+
+## Step 6.6 final acceptance
+
+The complete Step 6 validation can be reproduced with one command:
+
+```powershell
+python scripts/tools/validate_full_snapshot.py `
+    --snapshot <snapshot-path> `
+    --json-output <report.json> `
+    --csv-output <competition-season.csv> `
+    --markdown-output <report.md>
+```
+
+The frozen validation snapshot passed all critical domain, selection,
+chronology, round, feature, target, lineup, SoFIFA and strength checks.
+
+Final acceptance:
+
+- overall status: `PASS`;
+- critical observations: `0`;
+- selected matches: `30469`;
+- array-ready matches: `30468`;
+- selected competitions: `24`;
+- selected competition-seasons: `92`;
+- constructed rounds: `320`.
+
+The generated JSON, CSV and Markdown outputs are deterministic across
+repeated executions. Reported quality warnings are retained as explicit
+requirements for Step 7 temporary imputation.

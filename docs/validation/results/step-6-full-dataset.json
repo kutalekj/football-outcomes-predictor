@@ -1,0 +1,357 @@
+{
+  "components": {
+    "coverage": {
+      "coverage_source": "coverage-inventory.json",
+      "critical_issue_count": 0,
+      "findings": [
+        {
+          "code": "competition_season_player_match_gap",
+          "count": 79,
+          "examples": [
+            "competition-season[('Australia A-League', 2021)]: Lineup-reference player match rate is 0.997960.",
+            "competition-season[('Australia A-League', 2022)]: Lineup-reference player match rate is 0.999417.",
+            "competition-season[('Australia A-League', 2023)]: Lineup-reference player match rate is 0.990180.",
+            "competition-season[('Australia A-League', 2024)]: Lineup-reference player match rate is 0.964218.",
+            "competition-season[('Austria Bundesliga', 2022)]: Lineup-reference player match rate is 0.999527.",
+            "competition-season[('Austria Bundesliga', 2024)]: Lineup-reference player match rate is 0.999763.",
+            "competition-season[('Belgium Pro League', 2021)]: Lineup-reference player match rate is 0.994043.",
+            "competition-season[('Belgium Pro League', 2022)]: Lineup-reference player match rate is 0.994652.",
+            "competition-season[('Belgium Pro League', 2023)]: Lineup-reference player match rate is 0.996202.",
+            "competition-season[('Belgium Pro League', 2024)]: Lineup-reference player match rate is 0.996212."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "competition_season_strength_gap",
+          "count": 86,
+          "examples": [
+            "competition-season[('Australia A-League', 2021)]: Strength-cell observation rate is 0.996212.",
+            "competition-season[('Australia A-League', 2022)]: Strength-cell observation rate is 0.999392.",
+            "competition-season[('Australia A-League', 2023)]: Strength-cell observation rate is 0.989899.",
+            "competition-season[('Australia A-League', 2024)]: Strength-cell observation rate is 0.960463.",
+            "competition-season[('Austria Bundesliga', 2022)]: Strength-cell observation rate is 0.999527.",
+            "competition-season[('Austria Bundesliga', 2023)]: Strength-cell observation rate is 0.999527.",
+            "competition-season[('Austria Bundesliga', 2024)]: Strength-cell observation rate is 0.999763.",
+            "competition-season[('Belgium Pro League', 2021)]: Strength-cell observation rate is 0.991061.",
+            "competition-season[('Belgium Pro League', 2022)]: Strength-cell observation rate is 0.994294.",
+            "competition-season[('Belgium Pro League', 2023)]: Strength-cell observation rate is 0.992928."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "fully_missing_strength_matrices",
+          "count": 6,
+          "examples": [
+            "coverage[selected-scope]: Validly shaped strength matrices contain no observed cells."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "fully_missing_strength_rows",
+          "count": 6005,
+          "examples": [
+            "coverage[selected-scope]: Player-strength rows contain no observed skill cells."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "lineups_without_explicit_goalkeeper",
+          "count": 203,
+          "examples": [
+            "coverage[selected-scope]: Raw lineups contain no player labelled as goalkeeper."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "missing_strength_cells",
+          "count": 205165,
+          "examples": [
+            "coverage[selected-scope]: Strength skill cells are missing."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "missing_strength_matrices",
+          "count": 2,
+          "examples": [
+            "coverage[selected-scope]: Strength matrices are absent."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "noncomplete_lineups",
+          "count": 8,
+          "examples": [
+            "coverage[selected-scope]: Selected match sides do not contain exactly 11 raw lineup entries."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "partially_missing_strength_rows",
+          "count": 231,
+          "examples": [
+            "coverage[selected-scope]: Player-strength rows contain some missing skill cells."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "unmatched_lineup_player_references",
+          "count": 5511,
+          "examples": [
+            "coverage[selected-scope]: Lineup player references do not have successful SoFIFA matches."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "unmatched_unique_lineup_players",
+          "count": 306,
+          "examples": [
+            "coverage[selected-scope]: Unique lineup players do not have successful SoFIFA matches."
+          ],
+          "severity": "warning"
+        }
+      ],
+      "metrics": {
+        "competition_seasons": 92,
+        "complete_lineups": 60930,
+        "empty_lineups": 2,
+        "feature_ready_matches": 30468,
+        "fully_missing_strength_matrices": 6,
+        "fully_missing_strength_rows": 6005,
+        "fully_observed_strength_matrices": 55279,
+        "fully_observed_strength_rows": 664060,
+        "invalid_strength_matrices": 0,
+        "lineup_cache_failed_references": 5511,
+        "lineup_cache_matched_references": 664754,
+        "lineup_player_references": 670265,
+        "lineup_reference_cache_match_rate": 0.9917778788986445,
+        "lineups_without_explicit_goalkeeper": 203,
+        "mapped_selected_teams": 509,
+        "missing_strength_cells": 205165,
+        "missing_strength_matrices": 2,
+        "observed_strength_cells": 22584899,
+        "oversized_lineups": 1,
+        "partial_lineups": 5,
+        "partially_missing_strength_rows": 231,
+        "player_match_cache_entries": 20401,
+        "selected_match_sides": 60938,
+        "selected_matches": 30469,
+        "selected_team_mapping_rate": 1.0,
+        "sofifa_snapshot_count": 29,
+        "sofifa_snapshot_player_records": 745043,
+        "strength_cell_observation_rate": 0.9909976119417655,
+        "strength_cells": 22790064,
+        "strength_matrices": 60938,
+        "team_mapping_entries": 518,
+        "unique_lineup_players": 17314,
+        "unique_lineup_players_cache_failed": 306,
+        "unique_lineup_players_cache_matched": 17008,
+        "unique_player_cache_match_rate": 0.98232644103038,
+        "unique_selected_teams": 509,
+        "unique_sofifa_players": 39767,
+        "valid_strength_matrices": 60936
+      },
+      "ok": true,
+      "validation": "sofifa_lineup_strength_coverage",
+      "warning_count": 217602
+    },
+    "domain": {
+      "critical_issue_count": 0,
+      "findings": [
+        {
+          "code": "detached_comp_season_match_reference",
+          "count": 6797,
+          "examples": [
+            "competition-season[14801]: Match 7909044 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909045 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909046 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909047 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909048 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909049 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909050 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909051 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909052 is referenced by the competition season but is absent from the authoritative bundle.matches list.",
+            "competition-season[14801]: Match 7909053 is referenced by the competition season but is absent from the authoritative bundle.matches list."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "duplicate_away_lineup_player",
+          "count": 308,
+          "examples": [
+            "match[1440579]: Player 42458 appears more than once.",
+            "match[1440579]: Player 42458 appears more than once.",
+            "match[2831331]: Player 42458 appears more than once.",
+            "match[2831331]: Player 42458 appears more than once.",
+            "match[2831345]: Player 42458 appears more than once.",
+            "match[2831345]: Player 42458 appears more than once.",
+            "match[2831350]: Player 42458 appears more than once.",
+            "match[2831350]: Player 42458 appears more than once.",
+            "match[2831359]: Player 42458 appears more than once.",
+            "match[2831359]: Player 42458 appears more than once."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "duplicate_home_lineup_player",
+          "count": 443,
+          "examples": [
+            "match[1293602]: Player 42458 appears more than once.",
+            "match[1293602]: Player 42458 appears more than once.",
+            "match[1293602]: Player 42458 appears more than once.",
+            "match[1293602]: Player 42458 appears more than once.",
+            "match[1411381]: Player 42458 appears more than once.",
+            "match[1411381]: Player 42458 appears more than once.",
+            "match[1411381]: Player 42458 appears more than once.",
+            "match[1454146]: Player 42458 appears more than once.",
+            "match[2831337]: Player 42458 appears more than once.",
+            "match[2831337]: Player 42458 appears more than once."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "missing_away_team",
+          "count": 919,
+          "examples": [
+            "match[4289441]: away team is missing.",
+            "match[4455990]: away team is missing.",
+            "match[4455998]: away team is missing.",
+            "match[7229621]: away team is missing.",
+            "match[7244862]: away team is missing.",
+            "match[7734360]: away team is missing.",
+            "match[7734404]: away team is missing.",
+            "match[1425987]: away team is missing.",
+            "match[1425993]: away team is missing.",
+            "match[1425994]: away team is missing."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "player_in_both_lineups",
+          "count": 326,
+          "examples": [
+            "match[1278401]: Player 42458 appears in both lineups.",
+            "match[1302851]: Player 42458 appears in both lineups.",
+            "match[1309431]: Player 42458 appears in both lineups.",
+            "match[1454138]: Player 42458 appears in both lineups.",
+            "match[1454139]: Player 42458 appears in both lineups.",
+            "match[1454140]: Player 42458 appears in both lineups.",
+            "match[1454141]: Player 42458 appears in both lineups.",
+            "match[1454142]: Player 42458 appears in both lineups.",
+            "match[1454143]: Player 42458 appears in both lineups.",
+            "match[1454144]: Player 42458 appears in both lineups."
+          ],
+          "severity": "warning"
+        },
+        {
+          "code": "unknown_roster_player",
+          "count": 18,
+          "examples": [
+            "team[102]: Player 959 is absent from bundle.players.",
+            "team[11118]: Player 928990 is absent from bundle.players.",
+            "team[1376]: Player 68098 is absent from bundle.players.",
+            "team[187]: Player 941362 is absent from bundle.players.",
+            "team[191]: Player 575635 is absent from bundle.players.",
+            "team[196]: Player 692949 is absent from bundle.players.",
+            "team[2432]: Player 84479 is absent from bundle.players.",
+            "team[2432]: Player 800352 is absent from bundle.players.",
+            "team[2432]: Player 84507 is absent from bundle.players.",
+            "team[408]: Player 863070 is absent from bundle.players."
+          ],
+          "severity": "warning"
+        }
+      ],
+      "metrics": {
+        "competition_season_match_references": 49907,
+        "competition_seasons": 224,
+        "lineup_player_references": 877291,
+        "matches": 43110,
+        "players": 63805,
+        "team_roster_player_references": 190,
+        "teams": 2995,
+        "unique_match_ids": 43110
+      },
+      "ok": true,
+      "snapshot_filename": "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+      "validation": "domain_integrity",
+      "warning_count": 8811
+    },
+    "readiness": {
+      "critical_issue_count": 0,
+      "findings": [
+        {
+          "code": "missing_persisted_features",
+          "count": 1,
+          "examples": [
+            "match[7452304]: Selected match has no persisted feature object and is excluded from array validation."
+          ],
+          "severity": "warning"
+        }
+      ],
+      "metrics": {
+        "binary_over_25_count": 15589,
+        "binary_under_25_count": 14879,
+        "binary_under_25_prevalence": 0.4883484311408691,
+        "categorical_competition_count": 24,
+        "categorical_team_count": 509,
+        "fully_missing_strength_rows": 6005,
+        "missing_feature_matches": 1,
+        "missing_strength_cells": 205165,
+        "numerical_feature_count": 78,
+        "observed_strength_cells": 22584899,
+        "processed_array_chunks": 60,
+        "processed_array_matches": 30468,
+        "selected_matches": 30469,
+        "strength_mask_cells": 22790064,
+        "usable_feature_matches": 30468
+      },
+      "ok": true,
+      "snapshot_filename": "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+      "validation": "feature_array_target_readiness",
+      "warning_count": 1
+    },
+    "selection": {
+      "critical_issue_count": 0,
+      "findings": [],
+      "metrics": {
+        "constructed_rounds": 320,
+        "final_round_size": 29,
+        "matches_before_round_filter": 30741,
+        "matches_filtered_by_round": 272,
+        "maximum_round_size": 200,
+        "minimum_round_size": 8,
+        "selected_competition_seasons": 92,
+        "selected_competitions": 24,
+        "selected_matches": 30469,
+        "total_snapshot_matches": 43110
+      },
+      "ok": true,
+      "snapshot_filename": "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+      "validation": "selection_chronology_rounds",
+      "warning_count": 0
+    }
+  },
+  "coverage_inventory": {
+    "cache_reasons": {
+      "team_dob_fail": 411,
+      "team_dob_pass": 627702,
+      "team_only_fail": 5100,
+      "team_only_pass": 37052
+    },
+    "lineup_positions": {
+      "Defender": 230154,
+      "Forward": 138160,
+      "Goalkeeper": 60760,
+      "Midfielder": 241191
+    }
+  },
+  "critical_issue_count": 0,
+  "overall_ok": true,
+  "snapshot": {
+    "filename": "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+    "sha256": "AEC8C575156346AB1C255433C3D1E92E8782A5A04666149B929EE336FE27A51C",
+    "size_bytes": 700083593
+  },
+  "validation": "step_6_full_dataset",
+  "warning_count": 226414
+}
