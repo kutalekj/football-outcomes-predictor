@@ -129,3 +129,26 @@ Selection metrics:
 The selected scope contained no missing teams, invalid goals, invalid
 dates, incomplete round whitelists, chronology violations, repeated
 teams within a round, or lost matches during round construction.
+
+## Step 6.4 feature and target readiness
+
+The selected scope contained `30469` matches. One selected match had
+no persisted feature object and was excluded in the same way as the
+active training pipeline, leaving `30468` array-ready matches.
+
+The active array builder was validated in deterministic chunks for:
+
+- numerical feature dimensions and finite values;
+- dense team and competition IDs;
+- normalized strength values and binary masks;
+- dynamically derived player-position arrays;
+- binary Under/Over 2.5 targets;
+- agreement with the standalone target builder;
+- identical results from repeated construction.
+
+The absence of persisted player-position fields is not a data failure.
+The array builder derives the required 11-position arrays from each
+match lineup when those optional feature attributes are absent.
+
+Full data-derived array and missing-strength metrics are retained in
+the Step 6.4 JSON validation output.
