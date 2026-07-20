@@ -152,3 +152,62 @@ match lineup when those optional feature attributes are absent.
 
 Full data-derived array and missing-strength metrics are retained in
 the Step 6.4 JSON validation output.
+
+## Step 6.5 SoFIFA, lineup and strength coverage
+
+The active selected scope contains `30469` matches and `60938`
+match-team sides.
+
+### Team and player mapping
+
+- selected teams: `509`;
+- selected teams mapped to SoFIFA teams: `509` (`100%`);
+- unique lineup players: `17314`;
+- unique lineup players matched: `17008` (`98.23%`);
+- unique lineup players not matched: `306`;
+- lineup player references: `670265`;
+- matched lineup references: `664754` (`99.18%`);
+- failed lineup references: `5511`.
+
+### Raw lineup coverage
+
+- complete 11-player lineups: `60930`;
+- partial lineups: `5`;
+- empty lineups: `2`;
+- oversized lineups: `1`;
+- lineups without an explicitly labelled goalkeeper: `203`.
+
+The array builder remains model-ready because it deterministically
+sorts, pads and derives position indices. Raw lineup deficiencies are
+retained as quality warnings.
+
+### Strength coverage
+
+- strength matrices expected: `60938`;
+- validly shaped strength matrices: `60936`;
+- absent strength matrices: `2`;
+- valid matrices with no observed cells: `6`;
+- total strength cells: `22790064`;
+- observed strength cells: `22584899` (`99.10%`);
+- missing strength cells: `205165`;
+- fully missing player rows: `6005`;
+- partially missing player rows: `231`;
+- invalid strength matrices: `0`.
+
+The inventory and its competition-season table are deterministic across
+repeated executions.
+
+### Step 7 requirements
+
+Temporary SoFIFA imputation must:
+
+1. preserve observed skill values unchanged;
+2. preserve an explicit observed/imputed/missing provenance mask;
+3. never use a SoFIFA observation dated after the match unless that
+   fallback is explicitly enabled and reported;
+4. distinguish unmatched players from matched players with incomplete
+   skills;
+5. handle fully missing rows and partially missing rows separately;
+6. report imputation rates by competition, season, player role and skill;
+7. leave the original snapshot unchanged;
+8. remain removable when improved SoFIFA source data becomes available.

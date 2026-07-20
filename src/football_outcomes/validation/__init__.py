@@ -1,3 +1,6 @@
+from football_outcomes.validation.coverage import (
+    validate_coverage_summary,
+)
 from football_outcomes.validation.domain import (
     DomainValidationReport,
     validate_bundle_domain,
@@ -20,4 +23,5 @@ __all__ = [
     "validate_bundle_domain",
     "validate_bundle_selection",
     "validate_feature_readiness",
+    "validate_coverage_summary",
 ]

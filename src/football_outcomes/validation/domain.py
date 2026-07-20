@@ -37,7 +37,10 @@ class ValidationFinding:
 
 @dataclass
 class DomainValidationReport:
-    metrics: dict[str, int] = field(default_factory=dict)
+    metrics: dict[
+        str,
+        int | float,
+    ] = field(default_factory=dict)
     findings: dict[
         str,
         ValidationFinding,
@@ -52,7 +55,10 @@ class DomainValidationReport:
         entity_id: object,
         message: str,
         severity: Severity = "critical",
+        count: int = 1,
     ) -> None:
+        if count <= 0:
+            raise ValueError("Finding count must be " "positive.")
         finding = self.findings.get(code)
 
         if finding is None:
@@ -64,7 +70,7 @@ class DomainValidationReport:
         elif finding.severity != severity:
             raise ValueError("Finding severity changed for " f"{code}: " f"{finding.severity} -> " f"{severity}.")
 
-        finding.count += 1
+        finding.count += count
 
         if len(finding.examples) < self.max_examples_per_finding:
             finding.examples.append(f"{entity_type}" f"[{entity_id}]: " f"{message}")
