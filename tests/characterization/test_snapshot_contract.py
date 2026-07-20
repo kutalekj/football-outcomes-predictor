@@ -7,17 +7,17 @@ import pytest
 from football_outcomes.config.fs_globals import (
     Global,
 )
-from football_outcomes.data.fs_io import (
-    SNAPSHOT_VERSION,
-    load_snapshot,
-    save_snapshot,
-)
 from football_outcomes.data.fs_models import (
     FSCompSeason,
     FSDataBundle,
     FSMatch,
     FSPlayer,
     FSTeam,
+)
+from football_outcomes.data.snapshots import (
+    SNAPSHOT_VERSION,
+    load_snapshot,
+    save_snapshot,
 )
 
 MODEL_MODULE = "football_outcomes.data.fs_models"

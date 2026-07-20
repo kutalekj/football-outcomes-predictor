@@ -5,9 +5,6 @@ from types import SimpleNamespace
 from football_outcomes.data import (
     sofifa_team_matching,
 )
-from football_outcomes.utils import (
-    fs_player_skill_utils,
-)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -31,15 +28,6 @@ def test_team_module_has_no_legacy_or_matrix_dependency() -> None:
     assert "team_strength_matrix" not in source
     assert "sofifa_skills" not in source
     assert "lineups" not in source
-
-
-def test_legacy_team_exports_are_direct_aliases() -> None:
-    assert fs_player_skill_utils._norm_country is sofifa_team_matching._norm_country
-    assert fs_player_skill_utils._norm_league is sofifa_team_matching._norm_league
-    assert fs_player_skill_utils._norm_team is sofifa_team_matching._norm_team
-    assert fs_player_skill_utils._extract_sofifa_team_info is sofifa_team_matching._extract_sofifa_team_info
-    assert fs_player_skill_utils.build_sofifa_team_indexes is sofifa_team_matching.build_sofifa_team_indexes
-    assert fs_player_skill_utils.match_fs_teams_to_sofifa_teams is sofifa_team_matching.match_fs_teams_to_sofifa_teams
 
 
 def test_team_info_extraction_is_preserved() -> None:

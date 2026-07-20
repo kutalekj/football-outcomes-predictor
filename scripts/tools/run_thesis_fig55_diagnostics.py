@@ -7,14 +7,22 @@ from pathlib import Path
 import matplotlib
 
 import football_outcomes.config.fs_settings as sett
+from football_outcomes.application.snapshot_selection import (
+    resolve_snapshot_path,
+)
 from football_outcomes.config.fs_globals import Global
-from football_outcomes.data.fs_io import load_avg_team_strength, load_sofifa_players, try_load_snapshot
-from football_outcomes.data.fs_retrieve import fill_globals_with_cache, retrieve_new_data
+from football_outcomes.data.snapshots import try_load_snapshot
+from football_outcomes.data.sofifa_ingestion import load_avg_team_strength, load_sofifa_players
+from football_outcomes.data.sofifa_team_matching import (
+    match_fs_teams_to_sofifa_teams,
+)
+from football_outcomes.data.state import (
+    apply_bundle_to_global,
+)
 from football_outcomes.training.fs_training_utils import build_categorical_maps
 from football_outcomes.training.train_mlp_rolling import TrainConfig, train_rolling
 from football_outcomes.utils import fs_common as utils
 from football_outcomes.utils import fs_feature_utils as fu
-from football_outcomes.utils.fs_player_skill_utils import match_fs_teams_to_sofifa_teams
 
 matplotlib.use("Agg")
 
@@ -33,12 +41,12 @@ def prepare_matches():
 
     load_avg_team_strength()
 
-    cache = try_load_snapshot()
-    if sett.ALL_LOAD and cache is not None:
-        fill_globals_with_cache(cache, update_leagues_list=False)
+    cache = try_load_snapshot(resolve_snapshot_path())
 
-    if sett.ALL_GET_NEW:
-        retrieve_new_data()
+    if cache is None:
+        raise RuntimeError("Could not load the explicitly " "selected snapshot.")
+
+    apply_bundle_to_global(cache)
 
     load_sofifa_players(
         rebuild=getattr(sett, "REBUILD_SOFIFA_FROM_CSV", False),
@@ -52,10 +60,10 @@ def prepare_matches():
     if sett.VALIDATE_ROUND_IDS:
         utils.validate_league_valid_round_ids()
 
-    utils.ensure_comp_season_dates(force=sett.ALL_GET_NEW)
+    utils.ensure_comp_season_dates(force=False)
     utils.initialize_league_tables(
         precompute_positions=True,
-        force_rebuild=sett.ALL_GET_NEW,
+        force_rebuild=False,
     )
 
     match_fs_teams_to_sofifa_teams(force=False)

@@ -15,33 +15,6 @@ from football_outcomes.data.fs_models import (
     FSPlayer,
     FSTeam,
 )
-from football_outcomes.data.state import (
-    apply_bundle_to_global,
-)
-
-
-def fill_globals_with_cache(
-    cache: FSDataBundle,
-    update_leagues_list: bool = False,
-    client: FootyStatsClient | None = None,
-) -> None:
-    """
-    Compatibility wrapper for historical callers.
-
-    Offline state restoration is delegated to the
-    explicit state adapter. The optional network
-    refresh remains here until retrieval transport
-    is separated later in Step 5.
-    """
-
-    global_instance = apply_bundle_to_global(cache)
-
-    if not update_leagues_list:
-        return
-
-    resolved_client = client if client is not None else create_default_client()
-
-    global_instance.leagues_list = resolved_client.get_data("league-list")
 
 
 def retrieve_new_data(

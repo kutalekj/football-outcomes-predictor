@@ -10,9 +10,6 @@ from football_outcomes.data import (
 from football_outcomes.data.fs_models import (
     FSPlayer,
 )
-from football_outcomes.utils import (
-    fs_player_skill_utils,
-)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -54,15 +51,6 @@ def test_matching_module_has_no_matrix_or_skill_dependency() -> None:
     assert "team_strength_matrix" not in source
     assert "sofifa_skills" not in source
     assert "lineups" not in source
-
-
-def test_legacy_matching_exports_are_direct_aliases() -> None:
-    assert fs_player_skill_utils.MatchCandidate is sofifa_player_matching.MatchCandidate
-    assert fs_player_skill_utils.MatchResult is sofifa_player_matching.MatchResult
-    assert fs_player_skill_utils._similarity is sofifa_player_matching._similarity
-    assert fs_player_skill_utils._build_name_bucket is sofifa_player_matching._build_name_bucket
-    assert fs_player_skill_utils._match_fs_to_sofifa is sofifa_player_matching._match_fs_to_sofifa
-    assert fs_player_skill_utils._dbg is sofifa_player_matching._dbg
 
 
 def test_name_normalization_and_similarity_are_preserved() -> None:

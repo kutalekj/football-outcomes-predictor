@@ -15,9 +15,6 @@ from football_outcomes.data.fs_models import (
     FSPlayer,
     FSTeam,
 )
-from football_outcomes.utils import (
-    fs_player_skill_utils,
-)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -77,12 +74,6 @@ def test_matrix_module_has_no_legacy_matching_dependency() -> None:
     assert "football_outcomes.utils." "fs_player_skill_utils" not in source
     assert "fs_globals" not in source
     assert "rapidfuzz" not in source
-
-
-def test_legacy_matrix_exports_are_direct_aliases() -> None:
-    assert fs_player_skill_utils._gk_role_score is team_strength_matrix.goalkeeper_role_score
-    assert fs_player_skill_utils._ensure_one_goalkeeper_row is team_strength_matrix.ensure_one_goalkeeper_row
-    assert fs_player_skill_utils.calculate_team_strength is team_strength_matrix.calculate_team_strength
 
 
 def test_goalkeeper_role_score_ignores_missing_values(

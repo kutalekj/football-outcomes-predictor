@@ -11,9 +11,6 @@ from football_outcomes.data.fs_models import (
     FSPlayer,
     FSTeam,
 )
-from football_outcomes.utils import (
-    fs_player_skill_utils,
-)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -63,13 +60,6 @@ def test_lineup_module_has_no_global_or_matching_dependency() -> None:
     assert "rapidfuzz" not in source
     assert "fs_player_skill_utils" not in source
     assert "sofifa" not in source.lower()
-
-
-def test_legacy_lineup_exports_are_direct_aliases() -> None:
-    assert fs_player_skill_utils._FS_POS_ORDER is lineups.FS_POSITION_ORDER
-    assert fs_player_skill_utils._pos_rank is lineups.position_rank
-    assert fs_player_skill_utils._select_and_sort_lineup is lineups.select_and_sort_lineup
-    assert fs_player_skill_utils.calculate_team_position_indices is lineups.calculate_team_position_indices
 
 
 def test_missing_goalkeeper_and_padding_are_preserved() -> None:

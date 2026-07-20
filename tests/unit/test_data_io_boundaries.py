@@ -2,9 +2,7 @@ import ast
 from pathlib import Path
 
 from football_outcomes.data import (
-    fs_io,
     snapshots,
-    sofifa_ingestion,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -49,20 +47,6 @@ def test_sofifa_module_has_no_pickle_dependency() -> None:
     imported_names = {alias.name for node in ast.walk(tree) if isinstance(node, ast.Import) for alias in node.names}
 
     assert "pickle" not in imported_names
-
-
-def test_legacy_snapshot_exports_are_direct_aliases() -> None:
-    assert fs_io.SNAPSHOT_VERSION == snapshots.SNAPSHOT_VERSION
-    assert fs_io.load_snapshot is snapshots.load_snapshot
-    assert fs_io.try_load_snapshot is snapshots.try_load_snapshot
-    assert fs_io.save_snapshot is snapshots.save_snapshot
-
-
-def test_legacy_sofifa_exports_are_direct_aliases() -> None:
-    assert fs_io.load_avg_team_strength is sofifa_ingestion.load_avg_team_strength
-    assert fs_io.load_sofifa_players is sofifa_ingestion.load_sofifa_players
-    assert fs_io._parse_date_flexible is sofifa_ingestion._parse_date_flexible
-    assert fs_io._should_shift_skills_left_by_2 is sofifa_ingestion._should_shift_skills_left_by_2
 
 
 def test_missing_snapshot_returns_none(

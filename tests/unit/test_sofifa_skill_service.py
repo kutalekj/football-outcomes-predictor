@@ -5,9 +5,6 @@ from types import SimpleNamespace
 from football_outcomes.data import (
     sofifa_skills,
 )
-from football_outcomes.utils import (
-    fs_player_skill_utils,
-)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -21,11 +18,6 @@ def test_skill_module_has_no_matching_dependency() -> None:
     assert "MatchResult" not in source
     assert "FSPlayer" not in source
     assert "fs_player_skill_utils" not in source
-
-
-def test_legacy_skill_exports_are_direct_aliases() -> None:
-    assert fs_player_skill_utils._ordered_snapshot_candidates is sofifa_skills.ordered_snapshot_candidates
-    assert fs_player_skill_utils._merge_skills_from_snapshots is sofifa_skills.merge_skills_from_snapshots
 
 
 def test_snapshot_order_is_past_first_and_bounded() -> None:
