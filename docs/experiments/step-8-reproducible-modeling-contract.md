@@ -1,0 +1,316 @@
+# Step 8 first reproducible modeling milestone contract
+
+## Goal
+
+Step 8 produces the first trusted end-to-end modeling benchmark after
+the repository restructuring and data validation work.
+
+The milestone must execute the complete path from the frozen snapshot to
+chronological out-of-sample predictions through one documented command.
+
+The milestone establishes a reproducible benchmark. It is not a broad
+hyperparameter search and does not claim that the current neural model
+is optimal.
+
+## Frozen input
+
+The benchmark uses only the validated frozen snapshot:
+
+- filename:
+  `fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl`;
+- SHA-256:
+  `AEC8C575156346AB1C255433C3D1E92E8782A5A04666149B929EE336FE27A51C`;
+- selected matches: 30,469;
+- array-ready matches: 30,468;
+- competition-seasons: 92;
+- constructed chronological rounds: 320.
+
+A benchmark command must fail before model construction when the
+snapshot hash differs from the declared value.
+
+The snapshot remains immutable.
+
+## Prediction target
+
+The milestone predicts whether the final match goal total is under or
+over 2.5 goals.
+
+The binary target semantics are:
+
+- `1`: under 2.5 goals;
+- `0`: over 2.5 goals.
+
+Every prediction artifact must state these semantics explicitly.
+
+## Evaluation unit
+
+The authoritative evaluation unit is one out-of-sample match prediction.
+
+Each prediction row must contain enough information to identify:
+
+- experiment run;
+- validation fold or round;
+- match ID;
+- match datetime;
+- competition;
+- season;
+- true binary target;
+- predicted probability of the positive class;
+- model or baseline name.
+
+A match may appear at most once in the authoritative out-of-sample
+prediction artifact for a single experiment variant.
+
+## Chronological protocol
+
+The benchmark uses the repository's deterministic chronological round
+construction.
+
+For a validation round R:
+
+1. the training window consists only of the configured rounds preceding
+   R;
+2. the validation set consists only of round R;
+3. no validation target contributes to training, preprocessing,
+   imputation, calibration or threshold selection;
+4. no match from a later round contributes to the fold;
+5. the final eligible round is included.
+
+The initial benchmark uses a 25-round training window.
+
+The model-state policy must be explicit in the experiment manifest. The
+first neural benchmark uses the existing rolling carry-forward behavior
+unless a later contract amendment declares a reset-per-fold experiment.
+
+## Leakage-safe strength handling
+
+When team-strength imputation is enabled:
+
+1. SoFIFA values are reconstructed from snapshots dated no later than
+   each match;
+2. the statistical imputer is fitted only on the rolling training
+   window;
+3. the fitted imputer is applied to both training and validation
+   matrices;
+4. genuine past-only values retain observed mask `1`;
+5. statistically generated values retain observed mask `0`;
+6. no reconstructed or imputed value is written to the frozen snapshot.
+
+The Step 7 provenance and temporal contracts remain authoritative.
+
+## Experiment tiers
+
+Step 8 contains three experiment tiers.
+
+### Canary experiment
+
+The canary exercises a small number of chronological folds through the
+complete production path.
+
+Its purpose is to verify:
+
+- configuration loading;
+- snapshot identity;
+- match selection;
+- categorical mappings;
+- past-only reconstruction;
+- fold-local imputation;
+- array construction;
+- model construction and compilation;
+- optimization;
+- prediction;
+- metric calculation;
+- artifact persistence.
+
+Canary results are functional evidence, not final performance evidence.
+
+### Baseline experiment
+
+All baselines use exactly the same validation rows as the neural
+benchmark.
+
+The initial required baselines are:
+
+1. training-window positive-class prevalence;
+2. training-window majority class;
+3. a deterministic classical linear classifier using the declared
+   tabular feature subset.
+
+A baseline must not read validation targets while fitting.
+
+### Neural benchmark
+
+The first neural benchmark uses the selected v2 binary model with
+leakage-safe strength imputation enabled.
+
+The complete model and training configuration must be stored in the
+manifest. No configuration value may depend on validation performance
+from the same benchmark run.
+
+## Metrics
+
+The primary model-ranking metric is pooled out-of-sample ROC AUC.
+
+Required secondary metrics are:
+
+- accuracy at threshold 0.5;
+- Brier score;
+- binary log loss;
+- positive-class prevalence;
+- prediction count.
+
+Required reporting scopes are:
+
+- pooled across all out-of-sample predictions;
+- per validation fold;
+- per competition;
+- per season;
+- per competition-season.
+
+Calibration summaries and probability-distribution diagnostics are also
+required in the final report.
+
+Metrics for all model variants and baselines must be calculated from the
+same authoritative prediction rows.
+
+## Reproducibility identity
+
+Every experiment receives an immutable manifest containing at least:
+
+- schema version;
+- run ID;
+- command and arguments;
+- UTC creation time;
+- Git commit;
+- Git dirty-state indicator;
+- snapshot filename, size and SHA-256;
+- Python version;
+- operating-system information;
+- NumPy version;
+- scikit-learn version;
+- TensorFlow version;
+- TensorFlow CUDA-build status;
+- visible devices;
+- random seed;
+- match-selection configuration;
+- round and window configuration;
+- categorical-map identity;
+- imputation configuration;
+- model configuration;
+- optimizer and training configuration;
+- output artifact names and hashes.
+
+An experiment with a dirty Git working tree must be clearly marked. The
+final Milestone 1 benchmark must use a clean committed revision.
+
+## Reproducibility levels
+
+Deterministic non-model artifacts must be byte-identical when generated
+twice with the same inputs. These include:
+
+- selected match IDs;
+- round membership;
+- targets;
+- categorical maps;
+- experiment configuration;
+- report schemas.
+
+On the same machine and software environment, repeated canary runs must
+satisfy:
+
+- identical fold membership;
+- identical target arrays;
+- identical prediction-row ordering;
+- maximum absolute prediction difference no greater than `1e-6`;
+- absolute aggregate-metric difference no greater than `1e-6`.
+
+The manifest must expose environment differences rather than claiming
+cross-platform byte identity for TensorFlow optimization.
+
+## Required artifacts
+
+Each completed experiment produces:
+
+1. `manifest.json`;
+2. `folds.csv`;
+3. `predictions.csv`;
+4. `fold_metrics.csv`;
+5. `aggregate_metrics.json`;
+6. `configuration.json`;
+7. `runtime.json`;
+8. a human-readable Markdown summary.
+
+The final milestone additionally produces a tracked report under
+`docs/experiments/results`.
+
+Large model files, TensorBoard logs and temporary training artifacts are
+not committed unless explicitly selected for long-term archival.
+
+Tracked reports must contain hashes for any referenced untracked
+artifacts.
+
+## Failure policy
+
+An experiment command must exit non-zero when:
+
+- the snapshot identity is incorrect;
+- selected or array-ready scope differs from the declared contract;
+- a fold violates chronology;
+- a validation match appears more than once;
+- a target or prediction is missing or non-finite;
+- a prediction lies outside `[0, 1]`;
+- strength imputation leaves unresolved model values;
+- required artifacts cannot be written;
+- manifest and artifact identities disagree.
+
+Warnings may record small validation folds, class imbalance or weak model
+performance, but warnings do not override structural failures.
+
+## Performance interpretation
+
+The milestone is accepted even when the neural model does not outperform
+a baseline.
+
+A weak result must be reported honestly and becomes the starting point
+for later architecture and feature experiments.
+
+No model-selection claim may be based on the same validation predictions
+used for the final benchmark comparison.
+
+## Non-goals
+
+Step 8 does not:
+
+- perform broad hyperparameter optimization;
+- tune a probability threshold on final validation predictions;
+- modify the frozen snapshot;
+- rewrite legacy historical experiment results;
+- introduce GPU-specific requirements;
+- restore retired data-source implementations;
+- claim statistical significance from a single benchmark.
+
+## Step 8 substeps
+
+1. define the milestone and reproducibility contract;
+2. implement experiment manifests and artifact identity;
+3. implement and run the chronological canary;
+4. implement common-fold baselines;
+5. execute the first full neural benchmark;
+6. aggregate metrics, calibration and comparisons;
+7. validate, report, merge and tag Milestone 1.
+
+## Step 8.1 acceptance criteria
+
+Step 8.1 is complete when:
+
+1. the branch starts from the completed Step 7 merge;
+2. two independent Step 7 validator executions produce byte-identical
+   JSON, CSV and Markdown artifacts;
+3. the determinism evidence is stored as tracked JSON;
+4. the frozen snapshot hash is recorded;
+5. target semantics and chronological boundaries are explicit;
+6. required experiment artifacts and metrics are defined;
+7. reproducibility tolerances are explicit;
+8. weak model performance is distinguished from pipeline failure;
+9. documentation checks pass;
+10. the Step 8.1 files are committed and pushed.
