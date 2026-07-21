@@ -451,3 +451,59 @@ exits zero, the manifest reports the expected snapshot and scope, all
 prediction rows are unique and valid, and every required artifact is
 present. Canary performance is not used for model selection.
 
+
+## Step 8.4 common-fold baselines
+
+The first benchmark baselines are implemented in
+`football_outcomes.experiments.baselines` and executed through
+`scripts/tools/run_common_fold_baselines.py`.
+
+A baseline run consumes a completed manifest-backed canary or neural
+benchmark run as its reference. Before fitting, it verifies the
+reference manifest hashes for:
+
+- `configuration.json`;
+- `folds.csv`;
+- `predictions.csv`.
+
+The frozen snapshot SHA-256 must match the reference run. The baseline
+runner reconstructs the validated selected scope and chronological
+rounds, then requires exact ordered agreement with every reference
+validation match ID and target.
+
+Three binary baselines are produced for each reference fold:
+
+1. `training-prevalence`: every validation probability equals the
+   positive-class prevalence of the fold's training window;
+2. `training-majority`: every validation probability is the hard
+   majority class of the training window, with ties assigned to the
+   positive class;
+3. `logistic-regression`: a standardized deterministic logistic model
+   fitted only on the numerical pre-match feature array.
+
+The logistic baseline excludes team IDs, competition IDs, SoFIFA
+strength tensors, masks and player-position arrays. It uses solver
+`liblinear`, explicit random state, no class weighting and no validation
+information during fitting. A single-class training window falls back to
+that training class and records the fallback status.
+
+All three variants write prediction rows in the same schema as the
+reference neural run. For each model, the ordered tuple of fold, round,
+match ID and target must match the reference exactly.
+
+The baseline artifact set is:
+
+- `configuration.json`;
+- `folds.csv`;
+- `predictions.csv`;
+- `fold_metrics.csv`;
+- `aggregate_metrics.json`;
+- `runtime.json`;
+- `summary.md`;
+- `manifest.json`.
+
+The manifest records the reference run ID and hashes, the exact
+validation-match identity, feature-subset policy and complete logistic
+configuration. Baseline outputs remain separate from neural outputs so
+later reporting can compare them without rewriting either run.
+

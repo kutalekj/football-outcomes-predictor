@@ -1,3 +1,8 @@
+from football_outcomes.experiments.baselines import (
+    BaselineConfig,
+    run_common_fold_baselines,
+    validate_common_fold_predictions,
+)
 from football_outcomes.experiments.canary import (
     CanaryConfig,
     binary_metrics,
@@ -42,4 +47,7 @@ __all__ = [
     "run_modeling_canary",
     "validate_fold_chronology",
     "validate_prediction_rows",
+    "BaselineConfig",
+    "run_common_fold_baselines",
+    "validate_common_fold_predictions",
 ]
