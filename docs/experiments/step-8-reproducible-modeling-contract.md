@@ -282,7 +282,38 @@ used for the final benchmark comparison.
 Step 8 does not:
 
 - perform broad hyperparameter optimization;
-- tune a probability threshold on final validation predictions;
+- tune a probabilitfrom football_outcomes.experiments.manifest import (
+  ArtifactIdentity,
+  EnvironmentIdentity,
+  GitIdentity,
+  SnapshotIdentity,
+  build_experiment_manifest,
+  canonical_payload_sha256,
+  collect_artifact_identities,
+  collect_environment_identity,
+  collect_git_identity,
+  collect_snapshot_identity,
+  derive_run_id,
+  write_canonical_json,
+  write_experiment_manifest,
+  )
+
+__all__ = [
+"ArtifactIdentity",
+"EnvironmentIdentity",
+"GitIdentity",
+"SnapshotIdentity",
+"build_experiment_manifest",
+"canonical_payload_sha256",
+"collect_artifact_identities",
+"collect_environment_identity",
+"collect_git_identity",
+"collect_snapshot_identity",
+"derive_run_id",
+"write_canonical_json",
+"write_experiment_manifest",
+]y threshold on final validation predictions;
+
 - modify the frozen snapshot;
 - rewrite legacy historical experiment results;
 - introduce GPU-specific requirements;
@@ -314,3 +345,53 @@ Step 8.1 is complete when:
 8. weak model performance is distinguished from pipeline failure;
 9. documentation checks pass;
 10. the Step 8.1 files are committed and pushed.
+
+## Step 8.2 experiment identity and manifest
+
+Experiment identity is implemented in
+`football_outcomes.experiments.manifest`.
+
+The module is independent of training and model construction. It
+provides deterministic primitives for:
+
+- canonical JSON normalization;
+- canonical payload hashing;
+- atomic canonical JSON writing;
+- frozen snapshot identity and expected-hash validation;
+- Git commit, branch and dirty-state capture;
+- Python, operating-system and package environment capture;
+- relative artifact path, size and SHA-256 capture;
+- deterministic run-ID derivation;
+- final experiment-manifest construction.
+
+A run ID is derived from:
+
+- run kind;
+- Git commit;
+- frozen snapshot SHA-256;
+- random seed;
+- normalized experiment configuration.
+
+UTC creation time and runtime-environment information are recorded in
+the manifest but do not alter the deterministic run ID.
+
+Artifact paths are relative to the declared experiment-output root.
+Artifacts outside that root and duplicate artifact paths are rejected.
+
+The manifest records the binary target semantics explicitly:
+
+- positive class `1`: total goals below 2.5;
+- negative class `0`: total goals at least 2.5;
+- prediction field: `probability_under_2_5`.
+
+The manifest itself is not included in its artifact index, avoiding a
+self-referential hash. Every other completed experiment artifact will be
+hashed before the manifest is written.
+
+The Git dirty-state record includes staged, modified and untracked
+entries. A dirty run remains inspectable, but the final Milestone 1
+benchmark must be executed from a clean committed revision.
+
+Step 8.2 does not modify the current rolling trainer or its historical
+TensorBoard output behavior. The Step 8.3 canary runner will become the
+first consumer of this manifest API.

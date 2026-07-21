@@ -1,0 +1,31 @@
+from football_outcomes.experiments.manifest import (
+    ArtifactIdentity,
+    EnvironmentIdentity,
+    GitIdentity,
+    SnapshotIdentity,
+    build_experiment_manifest,
+    canonical_payload_sha256,
+    collect_artifact_identities,
+    collect_environment_identity,
+    collect_git_identity,
+    collect_snapshot_identity,
+    derive_run_id,
+    write_canonical_json,
+    write_experiment_manifest,
+)
+
+__all__ = [
+    "ArtifactIdentity",
+    "EnvironmentIdentity",
+    "GitIdentity",
+    "SnapshotIdentity",
+    "build_experiment_manifest",
+    "canonical_payload_sha256",
+    "collect_artifact_identities",
+    "collect_environment_identity",
+    "collect_git_identity",
+    "collect_snapshot_identity",
+    "derive_run_id",
+    "write_canonical_json",
+    "write_experiment_manifest",
+]
