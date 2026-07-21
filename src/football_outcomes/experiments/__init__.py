@@ -1,3 +1,11 @@
+from football_outcomes.experiments.canary import (
+    CanaryConfig,
+    binary_metrics,
+    choose_canary_fold_indices,
+    run_modeling_canary,
+    validate_fold_chronology,
+    validate_prediction_rows,
+)
 from football_outcomes.experiments.manifest import (
     ArtifactIdentity,
     EnvironmentIdentity,
@@ -28,4 +36,10 @@ __all__ = [
     "derive_run_id",
     "write_canonical_json",
     "write_experiment_manifest",
+    "CanaryConfig",
+    "binary_metrics",
+    "choose_canary_fold_indices",
+    "run_modeling_canary",
+    "validate_fold_chronology",
+    "validate_prediction_rows",
 ]

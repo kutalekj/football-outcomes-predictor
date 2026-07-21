@@ -395,3 +395,59 @@ benchmark must be executed from a clean committed revision.
 Step 8.2 does not modify the current rolling trainer or its historical
 TensorBoard output behavior. The Step 8.3 canary runner will become the
 first consumer of this manifest API.
+## Step 8.3 chronological modeling canary
+
+The first manifest-backed modeling runner is implemented in
+`football_outcomes.experiments.canary` and exposed through
+`scripts/tools/run_modeling_canary.py`.
+
+The default canary uses:
+
+- the validated frozen snapshot and required SHA-256;
+- the validated 30,469 selected-match scope;
+- the 30,468 array-ready matches;
+- the repository's deterministic 320 chronological rounds;
+- a 25-round training window;
+- the first two eligible validation rounds;
+- one optimization epoch per fold;
+- the v2 binary model;
+- leakage-safe past-only strength reconstruction;
+- fold-local statistical imputation;
+- carry-forward model state across consecutive canary folds;
+- deterministic seed `123`;
+- disabled branch diagnostics and TensorBoard output.
+
+For each canary fold, the runner:
+
+1. slices only the preceding training rounds;
+2. validates the training/validation datetime boundary;
+3. reconstructs and completes strength arrays through the Step 7 adapter;
+4. fits the strength imputer only on that fold's training matches;
+5. builds the model once and carries its state into the next consecutive
+   canary fold;
+6. trains without batch shuffling;
+7. predicts only the current validation round;
+8. verifies finite binary targets and probabilities in `[0, 1]`;
+9. rejects duplicate validation match IDs.
+
+Every canary run writes a deterministic run directory containing:
+
+- `configuration.json`;
+- `folds.csv`;
+- `predictions.csv`;
+- `fold_metrics.csv`;
+- `aggregate_metrics.json`;
+- `runtime.json`;
+- `summary.md`;
+- `manifest.json`.
+
+The manifest hashes every artifact except itself. The run ID is derived
+from the Git commit, frozen snapshot identity, seed and normalized
+configuration. Runtime timestamps and durations are recorded but do not
+alter the run ID.
+
+The canary is accepted as functional evidence when the complete command
+exits zero, the manifest reports the expected snapshot and scope, all
+prediction rows are unique and valid, and every required artifact is
+present. Canary performance is not used for model selection.
+
