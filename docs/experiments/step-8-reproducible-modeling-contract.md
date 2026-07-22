@@ -507,3 +507,55 @@ validation-match identity, feature-subset policy and complete logistic
 configuration. Baseline outputs remain separate from neural outputs so
 later reporting can compare them without rewriting either run.
 
+
+## Step 8.5 first full neural benchmark
+
+The chronological canary execution boundary is generalized so the same
+validated implementation can identify either a small canary or the full
+neural benchmark without duplicating model-training logic.
+
+The full benchmark uses:
+
+- all 295 eligible validation folds from round 26 through round 320;
+- a 25-round rolling training window;
+- one optimization epoch per fold;
+- batch size `64`;
+- learning rate `0.0001` with a constant schedule;
+- random seed `123`;
+- the v2 binary architecture;
+- leakage-safe past-only SoFIFA reconstruction;
+- fold-local strength imputation with minimum grouped support `20`;
+- neutral fallback value `50.0`;
+- model state carried forward between consecutive folds;
+- batch shuffling disabled.
+
+One epoch per fold is the frozen first-milestone configuration. It is a
+reproducible reference point, not a claim that the optimization budget is
+optimal.
+
+The benchmark includes the first and final eligible validation rounds.
+Every validation match appears at most once in the authoritative neural
+prediction file.
+
+The default benchmark command omits a fold count and therefore consumes
+every eligible fold. Supplying a fold count creates a separately
+identified `benchmark-partial` run and must not be presented as the full
+Milestone 1 neural result.
+
+The benchmark runner reuses the canary's snapshot, scope, chronology,
+imputation, metric, artifact and manifest checks. The run identity is
+changed to:
+
+- run kind: `benchmark`;
+- experiment tier: `full-neural-benchmark`;
+- model name: `v2-benchmark`.
+
+The final full benchmark must be launched from a clean committed Git
+revision. A detached clean Git worktree is used so preserved untracked
+historical experiment files in the development worktree do not need to be
+removed or modified.
+
+The benchmark output remains outside the repository. Step 8.6 will use
+its manifest-backed predictions as the reference rows for all three
+baseline models and will create the tracked comparison report.
+

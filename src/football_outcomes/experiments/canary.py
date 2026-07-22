@@ -286,9 +286,10 @@ def _render_summary(
     aggregate: Mapping[str, Any],
     fold_rows: Sequence[Mapping[str, Any]],
     runtime: Mapping[str, Any],
+    title: str = "Step 8 chronological modeling canary",
 ) -> str:
     lines = [
-        "# Step 8 chronological modeling canary",
+        f"# {title}",
         "",
         f"- Run ID: `{run_id}`",
         f"- Result: **{'PASS' if aggregate['overall_ok'] else 'FAIL'}**",
@@ -346,7 +347,22 @@ def run_modeling_canary(
     config: CanaryConfig,
     command: Sequence[str],
     overwrite: bool = False,
+    run_kind: str = "canary",
+    experiment_tier: str = "chronological-canary",
+    model_name: str | None = None,
+    summary_title: str = "Step 8 chronological modeling canary",
 ) -> Path:
+    if not run_kind:
+        raise ValueError("run_kind must not be empty.")
+
+    if not experiment_tier:
+        raise ValueError("experiment_tier must not be empty.")
+
+    if not summary_title:
+        raise ValueError("summary_title must not be empty.")
+
+    resolved_model_name = model_name or f"{config.model_version}-canary"
+
     started_at = datetime.now(timezone.utc)
     started_clock = time.perf_counter()
 
@@ -397,7 +413,7 @@ def run_modeling_canary(
     training_config = _training_config(config)
 
     configuration = {
-        "experiment_tier": "chronological-canary",
+        "experiment_tier": experiment_tier,
         "scope": {
             "selected_matches": len(selected),
             "array_ready_matches": len(array_ready),
@@ -429,7 +445,7 @@ def run_modeling_canary(
     }
 
     run_id = derive_run_id(
-        run_kind="canary",
+        run_kind=run_kind,
         git_commit=git_identity.commit,
         snapshot_sha256=snapshot_identity.sha256,
         seed=config.seed,
@@ -440,7 +456,7 @@ def run_modeling_canary(
     if run_directory.exists():
         if not overwrite:
             raise FileExistsError(
-                f"Canary output already exists: {run_directory}. " "Use overwrite=True to replace it."
+                f"Modeling output already exists: {run_directory}. " "Use overwrite=True to replace it."
             )
         shutil.rmtree(run_directory)
 
@@ -479,6 +495,14 @@ def run_modeling_canary(
             for match in round_matches
         ]
         validation_matches = list(rounds[round_index])
+
+        print(
+            f"[{run_kind}] fold {fold_number}/{len(fold_indices)} "
+            f"round={round_index + 1} train={len(training_matches)} "
+            f"validation={len(validation_matches)}",
+            flush=True,
+        )
+
         training_max, validation_min = validate_fold_chronology(
             training_matches,
             validation_matches,
@@ -552,7 +576,7 @@ def run_modeling_canary(
         fold_metric_rows.append(
             {
                 "run_id": run_id,
-                "model_name": f"{config.model_version}-canary",
+                "model_name": resolved_model_name,
                 "fold_number": fold_number,
                 "round_index": round_index + 1,
                 **metrics,
@@ -573,7 +597,7 @@ def run_modeling_canary(
             prediction_rows.append(
                 {
                     "run_id": run_id,
-                    "model_name": f"{config.model_version}-canary",
+                    "model_name": resolved_model_name,
                     "fold_number": fold_number,
                     "round_index": round_index + 1,
                     "match_id": int(match.id),
@@ -607,7 +631,7 @@ def run_modeling_canary(
     aggregate = {
         "overall_ok": True,
         "run_id": run_id,
-        "model_name": f"{config.model_version}-canary",
+        "model_name": resolved_model_name,
         "fold_count": len(fold_rows),
         "metrics": aggregate_metrics,
     }
@@ -639,6 +663,7 @@ def run_modeling_canary(
             aggregate=aggregate,
             fold_rows=fold_rows,
             runtime=runtime,
+            title=summary_title,
         ),
         encoding="utf-8",
         newline="\n",
@@ -655,7 +680,7 @@ def run_modeling_canary(
     )
     artifacts = collect_artifact_identities(artifact_paths, root=run_directory)
     manifest = build_experiment_manifest(
-        run_kind="canary",
+        run_kind=run_kind,
         command=command,
         created_at_utc=started_at,
         git=git_identity,

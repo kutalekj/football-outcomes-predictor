@@ -3,6 +3,12 @@ from football_outcomes.experiments.baselines import (
     run_common_fold_baselines,
     validate_common_fold_predictions,
 )
+from football_outcomes.experiments.benchmark import (
+    BenchmarkConfig,
+    choose_benchmark_fold_indices,
+    is_full_benchmark_schedule,
+    run_neural_benchmark,
+)
 from football_outcomes.experiments.canary import (
     CanaryConfig,
     binary_metrics,
@@ -50,4 +56,8 @@ __all__ = [
     "BaselineConfig",
     "run_common_fold_baselines",
     "validate_common_fold_predictions",
+    "BenchmarkConfig",
+    "choose_benchmark_fold_indices",
+    "is_full_benchmark_schedule",
+    "run_neural_benchmark",
 ]
