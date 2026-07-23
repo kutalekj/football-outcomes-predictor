@@ -17,6 +17,15 @@ from football_outcomes.experiments.canary import (
     validate_fold_chronology,
     validate_prediction_rows,
 )
+from football_outcomes.experiments.comparison import (
+    ComparisonConfig,
+    build_calibration_rows,
+    build_comparison_payload,
+    build_scope_metric_rows,
+    render_comparison_summary,
+    run_benchmark_comparison,
+    validate_common_prediction_rows,
+)
 from football_outcomes.experiments.manifest import (
     ArtifactIdentity,
     EnvironmentIdentity,
@@ -60,4 +69,11 @@ __all__ = [
     "choose_benchmark_fold_indices",
     "is_full_benchmark_schedule",
     "run_neural_benchmark",
+    "ComparisonConfig",
+    "build_calibration_rows",
+    "build_comparison_payload",
+    "build_scope_metric_rows",
+    "render_comparison_summary",
+    "run_benchmark_comparison",
+    "validate_common_prediction_rows",
 ]

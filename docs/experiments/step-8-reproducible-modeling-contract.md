@@ -559,3 +559,74 @@ The benchmark output remains outside the repository. Step 8.6 will use
 its manifest-backed predictions as the reference rows for all three
 baseline models and will create the tracked comparison report.
 
+## Step 8.6 full benchmark comparison
+
+The full neural benchmark and its common-fold baselines are combined by
+`football_outcomes.experiments.comparison`.
+
+The comparison command consumes only completed manifest-backed runs. It
+verifies every indexed source artifact before reading predictions and
+requires the baseline manifest to reference the declared neural run and
+model.
+
+All four variants must contain exactly the same ordered validation rows,
+including:
+
+- fold and round indices;
+- match ID and datetime;
+- competition and season;
+- binary target.
+
+The compared models are:
+
+1. `v2-benchmark`;
+2. `training-prevalence`;
+3. `training-majority`;
+4. `logistic-regression`.
+
+Metrics are calculated from the authoritative probability rows at these
+levels:
+
+- pooled;
+- validation fold;
+- competition;
+- season;
+- competition-season.
+
+The primary ranking metric remains pooled out-of-sample ROC AUC.
+Accuracy at threshold `0.5`, Brier score, binary log loss, prevalence and
+prediction count are retained for every scope. ROC AUC is explicitly
+unavailable for a scope containing only one target class.
+
+Pooled calibration uses ten equal-width probability bins by default.
+The report records each bin's prediction count, mean probability,
+observed positive rate and absolute calibration gap, together with
+expected and maximum calibration error for each model.
+
+Neural-versus-baseline deltas use these directions:
+
+- positive ROC AUC delta favors the neural model;
+- positive accuracy delta favors the neural model;
+- positive Brier-score improvement favors the neural model;
+- positive binary-log-loss improvement favors the neural model.
+
+Structural acceptance requires valid source manifests, identical
+common-fold rows, finite probabilities in `[0, 1]`, complete reporting
+scopes and a manifest-backed comparison artifact set. Acceptance does
+not require the neural model to outperform a baseline.
+
+The comparison output contains:
+
+1. `configuration.json`;
+2. `pooled_metrics.csv`;
+3. `scope_metrics.csv`;
+4. `calibration.csv`;
+5. `comparison.json`;
+6. `runtime.json`;
+7. `summary.md`;
+8. `manifest.json`.
+
+The final Step 8.7 report will promote the accepted comparison evidence
+into tracked milestone documentation without copying the large source
+prediction files into Git.
+
