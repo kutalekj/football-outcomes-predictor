@@ -395,6 +395,7 @@ benchmark must be executed from a clean committed revision.
 Step 8.2 does not modify the current rolling trainer or its historical
 TensorBoard output behavior. The Step 8.3 canary runner will become the
 first consumer of this manifest API.
+
 ## Step 8.3 chronological modeling canary
 
 The first manifest-backed modeling runner is implemented in
@@ -451,7 +452,6 @@ exits zero, the manifest reports the expected snapshot and scope, all
 prediction rows are unique and valid, and every required artifact is
 present. Canary performance is not used for model selection.
 
-
 ## Step 8.4 common-fold baselines
 
 The first benchmark baselines are implemented in
@@ -506,7 +506,6 @@ The manifest records the reference run ID and hashes, the exact
 validation-match identity, feature-subset policy and complete logistic
 configuration. Baseline outputs remain separate from neural outputs so
 later reporting can compare them without rewriting either run.
-
 
 ## Step 8.5 first full neural benchmark
 
@@ -630,3 +629,52 @@ The final Step 8.7 report will promote the accepted comparison evidence
 into tracked milestone documentation without copying the large source
 prediction files into Git.
 
+## Step 8.7 final milestone acceptance
+
+Step 8 is accepted as the first reproducible modeling milestone.
+
+The accepted neural benchmark:
+
+- was executed from clean Git commit
+  `396b6698048985b42542b4f33fa217ca4c2835c0`;
+- used the frozen validated snapshot;
+- evaluated 295 chronological folds;
+- covered validation rounds 26 through 320;
+- produced one prediction for each of 28,029 out-of-sample matches;
+- used a 25-round training window;
+- used leakage-safe fold-local SoFIFA imputation;
+- preserved carry-forward neural model state;
+- recorded all required manifest-backed artifacts.
+
+The accepted comparison:
+
+- was executed from clean Git commit
+  `8ae166276bc2582635f5b9378a5a85921182f827`;
+- evaluated the neural model and all three baselines on identical rows;
+- produced pooled, fold, competition, season,
+  competition-season and calibration results;
+- verified all declared source and output artifact hashes;
+- passed structurally without requiring the neural model to win.
+
+The pooled ROC AUC results are:
+
+1. logistic regression: `0.558414`;
+2. v2 neural benchmark: `0.545390`;
+3. training prevalence: `0.511609`;
+4. training majority: `0.510773`.
+
+The logistic-regression baseline is the strongest model by the declared
+primary metric. The training-prevalence baseline provides the best
+Brier score, binary log loss and expected calibration error.
+
+The neural model therefore establishes a valid but non-winning first
+benchmark. This outcome is retained honestly as the starting point for
+subsequent feature, architecture, training and calibration experiments.
+
+Step 8 does not promote a production model and makes no final
+model-selection claim.
+
+Detailed accepted evidence is tracked under
+`docs/experiments/results/step-8-*`. Large prediction artifacts and
+runtime outputs remain outside the repository and are referenced by
+their manifest identities and SHA-256 hashes.

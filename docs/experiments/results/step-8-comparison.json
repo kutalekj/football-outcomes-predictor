@@ -1,0 +1,120 @@
+{
+  "best_model_by_roc_auc": "logistic-regression",
+  "model_count": 4,
+  "models": {
+    "logistic-regression": {
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.057549613793599186,
+        "maximum_calibration_error": 0.4854129050763047,
+        "nonempty_bin_count": 10
+      },
+      "metrics": {
+        "accuracy_at_0_5": 0.5423668343501373,
+        "binary_log_loss": 0.7025574087901059,
+        "brier_score": 0.2526685875823116,
+        "positive_class_prevalence": 0.4878518677084448,
+        "prediction_count": 28029,
+        "roc_auc": 0.5584138021716512
+      }
+    },
+    "training-majority": {
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.4832851689321774,
+        "maximum_calibration_error": 0.49105145413870244,
+        "nonempty_bin_count": 2
+      },
+      "metrics": {
+        "accuracy_at_0_5": 0.5167148310678226,
+        "binary_log_loss": 7.789636631275824,
+        "brier_score": 0.4832851689321774,
+        "positive_class_prevalence": 0.4878518677084448,
+        "prediction_count": 28029,
+        "roc_auc": 0.5107725971338264
+      }
+    },
+    "training-prevalence": {
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.00497901679933332,
+        "maximum_calibration_error": 0.013026529139558929,
+        "nonempty_bin_count": 2
+      },
+      "metrics": {
+        "accuracy_at_0_5": 0.5167148310678226,
+        "binary_log_loss": 0.6927963529850488,
+        "brier_score": 0.2498242076899306,
+        "positive_class_prevalence": 0.4878518677084448,
+        "prediction_count": 28029,
+        "roc_auc": 0.5116092967827698
+      }
+    },
+    "v2-benchmark": {
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.04421880504691178,
+        "maximum_calibration_error": 0.8235153555870056,
+        "nonempty_bin_count": 9
+      },
+      "metrics": {
+        "accuracy_at_0_5": 0.5308787327410895,
+        "binary_log_loss": 0.7012716754974176,
+        "brier_score": 0.25306492437486977,
+        "positive_class_prevalence": 0.4878518677084448,
+        "prediction_count": 28029,
+        "roc_auc": 0.5453902631037189
+      }
+    }
+  },
+  "neural_vs_baselines": {
+    "logistic-regression": {
+      "accuracy_delta": -0.011488101609047785,
+      "binary_log_loss_improvement": 0.0012857332926882181,
+      "brier_score_improvement": -0.0003963367925581829,
+      "roc_auc_delta": -0.0130235390679323
+    },
+    "training-majority": {
+      "accuracy_delta": 0.014163901673266976,
+      "binary_log_loss_improvement": 7.088364955778407,
+      "brier_score_improvement": 0.2302202445573076,
+      "roc_auc_delta": 0.034617665969892464
+    },
+    "training-prevalence": {
+      "accuracy_delta": 0.014163901673266976,
+      "binary_log_loss_improvement": -0.008475322512368821,
+      "brier_score_improvement": -0.0032407166849391655,
+      "roc_auc_delta": 0.03378096632094907
+    }
+  },
+  "overall_ok": true,
+  "primary_metric": "roc_auc",
+  "roc_auc_ranking": [
+    {
+      "model_name": "logistic-regression",
+      "rank": 1,
+      "roc_auc": 0.5584138021716512
+    },
+    {
+      "model_name": "v2-benchmark",
+      "rank": 2,
+      "roc_auc": 0.5453902631037189
+    },
+    {
+      "model_name": "training-prevalence",
+      "rank": 3,
+      "roc_auc": 0.5116092967827698
+    },
+    {
+      "model_name": "training-majority",
+      "rank": 4,
+      "roc_auc": 0.5107725971338264
+    }
+  ],
+  "run_id": "comparison-24d9ee7428d5fb2e",
+  "source_runs": {
+    "baselines": "baselines-889d2555756949cc",
+    "neural": "benchmark-8eec79bacd3c9754"
+  },
+  "validation_match_count": 28029
+}
