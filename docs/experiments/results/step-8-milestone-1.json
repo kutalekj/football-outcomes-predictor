@@ -1,0 +1,198 @@
+{
+  "artifact_verification": {
+    "baseline_manifest_artifacts": true,
+    "benchmark_manifest_artifacts": true,
+    "comparison_manifest_artifacts": true,
+    "comparison_source_hashes": true
+  },
+  "best_model_by_roc_auc": "logistic-regression",
+  "interpretation": {
+    "benchmark_is_structurally_accepted": true,
+    "model_selection_claim": "No final model-selection claim is made from this milestone.",
+    "neural_is_best_by_primary_metric": false,
+    "performance_winner": "logistic-regression"
+  },
+  "milestone": "step-8-first-reproducible-modeling-benchmark",
+  "models": {
+    "logistic-regression": {
+      "accuracy_at_0_5": 0.5423668343501373,
+      "binary_log_loss": 0.7025574087901059,
+      "brier_score": 0.2526685875823116,
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.057549613793599186,
+        "maximum_calibration_error": 0.4854129050763047,
+        "nonempty_bin_count": 10
+      },
+      "positive_class_prevalence": 0.4878518677084448,
+      "prediction_count": 28029,
+      "roc_auc": 0.5584138021716512
+    },
+    "training-majority": {
+      "accuracy_at_0_5": 0.5167148310678226,
+      "binary_log_loss": 7.789636631275824,
+      "brier_score": 0.4832851689321774,
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.4832851689321774,
+        "maximum_calibration_error": 0.49105145413870244,
+        "nonempty_bin_count": 2
+      },
+      "positive_class_prevalence": 0.4878518677084448,
+      "prediction_count": 28029,
+      "roc_auc": 0.5107725971338264
+    },
+    "training-prevalence": {
+      "accuracy_at_0_5": 0.5167148310678226,
+      "binary_log_loss": 0.6927963529850488,
+      "brier_score": 0.2498242076899306,
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.00497901679933332,
+        "maximum_calibration_error": 0.013026529139558929,
+        "nonempty_bin_count": 2
+      },
+      "positive_class_prevalence": 0.4878518677084448,
+      "prediction_count": 28029,
+      "roc_auc": 0.5116092967827698
+    },
+    "v2-benchmark": {
+      "accuracy_at_0_5": 0.5308787327410895,
+      "binary_log_loss": 0.7012716754974176,
+      "brier_score": 0.25306492437486977,
+      "calibration": {
+        "bin_count": 10,
+        "expected_calibration_error": 0.04421880504691178,
+        "maximum_calibration_error": 0.8235153555870056,
+        "nonempty_bin_count": 9
+      },
+      "positive_class_prevalence": 0.4878518677084448,
+      "prediction_count": 28029,
+      "roc_auc": 0.5453902631037189
+    }
+  },
+  "neural_vs_baselines": {
+    "logistic-regression": {
+      "accuracy_delta": -0.011488101609047785,
+      "binary_log_loss_improvement": 0.0012857332926882181,
+      "brier_score_improvement": -0.0003963367925581829,
+      "roc_auc_delta": -0.0130235390679323
+    },
+    "training-majority": {
+      "accuracy_delta": 0.014163901673266976,
+      "binary_log_loss_improvement": 7.088364955778407,
+      "brier_score_improvement": 0.2302202445573076,
+      "roc_auc_delta": 0.034617665969892464
+    },
+    "training-prevalence": {
+      "accuracy_delta": 0.014163901673266976,
+      "binary_log_loss_improvement": -0.008475322512368821,
+      "brier_score_improvement": -0.0032407166849391655,
+      "roc_auc_delta": 0.03378096632094907
+    }
+  },
+  "overall_ok": true,
+  "primary_metric": "roc_auc",
+  "reporting_scope": {
+    "competition": 24,
+    "competition-season": 92,
+    "fold": 295,
+    "pooled": 1,
+    "season": 4
+  },
+  "repository_gate": {
+    "pre_commit": "passed",
+    "runtime_smoke_v1": "passed",
+    "runtime_smoke_v2": "passed",
+    "test_warnings": 138,
+    "unit_and_characterization_tests": 295
+  },
+  "schema_version": 1,
+  "scope": {
+    "array_ready_matches": 30468,
+    "competition_count": 24,
+    "competition_season_count": 92,
+    "evaluated_folds": 295,
+    "final_validation_round": 320,
+    "first_validation_round": 26,
+    "round_count": 320,
+    "season_count": 4,
+    "selected_matches": 30469,
+    "training_window_rounds": 25,
+    "validation_matches": 28029
+  },
+  "snapshot": {
+    "filename": "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+    "sha256": "AEC8C575156346AB1C255433C3D1E92E8782A5A04666149B929EE336FE27A51C",
+    "size_bytes": 700083593
+  },
+  "source_runs": {
+    "baselines": {
+      "git": {
+        "branch": null,
+        "commit": "396b6698048985b42542b4f33fa217ca4c2835c0",
+        "dirty_entries": [],
+        "is_dirty": false
+      },
+      "manifest_sha256": "6C3C63E378D78C8036027892CEEDD656F59C1FE3276AA84CBCBF16BF2757E5D9",
+      "predictions_sha256": "4F69AFCD68B4D4F3658B0F5832E2D496D2205316D29670139443FADC4DB6A948",
+      "run_id": "baselines-889d2555756949cc"
+    },
+    "comparison": {
+      "comparison_sha256": "1545C52AABE1121144179C80A1F908E16EB405843361118A843DE20D5A770C81",
+      "git": {
+        "branch": null,
+        "commit": "8ae166276bc2582635f5b9378a5a85921182f827",
+        "dirty_entries": [],
+        "is_dirty": false
+      },
+      "manifest_sha256": "09D0435F0CA2BCA2DEEA1D4621F80E99ABA50CE6EA612F4DE72F2F708C9A0C5F",
+      "run_id": "comparison-24d9ee7428d5fb2e"
+    },
+    "neural": {
+      "aggregate_metrics": {
+        "accuracy_at_0_5": 0.5308787327410895,
+        "binary_log_loss": 0.7012716754974176,
+        "brier_score": 0.25306492437486977,
+        "positive_class_prevalence": 0.4878518677084448,
+        "prediction_count": 28029,
+        "roc_auc": 0.5453902631037189
+      },
+      "git": {
+        "branch": null,
+        "commit": "396b6698048985b42542b4f33fa217ca4c2835c0",
+        "dirty_entries": [],
+        "is_dirty": false
+      },
+      "manifest_sha256": "1AEAEF9AAA631CB3334365CC8EC76F965CA06101D619C0F1DDD7542A3C962A04",
+      "predictions_sha256": "CB575ABF76FF5EBBDDC0C2DDB4A23236432798DDB6B273A8B13658E4841673E3",
+      "run_id": "benchmark-8eec79bacd3c9754"
+    }
+  },
+  "target": {
+    "name": "under_2_5_goals",
+    "negative_class": 0,
+    "negative_class_meaning": "total goals at least 2.5",
+    "positive_class": 1,
+    "positive_class_meaning": "total goals below 2.5",
+    "prediction_field": "probability_under_2_5"
+  },
+  "tracked_artifacts": {
+    "step-8-calibration.csv": {
+      "sha256": "AEA3D86109971B0D73C20680733EE91A5DE10693BA025084B33AAD92772FA247",
+      "size_bytes": 2747
+    },
+    "step-8-comparison.json": {
+      "sha256": "1545C52AABE1121144179C80A1F908E16EB405843361118A843DE20D5A770C81",
+      "size_bytes": 3794
+    },
+    "step-8-pooled-metrics.csv": {
+      "sha256": "CE80184CEFC234D832023226E63B89CB56DCB3A4F9D83F63E95536177DA3B4E3",
+      "size_bytes": 651
+    },
+    "step-8-scope-metrics.csv": {
+      "sha256": "A32AAE4A43C327C34234C40B717477333CDC44B8EB6DFFEE2A2227AE9431B600",
+      "size_bytes": 234188
+    }
+  }
+}

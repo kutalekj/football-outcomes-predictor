@@ -1,0 +1,35 @@
+﻿{
+    "schema_version":  1,
+    "validator":  "scripts/tools/validate_sofifa_imputation.py",
+    "snapshot":  {
+                     "filename":  "fs_full_26-01-26_NO-25-26-MATCHES_v5.pkl",
+                     "sha256":  "AEC8C575156346AB1C255433C3D1E92E8782A5A04666149B929EE336FE27A51C"
+                 },
+    "parameters":  {
+                       "window_rounds":  25,
+                       "audit_fold_count":  5,
+                       "minimum_support":  20,
+                       "neutral_value":  50
+                   },
+    "artifacts":  [
+                      {
+                          "name":  "step-7-sofifa-imputation.json",
+                          "run_a_sha256":  "19C54C2F53F19F1D1C0A50918DF3F258D099D6CDA657EE2AEAD98B88AA423586",
+                          "run_b_sha256":  "19C54C2F53F19F1D1C0A50918DF3F258D099D6CDA657EE2AEAD98B88AA423586",
+                          "byte_identical":  true
+                      },
+                      {
+                          "name":  "step-7-by-competition-season.csv",
+                          "run_a_sha256":  "EC97C2520EFDA04D8E6EA78EDC1E2CC9C6833149802CF4974655D95C7DA3DF76",
+                          "run_b_sha256":  "EC97C2520EFDA04D8E6EA78EDC1E2CC9C6833149802CF4974655D95C7DA3DF76",
+                          "byte_identical":  true
+                      },
+                      {
+                          "name":  "step-7-sofifa-imputation.md",
+                          "run_a_sha256":  "FE76B60F2888C0F51ABB2C6070ED319A34838BFFC596E00C6418E27A979E945D",
+                          "run_b_sha256":  "FE76B60F2888C0F51ABB2C6070ED319A34838BFFC596E00C6418E27A979E945D",
+                          "byte_identical":  true
+                      }
+                  ],
+    "all_artifacts_byte_identical":  true
+}
