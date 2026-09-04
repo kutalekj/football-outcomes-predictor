@@ -57,7 +57,7 @@ class BinaryEstimatorConfig:
     mlp_hidden_layers: tuple[int, ...] = (128, 64)
     mlp_alpha: float = 1e-4
     mlp_learning_rate_init: float = 1e-3
-    mlp_max_iter: int = 20
+    mlp_max_iter: int = 100
     mlp_batch_size: int = 64
 
     def validate(self) -> None:
@@ -257,6 +257,8 @@ def fit_logistic_probabilities(
     y_train: np.ndarray,
     X_validation: np.ndarray,
     config: BinaryEstimatorConfig,
+    *,
+    standardize: bool = True,
 ) -> ProbabilityResult:
     config.validate()
     training = _validated_feature_matrix(X_train, name="training")
@@ -268,15 +270,13 @@ def fit_logistic_probabilities(
     if constant is not None:
         return constant
 
-    model = make_pipeline(
-        StandardScaler(),
-        LogisticRegression(
-            C=config.logistic_c,
-            max_iter=config.logistic_max_iter,
-            solver="liblinear",
-            random_state=config.seed,
-        ),
+    estimator = LogisticRegression(
+        C=config.logistic_c,
+        max_iter=config.logistic_max_iter,
+        solver="liblinear",
+        random_state=config.seed,
     )
+    model = make_pipeline(StandardScaler(), estimator) if standardize else estimator
     model.fit(training, target)
     return _probability_result(model.predict_proba(validation)[:, 1], training.shape[1])
 
@@ -376,20 +376,17 @@ def fit_flat_mlp_probabilities(
     if constant is not None:
         return constant
 
-    model = make_pipeline(
-        StandardScaler(),
-        MLPClassifier(
-            hidden_layer_sizes=config.mlp_hidden_layers,
-            activation="relu",
-            solver="adam",
-            alpha=config.mlp_alpha,
-            batch_size=config.mlp_batch_size,
-            learning_rate_init=config.mlp_learning_rate_init,
-            max_iter=config.mlp_max_iter,
-            shuffle=False,
-            random_state=config.seed,
-            early_stopping=False,
-        ),
+    model = MLPClassifier(
+        hidden_layer_sizes=config.mlp_hidden_layers,
+        activation="relu",
+        solver="adam",
+        alpha=config.mlp_alpha,
+        batch_size=config.mlp_batch_size,
+        learning_rate_init=config.mlp_learning_rate_init,
+        max_iter=config.mlp_max_iter,
+        shuffle=False,
+        random_state=config.seed,
+        early_stopping=False,
     )
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always", ConvergenceWarning)
@@ -915,7 +912,13 @@ def run_publication_binary_experiment(
                 training_latent, y_train, validation_latent, config.estimators
             ),
             "probe-xgboost": fit_xgboost_probabilities(training_latent, y_train, validation_latent, config.estimators),
-            "flat-logistic": fit_logistic_probabilities(flat_train, y_train, flat_validation, config.estimators),
+            "flat-logistic": fit_logistic_probabilities(
+                flat_train,
+                y_train,
+                flat_validation,
+                config.estimators,
+                standardize=False,
+            ),
             "flat-random-forest": fit_random_forest_probabilities(
                 flat_train, y_train, flat_validation, config.estimators
             ),
