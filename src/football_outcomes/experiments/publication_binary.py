@@ -7,7 +7,7 @@ import math
 import time
 import warnings
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -118,6 +118,11 @@ class PublicationBinaryConfig:
     minimum_group_support: int = 20
     neutral_value: float = 50.0
     latent_batch_size: int = 256
+
+    # Publication reproduction defaults: rebuild current normalized features from
+    # raw snapshot match state and keep the historical selected-v1 strength path.
+    rebuild_match_features: bool = True
+    enable_strength_imputation: bool = False
 
     estimators: BinaryEstimatorConfig = BinaryEstimatorConfig()
 
@@ -453,59 +458,94 @@ def _write_json(path: Path, payload: Mapping[str, Any]) -> None:
 
 
 def _selected_v1_train_config(config: PublicationBinaryConfig) -> Any:
-    from football_outcomes.training.configs import TrainConfig
+    # Keep the publication control tied to the application's authoritative
+    # selected-v1 architecture instead of duplicating architecture constants here.
+    from football_outcomes.application.footystats_pipeline import selected_model_config
 
-    return TrainConfig(
-        mode="binary_u25",
-        model_version="v1",
-        representation="full",
-        use_strength_masks=True,
-        use_position_embedding=True,
-        use_team_strength=True,
-        use_team_ids=True,
-        use_comp_embedding=True,
-        learning_rate=config.proposed_learning_rate,
-        lr_schedule="exponential",
-        lr_decay_rate=config.proposed_lr_decay_rate,
-        min_learning_rate=config.proposed_min_learning_rate,
-        batch_size=config.proposed_batch_size,
+    base = selected_model_config(
+        run_name="prl-publication-v1",
+        enable_strength_imputation=config.enable_strength_imputation,
+    )
+    return replace(
+        base,
         window_rounds=config.window_rounds,
         epochs_per_step=config.proposed_epochs_per_fold,
-        early_stopping_patience=1,
-        early_stopping_min_delta=0.0,
-        team_emb_dim=8,
-        comp_emb_dim=5,
-        strength_emb_dim=24,
-        position_emb_dim=3,
-        mlp_hidden_1=128,
-        mlp_hidden_2=64,
-        mlp_hidden_3=32,
-        mlp_dropout_1=0.30,
-        mlp_dropout_2=0.20,
+        learning_rate=config.proposed_learning_rate,
+        batch_size=config.proposed_batch_size,
         seed=config.seed,
         run_name=None,
         enable_branch_diagnostics=False,
         save_oos_predictions=False,
-        enable_strength_imputation=True,
+        lr_decay_rate=config.proposed_lr_decay_rate,
+        min_learning_rate=config.proposed_min_learning_rate,
         strength_imputation_minimum_support=config.minimum_group_support,
         strength_imputation_neutral_value=config.neutral_value,
-        use_team_aux_head=False,
-        aux_task=None,
     )
 
 
-def _learning_rate_for_fold(config: PublicationBinaryConfig, fold_offset: int) -> float:
-    learning_rate = config.proposed_learning_rate * (config.proposed_lr_decay_rate ** int(fold_offset))
-    return max(config.proposed_min_learning_rate, float(learning_rate))
+def _validate_numerical_unit_interval(values: np.ndarray, *, name: str) -> dict[str, float]:
+    matrix = np.asarray(values, dtype=np.float64)
+    if matrix.ndim != 2 or matrix.shape[0] == 0 or matrix.shape[1] == 0:
+        raise RuntimeError(f"{name} numerical feature matrix must be a non-empty 2-D array.")
+    if not np.isfinite(matrix).all():
+        raise RuntimeError(f"{name} numerical feature matrix contains non-finite values.")
+
+    minimum = float(matrix.min())
+    maximum = float(matrix.max())
+    tolerance = 1e-6
+    if minimum < -tolerance or maximum > 1.0 + tolerance:
+        row, column = np.argwhere((matrix < -tolerance) | (matrix > 1.0 + tolerance))[0]
+        value = float(matrix[int(row), int(column)])
+        raise RuntimeError(
+            f"{name} numerical features must lie in [0, 1]; "
+            f"found value={value} at row={int(row)}, column={int(column)} "
+            f"with overall range [{minimum}, {maximum}]."
+        )
+    return {"minimum": minimum, "maximum": maximum}
 
 
-def _set_optimizer_learning_rate(model: Any, learning_rate: float) -> None:
-    try:
-        model.optimizer.learning_rate.assign(float(learning_rate))
-    except Exception:
-        from tensorflow.keras import backend as keras_backend
+def _rebuild_selected_match_features(bundle: Any) -> tuple[list[Any], list[Any]]:
+    """Reproduce the active FootyStats feature-preparation path from raw snapshot state."""
 
-        keras_backend.set_value(model.optimizer.learning_rate, float(learning_rate))
+    from football_outcomes.data.match_features import calculate_match_features
+    from football_outcomes.data.sofifa_team_matching import match_fs_teams_to_sofifa_teams
+    from football_outcomes.data.state import apply_bundle_to_global
+    from football_outcomes.utils import fs_common as common
+    from football_outcomes.utils import fs_feature_utils as feature_utils
+    from football_outcomes.validation.selection import select_validation_matches
+
+    global_instance = apply_bundle_to_global(bundle)
+    common.link_matches_to_comp_seasons()
+    common.ensure_comp_season_dates(force=False)
+    common.initialize_league_tables(precompute_positions=True, force_rebuild=False)
+    match_fs_teams_to_sofifa_teams(force=False)
+
+    all_matches_sorted = sorted(global_instance.all_matches, key=feature_utils.match_sort_key)
+    selected = sorted(
+        select_validation_matches(all_matches_sorted, _selection_config()),
+        key=feature_utils.match_sort_key,
+    )
+    team_index_all = feature_utils.build_team_match_index(all_matches_sorted)
+    team_index_league = feature_utils.build_team_match_index(selected)
+
+    array_ready: list[Any] = []
+    for match in selected:
+        try:
+            match.features_before_match = calculate_match_features(
+                match=match,
+                team_index_league=team_index_league,
+                team_index_all=team_index_all,
+            )
+        except ValueError as exc:
+            print(
+                f"[prl-binary][feature-skip] match_id={match.id} "
+                f"competition={match.comp_name!r} season={match.season} error={exc!r}",
+                flush=True,
+            )
+            continue
+        array_ready.append(match)
+
+    return selected, array_ready
 
 
 def _selection_config() -> Any:
@@ -581,9 +621,12 @@ def run_publication_binary_experiment(
 
     config.validate()
 
+    from tensorflow.keras.callbacks import EarlyStopping
+
     from football_outcomes.config import fs_settings as sett
     from football_outcomes.data.snapshots import load_snapshot
     from football_outcomes.data.sofifa_imputation import StrengthImputationConfig
+    from football_outcomes.datasets.arrays import build_arrays_for_matches
     from football_outcomes.datasets.imputed_strength import build_fold_imputed_arrays
     from football_outcomes.datasets.mappings import build_categorical_maps
     from football_outcomes.datasets.rounds import distribute_matches_into_rounds
@@ -592,6 +635,10 @@ def run_publication_binary_experiment(
         extract_final_hidden_representation,
     )
     from football_outcomes.modeling.factory import build_model
+    from football_outcomes.training.control import (
+        learning_rate_for_round,
+        set_optimizer_learning_rate,
+    )
     from football_outcomes.training.runtime import (
         extract_main_predictions,
         make_train_targets,
@@ -608,11 +655,14 @@ def run_publication_binary_experiment(
     output_root.mkdir(parents=True, exist_ok=True)
 
     bundle = load_snapshot(snapshot_path)
-    selected = select_validation_matches(bundle.matches, _selection_config())
-    array_ready = sorted(
-        (match for match in selected if getattr(match, "features_before_match", None) is not None),
-        key=match_sort_key,
-    )
+    if config.rebuild_match_features:
+        selected, array_ready = _rebuild_selected_match_features(bundle)
+    else:
+        selected = select_validation_matches(bundle.matches, _selection_config())
+        array_ready = sorted(
+            (match for match in selected if getattr(match, "features_before_match", None) is not None),
+            key=match_sort_key,
+        )
     rounds = distribute_matches_into_rounds(array_ready)
     fold_indices = choose_publication_fold_indices(
         round_count=len(rounds),
@@ -627,11 +677,15 @@ def run_publication_binary_experiment(
         competition_names=competition_names,
     )
     proposed_train_config = _selected_v1_train_config(config)
-    context = _strength_context(bundle)
-    imputation_config = StrengthImputationConfig(
-        skill_count=len(sett.PLAYER_SKILLS),
-        minimum_group_support=config.minimum_group_support,
-        neutral_value=config.neutral_value,
+    context = _strength_context(bundle) if config.enable_strength_imputation else None
+    imputation_config = (
+        StrengthImputationConfig(
+            skill_count=len(sett.PLAYER_SKILLS),
+            minimum_group_support=config.minimum_group_support,
+            neutral_value=config.neutral_value,
+        )
+        if config.enable_strength_imputation
+        else None
     )
 
     run_kind = "prl-binary-full" if config.fold_count is None else "prl-binary-partial"
@@ -679,8 +733,12 @@ def run_publication_binary_experiment(
         "notes": {
             "proposed_model_policy": "carry-forward across chronological folds",
             "classical_model_policy": "fresh fit per rolling training window",
-            "proposed_early_stopping": False,
+            "proposed_early_stopping": True,
+            "proposed_restore_best_weights": True,
+            "proposed_shuffle": True,
             "proposed_fixed_epochs_per_fold": config.proposed_epochs_per_fold,
+            "rebuild_match_features": config.rebuild_match_features,
+            "enable_strength_imputation": config.enable_strength_imputation,
         },
     }
     _write_json(run_directory / "configuration.json", configuration)
@@ -709,16 +767,51 @@ def run_publication_binary_experiment(
             flush=True,
         )
 
-        training_arrays, validation_arrays, diagnostics = build_fold_imputed_arrays(
-            training_matches=training_matches,
-            validation_matches=validation_matches,
-            cat_maps=cat_maps,
-            competition_names=competition_names,
-            mode="binary_u25",
-            max_goals_class=proposed_train_config.max_goals_class,
-            context=context,
-            imputation_config=imputation_config,
+        diagnostics = None
+        if config.enable_strength_imputation:
+            assert context is not None
+            assert imputation_config is not None
+            training_arrays, validation_arrays, diagnostics = build_fold_imputed_arrays(
+                training_matches=training_matches,
+                validation_matches=validation_matches,
+                cat_maps=cat_maps,
+                competition_names=competition_names,
+                mode="binary_u25",
+                max_goals_class=proposed_train_config.max_goals_class,
+                context=context,
+                imputation_config=imputation_config,
+            )
+        else:
+            training_arrays = build_arrays_for_matches(
+                matches=training_matches,
+                cat_maps=cat_maps,
+                competition_names=competition_names,
+                mode="binary_u25",
+                max_goals_class=proposed_train_config.max_goals_class,
+            )
+            validation_arrays = build_arrays_for_matches(
+                matches=validation_matches,
+                cat_maps=cat_maps,
+                competition_names=competition_names,
+                mode="binary_u25",
+                max_goals_class=proposed_train_config.max_goals_class,
+            )
+
+        training_num_range = _validate_numerical_unit_interval(
+            training_arrays[0],
+            name=f"fold {fold_number} training",
         )
+        validation_num_range = _validate_numerical_unit_interval(
+            validation_arrays[0],
+            name=f"fold {fold_number} validation",
+        )
+        if fold_number == 1:
+            print(
+                "[prl-binary] normalized X_num range "
+                f"train=[{training_num_range['minimum']:.6g}, {training_num_range['maximum']:.6g}] "
+                f"validation=[{validation_num_range['minimum']:.6g}, {validation_num_range['maximum']:.6g}]",
+                flush=True,
+            )
 
         if proposed_model is None:
             proposed_model = build_model(
@@ -741,16 +834,30 @@ def run_publication_binary_experiment(
         y_train = _validated_binary_target(training_arrays[-1])
         y_validation = _validated_binary_target(validation_arrays[-1])
 
-        learning_rate = _learning_rate_for_fold(config, fold_number - 1)
-        _set_optimizer_learning_rate(proposed_model, learning_rate)
+        round_offset = round_index - proposed_train_config.window_rounds
+        total_train_rounds = max(1, len(rounds) - proposed_train_config.window_rounds)
+        learning_rate = learning_rate_for_round(
+            proposed_train_config,
+            round_offset,
+            total_train_rounds,
+        )
+        set_optimizer_learning_rate(proposed_model, learning_rate)
 
+        early_stopping = EarlyStopping(
+            patience=proposed_train_config.early_stopping_patience,
+            min_delta=proposed_train_config.early_stopping_min_delta,
+            restore_best_weights=True,
+            monitor="val_loss",
+            mode="min",
+        )
         proposed_model.fit(
             training_arrays[:-1],
             y_train_for_model,
             validation_data=(validation_arrays[:-1], y_validation_for_model),
             epochs=config.proposed_epochs_per_fold,
             batch_size=config.proposed_batch_size,
-            shuffle=False,
+            callbacks=[early_stopping],
+            shuffle=True,
             verbose=2,
         )
 
@@ -880,7 +987,13 @@ def run_publication_binary_experiment(
                 "training_matches": len(training_matches),
                 "validation_matches": len(validation_matches),
                 "learning_rate": learning_rate,
-                "training_observed_strength_cells": diagnostics.training_observed_cells,
+                "training_observed_strength_cells": (
+                    diagnostics.training_observed_cells if diagnostics is not None else None
+                ),
+                "numerical_train_min": training_num_range["minimum"],
+                "numerical_train_max": training_num_range["maximum"],
+                "numerical_validation_min": validation_num_range["minimum"],
+                "numerical_validation_max": validation_num_range["maximum"],
                 "latent_features": int(training_latent.shape[1]),
                 "flat_features": layout.total_features,
             }
