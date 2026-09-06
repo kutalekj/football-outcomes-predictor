@@ -7,6 +7,7 @@ from pathlib import Path
 
 import matplotlib
 import numpy as np
+from matplotlib.offsetbox import AnnotationBbox, HPacker, TextArea
 
 import football_outcomes.config.fs_settings as sett
 from football_outcomes.application.snapshot_selection import resolve_snapshot_path
@@ -183,14 +184,73 @@ def _bounded_sqrt_widths(counts: list[int]) -> np.ndarray:
 
 
 def _annotate_bar_count(ax: plt.Axes, bar: object, count: int, value: float) -> None:
-    ax.annotate(
+    y_min, y_max = ax.get_ylim()
+    y_span = max(y_max - y_min, 1e-9)
+    x_pos = bar.get_x() + bar.get_width() / 2
+    y_pos = bar.get_height()
+
+    if value >= 0:
+        text_y = min(y_pos + 0.018 * y_span, y_max - 0.03 * y_span)
+        va = "bottom"
+    else:
+        text_y = max(y_pos - 0.025 * y_span, y_min + 0.02 * y_span)
+        va = "top"
+
+    ax.text(
+        x_pos,
+        text_y,
         f"n={count}",
-        (bar.get_x() + bar.get_width() / 2, bar.get_height()),
-        xytext=(0, 5 if value >= 0 else -13),
-        textcoords="offset points",
         ha="center",
+        va=va,
         fontsize=7,
+        clip_on=False,
     )
+
+
+def _annotate_bar_count_with_win_share(
+    ax: plt.Axes,
+    bar: object,
+    count: int,
+    value: float,
+    win_share_pct: float,
+) -> None:
+    y_min, y_max = ax.get_ylim()
+    y_span = max(y_max - y_min, 1e-9)
+    x_pos = bar.get_x() + bar.get_width() / 2
+    y_pos = bar.get_height()
+
+    if value >= 0:
+        text_y = min(y_pos + 0.018 * y_span, y_max - 0.035 * y_span)
+        box_alignment = (0.5, 0.0)  # bottom-aligned
+    else:
+        text_y = max(y_pos - 0.028 * y_span, y_min + 0.025 * y_span)
+        box_alignment = (0.5, 1.0)  # top-aligned
+
+    packed = HPacker(
+        children=[
+            TextArea(
+                f"n={count}",
+                textprops=dict(color="black", fontsize=8),
+            ),
+            TextArea(
+                f" ({win_share_pct:.0f}%)",
+                textprops=dict(color=WIN_SHARE_COLOR, fontsize=8),
+            ),
+        ],
+        align="center",
+        pad=0,
+        sep=0,
+    )
+
+    annotation = AnnotationBbox(
+        packed,
+        (x_pos, text_y),
+        xycoords="data",
+        box_alignment=box_alignment,
+        frameon=False,
+        pad=0.0,
+    )
+    ax.add_artist(annotation)
 
 
 def _bounded_marker_areas(
@@ -213,6 +273,89 @@ def _save_figure(fig: plt.Figure, figure_root: Path, filename: str) -> None:
     fig.savefig(figure_root / f"{filename}.pdf", bbox_inches="tight")
     fig.savefig(figure_root / f"{filename}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
+
+
+WIN_SHARE_COLOR = "#2ca02c"
+
+
+def _extract_win_share_percent(row: dict) -> float:
+    hit_rate = row.get("hit_rate")
+    if hit_rate not in (None, ""):
+        return 100.0 * float(hit_rate)
+
+    wins = float(row.get("wins", 0.0))
+    num_bets = float(row.get("num_bets", 0.0))
+    if num_bets <= 0.0:
+        return float("nan")
+    return 100.0 * wins / num_bets
+
+
+def plot_edge_selectivity_bar_only(
+    edge_bins: list[dict],
+    figure_root: Path,
+    *,
+    total_match_count: int,
+    positive_candidate_count: int,
+) -> None:
+    figure_root.mkdir(parents=True, exist_ok=True)
+
+    fig, ax = plt.subplots(figsize=(14.6, 6.3))
+
+    labels = [row["edge_bin"] for row in edge_bins]
+    roi = _finite_plot_values(edge_bins, "roi")
+    counts = [int(row["num_bets"]) for row in edge_bins]
+    win_share_pct = [_extract_win_share_percent(row) for row in edge_bins]
+
+    x = np.arange(len(labels))
+    widths = _bounded_sqrt_widths(counts)
+
+    bars = ax.bar(
+        x,
+        roi,
+        width=widths,
+        edgecolor="black",
+        linewidth=0.6,
+    )
+    ax.axhline(0.0, linestyle="--", linewidth=1.0)
+
+    ax.set_title("Realized ROI by Positive Best-Side Edge Bin", pad=20)
+    ax.text(
+        0.5,
+        1.005,
+        (
+            f"Non-negative best-side edge: {positive_candidate_count:,} of "
+            f"{total_match_count:,} matches "
+            f"({positive_candidate_count / max(1, total_match_count):.1%}). "
+            "Bar width ∝ √(number of bets)."
+        ),
+        transform=ax.transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=9,
+    )
+
+    ax.set_xlabel("Best-side model probability − corresponding bookmaker break-even probability")
+    ax.set_ylabel("ROI per unit stake")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=30, ha="right")
+    ax.tick_params(axis="x", labelsize=11)
+    ax.grid(axis="y", linestyle=":", alpha=0.45)
+
+    # Add a little headroom/footroom so annotations do not touch borders.
+    finite_roi = [value for value in roi if np.isfinite(value)]
+    if finite_roi:
+        y_min = min(min(finite_roi), 0.0)
+        y_max = max(max(finite_roi), 0.0)
+        y_span = max(y_max - y_min, 0.05)
+        ax.set_ylim(y_min - 0.08 * y_span, y_max + 0.14 * y_span)
+
+    # n=... annotations
+    for bar, value, count, pct in zip(bars, roi, counts, win_share_pct):
+        if np.isfinite(value) and np.isfinite(pct):
+            _annotate_bar_count_with_win_share(ax, bar, count, value, pct)
+
+    fig.subplots_adjust(top=0.86, bottom=0.14, left=0.08, right=0.98)
+    _save_figure(fig, figure_root, "bookmaker_edge_selectivity_bar_only")
 
 
 def plot_edge_selectivity(
@@ -1205,6 +1348,12 @@ def main() -> None:
     plot_edge_selectivity(
         edge_bins,
         coverage,
+        args.figure_root,
+        total_match_count=len(best),
+        positive_candidate_count=positive_candidate_count,
+    )
+    plot_edge_selectivity_bar_only(
+        edge_bins,
         args.figure_root,
         total_match_count=len(best),
         positive_candidate_count=positive_candidate_count,
